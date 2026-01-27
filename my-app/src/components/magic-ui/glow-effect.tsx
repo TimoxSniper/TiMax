@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 interface GlowEffectProps {
   className?: string;
   size?: "sm" | "md" | "lg" | "xl";
-  color?: "primary" | "accent" | "purple" | "blue";
+  variant?: "subtle" | "soft";
 }
 
 const sizeClasses = {
@@ -15,20 +15,18 @@ const sizeClasses = {
   xl: "w-[32rem] h-[32rem]",
 };
 
-const colorClasses = {
-  primary: "bg-primary/20",
-  accent: "bg-accent/20",
-  purple: "bg-purple-500/20",
-  blue: "bg-blue-500/20",
+const variantClasses = {
+  subtle: "bg-black/5 dark:bg-white/5",
+  soft: "bg-black/10 dark:bg-white/10",
 };
 
-export function GlowEffect({ className, size = "lg", color = "primary" }: GlowEffectProps) {
+export function GlowEffect({ className, size = "lg", variant = "subtle" }: GlowEffectProps) {
   return (
     <div
       className={cn(
-        "absolute rounded-full blur-3xl opacity-50 animate-pulse",
+        "absolute rounded-full blur-3xl opacity-30",
         sizeClasses[size],
-        colorClasses[color],
+        variantClasses[variant],
         className
       )}
       aria-hidden="true"

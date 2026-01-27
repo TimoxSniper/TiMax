@@ -5,7 +5,6 @@ import { GlowEffect } from "@/components/magic-ui/glow-effect";
 import { GlassCard } from "@/components/magic-ui/glass-card";
 import { AnimatedSection } from "@/components/magic-ui/animated-section";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
@@ -46,19 +45,19 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      {/* Hero Section mit Linear-ähnlichem Start-Effekt */}
+    <div className="flex min-h-screen flex-col bg-white dark:bg-black">
+      {/* Hero Section */}
       <section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-20 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Glow-Effekte im Hintergrund */}
+        {/* Subtle Glow-Effekte */}
         <GlowEffect 
           size="xl" 
-          color="primary" 
-          className="top-1/4 -left-1/4 blur-[120px]" 
+          variant="subtle"
+          className="top-1/4 -left-1/4" 
         />
         <GlowEffect 
           size="lg" 
-          color="accent" 
-          className="bottom-1/4 -right-1/4 blur-[100px]" 
+          variant="soft"
+          className="bottom-1/4 -right-1/4" 
         />
         
         <div className="container mx-auto max-w-6xl relative z-10">
@@ -71,7 +70,7 @@ export default function Home() {
             <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button 
                 size="lg" 
-                className="group relative overflow-hidden bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105"
+                className="group relative overflow-hidden bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90 transition-all duration-300 hover:scale-105 rounded-full px-8 py-6 text-base font-medium"
                 asChild
               >
                 <a href="/text-generator">
@@ -82,7 +81,7 @@ export default function Home() {
               <Button 
                 size="lg" 
                 variant="outline"
-                className="group border-2 hover:bg-accent/50 transition-all duration-300 hover:scale-105"
+                className="group border-2 border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 hover:scale-105 rounded-full px-8 py-6 text-base font-medium"
                 asChild
               >
                 <a href="#solution">
@@ -96,8 +95,8 @@ export default function Home() {
         {/* Scroll Indicator */}
         <AnimatedSection delay={1000} direction="fade">
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-            <div className="w-6 h-10 border-2 border-muted-foreground/30 rounded-full flex justify-center">
-              <div className="w-1 h-3 bg-muted-foreground/50 rounded-full mt-2 animate-pulse" />
+            <div className="w-6 h-10 border-2 border-black/20 dark:border-white/20 rounded-full flex justify-center">
+              <div className="w-1 h-3 bg-black/30 dark:bg-white/30 rounded-full mt-2 animate-pulse" />
             </div>
           </div>
         </AnimatedSection>
@@ -107,11 +106,11 @@ export default function Home() {
       <section className="relative px-4 py-24 sm:px-6 lg:px-8" id="features">
         <div className="container mx-auto max-w-6xl">
           <AnimatedSection direction="up">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+            <div className="text-center mb-20">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-black dark:text-white">
                 Alles was du brauchst
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-xl text-black/60 dark:text-white/60 max-w-2xl mx-auto">
                 Eine Plattform, die den gesamten Prozess nahtlos verbindet
               </p>
             </div>
@@ -122,18 +121,18 @@ export default function Home() {
               const Icon = feature.icon;
               return (
                 <AnimatedSection key={feature.title} delay={index * 100} direction="up">
-                  <GlassCard hover>
-                    <Card className="border-0 bg-transparent shadow-none">
-                      <CardHeader>
-                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                          <Icon className="h-6 w-6 text-primary" />
-                        </div>
-                        <CardTitle className="text-xl">{feature.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-muted-foreground">{feature.description}</p>
-                      </CardContent>
-                    </Card>
+                  <GlassCard hover variant="subtle" className="p-8 h-full">
+                    <div className="flex flex-col h-full">
+                      <div className="w-14 h-14 rounded-2xl bg-black/5 dark:bg-white/5 flex items-center justify-center mb-6 transition-colors group-hover:bg-black/10 dark:group-hover:bg-white/10">
+                        <Icon className="h-7 w-7 text-black dark:text-white" />
+                      </div>
+                      <h3 className="text-xl font-semibold mb-3 text-black dark:text-white">
+                        {feature.title}
+                      </h3>
+                      <p className="text-black/60 dark:text-white/60 leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </div>
                   </GlassCard>
                 </AnimatedSection>
               );
@@ -143,30 +142,42 @@ export default function Home() {
       </section>
 
       {/* Problem Section */}
-      <section className="relative px-4 py-24 sm:px-6 lg:px-8 bg-muted/20" id="problem">
-        <div className="container mx-auto max-w-5xl">
+      <section className="relative px-4 py-24 sm:px-6 lg:px-8" id="problem">
+        <div className="container mx-auto max-w-4xl">
           <AnimatedSection direction="up">
-            <GlassCard>
-              <Card className="border-0 bg-transparent shadow-none">
-                <CardHeader>
-                  <CardTitle className="text-3xl sm:text-4xl mb-2">Das Problem</CardTitle>
-                  <CardDescription className="text-lg">
+            <GlassCard variant="elevated" className="p-10 sm:p-12">
+              <div className="space-y-8">
+                <div>
+                  <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-black dark:text-white">
+                    Das Problem
+                  </h2>
+                  <p className="text-xl text-black/70 dark:text-white/70 leading-relaxed">
                     Content-Creator und Coaches kämpfen damit, aus bestehenden Videos und Audios schnell neues, passendes Textmaterial zu erstellen.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <p className="text-muted-foreground text-lg leading-relaxed">
+                  </p>
+                </div>
+                <div className="space-y-4">
+                  <p className="text-lg text-black/60 dark:text-white/60 leading-relaxed">
                     Ihre Inhalte sind unstrukturiert verteilt und kaum durchsuchbar. Aktuelle Tools fokussieren entweder nur auf Transkription oder reine Textgenerierung und verbinden Upload, Strukturierung und Dialog mit der KI kaum nahtlos. Dadurch verlieren die Nutzer Zeit, Ideen und Reichweite und können ihr Wissen nur begrenzt skalieren.
                   </p>
-                  <div className="flex flex-wrap gap-2 pt-4">
-                    <Badge variant="secondary" className="text-sm px-3 py-1">Content-Creator</Badge>
-                    <Badge variant="secondary" className="text-sm px-3 py-1">Freelance Social-Media-Manager</Badge>
-                    <Badge variant="secondary" className="text-sm px-3 py-1">Business- und Life-Coaches</Badge>
-                    <Badge variant="secondary" className="text-sm px-3 py-1">Solopreneure</Badge>
-                    <Badge variant="secondary" className="text-sm px-3 py-1">Kleine Businesses</Badge>
+                  <div className="flex flex-wrap gap-3 pt-4">
+                    <Badge variant="secondary" className="text-sm px-4 py-2 bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 border-0">
+                      Content-Creator
+                    </Badge>
+                    <Badge variant="secondary" className="text-sm px-4 py-2 bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 border-0">
+                      Freelance Social-Media-Manager
+                    </Badge>
+                    <Badge variant="secondary" className="text-sm px-4 py-2 bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 border-0">
+                      Business- und Life-Coaches
+                    </Badge>
+                    <Badge variant="secondary" className="text-sm px-4 py-2 bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 border-0">
+                      Solopreneure
+                    </Badge>
+                    <Badge variant="secondary" className="text-sm px-4 py-2 bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 border-0">
+                      Kleine Businesses
+                    </Badge>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </GlassCard>
           </AnimatedSection>
         </div>
@@ -174,59 +185,63 @@ export default function Home() {
 
       {/* Solution Section */}
       <section className="relative px-4 py-24 sm:px-6 lg:px-8" id="solution">
-        <div className="container mx-auto max-w-5xl">
+        <div className="container mx-auto max-w-4xl">
           <AnimatedSection direction="up">
-            <GlassCard>
-              <Card className="border-0 bg-transparent shadow-none">
-                <CardHeader>
-                  <CardTitle className="text-3xl sm:text-4xl mb-2">Die Lösung</CardTitle>
-                  <CardDescription className="text-lg">
+            <GlassCard variant="elevated" className="p-10 sm:p-12">
+              <div className="space-y-8">
+                <div>
+                  <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-black dark:text-white">
+                    Die Lösung
+                  </h2>
+                  <p className="text-xl text-black/70 dark:text-white/70 leading-relaxed">
                     Eine Plattform, die den gesamten Prozess nahtlos verbindet.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <p className="text-muted-foreground text-lg leading-relaxed">
+                  </p>
+                </div>
+                <div className="space-y-6">
+                  <p className="text-lg text-black/60 dark:text-white/60 leading-relaxed">
                     Nutze deine Video- und Audio-Bibliotheken, um schnell neues Textmaterial zu generieren. Unsere Plattform vereint Upload, intelligente Strukturierung und KI-Dialog in einem einzigen Workflow. So kannst du dein Wissen effizient skalieren, ohne zwischen verschiedenen Tools wechseln zu müssen.
                   </p>
-                  <ul className="space-y-3 text-muted-foreground">
-                    <li className="flex items-start gap-3">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                      <span>Nahtloser Upload von Videos und Audios</span>
+                  <ul className="space-y-4 text-black/60 dark:text-white/60">
+                    <li className="flex items-start gap-4">
+                      <div className="w-2 h-2 rounded-full bg-black dark:bg-white mt-2 flex-shrink-0" />
+                      <span className="text-lg">Nahtloser Upload von Videos und Audios</span>
                     </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                      <span>Intelligente Strukturierung deiner Inhalte</span>
+                    <li className="flex items-start gap-4">
+                      <div className="w-2 h-2 rounded-full bg-black dark:bg-white mt-2 flex-shrink-0" />
+                      <span className="text-lg">Intelligente Strukturierung deiner Inhalte</span>
                     </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                      <span>KI-Dialog für schnelle Textgenerierung</span>
+                    <li className="flex items-start gap-4">
+                      <div className="w-2 h-2 rounded-full bg-black dark:bg-white mt-2 flex-shrink-0" />
+                      <span className="text-lg">KI-Dialog für schnelle Textgenerierung</span>
                     </li>
-                    <li className="flex items-start gap-3">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                      <span>Alles in einem Workflow – keine Tool-Wechsel mehr</span>
+                    <li className="flex items-start gap-4">
+                      <div className="w-2 h-2 rounded-full bg-black dark:bg-white mt-2 flex-shrink-0" />
+                      <span className="text-lg">Alles in einem Workflow – keine Tool-Wechsel mehr</span>
                     </li>
                   </ul>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </GlassCard>
           </AnimatedSection>
         </div>
       </section>
 
       {/* Demo Section */}
-      <section className="relative px-4 py-24 sm:px-6 lg:px-8 bg-muted/20" id="demo">
-        <div className="container mx-auto max-w-5xl">
+      <section className="relative px-4 py-24 sm:px-6 lg:px-8" id="demo">
+        <div className="container mx-auto max-w-4xl">
           <AnimatedSection direction="up">
-            <div className="text-center space-y-8">
-              <div className="space-y-4">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">Probiere es aus</h2>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <div className="text-center space-y-10">
+              <div className="space-y-6">
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-black dark:text-white">
+                  Probiere es aus
+                </h2>
+                <p className="text-xl text-black/60 dark:text-white/60 max-w-2xl mx-auto">
                   Erlebe den Text Generator in Aktion. Generiere verschiedene Content-Formate aus einem Beispiel-Transkript.
                 </p>
               </div>
               <Button 
                 size="lg" 
-                className="group bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-105"
+                className="group bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90 transition-all duration-300 hover:scale-105 rounded-full px-8 py-6 text-base font-medium"
                 asChild
               >
                 <a href="/text-generator">
@@ -243,50 +258,50 @@ export default function Home() {
       <section className="relative px-4 py-24 sm:px-6 lg:px-8" id="cta">
         <div className="container mx-auto max-w-2xl">
           <AnimatedSection direction="up">
-            <GlassCard>
-              <Card className="border-0 bg-transparent shadow-none">
-                <CardHeader className="text-center">
-                  <CardTitle className="text-3xl sm:text-4xl mb-2">Bereit loszulegen?</CardTitle>
-                  <CardDescription className="text-lg">
+            <GlassCard variant="elevated" className="p-10 sm:p-12">
+              <div className="space-y-8 text-center">
+                <div>
+                  <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-black dark:text-white">
+                    Bereit loszulegen?
+                  </h2>
+                  <p className="text-xl text-black/70 dark:text-white/70">
                     Melde dich an und sei einer der Ersten, die Zugang erhalten.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="space-y-2">
-                      <label htmlFor="email" className="sr-only">
-                        E-Mail-Adresse
-                      </label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="deine@email.de"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        className="w-full bg-background/50 backdrop-blur-sm border-2 focus:border-primary transition-colors"
-                        aria-label="E-Mail-Adresse für Anmeldung"
-                      />
-                    </div>
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 hover:scale-[1.02]" 
-                      size="lg"
-                    >
-                      Jetzt anmelden
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
+                  </p>
+                </div>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label htmlFor="email" className="sr-only">
+                      E-Mail-Adresse
+                    </label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="deine@email.de"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="w-full bg-white/50 dark:bg-black/50 backdrop-blur-xl border-2 border-black/10 dark:border-white/10 focus:border-black/20 dark:focus:border-white/20 rounded-full px-6 py-4 text-base transition-colors"
+                      aria-label="E-Mail-Adresse für Anmeldung"
+                    />
+                  </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90 transition-all duration-300 hover:scale-[1.02] rounded-full px-8 py-6 text-base font-medium" 
+                    size="lg"
+                  >
+                    Jetzt anmelden
+                  </Button>
+                </form>
+              </div>
             </GlassCard>
           </AnimatedSection>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="mt-auto border-t border-border/50 py-12">
+      <footer className="mt-auto border-t border-black/5 dark:border-white/5 py-12">
         <div className="container mx-auto max-w-5xl px-4 text-center">
-          <p className="text-sm text-muted-foreground">© 2024 TiMax. Coming Soon.</p>
+          <p className="text-sm text-black/50 dark:text-white/50">© 2024 TiMax. Coming Soon.</p>
         </div>
       </footer>
     </div>
