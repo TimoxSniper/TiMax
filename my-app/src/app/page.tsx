@@ -52,8 +52,8 @@ export default function Home() {
   useEffect(() => {
     if (!statsVisible) return;
 
-    const duration = 2000;
-    const steps = 60;
+    const duration = 2500;
+    const steps = 80;
     const interval = duration / steps;
 
     let currentStep = 0;
@@ -61,13 +61,18 @@ export default function Home() {
       currentStep++;
       const progress = currentStep / steps;
 
-      // Für scalable: von 0 hochzählen bis 100, dann zu ∞
+      // Für scalable: exponentiell von 0 bis ~5000, dann zu ∞
       let scalableValue: number | string = 0;
-      if (progress < 0.9) {
-        // Zähle von 0 bis 100
-        scalableValue = Math.floor(100 * (progress / 0.9));
+      if (progress < 0.85) {
+        // Exponentielles Wachstum: e^(x * k) - 1, skaliert auf ~5000
+        // Bei progress = 0.85 soll der Wert etwa 5000 sein
+        const exponentialProgress = progress / 0.85;
+        // e^(x * 8.5) gibt uns bei x=1 etwa 5000
+        scalableValue = Math.floor(Math.exp(exponentialProgress * 8.5) - 1);
+        // Cap bei 5000
+        scalableValue = Math.min(scalableValue, 5000);
       } else {
-        // Bei 90% zu ∞ wechseln
+        // Bei 85% clean zu ∞ wechseln
         scalableValue = Infinity;
       }
 
