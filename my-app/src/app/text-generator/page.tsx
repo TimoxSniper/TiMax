@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { TranscriptViewer } from "@/components/text-generator/transcript-viewer";
 import { FormatSelector } from "@/components/text-generator/format-selector";
 import { TextOutput } from "@/components/text-generator/text-output";
 import { mockTranscript } from "@/lib/mock-transcript";
-import { generateText, type FormatType } from "@/lib/text-templates";
+import { type FormatType } from "@/lib/text-templates";
+import { generateTextAction } from "@/app/text-generator/actions";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,28 +15,42 @@ import Link from "next/link";
 export default function TextGeneratorPage() {
   const [selectedFormat, setSelectedFormat] = useState<FormatType | null>(null);
   const [generatedText, setGeneratedText] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const handleFormatSelect = (format: FormatType) => {
     setSelectedFormat(format);
-    // Stage 1: Mock-Generierung (sofort, < 100ms)
-    // Stage 2: Echte Template-Engine wird hier aufgerufen
-    const text = generateText(format, mockTranscript);
-    setGeneratedText(text);
+    setError(null);
+    setGeneratedText(""); // Alten Text löschen während Loading
     
-    // Smooth scroll zum Output-Bereich auf Mobile
-    if (window.innerWidth < 1024) {
-      setTimeout(() => {
-        const outputElement = document.getElementById("text-output");
-        outputElement?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }, 100);
-    }
+    startTransition(async () => {
+      try {
+        const result = await generateTextAction(format, mockTranscript);
+        
+        if (result.success && result.text) {
+          setGeneratedText(result.text);
+          setError(null);
+          
+          // Smooth scroll zum Output-Bereich auf Mobile
+          if (typeof window !== "undefined" && window.innerWidth < 1024) {
+            setTimeout(() => {
+              const outputElement = document.getElementById("text-output");
+              outputElement?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }, 100);
+          }
+        } else {
+          setError(result.error || "Fehler bei der Text-Generierung");
+          setGeneratedText("");
+        }
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Unbekannter Fehler";
+        setError(errorMessage);
+        setGeneratedText("");
+        console.error("Fehler bei handleFormatSelect:", err);
+      }
+    });
   };
 
-  const handleCopy = () => {
-    // Stage 1: Nur Placeholder
-    // Stage 2: Toast/Notification anzeigen
-    console.log("Text copied to clipboard");
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -93,13 +108,15 @@ export default function TextGeneratorPage() {
           <div className="space-y-6 lg:sticky lg:top-24">
             <FormatSelector 
               selectedFormat={selectedFormat} 
-              onSelectFormat={handleFormatSelect} 
+              onSelectFormat={handleFormatSelect}
+              disabled={isPending}
             />
             
             <TextOutput 
               generatedText={generatedText}
               format={selectedFormat}
-              onCopy={handleCopy}
+              isLoading={isPending}
+              error={error}
             />
           </div>
         </div>
@@ -157,7 +174,7 @@ export default function TextGeneratorPage() {
       {/* Footer */}
       <footer className="border-t mt-12 sm:mt-16 lg:mt-20 py-6 sm:py-8" role="contentinfo">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs sm:text-sm text-muted-foreground">
-          <p>TiMax Text Generator · Stage 1 Demo · UI Only</p>
+          <p>TiMax Text Generator · Stage 2 · Real Functionality</p>
         </div>
       </footer>
     </div>

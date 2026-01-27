@@ -8,6 +8,7 @@ import { FileText, MessageSquare, PenTool, Hash, Sparkles } from "lucide-react";
 interface FormatSelectorProps {
   selectedFormat: FormatType | null;
   onSelectFormat: (format: FormatType) => void;
+  disabled?: boolean;
 }
 
 const formatIcons: Record<FormatType, React.ReactNode> = {
@@ -17,7 +18,7 @@ const formatIcons: Record<FormatType, React.ReactNode> = {
   caption: <PenTool className="size-4" aria-hidden="true" />,
 };
 
-export function FormatSelector({ selectedFormat, onSelectFormat }: FormatSelectorProps) {
+export function FormatSelector({ selectedFormat, onSelectFormat, disabled = false }: FormatSelectorProps) {
   return (
     <Card className="transition-all duration-200 hover:shadow-md">
       <CardHeader>
@@ -45,11 +46,13 @@ export function FormatSelector({ selectedFormat, onSelectFormat }: FormatSelecto
               <Button
                 key={format.id}
                 variant={isSelected ? "default" : "outline"}
+                disabled={disabled}
                 className={`h-auto flex-col items-start gap-2 p-4 text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
                   isSelected ? "ring-2 ring-primary/20 shadow-md" : ""
-                }`}
+                } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
                 onClick={() => onSelectFormat(format.id)}
                 aria-pressed={isSelected}
+                aria-disabled={disabled}
                 aria-label={`${format.label} Format wählen: ${format.description}`}
               >
                 <div className="flex items-center gap-2 w-full">

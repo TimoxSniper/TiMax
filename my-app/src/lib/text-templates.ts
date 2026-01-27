@@ -37,83 +37,192 @@ export const formatOptions: FormatOption[] = [
 
 /**
  * Template-Generierungs-Funktionen
- * Stage 1: Geben nur Placeholder-Text zurück
- * Stage 2: Echte Template-Logik implementieren
+ * Stage 2: Echte Template-Logik basierend auf Transkript-Input
  */
 
+/**
+ * Hilfsfunktion: Transkript in Sätze aufteilen
+ */
+function splitIntoSentences(text: string): string[] {
+  return text
+    .replace(/\n+/g, " ")
+    .split(/[.!?]+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
+}
+
+/**
+ * Hilfsfunktion: Wichtige Keywords aus Transkript extrahieren
+ */
+function extractKeywords(text: string, maxKeywords: number = 5): string[] {
+  const words = text
+    .toLowerCase()
+    .replace(/[^\w\s]/g, " ")
+    .split(/\s+/)
+    .filter((w) => w.length > 4);
+  
+  const wordCount: Record<string, number> = {};
+  words.forEach((word) => {
+    wordCount[word] = (wordCount[word] || 0) + 1;
+  });
+  
+  return Object.entries(wordCount)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, maxKeywords)
+    .map(([word]) => word.charAt(0).toUpperCase() + word.slice(1));
+}
+
+/**
+ * Hilfsfunktion: Text auf maximale Länge kürzen
+ */
+function truncateText(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength - 3) + "...";
+}
+
+/**
+ * Hilfsfunktion: Text in Absätze aufteilen
+ */
+function splitIntoParagraphs(text: string, maxSentencesPerParagraph: number = 3): string[] {
+  const sentences = splitIntoSentences(text);
+  const paragraphs: string[] = [];
+  
+  for (let i = 0; i < sentences.length; i += maxSentencesPerParagraph) {
+    paragraphs.push(sentences.slice(i, i + maxSentencesPerParagraph).join(". ") + ".");
+  }
+  
+  return paragraphs;
+}
+
 export function generateInstagramPost(transcript: string): string {
-  return `🎯 Produktivität im digitalen Zeitalter
+  if (!transcript || transcript.trim().length === 0) {
+    return "Bitte wähle ein gültiges Transkript aus.";
+  }
 
-In der heutigen Zeit werden wir täglich von hunderten Nachrichten und Benachrichtigungen überflutet. Die ständige Erreichbarkeit kann Fluch und Segen zugleich sein.
+  const sentences = splitIntoSentences(transcript);
+  const keywords = extractKeywords(transcript, 8);
+  
+  // Ersten 2-3 Sätze als Hook verwenden
+  const hook = sentences.slice(0, 3).join(" ");
+  
+  // Hauptinhalt: Wichtige Punkte extrahieren
+  const mainContent = sentences.slice(3, 8).join(" ");
+  
+  // Hashtags generieren
+  const hashtags = keywords
+    .map((k) => `#${k.replace(/\s+/g, "")}`)
+    .slice(0, 6)
+    .join(" ");
 
-💡 Mein Tipp: Die Pomodoro-Technik
-→ 25 Minuten fokussierte Arbeit
-→ Kurze Pausen einbauen
-→ Alle Ablenkungen eliminieren
+  let post = `🎯 ${hook}\n\n`;
+  
+  if (mainContent) {
+    post += `💡 ${mainContent}\n\n`;
+  }
+  
+  // Call-to-Action
+  post += `✨ Der Schlüssel: Finde DEINEN eigenen Weg!\n\n`;
+  
+  // Hashtags
+  post += hashtags;
 
-Die Trennung verschiedener Tools für verschiedene Aufgaben hilft dem Gehirn, in den richtigen Modus zu wechseln. Kreative Arbeit braucht andere Programme als administrative Tätigkeiten.
-
-✨ Der Schlüssel: Finde DEINEN eigenen Weg!
-
-Produktivität ist keine Einheitslösung, sondern ein individueller Prozess. Probiere verschiedene Methoden aus und entdecke, was für dich funktioniert.
-
-#Produktivität #TimeManagement #PomodoroTechnik #DigitalWellbeing #WorkLifeBalance #Fokus #Effizienz #Selbstmanagement #Podcast`;
+  // Auf max. 2200 Zeichen begrenzen
+  return truncateText(post, 2200);
 }
 
 export function generateTwitterThread(transcript: string): string {
-  return `🧵 Thread über Produktivität im digitalen Zeitalter
+  if (!transcript || transcript.trim().length === 0) {
+    return "Bitte wähle ein gültiges Transkript aus.";
+  }
 
-1/6 Wir werden täglich von hunderten Nachrichten überflutet. Ständige Erreichbarkeit = Fluch & Segen zugleich. Wie bleiben wir fokussiert? 🎯
-
-2/6 Nach Jahren des Experimentierens: Es gibt keine universelle Lösung. Jeder arbeitet anders, hat andere Prioritäten. Der Schlüssel? Deinen eigenen Weg finden! 💡
-
-3/6 Was bei mir funktioniert: Die Pomodoro-Technik
-• 25 Min fokussierte Arbeit
-• Kurze Pausen
-• Null Ablenkungen
-Diese Intervalle helfen enorm beim Fokussieren ⏱️
-
-4/6 Digitale Umgebung bewusst gestalten: Verschiedene Tools für verschiedene Aufgaben nutzen. Kreative Arbeit ≠ Admin-Tätigkeiten. Diese Trennung hilft dem Gehirn beim Mode-Wechsel 🧠
-
-5/6 Produktivität ist kein Hack, sondern ein individueller Prozess. Was für andere funktioniert, muss nicht für dich passen. 
-
-6/6 Mein Tipp: Probiere verschiedene Ansätze aus. Experimentiere. Reflektiere. Finde heraus, was DICH produktiver macht! ✨`;
+  const sentences = splitIntoSentences(transcript);
+  const paragraphs = splitIntoParagraphs(transcript, 2);
+  
+  // Thread aufbauen: Jeder Tweet max. 280 Zeichen
+  const tweets: string[] = [];
+  const maxTweetLength = 270; // Platz für "1/6 " etc.
+  
+  // Erster Tweet: Hook
+  if (sentences.length > 0) {
+    const firstTweet = `🧵 ${sentences[0]}`;
+    tweets.push(truncateText(firstTweet, maxTweetLength));
+  }
+  
+  // Weitere Tweets aus Absätzen
+  paragraphs.slice(1, 6).forEach((para, index) => {
+    const tweetNum = index + 2;
+    const tweet = `${tweetNum}/${paragraphs.length + 1} ${para}`;
+    tweets.push(truncateText(tweet, maxTweetLength));
+  });
+  
+  // Letzter Tweet: CTA
+  const lastTweet = `${tweets.length + 1}/${tweets.length + 1} ✨ Mein Tipp: Probiere verschiedene Ansätze aus und finde heraus, was für dich funktioniert!`;
+  tweets.push(truncateText(lastTweet, maxTweetLength));
+  
+  // Tweet-Nummern aktualisieren
+  return tweets
+    .map((tweet, index) => {
+      const num = index + 1;
+      const total = tweets.length;
+      return tweet.replace(/^\d+\/\d+/, `${num}/${total}`);
+    })
+    .join("\n\n");
 }
 
 export function generateBlogPost(transcript: string): string {
-  return `## Produktivität im digitalen Zeitalter: Ein individueller Prozess
+  if (!transcript || transcript.trim().length === 0) {
+    return "Bitte wähle ein gültiges Transkript aus.";
+  }
 
-### Die Herausforderung der ständigen Erreichbarkeit
-
-Wir leben in einer Zeit, in der uns täglich hunderte von Nachrichten, E-Mails und Benachrichtigungen erreichen. Die ständige Erreichbarkeit kann sowohl Fluch als auch Segen sein. Einerseits ermöglicht sie uns, flexibel zu arbeiten und schnell auf Anfragen zu reagieren. Andererseits führt sie oft dazu, dass wir uns überwältigt fühlen und Schwierigkeiten haben, uns auf das Wesentliche zu konzentrieren.
-
-### Der Weg zur persönlichen Produktivitätsstrategie
-
-In den letzten Jahren habe ich verschiedene Methoden und Tools ausprobiert, um meine Produktivität zu steigern. Die wichtigste Erkenntnis: Es gibt keine universelle Lösung. Jeder Mensch arbeitet anders, hat unterschiedliche Prioritäten und muss seinen eigenen Weg finden.
-
-### Die Pomodoro-Technik: Fokus durch Intervalle
-
-Eine Strategie, die sich als besonders effektiv erwiesen hat, ist die Pomodoro-Technik. Dabei arbeitet man in 25-Minuten-Intervallen, gefolgt von einer kurzen Pause. Diese Methode hilft dabei, fokussiert zu bleiben und gleichzeitig regelmäßige Erholungsphasen einzubauen.
-
-Der Schlüssel liegt darin, während dieser 25 Minuten wirklich alle Ablenkungen zu eliminieren – keine E-Mails, keine Social Media, keine Benachrichtigungen.
-
-### Digitale Umgebung bewusst gestalten
-
-Ein weiterer wichtiger Aspekt ist die bewusste Gestaltung unserer digitalen Umgebung. Es ist enorm hilfreich, verschiedene Tools für verschiedene Aufgaben zu nutzen. Für kreative Arbeit verwende ich andere Programme als für administrative Tätigkeiten. Diese Trennung hilft dem Gehirn, in den richtigen Modus zu wechseln.
-
-### Fazit: Experimentieren und individualisieren
-
-Produktivität ist keine Einheitslösung, sondern ein individueller Prozess. Probieren Sie verschiedene Ansätze aus und finden Sie heraus, was für Sie am besten funktioniert.`;
+  const sentences = splitIntoSentences(transcript);
+  const paragraphs = splitIntoParagraphs(transcript, 3);
+  
+  // Titel aus erstem Satz extrahieren
+  const title = sentences[0] || "Aus dem Transkript";
+  
+  let blog = `## ${title}\n\n`;
+  
+  // Abschnitte mit Überschriften
+  paragraphs.forEach((para, index) => {
+    if (index === 0) {
+      blog += `${para}\n\n`;
+    } else if (index === 1) {
+      blog += `### Wichtige Erkenntnisse\n\n${para}\n\n`;
+    } else if (index === 2) {
+      blog += `### Praktische Anwendung\n\n${para}\n\n`;
+    } else {
+      blog += `${para}\n\n`;
+    }
+  });
+  
+  // Fazit
+  if (sentences.length > 5) {
+    const conclusion = sentences.slice(-2).join(" ");
+    blog += `### Fazit\n\n${conclusion}`;
+  }
+  
+  return blog.trim();
 }
 
 export function generateCaption(transcript: string): string {
-  return `🎯 Produktivität = individueller Prozess
+  if (!transcript || transcript.trim().length === 0) {
+    return "Bitte wähle ein gültiges Transkript aus.";
+  }
 
-Keine Einheitslösung! Die Pomodoro-Technik mit 25-Min-Intervallen hilft mir enorm beim Fokussieren. Verschiedene Tools für verschiedene Aufgaben nutzen – das macht den Unterschied.
-
-✨ Finde DEINEN Weg zur Produktivität!
-
-👉 Welche Methode funktioniert bei dir am besten?`;
+  const sentences = splitIntoSentences(transcript);
+  const keywords = extractKeywords(transcript, 3);
+  
+  // Ersten 1-2 Sätze als Hauptinhalt
+  const mainText = sentences.slice(0, 2).join(" ");
+  
+  // Kürzen auf ca. 150 Zeichen für Caption
+  let caption = `🎯 ${truncateText(mainText, 120)}\n\n`;
+  
+  // Call-to-Action
+  caption += `✨ Finde DEINEN Weg!\n\n`;
+  caption += `👉 Was funktioniert bei dir am besten?`;
+  
+  return truncateText(caption, 300);
 }
 
 /**

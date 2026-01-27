@@ -3,7 +3,7 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Check, FileText, Sparkles } from "lucide-react";
+import { Copy, Check, FileText, Sparkles, Loader2, AlertCircle } from "lucide-react";
 import { useState } from "react";
 import type { FormatType } from "@/lib/text-templates";
 
@@ -11,6 +11,8 @@ interface TextOutputProps {
   generatedText: string;
   format: FormatType | null;
   onCopy?: () => void;
+  isLoading?: boolean;
+  error?: string | null;
 }
 
 const formatLabels: Record<FormatType, string> = {
@@ -20,20 +22,43 @@ const formatLabels: Record<FormatType, string> = {
   caption: "Caption",
 };
 
-export function TextOutput({ generatedText, format, onCopy }: TextOutputProps) {
+export function TextOutput({ generatedText, format, onCopy, isLoading = false, error }: TextOutputProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
-    if (!generatedText) return;
+    if (!generatedText || isLoading) return;
     
-    // Stage 1: Nur Placeholder-Logik
-    // Stage 2: Echte Clipboard-API implementieren
-    setCopied(true);
-    onCopy?.();
-    
-    setTimeout(() => {
-      setCopied(false);
-    }, 2000);
+    try {
+      await navigator.clipboard.writeText(generatedText);
+      setCopied(true);
+      onCopy?.();
+      
+      // Reset nach 2 Sekunden
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch (err) {
+      console.error("Fehler beim Kopieren:", err);
+      // Fallback für ältere Browser
+      const textArea = document.createElement("textarea");
+      textArea.value = generatedText;
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      textArea.style.pointerEvents = "none";
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand("copy");
+        setCopied(true);
+        onCopy?.();
+        setTimeout(() => {
+          setCopied(false);
+        }, 2000);
+      } catch (fallbackErr) {
+        console.error("Fallback-Kopieren fehlgeschlagen:", fallbackErr);
+      }
+      document.body.removeChild(textArea);
+    }
   };
 
   const isEmpty = !generatedText || generatedText.trim() === "";
@@ -70,7 +95,39 @@ export function TextOutput({ generatedText, format, onCopy }: TextOutputProps) {
         </div>
       </CardHeader>
       <CardContent className="flex-1" id="text-output">
-        {isEmpty ? (
+        {isLoading ? (
+          <div 
+            className="flex flex-col items-center justify-center h-full min-h-[200px] sm:min-h-[300px] text-center text-muted-foreground p-8 rounded-lg border-2 border-dashed border-muted transition-colors"
+            role="status"
+            aria-live="polite"
+            aria-label="Text wird generiert"
+          >
+            <div className="size-16 sm:size-20 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <Loader2 className="size-8 sm:size-10 text-primary animate-spin" aria-hidden="true" />
+            </div>
+            <p className="text-sm sm:text-base font-medium mb-2 text-foreground">Text wird generiert...</p>
+            <p className="text-xs sm:text-sm max-w-xs">
+              Bitte warten, während dein Content erstellt wird
+            </p>
+          </div>
+        ) : error ? (
+          <div 
+            className="flex flex-col items-center justify-center h-full min-h-[200px] sm:min-h-[300px] text-center p-8 rounded-lg border-2 border-destructive/20 bg-destructive/5 transition-colors"
+            role="alert"
+            aria-live="assertive"
+          >
+            <div className="size-16 sm:size-20 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
+              <AlertCircle className="size-8 sm:size-10 text-destructive" aria-hidden="true" />
+            </div>
+            <p className="text-sm sm:text-base font-medium mb-2 text-destructive">Fehler bei der Generierung</p>
+            <p className="text-xs sm:text-sm max-w-xs text-muted-foreground">
+              {error}
+            </p>
+            <p className="text-xs sm:text-sm max-w-xs mt-4 text-muted-foreground">
+              Bitte versuche es erneut oder wähle ein anderes Format.
+            </p>
+          </div>
+        ) : isEmpty ? (
           <div 
             className="flex flex-col items-center justify-center h-full min-h-[200px] sm:min-h-[300px] text-center text-muted-foreground p-8 rounded-lg border-2 border-dashed border-muted transition-colors"
             role="status"
@@ -103,10 +160,11 @@ export function TextOutput({ generatedText, format, onCopy }: TextOutputProps) {
           </div>
         )}
       </CardContent>
-      {!isEmpty && (
+      {!isEmpty && !isLoading && !error && (
         <CardFooter className="border-t pt-6">
           <Button 
             onClick={handleCopy}
+            disabled={copied || isLoading}
             className="w-full transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             variant={copied ? "secondary" : "default"}
             size="lg"
