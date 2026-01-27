@@ -15,6 +15,7 @@ export default function Home() {
   const [statsVisible, setStatsVisible] = useState(false);
   const [countedStats, setCountedStats] = useState({ speed: 0, seamless: 0, scalable: 0, workflow: 0 });
   const [isDark, setIsDark] = useState(false);
+  const [showInfinityEffect, setShowInfinityEffect] = useState(false);
 
   useEffect(() => {
     // Check initial theme
@@ -57,6 +58,7 @@ export default function Home() {
     const interval = duration / steps;
 
     let currentStep = 0;
+    let previousScalable = 0;
     const timer = setInterval(() => {
       currentStep++;
       const progress = currentStep / steps;
@@ -74,7 +76,14 @@ export default function Home() {
       } else {
         // Bei 85% clean zu ∞ wechseln
         scalableValue = Infinity;
+        // Prüfe ob es gerade zu ∞ gewechselt ist
+        if (previousScalable !== Infinity && typeof previousScalable === 'number') {
+          setShowInfinityEffect(true);
+          setTimeout(() => setShowInfinityEffect(false), 1000);
+        }
       }
+      
+      previousScalable = scalableValue;
 
       setCountedStats({
         speed: Math.min(Math.floor(10 * progress), 10),
@@ -222,8 +231,19 @@ export default function Home() {
                 </div>
                 <div className="text-sm text-black/60 dark:text-white/60">Nahtlos</div>
               </GlassCard>
-              <GlassCard variant="subtle" className="p-6 text-center">
-                <div className="text-3xl sm:text-4xl font-bold text-black dark:text-white mb-2">
+              <GlassCard 
+                variant="subtle" 
+                className={`p-6 text-center transition-all duration-500 ${
+                  showInfinityEffect 
+                    ? "scale-110 shadow-2xl ring-4 ring-black/20 dark:ring-white/20 bg-gradient-to-br from-black/10 to-black/5 dark:from-white/10 dark:to-white/5" 
+                    : ""
+                }`}
+              >
+                <div className={`text-3xl sm:text-4xl font-bold mb-2 transition-all duration-500 ${
+                  showInfinityEffect 
+                    ? "text-black dark:text-white scale-125" 
+                    : "text-black dark:text-white"
+                }`}>
                   {countedStats.scalable === Infinity ? "∞" : countedStats.scalable}
                 </div>
                 <div className="text-sm text-black/60 dark:text-white/60">Skalierbar</div>
@@ -653,7 +673,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="relative mt-auto border-t border-black/5 dark:border-white/5 py-12 z-10">
         <div className="container mx-auto max-w-5xl px-4 text-center">
-          <p className="text-sm text-black/50 dark:text-white/50">© 2024 TiMax. Coming Soon.</p>
+          <p className="text-sm text-black/50 dark:text-white/50">© 2026 TiMax. Coming Soon.</p>
         </div>
       </footer>
     </div>
