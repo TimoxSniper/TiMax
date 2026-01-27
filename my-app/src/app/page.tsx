@@ -53,8 +53,8 @@ export default function Home() {
   useEffect(() => {
     if (!statsVisible) return;
 
-    const duration = 2500;
-    const steps = 80;
+    const duration = 3000;
+    const steps = 100;
     const interval = duration / steps;
 
     let currentStep = 0;
@@ -63,23 +63,23 @@ export default function Home() {
       currentStep++;
       const progress = currentStep / steps;
 
-      // Für scalable: exponentiell von 0 bis ~5000, dann zu ∞
+      // Für scalable: exponentiell von 0 bis ~50000, dann zu ∞
       let scalableValue: number | string = 0;
-      if (progress < 0.85) {
-        // Exponentielles Wachstum: e^(x * k) - 1, skaliert auf ~5000
-        // Bei progress = 0.85 soll der Wert etwa 5000 sein
-        const exponentialProgress = progress / 0.85;
-        // e^(x * 8.5) gibt uns bei x=1 etwa 5000
-        scalableValue = Math.floor(Math.exp(exponentialProgress * 8.5) - 1);
-        // Cap bei 5000
-        scalableValue = Math.min(scalableValue, 5000);
+      if (progress < 0.92) {
+        // Exponentielles Wachstum: e^(x * k) - 1, skaliert auf ~50000
+        // Bei progress = 0.92 soll der Wert etwa 50000 sein
+        const exponentialProgress = progress / 0.92;
+        // e^(x * 10.8) gibt uns bei x=1 etwa 50000
+        scalableValue = Math.floor(Math.exp(exponentialProgress * 10.8) - 1);
+        // Cap bei 50000
+        scalableValue = Math.min(scalableValue, 50000);
       } else {
-        // Bei 85% clean zu ∞ wechseln
+        // Bei 92% clean zu ∞ wechseln
         scalableValue = Infinity;
         // Prüfe ob es gerade zu ∞ gewechselt ist
         if (previousScalable !== Infinity && typeof previousScalable === 'number') {
           setShowInfinityEffect(true);
-          setTimeout(() => setShowInfinityEffect(false), 1000);
+          setTimeout(() => setShowInfinityEffect(false), 1200);
         }
       }
       
@@ -233,18 +233,22 @@ export default function Home() {
               </GlassCard>
               <GlassCard 
                 variant="subtle" 
-                className={`p-6 text-center transition-all duration-500 ${
+                className={`p-6 text-center transition-all duration-700 relative overflow-visible ${
                   showInfinityEffect 
-                    ? "scale-110 shadow-2xl ring-4 ring-black/20 dark:ring-white/20 bg-gradient-to-br from-black/10 to-black/5 dark:from-white/10 dark:to-white/5" 
+                    ? "scale-105 shadow-[0_0_40px_rgba(0,0,0,0.3)] dark:shadow-[0_0_40px_rgba(255,255,255,0.2)] ring-2 ring-black/30 dark:ring-white/30" 
                     : ""
                 }`}
               >
-                <div className={`text-3xl sm:text-4xl font-bold mb-2 transition-all duration-500 ${
+                {/* Glow-Effekt beim Infinity-Wechsel */}
+                {showInfinityEffect && (
+                  <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/20 via-black/10 to-black/20 dark:from-white/20 dark:via-white/10 dark:to-white/20 rounded-3xl blur-xl animate-pulse" />
+                )}
+                <div className={`text-3xl sm:text-4xl font-bold mb-2 transition-all duration-700 ${
                   showInfinityEffect 
-                    ? "text-black dark:text-white scale-125" 
+                    ? "text-black dark:text-white animate-pulse" 
                     : "text-black dark:text-white"
                 }`}>
-                  {countedStats.scalable === Infinity ? "∞" : countedStats.scalable}
+                  {countedStats.scalable === Infinity ? "∞" : countedStats.scalable.toLocaleString('de-DE')}
                 </div>
                 <div className="text-sm text-black/60 dark:text-white/60">Skalierbar</div>
               </GlassCard>
