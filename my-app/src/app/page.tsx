@@ -182,6 +182,17 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-br from-black/5 via-transparent to-black/5 dark:from-white/5 dark:via-transparent dark:to-white/5 pointer-events-none" />
         
         <div className="container mx-auto max-w-6xl relative z-10">
+          {/* TiMax – iPhone Glass Branding */}
+          <div
+            className="mb-8 inline-flex items-center justify-center px-8 py-4 rounded-[2rem] border border-white/30 dark:border-white/20 bg-white/25 dark:bg-white/10 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(255,255,255,0.06)]"
+            style={{
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.4), 0 8px 32px rgba(0,0,0,0.08)",
+            }}
+          >
+            <span className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-b from-black/90 to-black/70 dark:from-white/95 dark:to-white/80 bg-clip-text text-transparent">
+              TiMax
+            </span>
+          </div>
           <Hero
             heading="Transformiere deine Videos und Audios in kraftvolle Texte"
             subheading="Vereine Upload, intelligente Strukturierung und KI-Dialog in einem nahtlosen Workflow – ohne zwischen Tools wechseln zu müssen."
