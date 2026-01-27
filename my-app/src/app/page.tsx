@@ -8,12 +8,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
-import { ArrowRight, Upload, Sparkles, MessageSquare, Zap, Clock, TrendingUp, Users, Star, ChevronRight, Play } from "lucide-react";
+import { ArrowRight, Upload, Sparkles, MessageSquare, Zap, Clock, TrendingUp, Users, Star, ChevronRight, Play, FileText, Network, Moon, Sun } from "lucide-react";
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const [statsVisible, setStatsVisible] = useState(false);
   const [countedStats, setCountedStats] = useState({ speed: 0, seamless: 0, scalable: 0, workflow: 0 });
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    // Check initial theme
+    const html = document.documentElement;
+    const isDarkMode = html.classList.contains("dark");
+    setIsDark(isDarkMode);
+  }, []);
+
+  const toggleDarkMode = () => {
+    const html = document.documentElement;
+    html.classList.toggle("dark");
+    setIsDark(!isDark);
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -47,10 +61,20 @@ export default function Home() {
       currentStep++;
       const progress = currentStep / steps;
 
+      // Für scalable: von 0 hochzählen bis 100, dann zu ∞
+      let scalableValue: number | string = 0;
+      if (progress < 0.9) {
+        // Zähle von 0 bis 100
+        scalableValue = Math.floor(100 * (progress / 0.9));
+      } else {
+        // Bei 90% zu ∞ wechseln
+        scalableValue = Infinity;
+      }
+
       setCountedStats({
         speed: Math.min(Math.floor(10 * progress), 10),
         seamless: Math.min(Math.floor(100 * progress), 100),
-        scalable: progress >= 1 ? Infinity : 0,
+        scalable: scalableValue,
         workflow: 1,
       });
 
@@ -95,6 +119,19 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col bg-white dark:bg-black relative">
+      {/* Dark Mode Toggle */}
+      <button
+        onClick={toggleDarkMode}
+        className="fixed top-6 right-6 z-50 p-3 rounded-full bg-white/70 dark:bg-black/70 backdrop-blur-[40px] border border-black/10 dark:border-white/10 hover:bg-white/90 dark:hover:bg-black/90 transition-all duration-300 shadow-lg"
+        aria-label="Dark Mode umschalten"
+      >
+        {isDark ? (
+          <Sun className="w-5 h-5 text-black dark:text-white" />
+        ) : (
+          <Moon className="w-5 h-5 text-black dark:text-white" />
+        )}
+      </button>
+
       {/* Grid Background Pattern */}
       <div 
         className="fixed inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none z-0"
@@ -217,28 +254,31 @@ export default function Home() {
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
               {[
-                { step: "1", title: "Upload", desc: "Lade Videos oder Audios hoch" },
-                { step: "2", title: "Transkription", desc: "Automatische Umwandlung in Text" },
-                { step: "3", title: "Strukturierung", desc: "Intelligente Organisation" },
-                { step: "4", title: "Text generieren", desc: "KI-Dialog für deine Formate" },
-              ].map((item, index) => (
-                <AnimatedSection key={item.step} delay={index * 150} direction="up">
-                  <GlassCard variant="subtle" className="p-6 text-center relative">
-                    <div className="w-12 h-12 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center mx-auto mb-4 font-bold text-lg">
-                      {item.step}
-                    </div>
-                    <h3 className="text-lg font-semibold mb-2 text-black dark:text-white">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-black/60 dark:text-white/60">
-                      {item.desc}
-                    </p>
-                    {index < 3 && (
-                      <ChevronRight className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 text-black/20 dark:text-white/20 w-6 h-6" />
-                    )}
-                  </GlassCard>
-                </AnimatedSection>
-              ))}
+                { step: "1", icon: Upload, title: "Upload", desc: "Lade Videos oder Audios hoch" },
+                { step: "2", icon: FileText, title: "Transkription", desc: "Automatische Umwandlung in Text" },
+                { step: "3", icon: Network, title: "Strukturierung", desc: "Intelligente Organisation" },
+                { step: "4", icon: Sparkles, title: "Text generieren", desc: "KI-Dialog für deine Formate" },
+              ].map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <AnimatedSection key={item.step} delay={index * 150} direction="up">
+                    <GlassCard variant="subtle" className="p-6 text-center relative h-full flex flex-col">
+                      <div className="w-12 h-12 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center mx-auto mb-4 font-bold text-lg">
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <h3 className="text-lg font-semibold mb-2 text-black dark:text-white">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-black/60 dark:text-white/60 flex-grow">
+                        {item.desc}
+                      </p>
+                      {index < 3 && (
+                        <ChevronRight className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 text-black/20 dark:text-white/20 w-6 h-6" />
+                      )}
+                    </GlassCard>
+                  </AnimatedSection>
+                );
+              })}
             </div>
           </div>
         </div>
