@@ -42,6 +42,12 @@ dist/
 build/
 *.egg-info/
 out/
+.next/
+.turbo/
+.vercel/
+coverage/
+*.tsbuildinfo
+.eslintcache
 
 # Umgebungsvariablen
 .env
