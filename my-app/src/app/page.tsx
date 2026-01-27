@@ -84,6 +84,25 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Demo Section */}
+      <section className="px-4 py-16 sm:px-6 lg:px-8 bg-muted/30" id="demo">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center space-y-6">
+            <div className="space-y-2">
+              <h2 className="text-2xl sm:text-3xl font-bold">Probiere es aus</h2>
+              <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto">
+                Erlebe den Text Generator in Aktion. Generiere verschiedene Content-Formate aus einem Beispiel-Transkript.
+              </p>
+            </div>
+            <Button size="lg" asChild>
+              <a href="/text-generator">
+                Zum Text Generator →
+              </a>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Call to Action Section */}
       <section className="px-4 py-16 sm:px-6 lg:px-8" id="cta">
         <div className="container mx-auto max-w-2xl">
