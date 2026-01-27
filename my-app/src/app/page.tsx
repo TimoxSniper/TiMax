@@ -91,15 +91,6 @@ export default function Home() {
             </div>
           </AnimatedSection>
         </div>
-
-        {/* Scroll Indicator */}
-        <AnimatedSection delay={1000} direction="fade">
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-            <div className="w-6 h-10 border-2 border-black/20 dark:border-white/20 rounded-full flex justify-center">
-              <div className="w-1 h-3 bg-black/30 dark:bg-white/30 rounded-full mt-2 animate-pulse" />
-            </div>
-          </div>
-        </AnimatedSection>
       </section>
 
       {/* Features Section */}
@@ -280,7 +271,11 @@ export default function Home() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full bg-white/50 dark:bg-black/50 backdrop-blur-xl border-2 border-black/10 dark:border-white/10 focus:border-black/20 dark:focus:border-white/20 rounded-full px-6 py-4 text-base transition-colors"
+                      className="w-full bg-white/70 dark:bg-black/70 backdrop-blur-[40px] border border-black/10 dark:border-white/10 focus:border-black/20 dark:focus:border-white/20 rounded-full px-6 py-4 text-base transition-all shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] dark:shadow-[0_8px_32px_0_rgba(255,255,255,0.05)]"
+                      style={{
+                        backdropFilter: "blur(40px) saturate(180%)",
+                        WebkitBackdropFilter: "blur(40px) saturate(180%)",
+                      }}
                       aria-label="E-Mail-Adresse für Anmeldung"
                     />
                   </div>
