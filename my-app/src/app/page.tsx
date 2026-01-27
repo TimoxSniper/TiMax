@@ -28,6 +28,13 @@ export default function Home() {
             heading="Transformiere deine Videos und Audios in kraftvolle Texte"
             subheading="Vereine Upload, intelligente Strukturierung und KI-Dialog in einem nahtlosen Workflow – ohne zwischen Tools wechseln zu müssen."
           />
+          <div className="mt-8 flex justify-center">
+            <Button size="lg" asChild>
+              <a href="/text-generator">
+                Jetzt ausprobieren →
+              </a>
+            </Button>
+          </div>
         </div>
       </section>
 
