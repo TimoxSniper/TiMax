@@ -25,7 +25,7 @@ export default function Home() {
       <section className="relative flex min-h-[80vh] flex-col items-center justify-center px-4 py-20 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-5xl">
           <Hero
-            heading="Aus Videos und Audios schnell neues Textmaterial generieren"
+            heading="Transformiere deine Videos und Audios in kraftvolle Texte"
             subheading="Vereine Upload, intelligente Strukturierung und KI-Dialog in einem nahtlosen Workflow – ohne zwischen Tools wechseln zu müssen."
           />
         </div>
