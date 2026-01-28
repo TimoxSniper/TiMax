@@ -1,19 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-
-const N8N_UPLOAD_WEBHOOK_URL = process.env.N8N_UPLOAD_WEBHOOK_URL;
-
-if (!N8N_UPLOAD_WEBHOOK_URL && process.env.NODE_ENV === "development") {
-  console.warn("WARNUNG: N8N_UPLOAD_WEBHOOK_URL nicht gesetzt!");
-}
+import { validateRequiredEnv } from "@/lib/env";
 
 export async function POST(request: NextRequest) {
   try {
-    if (!N8N_UPLOAD_WEBHOOK_URL) {
-      return NextResponse.json(
-        { success: false, error: "Upload-Webhook nicht konfiguriert" },
-        { status: 500 }
-      );
-    }
+    // Validiere erforderliche Environment-Variablen
+    const env = validateRequiredEnv();
 
     const formData = await request.formData();
     const file = formData.get("file") as File;
@@ -31,7 +22,7 @@ export async function POST(request: NextRequest) {
     n8nFormData.append("Audio/Video Datei", file);
 
     // Upload zu n8n Form-Webhook
-    const response = await fetch(N8N_UPLOAD_WEBHOOK_URL, {
+    const response = await fetch(env.N8N_UPLOAD_WEBHOOK_URL, {
       method: "POST",
       body: n8nFormData,
     });

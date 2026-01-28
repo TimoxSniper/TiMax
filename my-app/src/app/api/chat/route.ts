@@ -1,19 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-
-const N8N_CHAT_WEBHOOK_URL = process.env.N8N_CHAT_WEBHOOK_URL;
-
-if (!N8N_CHAT_WEBHOOK_URL && process.env.NODE_ENV === "development") {
-  console.warn("WARNUNG: N8N_CHAT_WEBHOOK_URL nicht gesetzt!");
-}
+import { validateRequiredEnv } from "@/lib/env";
 
 export async function POST(request: NextRequest) {
   try {
-    if (!N8N_CHAT_WEBHOOK_URL) {
-      return NextResponse.json(
-        { success: false, error: "Chat-Webhook nicht konfiguriert" },
-        { status: 500 }
-      );
-    }
+    // Validiere erforderliche Environment-Variablen
+    const env = validateRequiredEnv();
 
     const body = await request.json();
     const { message, sessionId, chatHistory = [] } = body;
@@ -26,7 +17,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Request an n8n Webhook senden
-    const response = await fetch(N8N_CHAT_WEBHOOK_URL, {
+    const response = await fetch(env.N8N_CHAT_WEBHOOK_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
