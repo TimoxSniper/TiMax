@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, DragEvent } from "react";
+import { useState, useRef, useEffect, DragEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Upload, X, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
@@ -23,6 +23,7 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const validateFile = (file: File): string | null => {
     if (file.size > MAX_FILE_SIZE) {
@@ -124,11 +125,17 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       setSuccess(true);
       onUploadSuccess?.(result.fileName || file.name);
       
+      // Alten Timeout clearen falls vorhanden
+      if (resetTimeoutRef.current) {
+        clearTimeout(resetTimeoutRef.current);
+      }
+      
       // Reset nach 3 Sekunden
-      setTimeout(() => {
+      resetTimeoutRef.current = setTimeout(() => {
         setFile(null);
         setSuccess(false);
         setProgress(0);
+        resetTimeoutRef.current = null;
       }, 3000);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unbekannter Upload-Fehler";
@@ -144,7 +151,21 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
     }
   };
 
+  // Cleanup Timeout beim Unmount
+  useEffect(() => {
+    return () => {
+      if (resetTimeoutRef.current) {
+        clearTimeout(resetTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const handleRemove = () => {
+    // Timeout clearen wenn User manuell entfernt
+    if (resetTimeoutRef.current) {
+      clearTimeout(resetTimeoutRef.current);
+      resetTimeoutRef.current = null;
+    }
     setFile(null);
     setError(null);
     setSuccess(false);

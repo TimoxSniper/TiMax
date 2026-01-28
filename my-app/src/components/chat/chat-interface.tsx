@@ -24,11 +24,13 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const requestIdRef = useRef<number>(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Session-ID generieren falls nicht vorhanden
   useEffect(() => {
     if (!sessionId) {
-      const newSessionId = `chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const newSessionId = `chat-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
       setSessionId(newSessionId);
     }
   }, [sessionId]);
@@ -41,6 +43,16 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
   const handleSendMessage = async (content: string) => {
     if (!content.trim() || isLoading) return;
 
+    // Abbrechen vorheriger Request falls noch aktiv
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Neue Request-ID für Race-Condition-Schutz
+    const currentRequestId = ++requestIdRef.current;
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
     const userMessage: Message = {
       id: `msg-${Date.now()}-user`,
       role: "user",
@@ -49,27 +61,32 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
     };
 
     // Erstelle aktualisierte Messages-Liste mit neuer Nachricht
-    const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
+    setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
     setError(null);
 
     try {
-      // Sende Request mit vollständiger Historie (inkl. neuer Nachricht)
+      // Sende Request mit vollständiger Historie
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        signal: abortController.signal,
         body: JSON.stringify({
           message: content.trim(),
           sessionId,
-          chatHistory: updatedMessages.map((msg) => ({
+          chatHistory: [...messages, userMessage].map((msg) => ({
             role: msg.role,
             content: msg.content,
           })),
         }),
       });
+
+      // Prüfe ob dieser Request noch aktuell ist (Race-Condition-Schutz)
+      if (currentRequestId !== requestIdRef.current) {
+        return; // Verwerfe veraltete Antwort
+      }
 
       const data = await response.json();
 
@@ -84,16 +101,39 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
         timestamp: new Date(),
       };
 
-      setMessages((prev) => [...prev, assistantMessage]);
+      // Nur aktualisieren wenn dieser Request noch aktuell ist
+      if (currentRequestId === requestIdRef.current) {
+        setMessages((prev) => {
+          // Prüfe ob die User-Nachricht bereits vorhanden ist
+          const userMsgExists = prev.some((msg) => msg.id === userMessage.id);
+          if (userMsgExists) {
+            return [...prev, assistantMessage];
+          }
+          // Falls nicht (sollte nicht passieren), füge beide hinzu
+          return [...prev, userMessage, assistantMessage];
+        });
+      }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Unbekannter Fehler";
-      setError(errorMessage);
-      // In Production: Hier würde man zu einem Error-Tracking-Service loggen
-      if (process.env.NODE_ENV === "development") {
-        console.error("Chat-Fehler:", err);
+      // Ignoriere Abort-Errors (normale Request-Cancellation)
+      if (err instanceof Error && err.name === "AbortError") {
+        return;
+      }
+
+      // Nur Fehler anzeigen wenn dieser Request noch aktuell ist
+      if (currentRequestId === requestIdRef.current) {
+        const errorMessage = err instanceof Error ? err.message : "Unbekannter Fehler";
+        setError(errorMessage);
+        // In Production: Hier würde man zu einem Error-Tracking-Service loggen
+        if (process.env.NODE_ENV === "development") {
+          console.error("Chat-Fehler:", err);
+        }
       }
     } finally {
-      setIsLoading(false);
+      // Nur Loading-State zurücksetzen wenn dieser Request noch aktuell ist
+      if (currentRequestId === requestIdRef.current) {
+        setIsLoading(false);
+        abortControllerRef.current = null;
+      }
     }
   };
 

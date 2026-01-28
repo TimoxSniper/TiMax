@@ -109,9 +109,7 @@ export default function TextGeneratorPage() {
             <FileUpload 
               onUploadSuccess={(fileName) => {
                 // In Production: Hier würde man zu einem Analytics-Service loggen
-                if (process.env.NODE_ENV === "development") {
-                  console.log("Upload erfolgreich:", fileName);
-                }
+                // Removed console.log for production
               }}
               onUploadError={(error) => {
                 // In Production: Hier würde man zu einem Error-Tracking-Service loggen

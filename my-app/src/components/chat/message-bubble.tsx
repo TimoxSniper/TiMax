@@ -4,7 +4,7 @@ import { Message } from "./chat-interface";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Copy, Check, User, Bot } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface MessageBubbleProps {
   message: Message;
@@ -13,11 +13,18 @@ interface MessageBubbleProps {
 export function MessageBubble({ message }: MessageBubbleProps) {
   const [copied, setCopied] = useState(false);
 
+  // Cleanup für Timeout
+  useEffect(() => {
+    if (copied) {
+      const timeoutId = setTimeout(() => setCopied(false), 2000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [copied]);
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(message.content);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       // In Production: Hier würde man zu einem Error-Tracking-Service loggen
       if (process.env.NODE_ENV === "development") {

@@ -22,6 +22,15 @@ const ToastContext = React.createContext<ToastContextType | undefined>(undefined
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = React.useState<Toast[]>([]);
+  const timeoutRefs = React.useRef<Map<string, NodeJS.Timeout>>(new Map());
+
+  // Cleanup alle Timeouts beim Unmount
+  React.useEffect(() => {
+    return () => {
+      timeoutRefs.current.forEach((timeout) => clearTimeout(timeout));
+      timeoutRefs.current.clear();
+    };
+  }, []);
 
   const showToast = React.useCallback((message: string, type: ToastType = "info") => {
     const id = Math.random().toString(36).substring(2, 9);
@@ -30,9 +39,12 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     setToasts((prev) => [...prev, newToast]);
 
     // Auto-remove nach 5 Sekunden
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
+      timeoutRefs.current.delete(id);
     }, 5000);
+    
+    timeoutRefs.current.set(id, timeoutId);
   }, []);
 
   const removeToast = React.useCallback((id: string) => {
