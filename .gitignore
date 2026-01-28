@@ -53,6 +53,7 @@ coverage/
 .env
 .env.local
 .env.*.local
+cursor_*.local
 
 # Logs
 logs/
