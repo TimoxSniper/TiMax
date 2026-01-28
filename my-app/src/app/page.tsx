@@ -15,7 +15,6 @@ export default function Home() {
   const [statsVisible, setStatsVisible] = useState(false);
   const [countedStats, setCountedStats] = useState({ speed: 0, seamless: 0, scalable: 0, workflow: 0 });
   const [isDark, setIsDark] = useState(false);
-  const [showInfinityEffect, setShowInfinityEffect] = useState(false);
 
   useEffect(() => {
     // Check initial theme
@@ -63,24 +62,19 @@ export default function Home() {
       currentStep++;
       const progress = currentStep / steps;
 
-      // Für scalable: exponentiell von 0 bis ~50000, dann zu ∞
+      // Für scalable: exponentiell von 0 bis ~50000, dann sanft zu ∞
       let scalableValue: number | string = 0;
-      if (progress < 0.92) {
+      if (progress < 0.95) {
         // Exponentielles Wachstum: e^(x * k) - 1, skaliert auf ~50000
-        // Bei progress = 0.92 soll der Wert etwa 50000 sein
-        const exponentialProgress = progress / 0.92;
+        // Bei progress = 0.95 soll der Wert etwa 50000 sein
+        const exponentialProgress = progress / 0.95;
         // e^(x * 10.8) gibt uns bei x=1 etwa 50000
         scalableValue = Math.floor(Math.exp(exponentialProgress * 10.8) - 1);
         // Cap bei 50000
         scalableValue = Math.min(scalableValue, 50000);
       } else {
-        // Bei 92% clean zu ∞ wechseln
+        // Bei 95% sanft zu ∞ wechseln (längerer Übergang)
         scalableValue = Infinity;
-        // Prüfe ob es gerade zu ∞ gewechselt ist
-        if (previousScalable !== Infinity && typeof previousScalable === 'number') {
-          setShowInfinityEffect(true);
-          setTimeout(() => setShowInfinityEffect(false), 1200);
-        }
       }
       
       previousScalable = scalableValue;
@@ -182,17 +176,6 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-br from-black/5 via-transparent to-black/5 dark:from-white/5 dark:via-transparent dark:to-white/5 pointer-events-none" />
         
         <div className="container mx-auto max-w-6xl relative z-10">
-          {/* TiMax – iPhone Glass Branding */}
-          <div
-            className="mb-8 inline-flex items-center justify-center px-8 py-4 rounded-[2rem] border border-white/30 dark:border-white/20 bg-white/25 dark:bg-white/10 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(255,255,255,0.06)]"
-            style={{
-              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.4), 0 8px 32px rgba(0,0,0,0.08)",
-            }}
-          >
-            <span className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-b from-black/90 to-black/70 dark:from-white/95 dark:to-white/80 bg-clip-text text-transparent">
-              TiMax
-            </span>
-          </div>
           <Hero
             heading="Transformiere deine Videos und Audios in kraftvolle Texte"
             subheading="Vereine Upload, intelligente Strukturierung und KI-Dialog in einem nahtlosen Workflow – ohne zwischen Tools wechseln zu müssen."
@@ -242,23 +225,8 @@ export default function Home() {
                 </div>
                 <div className="text-sm text-black/60 dark:text-white/60">Nahtlos</div>
               </GlassCard>
-              <GlassCard 
-                variant="subtle" 
-                className={`p-6 text-center transition-all duration-700 relative overflow-visible ${
-                  showInfinityEffect 
-                    ? "scale-105 shadow-[0_0_40px_rgba(0,0,0,0.3)] dark:shadow-[0_0_40px_rgba(255,255,255,0.2)] ring-2 ring-black/30 dark:ring-white/30" 
-                    : ""
-                }`}
-              >
-                {/* Glow-Effekt beim Infinity-Wechsel */}
-                {showInfinityEffect && (
-                  <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/20 via-black/10 to-black/20 dark:from-white/20 dark:via-white/10 dark:to-white/20 rounded-3xl blur-xl animate-pulse" />
-                )}
-                <div className={`text-3xl sm:text-4xl font-bold mb-2 transition-all duration-700 ${
-                  showInfinityEffect 
-                    ? "text-black dark:text-white animate-pulse" 
-                    : "text-black dark:text-white"
-                }`}>
+              <GlassCard variant="subtle" className="p-6 text-center">
+                <div className="text-3xl sm:text-4xl font-bold mb-2 text-black dark:text-white transition-all duration-1000 ease-out">
                   {countedStats.scalable === Infinity ? "∞" : countedStats.scalable.toLocaleString('de-DE')}
                 </div>
                 <div className="text-sm text-black/60 dark:text-white/60">Skalierbar</div>
@@ -292,7 +260,7 @@ export default function Home() {
             {/* Connection lines - hidden on mobile */}
             <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-black/10 via-black/20 to-black/10 dark:from-white/10 dark:via-white/20 dark:to-white/10 transform -translate-y-1/2 z-0" />
             
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-20">
               {[
                 { step: "1", icon: Upload, title: "Upload", desc: "Lade Videos oder Audios hoch" },
                 { step: "2", icon: FileText, title: "Transkription", desc: "Automatische Umwandlung in Text" },
@@ -471,17 +439,6 @@ export default function Home() {
                     Demo-Video kommt bald
                   </p>
                 </div>
-                {/* Subtle grid overlay */}
-                <div 
-                  className="absolute inset-0 opacity-10"
-                  style={{
-                    backgroundImage: `
-                      linear-gradient(to right, currentColor 1px, transparent 1px),
-                      linear-gradient(to bottom, currentColor 1px, transparent 1px)
-                    `,
-                    backgroundSize: '32px 32px',
-                  }}
-                />
               </div>
             </GlassCard>
           </AnimatedSection>
@@ -507,7 +464,7 @@ export default function Home() {
               {
                 name: "Sarah M.",
                 role: "Content Creator",
-                text: "Endlich muss ich nicht mehr zwischen fünf verschiedenen Tools wechseln. TiMax hat meinen Workflow komplett revolutioniert.",
+                text: "Endlich muss ich nicht mehr zwischen fünf verschiedenen Tools wechseln. timax hat meinen Workflow komplett revolutioniert.",
                 rating: 5,
               },
               {
@@ -554,7 +511,7 @@ export default function Home() {
           <AnimatedSection direction="up">
             <div className="text-center mb-16">
               <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-black dark:text-white">
-                Warum TiMax?
+                Warum timax?
               </h2>
               <p className="text-xl text-black/60 dark:text-white/60 max-w-2xl mx-auto">
                 Die Vorteile auf einen Blick
@@ -688,7 +645,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="relative mt-auto border-t border-black/5 dark:border-white/5 py-12 z-10">
         <div className="container mx-auto max-w-5xl px-4 text-center">
-          <p className="text-sm text-black/50 dark:text-white/50">© 2026 TiMax. Coming Soon.</p>
+          <p className="text-sm text-black/50 dark:text-white/50">© 2026 timax. Coming Soon.</p>
         </div>
       </footer>
     </div>
