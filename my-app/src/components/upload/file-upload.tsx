@@ -77,26 +77,52 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
+      // Verwende XMLHttpRequest für echten Upload-Progress
+      const xhr = new XMLHttpRequest();
+
+      // Progress-Tracking
+      xhr.upload.addEventListener("progress", (e) => {
+        if (e.lengthComputable) {
+          const percentComplete = Math.round((e.loaded / e.total) * 100);
+          setProgress(percentComplete);
+        }
       });
 
-      // Simuliere Progress
-      const progressInterval = setInterval(() => {
-        setProgress((prev) => Math.min(prev + 10, 90));
-      }, 200);
+      // Promise für async/await
+      const uploadPromise = new Promise<{ success: boolean; fileName?: string; error?: string }>((resolve, reject) => {
+        xhr.addEventListener("load", () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+              const data = JSON.parse(xhr.responseText);
+              if (data.success) {
+                resolve({ success: true, fileName: data.fileName || file.name });
+              } else {
+                reject(new Error(data.error || "Upload fehlgeschlagen"));
+              }
+            } catch (parseError) {
+              reject(new Error("Ungültige Antwort vom Server"));
+            }
+          } else {
+            reject(new Error(`Upload fehlgeschlagen: ${xhr.statusText}`));
+          }
+        });
 
-      const data = await response.json();
-      clearInterval(progressInterval);
+        xhr.addEventListener("error", () => {
+          reject(new Error("Netzwerkfehler beim Upload"));
+        });
+
+        xhr.addEventListener("abort", () => {
+          reject(new Error("Upload abgebrochen"));
+        });
+
+        xhr.open("POST", "/api/upload");
+        xhr.send(formData);
+      });
+
+      const result = await uploadPromise;
       setProgress(100);
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Upload fehlgeschlagen");
-      }
-
       setSuccess(true);
-      onUploadSuccess?.(data.fileName || file.name);
+      onUploadSuccess?.(result.fileName || file.name);
       
       // Reset nach 3 Sekunden
       setTimeout(() => {
@@ -108,7 +134,11 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       const errorMessage = err instanceof Error ? err.message : "Unbekannter Upload-Fehler";
       setError(errorMessage);
       onUploadError?.(errorMessage);
-      console.error("Upload-Fehler:", err);
+      setProgress(0);
+      // In Production: Hier würde man zu einem Error-Tracking-Service loggen
+      if (process.env.NODE_ENV === "development") {
+        console.error("Upload-Fehler:", err);
+      }
     } finally {
       setIsUploading(false);
     }

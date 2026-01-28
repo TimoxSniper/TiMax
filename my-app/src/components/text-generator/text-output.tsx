@@ -61,8 +61,12 @@ export function TextOutput({ generatedText, format, onCopy, isLoading = false, e
         if (process.env.NODE_ENV === "development") {
           console.error("Fallback-Kopieren fehlgeschlagen:", fallbackErr);
         }
+      } finally {
+        // Stelle sicher, dass textArea immer entfernt wird
+        if (document.body.contains(textArea)) {
+          document.body.removeChild(textArea);
+        }
       }
-      document.body.removeChild(textArea);
     }
   };
 

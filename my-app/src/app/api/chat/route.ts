@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const N8N_CHAT_WEBHOOK_URL = process.env.N8N_CHAT_WEBHOOK_URL;
 
-if (!N8N_CHAT_WEBHOOK_URL) {
+if (!N8N_CHAT_WEBHOOK_URL && process.env.NODE_ENV === "development") {
   console.warn("WARNUNG: N8N_CHAT_WEBHOOK_URL nicht gesetzt!");
 }
 
@@ -45,25 +45,47 @@ export async function POST(request: NextRequest) {
       throw new Error(`n8n Webhook Fehler: ${response.status} - ${errorText}`);
     }
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      throw new Error("Ungültige JSON-Antwort von n8n Webhook");
+    }
+
+    // Validierung: Prüfe ob data existiert und ein valides Format hat
+    if (!data || (typeof data !== "string" && typeof data !== "object")) {
+      throw new Error("Ungültiges Response-Format von n8n Webhook");
+    }
 
     // n8n gibt die Antwort in verschiedenen Formaten zurück
-    // Wir müssen die Struktur anpassen
+    // Wir müssen die Struktur anpassen und validieren
     let output = "";
     
     if (typeof data === "string") {
-      output = data;
-    } else if (data.output) {
-      output = data.output;
-    } else if (data.body?.output) {
-      output = data.body.output;
-    } else if (Array.isArray(data) && data[0]?.json?.output) {
-      output = data[0].json.output;
-    } else if (data.json?.output) {
-      output = data.json.output;
-    } else {
-      // Fallback: JSON stringify
-      output = JSON.stringify(data);
+      // Direkter String-Output
+      output = data.trim();
+    } else if (data && typeof data === "object") {
+      // Objekt-Response - verschiedene mögliche Strukturen
+      if (typeof data.output === "string") {
+        output = data.output.trim();
+      } else if (data.body && typeof data.body.output === "string") {
+        output = data.body.output.trim();
+      } else if (Array.isArray(data) && data.length > 0) {
+        // Array-Response (n8n Standard-Format)
+        const firstItem = data[0];
+        if (firstItem?.json?.output && typeof firstItem.json.output === "string") {
+          output = firstItem.json.output.trim();
+        } else if (firstItem?.output && typeof firstItem.output === "string") {
+          output = firstItem.output.trim();
+        }
+      } else if (data.json && typeof data.json.output === "string") {
+        output = data.json.output.trim();
+      }
+    }
+
+    // Validierung: Output muss nicht leer sein
+    if (!output || output.length === 0) {
+      throw new Error("n8n Webhook hat leere Antwort zurückgegeben");
     }
 
     return NextResponse.json({
@@ -71,7 +93,10 @@ export async function POST(request: NextRequest) {
       output,
     });
   } catch (error) {
-    console.error("Chat API Fehler:", error);
+    // In Production: Hier würde man zu einem Error-Tracking-Service loggen
+    if (process.env.NODE_ENV === "development") {
+      console.error("Chat API Fehler:", error);
+    }
     return NextResponse.json(
       {
         success: false,

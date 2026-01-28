@@ -22,10 +22,8 @@ export function Hero({ heading, subheading, className }: HeroProps) {
         <span 
           className={cn(
             "bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent",
-            "transition-all duration-1000 ease-out",
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            "transition-all duration-1000 ease-out"
           )}
-          style={{ transitionDelay: "200ms" }}
         >
           {heading}
         </span>
@@ -33,10 +31,8 @@ export function Hero({ heading, subheading, className }: HeroProps) {
       <p 
         className={cn(
           "max-w-2xl text-lg text-muted-foreground sm:text-xl md:text-2xl",
-          "transition-all duration-1000 ease-out",
-          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          "transition-all duration-1000 ease-out"
         )}
-        style={{ transitionDelay: "400ms" }}
       >
         {subheading}
       </p>

@@ -48,11 +48,14 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    // Erstelle aktualisierte Messages-Liste mit neuer Nachricht
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setIsLoading(true);
     setError(null);
 
     try {
+      // Sende Request mit vollständiger Historie (inkl. neuer Nachricht)
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -61,7 +64,7 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
         body: JSON.stringify({
           message: content.trim(),
           sessionId,
-          chatHistory: messages.map((msg) => ({
+          chatHistory: updatedMessages.map((msg) => ({
             role: msg.role,
             content: msg.content,
           })),
@@ -85,11 +88,15 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unbekannter Fehler";
       setError(errorMessage);
-      console.error("Chat-Fehler:", err);
+      // In Production: Hier würde man zu einem Error-Tracking-Service loggen
+      if (process.env.NODE_ENV === "development") {
+        console.error("Chat-Fehler:", err);
+      }
     } finally {
       setIsLoading(false);
     }
   };
+
 
   return (
     <Card className="flex flex-col h-[calc(100vh-8rem)] max-h-[800px]">

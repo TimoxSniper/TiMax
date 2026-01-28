@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const N8N_UPLOAD_WEBHOOK_URL = process.env.N8N_UPLOAD_WEBHOOK_URL;
 
-if (!N8N_UPLOAD_WEBHOOK_URL) {
+if (!N8N_UPLOAD_WEBHOOK_URL && process.env.NODE_ENV === "development") {
   console.warn("WARNUNG: N8N_UPLOAD_WEBHOOK_URL nicht gesetzt!");
 }
 
@@ -41,26 +41,70 @@ export async function POST(request: NextRequest) {
       throw new Error(`n8n Upload Fehler: ${response.status} - ${errorText}`);
     }
 
-    const data = await response.json();
-
-    // n8n Response-Struktur anpassen
+    // n8n Form-Trigger gibt HTML zurück, Webhooks geben JSON zurück
+    const contentType = response.headers.get("content-type") || "";
     let status = "✅ Erfolgreich gespeichert";
     let fileName = file.name;
 
-    if (data.status) {
-      status = data.status;
-    } else if (Array.isArray(data) && data[0]?.json?.status) {
-      status = data[0].json.status;
-    } else if (data.json?.status) {
-      status = data.json.status;
-    }
+    if (contentType.includes("application/json")) {
+      // JSON-Response (Webhook)
+      try {
+        const data = await response.json();
+        
+        // Validierung: Prüfe ob data existiert und ein valides Format hat
+        if (!data || (typeof data !== "object" && !Array.isArray(data))) {
+          throw new Error("Ungültiges Response-Format von n8n Upload Webhook");
+        }
 
-    if (data.fileName) {
-      fileName = data.fileName;
-    } else if (Array.isArray(data) && data[0]?.json?.fileName) {
-      fileName = data[0].json.fileName;
-    } else if (data.json?.fileName) {
-      fileName = data.json.fileName;
+        // Extrahiere status mit Validierung
+        if (data && typeof data === "object") {
+          if (typeof data.status === "string") {
+            status = data.status;
+          } else if (data.json && typeof data.json.status === "string") {
+            status = data.json.status;
+          }
+        } else if (Array.isArray(data) && data.length > 0) {
+          // Array-Response (n8n Standard-Format)
+          const firstItem = data[0];
+          if (firstItem?.json?.status && typeof firstItem.json.status === "string") {
+            status = firstItem.json.status;
+          } else if (firstItem?.status && typeof firstItem.status === "string") {
+            status = firstItem.status;
+          }
+        }
+
+        // Extrahiere fileName mit Validierung
+        if (data && typeof data === "object") {
+          if (typeof data.fileName === "string") {
+            fileName = data.fileName;
+          } else if (data.json && typeof data.json.fileName === "string") {
+            fileName = data.json.fileName;
+          }
+        } else if (Array.isArray(data) && data.length > 0) {
+          const firstItem = data[0];
+          if (firstItem?.json?.fileName && typeof firstItem.json.fileName === "string") {
+            fileName = firstItem.json.fileName;
+          } else if (firstItem?.fileName && typeof firstItem.fileName === "string") {
+            fileName = firstItem.fileName;
+          }
+        }
+
+        // Validierung: fileName sollte nicht leer sein
+        if (!fileName || fileName.trim().length === 0) {
+          fileName = file.name; // Fallback auf Original-Dateiname
+        }
+      } catch (jsonError) {
+        // Falls JSON-Parsing fehlschlägt, verwende Standardwerte
+        if (process.env.NODE_ENV === "development") {
+          console.warn("Konnte JSON-Response nicht parsen:", jsonError);
+        }
+        // Verwende Standardwerte - Upload war erfolgreich (Status 200)
+        status = "✅ Datei erfolgreich hochgeladen und wird verarbeitet";
+        fileName = file.name;
+      }
+    } else {
+      // HTML-Response (Form-Trigger) - Upload war erfolgreich wenn Status 200/201
+      status = "✅ Datei erfolgreich hochgeladen und wird verarbeitet";
     }
 
     return NextResponse.json({
@@ -69,7 +113,10 @@ export async function POST(request: NextRequest) {
       fileName,
     });
   } catch (error) {
-    console.error("Upload API Fehler:", error);
+    // In Production: Hier würde man zu einem Error-Tracking-Service loggen
+    if (process.env.NODE_ENV === "development") {
+      console.error("Upload API Fehler:", error);
+    }
     return NextResponse.json(
       {
         success: false,

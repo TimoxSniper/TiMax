@@ -108,10 +108,16 @@ export default function TextGeneratorPage() {
             {/* Upload-Bereich */}
             <FileUpload 
               onUploadSuccess={(fileName) => {
-                console.log("Upload erfolgreich:", fileName);
+                // In Production: Hier würde man zu einem Analytics-Service loggen
+                if (process.env.NODE_ENV === "development") {
+                  console.log("Upload erfolgreich:", fileName);
+                }
               }}
               onUploadError={(error) => {
-                console.error("Upload-Fehler:", error);
+                // In Production: Hier würde man zu einem Error-Tracking-Service loggen
+                if (process.env.NODE_ENV === "development") {
+                  console.error("Upload-Fehler:", error);
+                }
               }}
             />
             

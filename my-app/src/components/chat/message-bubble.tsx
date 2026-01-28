@@ -19,7 +19,11 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error("Kopieren fehlgeschlagen:", err);
+      // In Production: Hier würde man zu einem Error-Tracking-Service loggen
+      if (process.env.NODE_ENV === "development") {
+        console.error("Kopieren fehlgeschlagen:", err);
+      }
+      // Fehler wird stillschweigend ignoriert, da Copy-Funktionalität optional ist
     }
   };
 

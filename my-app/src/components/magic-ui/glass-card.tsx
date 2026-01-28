@@ -11,10 +11,11 @@ interface GlassCardProps {
 }
 
 export function GlassCard({ children, className, hover = true, variant = "default" }: GlassCardProps) {
+  // Optimiert für Mobile: Weniger Blur auf kleinen Screens
   const variantClasses = {
-    default: "bg-white/70 dark:bg-black/70 backdrop-blur-[40px] border border-black/10 dark:border-white/10",
-    subtle: "bg-white/60 dark:bg-black/60 backdrop-blur-[30px] border border-black/8 dark:border-white/8",
-    elevated: "bg-white/80 dark:bg-black/80 backdrop-blur-[50px] border border-black/15 dark:border-white/15 shadow-2xl",
+    default: "bg-white/70 dark:bg-black/70 backdrop-blur-md sm:backdrop-blur-lg md:backdrop-blur-xl border border-black/10 dark:border-white/10",
+    subtle: "bg-white/60 dark:bg-black/60 backdrop-blur-sm sm:backdrop-blur-md md:backdrop-blur-lg border border-black/8 dark:border-white/8",
+    elevated: "bg-white/80 dark:bg-black/80 backdrop-blur-lg sm:backdrop-blur-xl md:backdrop-blur-2xl border border-black/15 dark:border-white/15 shadow-2xl",
   };
 
   return (
@@ -27,10 +28,6 @@ export function GlassCard({ children, className, hover = true, variant = "defaul
         hover && "hover:bg-white/80 dark:hover:bg-black/80 hover:border-black/15 dark:hover:border-white/15 hover:shadow-[0_12px_48px_0_rgba(0,0,0,0.15)] dark:hover:shadow-[0_12px_48px_0_rgba(255,255,255,0.08)]",
         className
       )}
-      style={{
-        backdropFilter: "blur(40px) saturate(180%)",
-        WebkitBackdropFilter: "blur(40px) saturate(180%)",
-      }}
     >
       {/* Liquid glass gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/5 to-transparent dark:from-white/10 dark:via-white/5 pointer-events-none" />
