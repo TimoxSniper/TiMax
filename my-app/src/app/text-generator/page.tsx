@@ -8,8 +8,9 @@ import { mockTranscript } from "@/lib/mock-transcript";
 import { type FormatType } from "@/lib/text-templates";
 import { generateTextAction } from "@/app/text-generator/actions";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Zap } from "lucide-react";
+import { ArrowLeft, Zap, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FileUpload } from "@/components/upload/file-upload";
 import Link from "next/link";
 
 export default function TextGeneratorPage() {
@@ -104,6 +105,24 @@ export default function TextGeneratorPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
           {/* Left Column: Transcript */}
           <div className="space-y-6">
+            {/* Upload-Bereich */}
+            <FileUpload 
+              onUploadSuccess={(fileName) => {
+                console.log("Upload erfolgreich:", fileName);
+              }}
+              onUploadError={(error) => {
+                console.error("Upload-Fehler:", error);
+              }}
+            />
+            
+            {/* Link zum Chat */}
+            <Button asChild className="w-full">
+              <Link href="/chat">
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Zum Chat-Interface
+              </Link>
+            </Button>
+            
             <TranscriptViewer transcript={mockTranscript} />
           </div>
 
