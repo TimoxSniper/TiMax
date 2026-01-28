@@ -47,7 +47,7 @@
 ---
 
 ### 1.2 Analytics (Plausible)
-- [ ] Plausible-Account erstellen (oder Google Analytics)
+- [ ] Plausible-Account erstellen (oder Google Analytics) - **ÜBERSPRUNGEN: Nur wenn wirklich nötig**
 - [ ] Analytics-Script in `layout.tsx` einbinden
 - [ ] Event-Tracking für wichtige Aktionen:
   - [ ] CTA-Clicks auf Homepage
@@ -59,7 +59,8 @@
 - [ ] Test: Events in Dashboard prüfen
 
 **Zeitaufwand:** 1-2 Stunden  
-**Priorität:** 🔴 Kritisch
+**Priorität:** 🟢 Optional (kann später hinzugefügt werden)  
+**Status:** ⏸️ Übersprungen - Kostenloser Fokus
 
 ---
 
@@ -88,12 +89,12 @@
     - [x] `chat-header.tsx` (Root vs. `components/chat/`)
     - [x] `chat-input.tsx` (Root vs. `components/chat/`)
     - [x] `message-list.tsx` (Root vs. `components/chat/`)
-- [ ] Unused Imports entfernen
-- [ ] TODO-Kommentare durchgehen und priorisieren
+- [x] Unused Imports entfernen (keine gefunden - Build erfolgreich)
+- [x] TODO-Kommentare durchgehen und priorisieren (TODOS.md erstellt)
 
 **Zeitaufwand:** 1 Stunde  
 **Priorität:** 🟢 Nice-to-have  
-**Status:** 🟡 Teilweise abgeschlossen
+**Status:** ✅ Abgeschlossen
 
 ---
 
@@ -103,8 +104,8 @@
 **Zeitaufwand:** 3-4 Tage
 
 ### 2.1 Supabase-Projekt einrichten
-- [ ] Supabase-Account erstellen
-- [ ] Neues Projekt anlegen
+- [ ] Supabase-Account erstellen (kostenlos)
+- [ ] Neues Projekt anlegen (Free Tier)
 - [ ] API-Keys kopieren:
   - [ ] `NEXT_PUBLIC_SUPABASE_URL`
   - [ ] `NEXT_PUBLIC_SUPABASE_ANON_KEY`
@@ -113,7 +114,8 @@
 - [ ] Test-Connection prüfen
 
 **Zeitaufwand:** 1-2 Stunden  
-**Priorität:** 🔴 Kritisch
+**Priorität:** 🔴 Kritisch  
+**💰 Kosten:** €0 (Supabase Free Tier)
 
 ---
 
@@ -393,11 +395,12 @@ Das Projekt ist launch-ready wenn:
 ## 📝 Notizen
 
 ### Entscheidungen
-- **Auth-Lösung:** NextAuth.js + Supabase
-- **Datenbank:** Supabase (PostgreSQL)
-- **Error-Tracking:** Sentry
-- **Analytics:** Plausible (oder Google Analytics)
-- **Hosting:** Vercel
+- **Auth-Lösung:** NextAuth.js + Supabase (Free Tier)
+- **Datenbank:** Supabase (PostgreSQL) - **Free Tier nutzen**
+- **Error-Tracking:** Sentry (Code fertig, Account optional)
+- **Analytics:** Übersprungen - nur wenn wirklich nötig
+- **Hosting:** Vercel (Free Tier)
+- **💰 Kostenstrategie:** So wenig Geld wie möglich - nur kostenlose Services nutzen
 
 ### Offene Fragen
 - [ ] Welche OAuth-Provider sollen unterstützt werden?
@@ -418,7 +421,10 @@ Das Projekt ist launch-ready wenn:
 - Launch-Plan definiert
 - Multi-User-Implementierungsplan erstellt
 - ✅ Phase 1.3 abgeschlossen: ENV-Var-Validierung mit Zod implementiert
-- ✅ Phase 1.4 teilweise abgeschlossen: Code-Cleanup (veraltete Dateien entfernt)
+- ✅ Phase 1.4 abgeschlossen: Code-Cleanup (veraltete Dateien entfernt, TODOs dokumentiert)
+- ✅ Phase 1.1 teilweise abgeschlossen: Sentry Error-Tracking (Code fertig)
+- ⏸️ Phase 1.2 übersprungen: Analytics (nur wenn wirklich nötig)
+- 💰 Kostenstrategie: Fokus auf kostenlose Lösungen (Supabase Free Tier)
 - ✅ Quick-Wins teilweise abgeschlossen: `.env.example` erstellt, veraltete Dateien entfernt
 
 ---

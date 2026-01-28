@@ -27,7 +27,10 @@ export function EmailSignup() {
     setIsSubmitting(true);
 
     try {
-      // TODO: Backend-Integration implementieren
+      // TODO (Phase 2): Backend-Integration implementieren
+      // - Email-API-Route erstellen (/api/email/subscribe)
+      // - Email-Service integrieren (z.B. Resend, SendGrid)
+      // - Email in Datenbank speichern (Supabase)
       await new Promise((resolve) => setTimeout(resolve, EMAIL_SUBMIT_DELAY));
       
       showToast("Vielen Dank für dein Interesse! Die Anmeldung ist aktuell noch in Entwicklung.", "success");
