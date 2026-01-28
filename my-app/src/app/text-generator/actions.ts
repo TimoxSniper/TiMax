@@ -26,7 +26,10 @@ export async function generateTextAction(
   try {
     // Validierung
     if (!format || !["instagram", "twitter", "blog", "caption"].includes(format)) {
-      console.error("[generateTextAction] Ungültiges Format:", format);
+      // In Production: Hier würde man zu einem Error-Tracking-Service loggen
+      if (process.env.NODE_ENV === "development") {
+        console.error("[generateTextAction] Ungültiges Format:", format);
+      }
       return {
         success: false,
         error: "Ungültiges Format ausgewählt",
@@ -34,35 +37,37 @@ export async function generateTextAction(
     }
 
     if (!transcript || transcript.trim().length === 0) {
-      console.error("[generateTextAction] Leeres Transkript");
+      if (process.env.NODE_ENV === "development") {
+        console.error("[generateTextAction] Leeres Transkript");
+      }
       return {
         success: false,
         error: "Transkript darf nicht leer sein",
       };
     }
 
-    // Server-Side Logging für Debugging
-    console.log(`[generateTextAction] Generiere ${format} Text aus Transkript (${transcript.length} Zeichen)`);
-
     // Template-Generierung aufrufen
     const generatedText = generateText(format, transcript);
 
     if (!generatedText || generatedText.trim().length === 0) {
-      console.error("[generateTextAction] Generierung fehlgeschlagen - leerer Text");
+      if (process.env.NODE_ENV === "development") {
+        console.error("[generateTextAction] Generierung fehlgeschlagen - leerer Text");
+      }
       return {
         success: false,
         error: "Text-Generierung hat keinen Inhalt erzeugt",
       };
     }
 
-    console.log(`[generateTextAction] Erfolgreich generiert: ${generatedText.length} Zeichen`);
-
     return {
       success: true,
       text: generatedText,
     };
   } catch (error) {
-    console.error("[generateTextAction] Fehler:", error);
+    // In Production: Hier würde man zu einem Error-Tracking-Service loggen
+    if (process.env.NODE_ENV === "development") {
+      console.error("[generateTextAction] Fehler:", error);
+    }
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unbekannter Fehler bei der Text-Generierung",

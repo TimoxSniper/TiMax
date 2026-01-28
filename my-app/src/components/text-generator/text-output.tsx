@@ -38,7 +38,10 @@ export function TextOutput({ generatedText, format, onCopy, isLoading = false, e
         setCopied(false);
       }, 2000);
     } catch (err) {
-      console.error("Fehler beim Kopieren:", err);
+      // In Production: Hier würde man zu einem Error-Tracking-Service loggen
+      if (process.env.NODE_ENV === "development") {
+        console.error("Fehler beim Kopieren:", err);
+      }
       // Fallback für ältere Browser
       const textArea = document.createElement("textarea");
       textArea.value = generatedText;
@@ -55,7 +58,9 @@ export function TextOutput({ generatedText, format, onCopy, isLoading = false, e
           setCopied(false);
         }, 2000);
       } catch (fallbackErr) {
-        console.error("Fallback-Kopieren fehlgeschlagen:", fallbackErr);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Fallback-Kopieren fehlgeschlagen:", fallbackErr);
+        }
       }
       document.body.removeChild(textArea);
     }

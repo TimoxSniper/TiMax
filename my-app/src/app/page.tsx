@@ -7,26 +7,50 @@ import { AnimatedSection } from "@/components/magic-ui/animated-section";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/components/ui/toast";
 import { useState, useEffect } from "react";
-import { ArrowRight, Upload, Sparkles, MessageSquare, Zap, Clock, TrendingUp, Users, Star, ChevronRight, Play, FileText, Network, Moon, Sun } from "lucide-react";
+import { ArrowRight, Upload, Sparkles, MessageSquare, Zap, Clock, TrendingUp, Users, Star, ChevronRight, Play, FileText, Network, Moon, Sun, Loader2 } from "lucide-react";
+
+// Konstanten für Animation
+const STATS_ANIMATION_DURATION = 3000; // ms
+const STATS_ANIMATION_STEPS = 100;
+const SCALABLE_MAX_VALUE = 50000;
+const SCALABLE_INFINITY_THRESHOLD = 0.95;
+const EXPONENTIAL_FACTOR = 10.8;
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const [statsVisible, setStatsVisible] = useState(false);
   const [countedStats, setCountedStats] = useState({ speed: 0, seamless: 0, scalable: 0, workflow: 0 });
   const [isDark, setIsDark] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { showToast } = useToast();
 
+  // Dark Mode State-Synchronisation mit MutationObserver für externe Änderungen
   useEffect(() => {
-    // Check initial theme
     const html = document.documentElement;
     const isDarkMode = html.classList.contains("dark");
     setIsDark(isDarkMode);
+
+    // Observer für externe Theme-Änderungen
+    const observer = new MutationObserver(() => {
+      const currentIsDark = html.classList.contains("dark");
+      setIsDark(currentIsDark);
+    });
+
+    observer.observe(html, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   const toggleDarkMode = () => {
     const html = document.documentElement;
+    const newIsDark = !html.classList.contains("dark");
     html.classList.toggle("dark");
-    setIsDark(!isDark);
+    setIsDark(newIsDark);
   };
 
   useEffect(() => {
@@ -52,32 +76,25 @@ export default function Home() {
   useEffect(() => {
     if (!statsVisible) return;
 
-    const duration = 3000;
-    const steps = 100;
-    const interval = duration / steps;
+    const interval = STATS_ANIMATION_DURATION / STATS_ANIMATION_STEPS;
 
     let currentStep = 0;
-    let previousScalable = 0;
     const timer = setInterval(() => {
       currentStep++;
-      const progress = currentStep / steps;
+      const progress = currentStep / STATS_ANIMATION_STEPS;
 
       // Für scalable: exponentiell von 0 bis ~50000, dann sanft zu ∞
       let scalableValue: number | string = 0;
-      if (progress < 0.95) {
+      if (progress < SCALABLE_INFINITY_THRESHOLD) {
         // Exponentielles Wachstum: e^(x * k) - 1, skaliert auf ~50000
-        // Bei progress = 0.95 soll der Wert etwa 50000 sein
-        const exponentialProgress = progress / 0.95;
-        // e^(x * 10.8) gibt uns bei x=1 etwa 50000
-        scalableValue = Math.floor(Math.exp(exponentialProgress * 10.8) - 1);
+        const exponentialProgress = progress / SCALABLE_INFINITY_THRESHOLD;
+        scalableValue = Math.floor(Math.exp(exponentialProgress * EXPONENTIAL_FACTOR) - 1);
         // Cap bei 50000
-        scalableValue = Math.min(scalableValue, 50000);
+        scalableValue = Math.min(scalableValue, SCALABLE_MAX_VALUE);
       } else {
         // Bei 95% sanft zu ∞ wechseln (längerer Übergang)
         scalableValue = Infinity;
       }
-      
-      previousScalable = scalableValue;
 
       setCountedStats({
         speed: Math.min(Math.floor(10 * progress), 10),
@@ -86,7 +103,7 @@ export default function Home() {
         workflow: 1,
       });
 
-      if (currentStep >= steps) {
+      if (currentStep >= STATS_ANIMATION_STEPS) {
         clearInterval(timer);
       }
     }, interval);
@@ -94,12 +111,22 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [statsVisible]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Backend integration
-    console.log("Email submitted:", email);
-    alert("Vielen Dank für dein Interesse! Wir melden uns bald bei dir.");
-    setEmail("");
+    setIsSubmitting(true);
+
+    try {
+      // Backend-Integration: Hier würde die API-Anfrage stattfinden
+      // Simuliere API-Call für besseres UX
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      showToast("Vielen Dank für dein Interesse! Wir melden uns bald bei dir.", "success");
+      setEmail("");
+    } catch (error) {
+      showToast("Es ist ein Fehler aufgetreten. Bitte versuche es später erneut.", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const features = [
@@ -630,10 +657,18 @@ export default function Home() {
                   </div>
                   <Button 
                     type="submit" 
-                    className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90 transition-all duration-300 hover:scale-[1.02] rounded-full px-8 py-6 text-base font-medium" 
+                    disabled={isSubmitting}
+                    className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90 transition-all duration-300 hover:scale-[1.02] rounded-full px-8 py-6 text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed" 
                     size="lg"
                   >
-                    Jetzt anmelden
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Wird gesendet...
+                      </>
+                    ) : (
+                      "Jetzt anmelden"
+                    )}
                   </Button>
                 </form>
               </div>

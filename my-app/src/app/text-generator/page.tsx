@@ -46,7 +46,10 @@ export default function TextGeneratorPage() {
         const errorMessage = err instanceof Error ? err.message : "Unbekannter Fehler";
         setError(errorMessage);
         setGeneratedText("");
-        console.error("Fehler bei handleFormatSelect:", err);
+        // In Production: Hier würde man zu einem Error-Tracking-Service loggen
+        if (process.env.NODE_ENV === "development") {
+          console.error("Fehler bei handleFormatSelect:", err);
+        }
       }
     });
   };
