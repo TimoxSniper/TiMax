@@ -20,7 +20,7 @@ const formatIcons: Record<FormatType, React.ReactNode> = {
 
 export function FormatSelector({ selectedFormat, onSelectFormat, disabled = false }: FormatSelectorProps) {
   return (
-    <Card className="transition-all duration-200 hover:shadow-md">
+    <Card id="format-selector" className="transition-all duration-200 hover:shadow-md">
       <CardHeader>
         <div className="flex items-center gap-2">
           <div className="flex items-center justify-center size-8 rounded-lg bg-primary/10 text-primary">

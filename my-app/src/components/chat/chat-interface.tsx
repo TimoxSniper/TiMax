@@ -144,13 +144,19 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
-            <p className="text-lg font-medium mb-2">Willkommen bei REX!</p>
-            <p className="text-sm">
-              Stelle Fragen oder bitte um Content-Generierung.
-              <br />
-              Beispiel: "Erstelle einen LinkedIn Post über Produktivität"
+          <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground px-4">
+            <p className="text-lg font-medium mb-2 text-foreground">Willkommen bei REX!</p>
+            <p className="text-sm mb-4 max-w-md">
+              Chatte mit deiner KI über deine Transkripte und lass dir Content generieren.
             </p>
+            <div className="space-y-2 text-xs text-muted-foreground">
+              <p className="font-medium text-foreground mb-3">Beispiel-Anfragen:</p>
+              <div className="space-y-1 text-left bg-muted/50 rounded-lg p-3 max-w-md">
+                <p>• "Erstelle einen Instagram Post über Produktivität"</p>
+                <p>• "Generiere einen Twitter Thread aus meinem letzten Video"</p>
+                <p>• "Was sind die wichtigsten Punkte aus dem Transkript?"</p>
+              </div>
+            </div>
           </div>
         ) : (
           <MessageList messages={messages} />

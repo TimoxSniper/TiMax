@@ -5,13 +5,14 @@ import { TranscriptViewer } from "@/components/text-generator/transcript-viewer"
 import { FormatSelector } from "@/components/text-generator/format-selector";
 import { TextOutput } from "@/components/text-generator/text-output";
 import { mockTranscript } from "@/lib/mock-transcript";
-import { type FormatType } from "@/lib/text-templates";
+import { type FormatType, formatOptions } from "@/lib/text-templates";
 import { generateTextAction } from "@/app/text-generator/actions";
 import { Separator } from "@/components/ui/separator";
 import { Zap, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/upload/file-upload";
 import { MainNavigation } from "@/components/layout/main-navigation";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import Link from "next/link";
 
 export default function TextGeneratorPage() {
@@ -76,6 +77,14 @@ export default function TextGeneratorPage() {
         className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12"
         role="main"
       >
+        {/* Breadcrumbs */}
+        <Breadcrumbs 
+          items={[
+            { label: "Text Generator", href: "/text-generator" },
+            ...(selectedFormat ? [{ label: formatOptions.find(f => f.id === selectedFormat)?.label || "Format" }] : [])
+          ]}
+          className="mb-6"
+        />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
           {/* Left Column: Transcript */}
           <div className="space-y-6">
@@ -84,6 +93,14 @@ export default function TextGeneratorPage() {
               onUploadSuccess={(fileName) => {
                 // In Production: Hier würde man zu einem Analytics-Service loggen
                 // Removed console.log for production
+                
+                // Optional: Scroll zu Format-Auswahl nach Upload
+                setTimeout(() => {
+                  const formatSelector = document.getElementById("format-selector");
+                  if (formatSelector) {
+                    formatSelector.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                  }
+                }, 500);
               }}
               onUploadError={(error) => {
                 // In Production: Hier würde man zu einem Error-Tracking-Service loggen

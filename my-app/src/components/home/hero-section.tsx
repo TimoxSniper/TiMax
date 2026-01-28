@@ -27,26 +27,32 @@ export function HeroSection() {
         />
         
         <AnimatedSection delay={300} direction="up">
-          <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="mt-12 flex flex-col items-center gap-4">
+            {/* Primary CTA - Klarer Fokus */}
             <Button 
               size="lg" 
-              className="group relative overflow-hidden bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90 transition-all duration-300 hover:scale-105 rounded-full px-8 py-6 text-base font-medium focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20 focus:ring-offset-2"
+              className="group relative overflow-hidden bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90 transition-all duration-300 hover:scale-105 rounded-full px-10 py-7 text-lg font-semibold shadow-xl focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20 focus:ring-offset-2"
               asChild
             >
               <Link href="/text-generator">
-                Jetzt ausprobieren
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                Jetzt starten
+                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>
+            
+            {/* Secondary CTA - Weniger prominent */}
+            <p className="text-sm text-black/60 dark:text-white/60 mb-2">
+              oder
+            </p>
             <Button 
               size="lg" 
-              variant="outline"
-              className="group border-2 border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 hover:scale-105 rounded-full px-8 py-6 text-base font-medium focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20 focus:ring-offset-2"
+              variant="ghost"
+              className="group text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 rounded-full px-6 py-4 text-base font-medium"
               asChild
             >
               <Link href="/chat">
                 <MessageSquare className="mr-2 h-4 w-4 transition-transform group-hover:scale-110" />
-                Chat starten
+                Direkt chatten
               </Link>
             </Button>
           </div>

@@ -43,12 +43,12 @@ const FEATURES = [
   },
 ] as const;
 
-// Workflow Steps
+// Workflow Steps - Jetzt mit Links
 const WORKFLOW_STEPS = [
-  { step: "1", icon: Upload, title: "Upload", desc: "Lade Videos oder Audios hoch" },
-  { step: "2", icon: FileText, title: "Transkription", desc: "Automatische Umwandlung in Text" },
-  { step: "3", icon: Network, title: "Strukturierung", desc: "Intelligente Organisation" },
-  { step: "4", icon: Sparkles, title: "Text generieren", desc: "KI-Dialog für deine Formate" },
+  { step: "1", icon: Upload, title: "Upload", desc: "Lade Videos oder Audios hoch", href: "/text-generator", action: "Upload starten" },
+  { step: "2", icon: FileText, title: "Transkription", desc: "Automatische Umwandlung in Text", href: "/text-generator", action: "Transkript ansehen" },
+  { step: "3", icon: Network, title: "Strukturierung", desc: "Intelligente Organisation", href: "/text-generator", action: "Strukturierung sehen" },
+  { step: "4", icon: Sparkles, title: "Text generieren", desc: "KI-Dialog für deine Formate", href: "/text-generator", action: "Text generieren" },
 ] as const;
 
 // Target Audiences
@@ -84,20 +84,31 @@ const WorkflowSection = memo(function WorkflowSection() {
               const Icon = item.icon;
               return (
                 <AnimatedSection key={item.step} delay={index * 150} direction="up">
-                  <GlassCard variant="subtle" className="p-6 text-center relative h-full flex flex-col focus-within:ring-2 focus-within:ring-black/20 dark:focus-within:ring-white/20">
-                    <div className="w-12 h-12 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center mx-auto mb-4 font-bold text-lg">
-                      <Icon className="w-6 h-6" aria-hidden="true" />
-                    </div>
-                    <h3 className="text-lg font-semibold mb-2 text-black dark:text-white">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-black/70 dark:text-white/70 flex-grow">
-                      {item.desc}
-                    </p>
-                    {index < 3 && (
-                      <ChevronRight className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 text-black/20 dark:text-white/20 w-6 h-6" aria-hidden="true" />
-                    )}
-                  </GlassCard>
+                  <Link href={item.href} className="block h-full">
+                    <GlassCard 
+                      variant="subtle" 
+                      hover
+                      className="p-6 text-center relative h-full flex flex-col focus-within:ring-2 focus-within:ring-black/20 dark:focus-within:ring-white/20 cursor-pointer group transition-all duration-300 hover:scale-105"
+                    >
+                      <div className="w-12 h-12 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center mx-auto mb-4 font-bold text-lg transition-transform group-hover:scale-110">
+                        <Icon className="w-6 h-6" aria-hidden="true" />
+                      </div>
+                      <h3 className="text-lg font-semibold mb-2 text-black dark:text-white">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-black/70 dark:text-white/70 flex-grow mb-3">
+                        {item.desc}
+                      </p>
+                      <div className="mt-auto pt-3 border-t border-black/10 dark:border-white/10">
+                        <span className="text-xs font-medium text-black/60 dark:text-white/60 group-hover:text-black dark:group-hover:text-white transition-colors">
+                          {item.action} →
+                        </span>
+                      </div>
+                      {index < 3 && (
+                        <ChevronRight className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 text-black/20 dark:text-white/20 w-6 h-6 group-hover:text-black/40 dark:group-hover:text-white/40 transition-colors" aria-hidden="true" />
+                      )}
+                    </GlassCard>
+                  </Link>
                 </AnimatedSection>
               );
             })}
