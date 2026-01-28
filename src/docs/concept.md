@@ -1,0 +1,3 @@
+Content-Creator und Freelance Social-Media-Manager sitzen auf vielen Video- und Audio-Inhalten, aus denen sie schnell neues Textmaterial wie Posts, Skripte oder Captions machen müssen. Heute sind ihre Inhalte unstrukturiert verteilt und vorhandene Tools decken nur Teilaufgaben wie Transkription oder reine Textgenerierung ab. Die geplante Plattform verbindet Upload, intelligente Strukturierung und einen KI-Dialog in einem durchgängigen Workflow, damit Nutzer ihre Bibliotheken leicht durchsuchen, Inhalte in sinnvolle Einheiten zerlegen und daraus wiederverwendbare Textbausteine erstellen können. So sparen sie Zeit, erhöhen ihre Reichweite und können ihr Wissen effizient skalieren, ohne zwischen vielen Fragment-Tools wechseln zu müssen.
+
+
