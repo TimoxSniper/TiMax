@@ -226,6 +226,17 @@ export default function Home() {
                 className="group border-2 border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 hover:scale-105 rounded-full px-8 py-6 text-base font-medium"
                 asChild
               >
+                <a href="/chat">
+                  <MessageSquare className="mr-2 h-4 w-4 transition-transform group-hover:scale-110" />
+                  Chat starten
+                </a>
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="group border-2 border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 hover:scale-105 rounded-full px-8 py-6 text-base font-medium"
+                asChild
+              >
                 <a href="#solution">
                   Mehr erfahren
                 </a>
