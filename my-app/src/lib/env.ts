@@ -24,6 +24,7 @@ const envSchema = z.object({
 
   // Sentry (für Phase 1.1 - optional für jetzt)
   SENTRY_DSN: z.string().url().optional(),
+  NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
 
   // Analytics (für Phase 1.2 - optional für jetzt)
   NEXT_PUBLIC_PLAUSIBLE_DOMAIN: z.string().optional(),

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import * as Sentry from "@sentry/nextjs";
 import { validateRequiredEnv } from "@/lib/env";
 
 export async function POST(request: NextRequest) {
@@ -104,10 +105,22 @@ export async function POST(request: NextRequest) {
       fileName,
     });
   } catch (error) {
-    // In Production: Hier würde man zu einem Error-Tracking-Service loggen
+    // Sende Fehler an Sentry
+    Sentry.captureException(error, {
+      tags: {
+        api_route: "/api/upload",
+      },
+      extra: {
+        endpoint: "/api/upload",
+        method: "POST",
+      },
+    });
+
+    // In Development auch in Console loggen
     if (process.env.NODE_ENV === "development") {
       console.error("Upload API Fehler:", error);
     }
+
     return NextResponse.json(
       {
         success: false,

@@ -33,15 +33,16 @@
 
 ### 1.1 Error-Tracking (Sentry)
 - [ ] Sentry-Account erstellen
-- [ ] `@sentry/nextjs` installieren
-- [ ] Sentry in `next.config.ts` konfigurieren
-- [ ] Error-Boundary mit Sentry verbinden
-- [ ] API-Routen Error-Handling mit Sentry
-- [ ] Environment-Variable: `SENTRY_DSN`
-- [ ] Test: Fehler manuell auslösen und prüfen
+- [x] `@sentry/nextjs` installieren
+- [x] Sentry in `next.config.ts` konfigurieren
+- [x] Error-Boundary mit Sentry verbinden
+- [x] API-Routen Error-Handling mit Sentry
+- [x] Environment-Variable: `SENTRY_DSN` (in env.ts hinzugefügt)
+- [ ] Test: Fehler manuell auslösen und prüfen (benötigt Sentry-Account)
 
 **Zeitaufwand:** 2-3 Stunden  
-**Priorität:** 🔴 Kritisch
+**Priorität:** 🔴 Kritisch  
+**Status:** 🟡 Teilweise abgeschlossen (Code fertig, benötigt Sentry-Account für Tests)
 
 ---
 
