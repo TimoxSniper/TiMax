@@ -139,7 +139,7 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
 
 
   return (
-    <Card className="flex flex-col h-[calc(100vh-8rem)] max-h-[800px]">
+    <Card className="flex flex-col h-[calc(100vh-12rem)] sm:h-[calc(100vh-10rem)] max-h-[800px]">
       <ChatHeader sessionId={sessionId} messageCount={messages.length} />
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4">

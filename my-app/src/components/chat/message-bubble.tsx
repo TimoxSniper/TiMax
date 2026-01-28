@@ -39,8 +39,8 @@ export function MessageBubble({ message }: MessageBubbleProps) {
   return (
     <div className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}>
       {!isUser && (
-        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-          <Bot className="w-4 h-4 text-primary" />
+        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0" aria-label="KI-Assistent">
+          <Bot className="w-5 h-5 text-primary" aria-hidden="true" />
         </div>
       )}
       
@@ -67,12 +67,13 @@ export function MessageBubble({ message }: MessageBubbleProps) {
                 variant="ghost"
                 size="sm"
                 onClick={handleCopy}
-                className="h-6 px-2 opacity-70 hover:opacity-100"
+                className="h-8 w-8 min-w-[44px] opacity-70 hover:opacity-100"
+                aria-label={copied ? "Kopiert" : "Nachricht kopieren"}
               >
                 {copied ? (
-                  <Check className="w-3 h-3" />
+                  <Check className="w-4 h-4" aria-hidden="true" />
                 ) : (
-                  <Copy className="w-3 h-3" />
+                  <Copy className="w-4 h-4" aria-hidden="true" />
                 )}
               </Button>
             )}
@@ -81,8 +82,8 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       </Card>
       
       {isUser && (
-        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-          <User className="w-4 h-4 text-primary" />
+        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0" aria-label="Du">
+          <User className="w-5 h-5 text-primary" aria-hidden="true" />
         </div>
       )}
     </div>

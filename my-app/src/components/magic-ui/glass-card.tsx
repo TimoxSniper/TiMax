@@ -11,11 +11,11 @@ interface GlassCardProps {
 }
 
 export function GlassCard({ children, className, hover = true, variant = "default" }: GlassCardProps) {
-  // Optimiert für Mobile: Weniger Blur auf kleinen Screens
+  // Performance-optimiert: Reduzierter Blur auf Mobile, prefers-reduced-motion Support
   const variantClasses = {
-    default: "bg-white/70 dark:bg-black/70 backdrop-blur-md sm:backdrop-blur-lg md:backdrop-blur-xl border border-black/10 dark:border-white/10",
-    subtle: "bg-white/60 dark:bg-black/60 backdrop-blur-sm sm:backdrop-blur-md md:backdrop-blur-lg border border-black/8 dark:border-white/8",
-    elevated: "bg-white/80 dark:bg-black/80 backdrop-blur-lg sm:backdrop-blur-xl md:backdrop-blur-2xl border border-black/15 dark:border-white/15 shadow-2xl",
+    default: "bg-white/70 dark:bg-black/70 backdrop-blur-sm sm:backdrop-blur-md md:backdrop-blur-lg border border-black/10 dark:border-white/10",
+    subtle: "bg-white/60 dark:bg-black/60 backdrop-blur-sm sm:backdrop-blur-md border border-black/8 dark:border-white/8",
+    elevated: "bg-white/80 dark:bg-black/80 backdrop-blur-md sm:backdrop-blur-lg md:backdrop-blur-xl border border-black/15 dark:border-white/15 shadow-2xl",
   };
 
   return (
@@ -23,9 +23,10 @@ export function GlassCard({ children, className, hover = true, variant = "defaul
       className={cn(
         "relative overflow-hidden rounded-3xl",
         variantClasses[variant],
-        "transition-all duration-500 ease-out",
+        "transition-all duration-300 ease-out",
         "shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] dark:shadow-[0_8px_32px_0_rgba(255,255,255,0.05)]",
         hover && "hover:bg-white/80 dark:hover:bg-black/80 hover:border-black/15 dark:hover:border-white/15 hover:shadow-[0_12px_48px_0_rgba(0,0,0,0.15)] dark:hover:shadow-[0_12px_48px_0_rgba(255,255,255,0.08)]",
+        "will-change-transform",
         className
       )}
     >

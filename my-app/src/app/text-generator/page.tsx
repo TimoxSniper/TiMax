@@ -8,9 +8,10 @@ import { mockTranscript } from "@/lib/mock-transcript";
 import { type FormatType } from "@/lib/text-templates";
 import { generateTextAction } from "@/app/text-generator/actions";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Zap, MessageSquare } from "lucide-react";
+import { Zap, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/upload/file-upload";
+import { MainNavigation } from "@/components/layout/main-navigation";
 import Link from "next/link";
 
 export default function TextGeneratorPage() {
@@ -67,34 +68,7 @@ export default function TextGeneratorPage() {
       </a>
 
       {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              asChild
-              className="transition-all hover:scale-110"
-              aria-label="Zurück zur Startseite"
-            >
-              <Link href="/">
-                <ArrowLeft className="size-4" />
-              </Link>
-            </Button>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <Zap className="size-5 text-primary shrink-0" aria-hidden="true" />
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight truncate">
-                  Text Generator
-                </h1>
-              </div>
-              <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1">
-                Generiere verschiedene Content-Formate aus deinem Transkript
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <MainNavigation />
 
       {/* Main Content */}
       <main 

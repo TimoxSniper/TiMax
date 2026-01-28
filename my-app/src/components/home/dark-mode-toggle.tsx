@@ -2,8 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { Moon, Sun } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-export function DarkModeToggle() {
+interface DarkModeToggleProps {
+  variant?: "fixed" | "inline";
+  className?: string;
+}
+
+export function DarkModeToggle({ variant = "fixed", className }: DarkModeToggleProps) {
   const [isDark, setIsDark] = useState(false);
 
   // Vereinfachter Dark Mode - kein MutationObserver mehr
@@ -19,16 +26,38 @@ export function DarkModeToggle() {
     setIsDark(!isDark);
   };
 
+  if (variant === "inline") {
+    return (
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={toggleDarkMode}
+        className={cn("h-9 w-9", className)}
+        aria-label="Dark Mode umschalten"
+      >
+        {isDark ? (
+          <Sun className="h-4 w-4" aria-hidden="true" />
+        ) : (
+          <Moon className="h-4 w-4" aria-hidden="true" />
+        )}
+      </Button>
+    );
+  }
+
+  // Fixed variant (für Homepage)
   return (
     <button
       onClick={toggleDarkMode}
-      className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 p-3 rounded-full bg-white/70 dark:bg-black/70 backdrop-blur-md sm:backdrop-blur-lg border border-black/10 dark:border-white/10 hover:bg-white/90 dark:hover:bg-black/90 transition-all duration-300 shadow-lg focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20 focus:ring-offset-2"
+      className={cn(
+        "fixed top-4 right-4 sm:top-6 sm:right-6 z-50 p-3 rounded-full bg-white/70 dark:bg-black/70 backdrop-blur-md sm:backdrop-blur-lg border border-black/10 dark:border-white/10 hover:bg-white/90 dark:hover:bg-black/90 transition-all duration-300 shadow-lg focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20 focus:ring-offset-2",
+        className
+      )}
       aria-label="Dark Mode umschalten"
     >
       {isDark ? (
-        <Sun className="w-5 h-5 text-black dark:text-white" />
+        <Sun className="w-5 h-5 text-black dark:text-white" aria-hidden="true" />
       ) : (
-        <Moon className="w-5 h-5 text-black dark:text-white" />
+        <Moon className="w-5 h-5 text-black dark:text-white" aria-hidden="true" />
       )}
     </button>
   );
