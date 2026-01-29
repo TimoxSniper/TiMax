@@ -7,6 +7,7 @@ import {
   validateFileType,
 } from "@/lib/validation";
 import { validateCSRFToken } from "@/lib/csrf";
+import { UPLOAD_CONFIG } from "@/lib/upload-config";
 
 export async function POST(request: NextRequest) {
   try {

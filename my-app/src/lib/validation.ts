@@ -1,48 +1,28 @@
 import { z } from "zod";
+import { UPLOAD_CONFIG, isFileSizeAllowed, isMimeTypeAllowed, isExtensionAllowed } from "./upload-config";
 
 /**
  * Schema für File Upload Validation
+ * Nutzt zentrale Upload-Konfiguration
  */
 export const uploadSchema = z.object({
   file: z
     .instanceof(File)
-    .refine((file) => file.size <= 100 * 1024 * 1024, {
-      message: "Datei ist zu groß. Maximum: 100MB",
-    })
     .refine(
-      (file) => {
-        const allowedTypes = [
-          "video/mp4",
-          "video/webm",
-          "video/quicktime",
-          "audio/mpeg",
-          "audio/mp3",
-          "audio/wav",
-          "audio/m4a",
-          "audio/webm",
-        ];
-        return allowedTypes.includes(file.type);
-      },
+      (file) => isFileSizeAllowed(file.size),
+      {
+        message: `Datei ist zu groß. Maximum: ${UPLOAD_CONFIG.maxFileSize / 1024 / 1024}MB`,
+      }
+    )
+    .refine(
+      (file) => isMimeTypeAllowed(file.type),
       {
         message:
           "Ungültiger Dateityp. Erlaubt: MP4, WebM, MP3, WAV, M4A",
       }
     )
     .refine(
-      (file) => {
-        const allowedExtensions = [
-          ".mp4",
-          ".webm",
-          ".mov",
-          ".mp3",
-          ".wav",
-          ".m4a",
-        ];
-        const extension = file.name
-          .toLowerCase()
-          .substring(file.name.lastIndexOf("."));
-        return allowedExtensions.includes(extension);
-      },
+      (file) => isExtensionAllowed(file.name),
       {
         message: "Ungültige Dateiendung",
       }
@@ -139,21 +119,11 @@ export function validateFilename(filename: string): boolean {
 /**
  * Validiere MIME-Type basierend auf Magic Bytes (vereinfacht)
  * In Production sollte eine richtige Library wie file-type verwendet werden
+ * Nutzt zentrale Upload-Konfiguration
  */
 export async function validateFileType(file: File): Promise<boolean> {
-  const allowedTypes = [
-    "video/mp4",
-    "video/webm",
-    "video/quicktime",
-    "audio/mpeg",
-    "audio/mp3",
-    "audio/wav",
-    "audio/m4a",
-    "audio/webm",
-  ];
-
-  // Prüfe MIME-Type
-  if (!allowedTypes.includes(file.type)) {
+  // Prüfe MIME-Type mit zentraler Konfiguration
+  if (!isMimeTypeAllowed(file.type)) {
     return false;
   }
 
