@@ -340,7 +340,7 @@ const DemoSection = memo(function DemoSection() {
 // Main Page Component
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-white dark:bg-black relative">
+    <div className="flex min-h-screen flex-col bg-transparent relative">
       <DarkModeToggle />
       <GridBackground />
       
