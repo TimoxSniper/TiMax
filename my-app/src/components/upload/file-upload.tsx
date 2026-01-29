@@ -22,7 +22,6 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [csrfToken, setCsrfToken] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -69,13 +68,6 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
   
   const handleUpload = async () => {
     if (!file) return;
-
-    // Prüfe ob CSRF Token vorhanden ist
-    if (!csrfToken) {
-      setError("CSRF-Token nicht verfügbar. Bitte Seite neu laden.");
-      onUploadError?.("CSRF-Token nicht verfügbar");
-      return;
-    }
 
     setIsUploading(true);
     setProgress(0);
@@ -143,8 +135,6 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
         });
 
         xhr.open("POST", "/api/upload");
-        // CSRF Token im Header mitsenden
-        xhr.setRequestHeader("x-csrf-token", csrfToken);
         xhr.send(formData);
       });
 
@@ -178,25 +168,6 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       setIsUploading(false);
     }
   };
-
-  // CSRF Token beim Mount abrufen
-  useEffect(() => {
-    const fetchCsrfToken = async () => {
-      try {
-        const response = await fetch("/api/csrf-token");
-        if (response.ok) {
-          const data = await response.json();
-          setCsrfToken(data.csrfToken);
-        } else {
-          console.error("Fehler beim Abrufen des CSRF-Tokens");
-        }
-      } catch (err) {
-        console.error("Fehler beim Abrufen des CSRF-Tokens:", err);
-      }
-    };
-
-    fetchCsrfToken();
-  }, []);
 
   // Cleanup Timeout beim Unmount
   useEffect(() => {

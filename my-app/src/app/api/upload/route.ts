@@ -6,7 +6,6 @@ import {
   validateFilename,
   validateFileType,
 } from "@/lib/validation";
-import { validateCSRFToken } from "@/lib/csrf";
 import { UPLOAD_CONFIG } from "@/lib/upload-config";
 
 // Vercel-Konfiguration für größere Dateien
@@ -16,20 +15,11 @@ export const maxDuration = 60; // 60 Sekunden Timeout für große Dateien
 export async function POST(request: NextRequest) {
   console.log("[Upload API] ===== Upload Request gestartet =====");
   try {
-    // CSRF Protection
-    const csrfToken = request.headers.get("x-csrf-token");
-    if (!validateCSRFToken(csrfToken)) {
-      console.error("[Upload API] CSRF Token ungültig");
-      return NextResponse.json(
-        { success: false, error: "Ungültiger CSRF Token" },
-        { status: 403 }
-      );
-    }
-
     // Validiere erforderliche Environment-Variablen
     const env = validateRequiredEnv();
     console.log("[Upload API] Environment-Variablen validiert");
     console.log("[Upload API] N8N_UPLOAD_WEBHOOK_URL:", env.N8N_UPLOAD_WEBHOOK_URL);
+    console.log("[Upload API] N8N_TRANSCRIPTION_WEBHOOK_URL:", env.N8N_TRANSCRIPTION_WEBHOOK_URL);
 
     const formData = await request.formData();
     const file = formData.get("file") as File;
@@ -125,10 +115,10 @@ export async function POST(request: NextRequest) {
       // JSON-Response (Webhook)
       try {
         const data = await response.json();
-        
+
         // Debug-Logging - immer aktiv für Troubleshooting
         console.log("[Upload API] n8n Response:", JSON.stringify(data, null, 2));
-        
+
         // Validierung: Prüfe ob data existiert und ein valides Format hat
         if (!data || (typeof data !== "object" && !Array.isArray(data))) {
           throw new Error("Ungültiges Response-Format von n8n Upload Webhook");
@@ -170,48 +160,45 @@ export async function POST(request: NextRequest) {
         // Extrahiere transcript mit Validierung - erweiterte Suche
         const extractTranscript = (obj: any): string | undefined => {
           if (!obj || typeof obj !== "object") return undefined;
-          
-          // Direkte Felder
-          if (typeof obj.transcript === "string" && obj.transcript.trim().length > 0) {
-            return obj.transcript;
+
+          // Direkte Felder - explizite Checks
+          const specificFields = ["transcript", "text", "content", "output", "result", "response", "transcription"];
+          for (const field of specificFields) {
+            if (typeof obj[field] === "string" && obj[field].trim().length > 0) {
+              return obj[field];
+            }
           }
-          if (typeof obj.text === "string" && obj.text.trim().length > 0) {
-            return obj.text;
+
+          // Verschachtelte Felder - Rekursive Suche
+          const nestedFields = ["json", "body", "data", "result", "output"];
+          for (const field of nestedFields) {
+            if (obj[field] && typeof obj[field] === "object") {
+              const nested = extractTranscript(obj[field]);
+              if (nested) return nested;
+            }
           }
-          if (typeof obj.content === "string" && obj.content.trim().length > 0) {
-            return obj.content;
-          }
-          
-          // Verschachtelte Felder
-          if (obj.json) {
-            const nested = extractTranscript(obj.json);
-            if (nested) return nested;
-          }
-          
-          if (obj.body) {
-            const nested = extractTranscript(obj.body);
-            if (nested) return nested;
-          }
-          
-          if (obj.data) {
-            const nested = extractTranscript(obj.data);
-            if (nested) return nested;
-          }
-          
-          // Suche in allen String-Feldern, die wie Transkripte aussehen
+
+          // Heuristische Suche in allen String-Feldern
+          // Suche nach Feldern, die relevante Schlüsselwörter enthalten
           for (const key in obj) {
-            if (key.toLowerCase().includes("transcript") || 
-                key.toLowerCase().includes("text") ||
-                key.toLowerCase().includes("content")) {
-              if (typeof obj[key] === "string" && obj[key].trim().length > 50) {
+            const lowerKey = key.toLowerCase();
+            if (lowerKey.includes("transcript") ||
+              lowerKey.includes("text") ||
+              lowerKey.includes("content") ||
+              lowerKey.includes("out") ||
+              lowerKey.includes("res")) {
+
+              // Weniger strikte Längenprüfung (min 5 Zeichen statt 50)
+              // Damit auch kurze Tests funktionieren
+              if (typeof obj[key] === "string" && obj[key].trim().length > 5) {
                 return obj[key];
               }
             }
           }
-          
+
           return undefined;
         };
-        
+
         if (Array.isArray(data) && data.length > 0) {
           // Array-Response: Prüfe alle Items
           for (const item of data) {
@@ -224,7 +211,7 @@ export async function POST(request: NextRequest) {
         } else if (data && typeof data === "object") {
           transcript = extractTranscript(data);
         }
-        
+
         // Debug-Logging für Transkript - immer aktiv
         if (transcript) {
           console.log("[Upload API] ✅ Transkript gefunden, Länge:", transcript.length);
@@ -256,7 +243,7 @@ export async function POST(request: NextRequest) {
       const htmlText = await response.text();
       console.log("[Upload API] HTML-Response Länge:", htmlText.length);
       status = "✅ Datei erfolgreich hochgeladen und wird verarbeitet";
-      
+
       // Versuche Transkript aus HTML zu extrahieren (falls n8n es dort einbettet)
       // Oft sendet n8n Form-Trigger das Ergebnis in einem <script> Tag oder data-Attribut
       const scriptMatch = htmlText.match(/<script[^>]*>[\s\S]*?transcript["\s:]+["']([^"']+)["']/i);
@@ -273,7 +260,7 @@ export async function POST(request: NextRequest) {
       fileName,
       ...(transcript && { transcript }),
     };
-    
+
     console.log("[Upload API] Finale Response:", {
       success: true,
       status,

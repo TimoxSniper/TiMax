@@ -75,11 +75,6 @@ export default function CookiesPage() {
                         <td className="py-2">Session-Verwaltung</td>
                         <td className="py-2">Session</td>
                       </tr>
-                      <tr className="border-b border-black/5 dark:border-white/5">
-                        <td className="py-2">csrf_token</td>
-                        <td className="py-2">Sicherheit (CSRF-Schutz)</td>
-                        <td className="py-2">Session</td>
-                      </tr>
                     </tbody>
                   </table>
                 </div>

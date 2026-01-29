@@ -2,19 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import * as Sentry from "@sentry/nextjs";
 import { validateRequiredEnv } from "@/lib/env";
 import { chatSchema, sanitizeString } from "@/lib/validation";
-import { validateCSRFToken } from "@/lib/csrf";
 
 export async function POST(request: NextRequest) {
   try {
-    // CSRF Protection
-    const csrfToken = request.headers.get("x-csrf-token");
-    if (!validateCSRFToken(csrfToken)) {
-      return NextResponse.json(
-        { success: false, error: "Ungültiger CSRF Token" },
-        { status: 403 }
-      );
-    }
-
     // Validiere erforderliche Environment-Variablen
     const env = validateRequiredEnv();
 
