@@ -93,7 +93,7 @@ export function isExtensionAllowed(filename: string): boolean {
   const extension = filename
     .toLowerCase()
     .substring(filename.lastIndexOf('.'));
-  return UPLOAD_CONFIG.allowedExtensions.includes(extension);
+  return (UPLOAD_CONFIG.allowedExtensions as readonly string[]).includes(extension);
 }
 
 /**
