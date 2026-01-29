@@ -22,15 +22,28 @@ const variantClasses = {
 
 export function GlowEffect({ className, size = "lg", variant = "subtle" }: GlowEffectProps) {
   return (
-    <div
-      className={cn(
-        "absolute rounded-full blur-3xl opacity-30",
-        sizeClasses[size],
-        variantClasses[variant],
-        className
-      )}
-      aria-hidden="true"
-    />
+    <>
+      {/* Haupt-Glow mit mehrschichtigen Effekten */}
+      <div
+        className={cn(
+          "absolute rounded-full blur-3xl opacity-40",
+          sizeClasses[size],
+          variantClasses[variant],
+          className
+        )}
+        aria-hidden="true"
+      />
+      {/* Zusätzlicher äußerer Glow für mehr Tiefe */}
+      <div
+        className={cn(
+          "absolute rounded-full blur-[60px] opacity-20",
+          sizeClasses[size],
+          variantClasses[variant],
+          className
+        )}
+        aria-hidden="true"
+      />
+    </>
   );
 }
 

@@ -144,3 +144,13 @@
     }
   }
 }
+
+@layer utilities {
+  /* Radialer Gradient für mehr visuelle Tiefe */
+  .bg-gradient-radial {
+    background-image: radial-gradient(circle at center, var(--tw-gradient-stops));
+  }
+  .bg-gradient-radial-top {
+    background-image: radial-gradient(circle at top, var(--tw-gradient-stops));
+  }
+}

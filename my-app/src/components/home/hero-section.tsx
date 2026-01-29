@@ -17,7 +17,14 @@ export function HeroSection() {
         className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" 
       />
       
-      {/* Subtle gradient background */}
+      {/* Mehrschichtige Gradient-Hintergründe für mehr Tiefe */}
+      {/* Radialer Gradient in der Mitte */}
+      <div className="absolute inset-0 bg-gradient-radial from-black/10 via-black/5 to-transparent dark:from-white/15 dark:via-white/5 pointer-events-none" />
+      {/* Linearer Gradient von oben */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/8 via-transparent to-transparent dark:from-white/10 dark:via-transparent pointer-events-none" />
+      {/* Linearer Gradient von unten */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/8 via-transparent to-transparent dark:from-white/10 dark:via-transparent pointer-events-none" />
+      {/* Diagonaler Gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-black/5 via-transparent to-black/5 dark:from-white/5 dark:via-transparent dark:to-white/5 pointer-events-none" />
       
       <div className="container mx-auto max-w-6xl relative z-10">
