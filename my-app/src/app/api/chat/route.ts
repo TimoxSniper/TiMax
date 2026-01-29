@@ -1,21 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as Sentry from "@sentry/nextjs";
 import { validateRequiredEnv } from "@/lib/env";
+import { chatSchema, sanitizeString } from "@/lib/validation";
+import { validateCSRFToken } from "@/lib/csrf";
 
 export async function POST(request: NextRequest) {
   try {
+    // CSRF Protection
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!validateCSRFToken(csrfToken)) {
+      return NextResponse.json(
+        { success: false, error: "Ungültiger CSRF Token" },
+        { status: 403 }
+      );
+    }
+
     // Validiere erforderliche Environment-Variablen
     const env = validateRequiredEnv();
 
     const body = await request.json();
-    const { message, sessionId, chatHistory = [] } = body;
-
-    if (!message || !sessionId) {
+    
+    // Validiere Input mit Zod Schema
+    const validationResult = chatSchema.safeParse(body);
+    if (!validationResult.success) {
+      const errorMessage =
+        validationResult.error.errors[0]?.message ||
+        "Ungültige Eingabedaten";
       return NextResponse.json(
-        { success: false, error: "message und sessionId sind erforderlich" },
+        { success: false, error: errorMessage },
         { status: 400 }
       );
     }
+
+    const { message, sessionId, chatHistory = [] } = validationResult.data;
+
+    // Sanitize Message
+    const sanitizedMessage = sanitizeString(message);
 
     // Request an n8n Webhook senden
     const response = await fetch(env.N8N_CHAT_WEBHOOK_URL, {
@@ -25,9 +45,12 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         body: {
-          message,
+          message: sanitizedMessage,
           sessionId,
-          chatHistory,
+          chatHistory: chatHistory.map((msg) => ({
+            ...msg,
+            content: sanitizeString(msg.content),
+          })),
         },
       }),
     });

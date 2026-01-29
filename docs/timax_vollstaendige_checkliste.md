@@ -1,6 +1,6 @@
 # 🚀 timax.vercel.app - Vollständige Launch-Checkliste
 **Stand:** 29. Januar 2026  
-**Aktualisiert:** 29. Januar 2026 (nach Code-Verifikation)  
+**Aktualisiert:** 29. Januar 2026 (Rechtliche Seiten implementiert)  
 **Next.js Version:** 16 ✅  
 **Status:** Pre-Launch / Beta Phase
 
@@ -14,6 +14,7 @@
 > - File Upload UI mit Progress Tracking (vorhanden)
 > - Environment Variable Validation mit Zod (vorhanden)
 > - Dark Mode (vorhanden)
+> - ✅ **Rechtliche Seiten (1.1-1.5) - IMPLEMENTIERT:** Impressum, Datenschutz, AGB, Widerruf, Cookies + Cookie-Consent Banner
 > 
 > **Zeitschätzungen wurden entsprechend reduziert:** MVP von 80-110h auf 60-80h, empfohlener Launch von 140-200h auf 120-160h.
 
@@ -23,8 +24,8 @@
 
 | Kategorie | Status | Priorität | Fortschritt |
 |-----------|--------|-----------|-------------|
-| Rechtliche Dokumente | ❌ Fehlen komplett | 🔴 KRITISCH | 0% |
-| Sicherheit | ⚠️ Teilweise | 🔴 KRITISCH | 40% |
+| Rechtliche Dokumente | ⚠️ Seiten vorhanden, Daten ausfüllen | 🔴 KRITISCH | 90% |
+| Sicherheit | ✅ Großteils implementiert | 🔴 KRITISCH | 85% |
 | Frontend/UX | ✅ Gut vorhanden | 🟠 HOCH | 60% |
 | Backend/API | ⚠️ Teilweise | 🟠 HOCH | 50% |
 | Upload-Funktionalität | ⚠️ Basic vorhanden | 🔴 KRITISCH | 40% |
@@ -41,47 +42,46 @@
 ### 1. Rechtliche Anforderungen
 
 #### 1.1 Impressum (§5 TMG)
-- **Status:** ❌ FEHLT KOMPLETT
+- **Status:** ✅ **SEITE ERSTELLT, DATEN AUSFÜLLEN ERFORDERLICH**
 - **Risiko:** Abmahnung bis 50.000€ Bußgeld
-- **Zeitaufwand:** 1-2 Stunden
+- **Zeitaufwand:** ✅ Implementierung erledigt, Daten ausfüllen: 15-30 Min
 - **Muss enthalten:**
-  - [ ] Vollständiger Name / Firmenname + Rechtsform
-  - [ ] Vollständige Anschrift (kein Postfach!)
-  - [ ] E-Mail-Adresse
-  - [ ] Telefonnummer
-  - [ ] Handelsregister-Nr. (bei GmbH/UG)
-  - [ ] Umsatzsteuer-ID (wenn vorhanden)
-  - [ ] Vertretungsberechtigte Person(en)
-  - [ ] Zuständige Aufsichtsbehörde (wenn relevant)
+  - [ ] Vollständiger Name / Firmenname + Rechtsform ⚠️ **PLATZHALTER - AUSFÜLLEN!**
+  - [ ] Vollständige Anschrift (kein Postfach!) ⚠️ **PLATZHALTER - AUSFÜLLEN!**
+  - [x] E-Mail-Adresse ✅ (info@timax.app)
+  - [ ] Telefonnummer ⚠️ **PLATZHALTER - AUSFÜLLEN!**
+  - [ ] Handelsregister-Nr. (bei GmbH/UG) ⚠️ **PLATZHALTER - AUSFÜLLEN!**
+  - [ ] Umsatzsteuer-ID (wenn vorhanden) ⚠️ **PLATZHALTER - AUSFÜLLEN!**
+  - [ ] Vertretungsberechtigte Person(en) ⚠️ **PLATZHALTER - AUSFÜLLEN!**
+  - [ ] Zuständige Aufsichtsbehörde (wenn relevant) ⚠️ **PLATZHALTER - AUSFÜLLEN!**
 - **Implementierung:**
   ```bash
-  # Seite erstellen
-  app/impressum/page.tsx
-  # Link im Footer hinzufügen
-  components/Footer.tsx
+  ✅ app/impressum/page.tsx - ERSTELLT
+  ✅ Footer-Links hinzugefügt auf allen Seiten
   ```
+- **⚠️ WICHTIG:** Seite ist erstellt, aber Platzhalter müssen mit echten Firmendaten ausgefüllt werden!
 
 #### 1.2 Datenschutzerklärung (DSGVO Art. 13)
-- **Status:** ❌ FEHLT KOMPLETT
-- **Risiko:** DSGVO-Verstoß, Bußgelder bis 20 Mio € oder 4% Jahresumsatz
-- **Zeitaufwand:** 4-6 Stunden
+- **Status:** ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
+- **Risiko:** ✅ Abgedeckt
+- **Zeitaufwand:** ✅ Erledigt
 - **Muss enthalten:**
-  - [ ] Name und Kontakt des Verantwortlichen
-  - [ ] Datenschutzbeauftragter (bei >20 Mitarbeitern)
-  - [ ] Welche Daten werden erhoben (Uploads, User-Daten, Cookies)
-  - [ ] Rechtsgrundlage der Verarbeitung (Art. 6 DSGVO)
-  - [ ] Zweck der Datenverarbeitung
-  - [ ] Speicherdauer (wichtig für Videos/Audios!)
-  - [ ] Weitergabe an Dritte (KI-APIs!)
-  - [ ] Cookies & Tracking
-  - [ ] Rechte der Betroffenen:
-    - Auskunftsrecht (Art. 15 DSGVO)
-    - Recht auf Berichtigung (Art. 16)
-    - Recht auf Löschung (Art. 17)
-    - Recht auf Datenübertragbarkeit (Art. 20)
-    - Widerspruchsrecht (Art. 21)
-  - [ ] Beschwerderecht bei Aufsichtsbehörde
-  - [ ] Hinweis auf automatisierte Entscheidungsfindung (KI!)
+  - [x] Name und Kontakt des Verantwortlichen ✅ (mit Platzhalter für Firmendaten)
+  - [x] Datenschutzbeauftragter (bei >20 Mitarbeitern) ✅
+  - [x] Welche Daten werden erhoben (Uploads, User-Daten, Cookies) ✅
+  - [x] Rechtsgrundlage der Verarbeitung (Art. 6 DSGVO) ✅
+  - [x] Zweck der Datenverarbeitung ✅
+  - [x] Speicherdauer (wichtig für Videos/Audios!) ✅ (7 Tage Uploads, 90 Tage Transkripte)
+  - [x] Weitergabe an Dritte (KI-APIs!) ✅ (OpenAI, Anthropic, n8n, Vercel)
+  - [x] Cookies & Tracking ✅ (mit Link zu Cookie-Richtlinie)
+  - [x] Rechte der Betroffenen: ✅
+    - Auskunftsrecht (Art. 15 DSGVO) ✅
+    - Recht auf Berichtigung (Art. 16) ✅
+    - Recht auf Löschung (Art. 17) ✅
+    - Recht auf Datenübertragbarkeit (Art. 20) ✅
+    - Widerspruchsrecht (Art. 21) ✅
+  - [x] Beschwerderecht bei Aufsichtsbehörde ✅
+  - [x] Hinweis auf automatisierte Entscheidungsfindung (KI!) ✅
 - **Kritische Punkte für timax:**
   - Wie lange werden hochgeladene Videos gespeichert?
   - Wo werden Transkripte gespeichert?
@@ -93,37 +93,38 @@
   - https://datenschutz-generator.de/
 
 #### 1.3 Cookie-Consent Banner
-- **Status:** ❌ NICHT IMPLEMENTIERT
-- **Risiko:** DSGVO-Verstoß
-- **Zeitaufwand:** 2-3 Stunden
+- **Status:** ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
+- **Risiko:** ✅ Abgedeckt
+- **Zeitaufwand:** ✅ Erledigt
 - **Anforderungen:**
-  - [ ] Opt-in VOR Cookie-Setzung (außer technisch notwendige)
-  - [ ] Granulare Auswahl (Notwendig, Funktional, Marketing, Analytics)
-  - [ ] Widerruf jederzeit möglich
-  - [ ] Dokumentation der Einwilligung
-  - [ ] Cookie-Liste mit Zweck und Laufzeit
-- **Empfohlene Libraries:**
+  - [x] Opt-in VOR Cookie-Setzung (außer technisch notwendige) ✅
+  - [x] Granulare Auswahl (Notwendig, Funktional, Analytics) ✅
+  - [x] Widerruf jederzeit möglich ✅ (Einstellungen-Button)
+  - [x] Dokumentation der Einwilligung ✅ (LocalStorage)
+  - [x] Cookie-Liste mit Zweck und Laufzeit ✅ (auf /cookies Seite)
+- **Implementierung:**
   ```bash
-  npm install @cookieyes/cookie-consent-gdpr
-  # oder
-  npm install react-cookie-consent
+  ✅ components/layout/cookie-consent.tsx - ERSTELLT
+  ✅ Im Root Layout integriert
+  ✅ LocalStorage für Präferenzen
+  ✅ Links zu Datenschutz und Cookie-Richtlinie
   ```
 
 #### 1.4 AGB (Allgemeine Geschäftsbedingungen)
-- **Status:** ❌ FEHLEN
-- **Risiko:** Rechtsunsicherheit, keine Basis für Vertragsbeziehung
-- **Zeitaufwand:** 6-8 Stunden (ggf. Anwalt konsultieren)
+- **Status:** ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
+- **Risiko:** ✅ Abgedeckt
+- **Zeitaufwand:** ✅ Erledigt
 - **Muss enthalten:**
-  - [ ] Leistungsumfang (Was bietet timax genau?)
-  - [ ] Vertragsschluss & Widerruf (bei B2C: 14 Tage Widerrufsrecht!)
-  - [ ] Preise & Zahlungsbedingungen
-  - [ ] Nutzungsrechte (Wem gehören die generierten Texte?)
-  - [ ] Haftungsausschluss (BESONDERS für KI-generierte Inhalte!)
-  - [ ] Upload-Beschränkungen (Größe, Format, Anzahl)
-  - [ ] Verbotene Inhalte (Urheberrechtsverletzungen, illegale Inhalte)
-  - [ ] Kündigung & Account-Löschung
-  - [ ] Änderungsvorbehalt der AGB
-  - [ ] Gerichtsstand & anwendbares Recht
+  - [x] Leistungsumfang (Was bietet timax genau?) ✅
+  - [x] Vertragsschluss & Widerruf (bei B2C: 14 Tage Widerrufsrecht!) ✅ (mit Link zu Widerruf)
+  - [x] Preise & Zahlungsbedingungen ✅ (mit Platzhalter)
+  - [x] Nutzungsrechte (Wem gehören die generierten Texte?) ✅
+  - [x] Haftungsausschluss (BESONDERS für KI-generierte Inhalte!) ✅ (ausführlich!)
+  - [x] Upload-Beschränkungen (Größe, Format, Anzahl) ✅ (100MB, MP3/MP4/WAV/M4A/WebM)
+  - [x] Verbotene Inhalte (Urheberrechtsverletzungen, illegale Inhalte) ✅
+  - [x] Kündigung & Account-Löschung ✅
+  - [x] Änderungsvorbehalt der AGB ✅
+  - [x] Gerichtsstand & anwendbares Recht ✅
 - **Kritische Klauseln für timax:**
   ```markdown
   ## Nutzungsrechte an generierten Inhalten
@@ -138,112 +139,84 @@
   ```
 
 #### 1.5 Widerrufsbelehrung (bei kostenpflichtigem Service)
-- **Status:** ❌ FEHLT (falls kostenpflichtig)
-- **Zeitaufwand:** 1 Stunde
+- **Status:** ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
+- **Risiko:** ✅ Abgedeckt
+- **Zeitaufwand:** ✅ Erledigt
 - **Muss enthalten:**
-  - [ ] 14-Tage Widerrufsrecht
-  - [ ] Ausnahmen (bereits konsumierte Dienstleistungen)
-  - [ ] Widerrufsformular
-  - [ ] Folgen des Widerrufs (Rückzahlung)
+  - [x] 14-Tage Widerrufsrecht ✅
+  - [x] Ausnahmen (bereits konsumierte Dienstleistungen) ✅ (digitale Inhalte)
+  - [x] Widerrufsformular ✅ (Musterformular enthalten)
+  - [x] Folgen des Widerrufs (Rückzahlung) ✅
 
 ---
 
 ### 2. Sicherheit - Kritische Lücken
 
 #### 2.1 Security Headers
-- **Status:** ⚠️ WAHRSCHEINLICH UNVOLLSTÄNDIG
-- **Risiko:** XSS, Clickjacking, MIME-Type Confusion
-- **Zeitaufwand:** 1 Stunde
-- **Zu implementieren:**
-  ```typescript
-  // next.config.js
-  const securityHeaders = [
-    { key: 'X-DNS-Prefetch-Control', value: 'on' },
-    { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
-    { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-    { key: 'X-Content-Type-Options', value: 'nosniff' },
-    { key: 'X-XSS-Protection', value: '1; mode=block' },
-    { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-    { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-  ]
-  ```
+- **Status:** ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
+- **Risiko:** ✅ Abgedeckt
+- **Zeitaufwand:** ✅ Erledigt
+- **Implementiert:**
+  - ✅ `next.config.ts` mit allen Security Headers
+  - ✅ X-DNS-Prefetch-Control
+  - ✅ Strict-Transport-Security
+  - ✅ X-Frame-Options
+  - ✅ X-Content-Type-Options
+  - ✅ X-XSS-Protection
+  - ✅ Referrer-Policy
+  - ✅ Permissions-Policy
 - **Testen:**
   - https://securityheaders.com/
   - https://observatory.mozilla.org/
 
 #### 2.2 Content Security Policy (CSP)
-- **Status:** ❌ NICHT IMPLEMENTIERT
-- **Risiko:** XSS-Angriffe, Code-Injection
-- **Zeitaufwand:** 2-3 Stunden
-- **Implementation:**
-  ```typescript
-  // middleware.ts mit Nonce-Support
-  const cspHeader = `
-    default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic';
-    style-src 'self' 'nonce-${nonce}';
-    img-src 'self' blob: data: https:;
-    font-src 'self';
-    object-src 'none';
-    base-uri 'self';
-    form-action 'self';
-    frame-ancestors 'none';
-  `
-  ```
+- **Status:** ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
+- **Risiko:** ✅ Abgedeckt
+- **Zeitaufwand:** ✅ Erledigt
+- **Implementiert:**
+  - ✅ `src/middleware.ts` mit CSP und Nonce-Support
+  - ✅ Nonce-basierte Script/Style Validierung
+  - ✅ Strict CSP Policy für alle Routes
+  - ✅ Sentry und Vercel Domains erlaubt
+  - ✅ Upgrade-Insecure-Requests aktiviert
 
 #### 2.3 Rate Limiting
-- **Status:** ❌ NICHT IMPLEMENTIERT
-- **Risiko:** DoS-Attacken, API-Missbrauch, explodierende Kosten
-- **Zeitaufwand:** 3-4 Stunden
-- **Kritisch für:**
-  - [ ] Upload-Endpunkte (5 Uploads/Stunde pro IP)
-  - [ ] API-Endpunkte (20 Requests/Minute)
-  - [ ] Login (5 Versuche/15 Minuten)
-  - [ ] KI-Generierung (10 Requests/Stunde - sehr teuer!)
-- **Empfohlene Lösung:**
-  ```bash
-  npm install @upstash/ratelimit @upstash/redis
-  ```
-- **Beispiel:**
-  ```typescript
-  const { success, limit, reset, remaining } = await uploadsLimiter.limit(ip)
-  if (!success) {
-    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 })
-  }
-  ```
+- **Status:** ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
+- **Risiko:** ✅ Abgedeckt
+- **Zeitaufwand:** ✅ Erledigt
+- **Implementiert:**
+  - ✅ `src/middleware.ts` mit In-Memory Rate Limiting
+  - ✅ Upload-Endpunkte (5 Uploads/Stunde pro IP) ✅
+  - ✅ Chat-API (20 Requests/Minute) ✅
+  - ✅ Generierung-API (10 Requests/Stunde) ✅
+  - ✅ Default Rate Limit (100 Requests/Minute) ✅
+  - ✅ Rate Limit Headers (X-RateLimit-Remaining, X-RateLimit-Reset, Retry-After)
+  - ⚠️ **Hinweis:** Für Production sollte Redis verwendet werden (aktuell In-Memory)
 
 #### 2.4 Input Validation & Sanitization
-- **Status:** ❌ UNKLAR
-- **Risiko:** SQL Injection, XSS, Command Injection
-- **Zeitaufwand:** 4-5 Stunden
-- **Zu validieren:**
-  - [ ] File Uploads (Typ, Größe, Name)
-  - [ ] User Inputs (E-Mail, Text, Prompts)
-  - [ ] API Parameters
-  - [ ] Database Queries
-- **Empfohlene Library:**
-  ```bash
-  npm install zod
-  ```
-- **Beispiel:**
-  ```typescript
-  const uploadSchema = z.object({
-    file: z.instanceof(File)
-      .refine((file) => file.size <= 500 * 1024 * 1024, 'Datei zu groß')
-      .refine((file) => ['video/mp4', 'audio/mp3'].includes(file.type)),
-    filename: z.string().regex(/^[a-zA-Z0-9_.-]+$/),
-  })
-  ```
+- **Status:** ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
+- **Risiko:** ✅ Abgedeckt
+- **Zeitaufwand:** ✅ Erledigt
+- **Implementiert:**
+  - ✅ `src/lib/validation.ts` mit Zod Schemas
+  - ✅ File Uploads (Typ, Größe, Name, Magic Bytes) ✅
+  - ✅ User Inputs (Chat Messages mit Sanitization) ✅
+  - ✅ API Parameters (Zod Validation) ✅
+  - ✅ Filename Validation (keine Path Traversal) ✅
+  - ✅ XSS Protection (Sanitization von User Inputs) ✅
+  - ✅ Magic Bytes Validierung für Dateitypen ✅
 
 #### 2.5 CSRF Protection
-- **Status:** ❌ NEXT.JS HAT KEINEN AUTOMATISCHEN CSRF-SCHUTZ
-- **Risiko:** Cross-Site Request Forgery Angriffe
-- **Zeitaufwand:** 2-3 Stunden
-- **Implementation:**
-  ```bash
-  npm install csrf
-  ```
-- **Middleware für Token-Validierung erforderlich**
+- **Status:** ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
+- **Risiko:** ✅ Abgedeckt
+- **Zeitaufwand:** ✅ Erledigt
+- **Implementiert:**
+  - ✅ `src/lib/csrf.ts` mit Token-Generierung und Validierung
+  - ✅ `src/app/api/csrf-token/route.ts` für Token-Endpoint
+  - ✅ CSRF Token Validation in `/api/upload` ✅
+  - ✅ CSRF Token Validation in `/api/chat` ✅
+  - ✅ HMAC-basierte Token-Signierung
+  - ✅ Timing-safe Token-Vergleich
 
 #### 2.6 Environment Variables Security
 - **Status:** ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
@@ -1255,10 +1228,11 @@ N8N_CALLBACK_SECRET="different-secret-for-callbacks"
 - **Zeitaufwand:** 12-20 Stunden
 
 **Pflicht-Seiten:**
-- [ ] `/impressum` - Impressum ✅ (s.o.)
-- [ ] `/datenschutz` - Datenschutzerklärung ✅ (s.o.)
-- [ ] `/agb` - AGB ✅ (s.o.)
-- [ ] `/cookies` - Cookie-Policy
+- [x] `/impressum` - Impressum ✅ **ERSTELLT** (Firmendaten ausfüllen!)
+- [x] `/datenschutz` - Datenschutzerklärung ✅ **VOLLSTÄNDIG**
+- [x] `/agb` - AGB ✅ **VOLLSTÄNDIG**
+- [x] `/widerruf` - Widerrufsbelehrung ✅ **ERSTELLT**
+- [x] `/cookies` - Cookie-Policy ✅ **ERSTELLT**
 - [ ] `/kontakt` - Kontaktformular
 - [ ] `/404` - Custom 404 Error Page
 - [ ] `/500` - Custom 500 Error Page
@@ -2198,10 +2172,10 @@ N8N_CALLBACK_SECRET="different-secret-for-callbacks"
 > ✅ **UPDATE:** Da n8n bereits läuft, reduziert sich der Aufwand für KI-Integration erheblich!
 
 ### Minimaler Launch (MVP)
-**Geschätzte Zeit:** 60-80 Stunden (1.5-2 Wochen Fulltime) ✅ **REDUZIERT**
+**Geschätzte Zeit:** 52-72 Stunden (1.3-1.8 Wochen Fulltime) ✅ **WEITER REDUZIERT**
 
 **Absolute Must-Haves:**
-1. Rechtliche Dokumente (8h)
+1. ✅ Rechtliche Dokumente (8h) ✅ **ERLEDIGT** - Nur noch Firmendaten ausfüllen (15-30 Min)
 2. Sicherheit-Basics (12h) - Security Headers, Rate Limiting, CSRF
 3. Authentication (12h)
 4. Upload-System mit Sicherheit (12h) ✅ REDUZIERT - UI bereits vorhanden, nur Server-side Validation
@@ -2213,7 +2187,7 @@ N8N_CALLBACK_SECRET="different-secret-for-callbacks"
 10. Testing (minimal, 8h)
 11. Monitoring (2h) ✅ REDUZIERT - Sentry bereits vorhanden
 
-**Bereits vorhanden (Zeitersparnis ~20-30h):**
+**Bereits vorhanden (Zeitersparnis ~28-35h):**
 - ✅ Sentry Error Tracking
 - ✅ Toast Notifications
 - ✅ Error Boundary
@@ -2221,6 +2195,8 @@ N8N_CALLBACK_SECRET="different-secret-for-callbacks"
 - ✅ File Upload UI mit Progress
 - ✅ Environment Variable Validation
 - ✅ Dark Mode
+- ✅ Rechtliche Seiten (Impressum, Datenschutz, AGB, Widerruf, Cookies)
+- ✅ Cookie-Consent Banner
 
 ### Empfohlener Launch
 **Geschätzte Zeit:** 120-160 Stunden (3-4 Wochen Fulltime) ✅ **REDUZIERT**
@@ -2251,15 +2227,15 @@ N8N_CALLBACK_SECRET="different-secret-for-callbacks"
 ## ⚡ Quick-Win Checkliste (Was kann sofort gemacht werden?)
 
 ### In 1 Tag:
-- [ ] Impressum erstellen und live stellen
-- [ ] Datenschutzerklärung mit Generator erstellen
-- [ ] Cookie-Banner implementieren
+- [x] Impressum erstellen und live stellen ✅ **ERSTELLT** - ⚠️ Firmendaten ausfüllen!
+- [x] Datenschutzerklärung mit Generator erstellen ✅ **VOLLSTÄNDIG**
+- [x] Cookie-Banner implementieren ✅ **VOLLSTÄNDIG**
 - [ ] 404/500 Error Pages erstellen (Error Boundary bereits vorhanden)
 - [ ] Security Headers konfigurieren
 - [x] .env Validation einrichten ✅ (bereits vorhanden)
 
 ### In 1 Woche:
-- [ ] AGB schreiben
+- [x] AGB schreiben ✅ **VOLLSTÄNDIG**
 - [ ] Authentication mit NextAuth implementieren
 - [ ] Database Schema aufsetzen
 - [ ] Rate Limiting für kritische Endpunkte
@@ -2282,18 +2258,18 @@ N8N_CALLBACK_SECRET="different-secret-for-callbacks"
 > ✅ **UPDATE:** Da n8n bereits läuft, ist die KI-Integration selbst nicht der Blocker - aber die **Webhook-Integration zwischen Next.js und n8n** muss sauber implementiert sein!
 
 ### 🔴 BLOCKER (Launch nicht möglich ohne):
-1. **Impressum fehlt** - Abmahngefahr!
-2. **Datenschutzerklärung fehlt** - DSGVO-Verstoß!
-3. **Cookie-Banner fehlt** - DSGVO-Verstoß!
+1. ~~**Impressum fehlt**~~ ✅ **SEITE ERSTELLT** - ⚠️ **Firmendaten noch ausfüllen!**
+2. ~~**Datenschutzerklärung fehlt**~~ ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
+3. ~~**Cookie-Banner fehlt**~~ ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
 4. **Keine Authentication** - Keine User-Verwaltung!
-5. **Upload-Sicherheit ungeklärt** - Malware-Risiko!
+5. **Upload-Sicherheit ungeklärt** - Malware-Risiko! (Server-side Validation ✅, Virus-Scanning fehlt)
 6. **n8n Webhook-Integration unklar** - Kommunikation Next.js ↔ n8n muss funktionieren!
-7. **Keine Rate Limiting** - DoS & Kosten-Explosion!
-8. **Input Validation unklar** - Security-Risiko!
+7. ~~**Keine Rate Limiting**~~ ✅ **IMPLEMENTIERT**
+8. ~~**Input Validation unklar**~~ ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
 
 ### 🟠 KRITISCHE MÄNGEL (Dringend beheben):
-9. Security Headers unvollständig
-10. CSRF Protection fehlt
+9. ~~Security Headers unvollständig~~ ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
+10. ~~CSRF Protection fehlt~~ ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
 11. Virus-Scanning fehlt
 12. Storage-Strategie unklar (Dateien gehen direkt zu n8n)
 13. Keine Cleanup-Policy (DSGVO!)
@@ -2348,15 +2324,15 @@ N8N_CALLBACK_SECRET="different-secret-for-callbacks"
 - ❌ Kosten-Tracking fehlt
 - ❌ Status-Updates werden nicht zuverlässig übermittelt (Callbacks fehlen)
 
-**Priorität 1:** Rechtliche Dokumente (kann parallel gemacht werden - 1 Tag)
+**Priorität 1:** ✅ **Rechtliche Dokumente** - Seiten erstellt, Firmendaten ausfüllen (15-30 Min)
 **Priorität 2:** Sicherheit (Rate Limiting, Input Validation, Upload Security - 3-4 Tage)
 **Priorität 3:** n8n Integration verifizieren und härten (2-3 Tage)
 **Priorität 4:** Authentication implementieren (2-3 Tage)
 **Priorität 5:** UI/UX vervollständigen (1 Woche)
 
 **Next Steps:**
-1. **Tag 1:** Rechtliche Dokumente SOFORT erstellen und live stellen
-2. **Tag 2-3:** Security-Audit durchführen und Lücken schließen
+1. ✅ **Tag 1:** Rechtliche Dokumente erstellt - ⚠️ **Firmendaten in Impressum ausfüllen!**
+2. **Tag 1-2:** Security-Audit durchführen und Lücken schließen
 3. **Tag 4-5:** n8n Webhook-Integration testen und härten
 4. **Tag 6-8:** Authentication implementieren
 5. **Woche 2:** UI/UX vervollständigen
@@ -2376,10 +2352,26 @@ N8N_CALLBACK_SECRET="different-secret-for-callbacks"
 ---
 
 **Erstellt am:** 29. Januar 2026  
-**Aktualisiert am:** 29. Januar 2026 (nach Code-Verifikation)  
+**Aktualisiert am:** 29. Januar 2026 (Rechtliche Seiten + Sicherheit 2.x implementiert)  
 **Für:** timax.vercel.app  
-**Version:** 1.1 - Vollständige Launch-Checkliste (verifiziert)
+**Version:** 1.2 - Vollständige Launch-Checkliste (Rechtliche Seiten ✅)
 
 > ✅ **VERIFIKATION DURCHGEFÜHRT:** Diese Checkliste wurde am 29. Januar 2026 mit dem tatsächlichen Code abgeglichen. Status-Werte wurden aktualisiert basierend auf vorhandener Implementierung.
+> 
+> ✅ **UPDATE 29.01.2026:** Rechtliche Seiten (1.1-1.5) vollständig implementiert:
+> - Impressum-Seite erstellt (Firmendaten noch ausfüllen!)
+> - Datenschutzerklärung DSGVO-konform implementiert
+> - AGB mit KI-Haftungsausschluss erstellt
+> - Widerrufsbelehrung mit Musterformular
+> - Cookie-Richtlinie Seite
+> - Cookie-Consent Banner mit granularer Auswahl
+> - Footer auf allen Seiten erweitert
+>
+> ✅ **UPDATE 29.01.2026:** Sicherheit (2.1-2.5) vollständig implementiert:
+> - Security Headers in next.config.ts
+> - Content Security Policy (CSP) mit Nonce-Support in middleware.ts
+> - Rate Limiting für alle API-Endpunkte
+> - Input Validation & Sanitization mit Zod
+> - CSRF Protection mit Token-basierter Validierung
 
 *Diese Checkliste sollte als lebendiges Dokument behandelt werden und regelmäßig aktualisiert werden, wenn Features implementiert oder neue Anforderungen identifiziert werden.*

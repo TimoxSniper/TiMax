@@ -1,9 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as Sentry from "@sentry/nextjs";
 import { validateRequiredEnv } from "@/lib/env";
+import {
+  uploadSchema,
+  validateFilename,
+  validateFileType,
+} from "@/lib/validation";
+import { validateCSRFToken } from "@/lib/csrf";
 
 export async function POST(request: NextRequest) {
   try {
+    // CSRF Protection
+    const csrfToken = request.headers.get("x-csrf-token");
+    if (!validateCSRFToken(csrfToken)) {
+      return NextResponse.json(
+        { success: false, error: "Ungültiger CSRF Token" },
+        { status: 403 }
+      );
+    }
+
     // Validiere erforderliche Environment-Variablen
     const env = validateRequiredEnv();
 
@@ -13,6 +28,41 @@ export async function POST(request: NextRequest) {
     if (!file) {
       return NextResponse.json(
         { success: false, error: "Keine Datei bereitgestellt" },
+        { status: 400 }
+      );
+    }
+
+    // Validiere Dateiname
+    if (!validateFilename(file.name)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Ungültiger Dateiname. Nur Buchstaben, Zahlen, Punkte, Unterstriche und Bindestriche erlaubt",
+        },
+        { status: 400 }
+      );
+    }
+
+    // Validiere File mit Zod Schema
+    const validationResult = uploadSchema.safeParse({ file });
+    if (!validationResult.success) {
+      const errorMessage =
+        validationResult.error.errors[0]?.message ||
+        "Ungültige Datei";
+      return NextResponse.json(
+        { success: false, error: errorMessage },
+        { status: 400 }
+      );
+    }
+
+    // Zusätzliche Magic Bytes Validierung
+    const isValidType = await validateFileType(file);
+    if (!isValidType) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Dateityp konnte nicht verifiziert werden. Bitte verwenden Sie eine gültige Audio- oder Videodatei.",
+        },
         { status: 400 }
       );
     }
