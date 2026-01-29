@@ -18,12 +18,18 @@ export function Hero({ heading, subheading, className }: HeroProps) {
 
   return (
     <div className={cn("relative flex flex-col items-center justify-center space-y-6 text-center", className)}>
-      <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+      <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl text-foreground">
         <span 
           className={cn(
-            "bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent",
+            "bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text",
             "transition-all duration-1000 ease-out"
           )}
+          style={{
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            color: 'inherit', // Fallback falls Gradient nicht funktioniert
+          }}
         >
           {heading}
         </span>

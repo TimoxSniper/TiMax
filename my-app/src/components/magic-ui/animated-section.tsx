@@ -28,24 +28,36 @@ export const AnimatedSection = memo(function AnimatedSection({
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const currentRef = ref.current;
+    if (!currentRef) return;
+
+    // Prüfe sofort beim Mount, ob das Element bereits sichtbar ist
+    const checkInitialVisibility = () => {
+      const rect = currentRef.getBoundingClientRect();
+      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+      const isInViewport = rect.top < windowHeight && rect.bottom > 0;
+      
+      if (isInViewport) {
+        setIsVisible(true);
+      }
+    };
+
+    // Prüfe sofort
+    checkInitialVisibility();
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1, rootMargin: '50px' } // rootMargin für frühere Erkennung
     );
 
-    const currentRef = ref.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
+    observer.observe(currentRef);
 
     return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
+      observer.unobserve(currentRef);
     };
   }, []);
 
