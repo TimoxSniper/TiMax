@@ -359,7 +359,7 @@ export default function Home() {
       <footer className="relative mt-auto border-t border-black/5 dark:border-white/5 py-12 z-10">
         <div className="container mx-auto max-w-5xl px-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-sm text-black/50 dark:text-white/50">© 2026 timax. Coming Soon.</p>
+            <p className="text-sm text-black/50 dark:text-white/50">© 2026 TiMax. Coming Soon.</p>
             <nav className="flex flex-wrap justify-center gap-4 sm:gap-6">
               <Link
                 href="/impressum"
