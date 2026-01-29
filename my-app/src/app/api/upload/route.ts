@@ -9,6 +9,10 @@ import {
 import { validateCSRFToken } from "@/lib/csrf";
 import { UPLOAD_CONFIG } from "@/lib/upload-config";
 
+// Vercel-Konfiguration für größere Dateien
+export const runtime = "nodejs";
+export const maxDuration = 60; // 60 Sekunden Timeout für große Dateien
+
 export async function POST(request: NextRequest) {
   try {
     // CSRF Protection
