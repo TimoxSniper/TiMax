@@ -82,42 +82,6 @@ function checkRateLimit(
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // CSP Header generieren - Nonce erstellen
-  const nonce = Buffer.from(
-    Array.from(crypto.getRandomValues(new Uint8Array(16)))
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("")
-  ).toString("base64");
-  // Hashes für Next.js Inline-Scripts (von Browser-Fehlermeldungen)
-  const scriptHashes = [
-    "'sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo='",
-    "'sha256-785ajcyXqRN19y7eTBno8NdZZ13UmfL41I4uk0iwRS8='",
-    "'sha256-Jz+3dLASJW4r3qRWq9NV0DM6jxv9Bkiu7NE2yZ2I+Vw='",
-    "'sha256-8QGtv9j9lw2t07LbQSpKDeynV1kzA+PvAYjQDKTyYQY='",
-    "'sha256-nzmdl+AXdlsLPaG5B+ouuCXbm2uL+onDzFRTXheLkqo='",
-    "'sha256-NQvBp15KZHVMaUc/ogD5gUFB4cQg8Q5iMwGFG991U7U='",
-    "'sha256-+213lHkxCofqBqJ8kFJKs+ftpbLSqcGFknvNU11nF4='",
-    "'sha256-weLWrWsjytXY4FB/KiYuhW7OfLGLGBRrd8ZJ6XIfSSQ='",
-  ].join(" ");
-
-  // CSP Header: 'strict-dynamic' entfernt, damit Next.js Chunks von 'self' geladen werden können
-  // Die Hashes erlauben die Next.js Inline-Scripts
-  // 'self' erlaubt direkte Script-Ladungen von der eigenen Domain (für Next.js Chunks)
-  const cspHeader = `
-    default-src 'self';
-    script-src 'self' 'nonce-${nonce}' ${scriptHashes} https://vercel.live https://*.sentry.io;
-    style-src 'self' 'unsafe-inline';
-    img-src 'self' blob: data: https:;
-    font-src 'self' data:;
-    connect-src 'self' https://*.sentry.io https://*.vercel.app https://*.n8n.cloud https://*.n8n.io;
-    frame-src 'none';
-    object-src 'none';
-    base-uri 'self';
-    form-action 'self';
-    frame-ancestors 'none';
-    upgrade-insecure-requests;
-  `.replace(/\s{2,}/g, " ").trim();
-
   // Rate Limiting für API Routes
   if (pathname.startsWith("/api/")) {
     const ip = getClientIP(request);
@@ -154,19 +118,11 @@ export function middleware(request: NextRequest) {
       response.headers.set("X-RateLimit-Reset", rateLimit.resetTime.toString());
     }
 
-    // CSP Header hinzufügen
-    response.headers.set("Content-Security-Policy", cspHeader);
-    response.headers.set("X-Nonce", nonce);
-
     return response;
   }
 
-  // Für alle anderen Routes nur CSP hinzufügen
-  const response = NextResponse.next();
-  response.headers.set("Content-Security-Policy", cspHeader);
-  response.headers.set("X-Nonce", nonce);
-
-  return response;
+  // Für alle anderen Routes einfach durchlassen
+  return NextResponse.next();
 }
 
 export const config = {
