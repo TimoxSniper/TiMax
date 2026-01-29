@@ -98,9 +98,12 @@ export function middleware(request: NextRequest) {
     "'sha256-NQvBp15KZHVMaUc/ogD5gUFB4cQg8Q5iMwGFG991U7U='",
   ].join(" ");
 
+  // CSP Header: 'strict-dynamic' entfernt, damit Next.js Chunks von 'self' geladen werden können
+  // Die Hashes erlauben die Next.js Inline-Scripts
+  // 'self' erlaubt direkte Script-Ladungen von der eigenen Domain (für Next.js Chunks)
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${scriptHashes} https://vercel.live https://*.sentry.io;
+    script-src 'self' 'nonce-${nonce}' ${scriptHashes} https://vercel.live https://*.sentry.io;
     style-src 'self' 'unsafe-inline';
     img-src 'self' blob: data: https:;
     font-src 'self' data:;
