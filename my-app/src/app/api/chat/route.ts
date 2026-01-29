@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     const validationResult = chatSchema.safeParse(body);
     if (!validationResult.success) {
       const errorMessage =
-        validationResult.error.errors[0]?.message ||
+        validationResult.error.issues[0]?.message ||
         "Ungültige Eingabedaten";
       return NextResponse.json(
         { success: false, error: errorMessage },
