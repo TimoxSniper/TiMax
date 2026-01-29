@@ -4,7 +4,6 @@ import { useState, useTransition } from "react";
 import { TranscriptViewer } from "@/components/text-generator/transcript-viewer";
 import { FormatSelector } from "@/components/text-generator/format-selector";
 import { TextOutput } from "@/components/text-generator/text-output";
-import { mockTranscript } from "@/lib/mock-transcript";
 import { type FormatType, formatOptions } from "@/lib/text-templates";
 import { generateTextAction } from "@/app/text-generator/actions";
 import { Separator } from "@/components/ui/separator";
@@ -20,15 +19,21 @@ export default function TextGeneratorPage() {
   const [generatedText, setGeneratedText] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [transcript, setTranscript] = useState<string>("");
 
   const handleFormatSelect = (format: FormatType) => {
+    if (!transcript || transcript.trim().length === 0) {
+      setError("Bitte laden Sie zuerst eine Datei hoch, um ein Transkript zu erhalten.");
+      return;
+    }
+
     setSelectedFormat(format);
     setError(null);
     setGeneratedText(""); // Alten Text löschen während Loading
     
     startTransition(async () => {
       try {
-        const result = await generateTextAction(format, mockTranscript);
+        const result = await generateTextAction(format, transcript);
         
         if (result.success && result.text) {
           setGeneratedText(result.text);
@@ -90,9 +95,18 @@ export default function TextGeneratorPage() {
           <div className="space-y-6">
             {/* Upload-Bereich */}
             <FileUpload 
-              onUploadSuccess={(fileName) => {
+              onUploadSuccess={(fileName, transcriptText) => {
                 // In Production: Hier würde man zu einem Analytics-Service loggen
                 // Removed console.log for production
+                
+                // Setze Transkript wenn vorhanden
+                if (transcriptText && transcriptText.trim().length > 0) {
+                  setTranscript(transcriptText);
+                  setError(null);
+                  // Lösche generierten Text wenn neues Transkript kommt
+                  setGeneratedText("");
+                  setSelectedFormat(null);
+                }
                 
                 // Optional: Scroll zu Format-Auswahl nach Upload
                 setTimeout(() => {
@@ -107,6 +121,7 @@ export default function TextGeneratorPage() {
                 if (process.env.NODE_ENV === "development") {
                   console.error("Upload-Fehler:", error);
                 }
+                setError(error);
               }}
             />
             
@@ -118,7 +133,9 @@ export default function TextGeneratorPage() {
               </Link>
             </Button>
             
-            <TranscriptViewer transcript={mockTranscript} />
+            <TranscriptViewer 
+              transcript={transcript || "Laden Sie eine Audio- oder Videodatei hoch, um das Transkript zu sehen."} 
+            />
           </div>
 
           {/* Right Column: Format Selection & Output */}
@@ -161,9 +178,9 @@ export default function TextGeneratorPage() {
               <div className="size-12 sm:size-14 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mx-auto sm:mx-auto mb-3 transition-transform hover:scale-110">
                 <span className="text-primary font-bold text-lg sm:text-xl" aria-label="Schritt 1">1</span>
               </div>
-              <p className="font-semibold text-foreground text-sm sm:text-base">Transkript anzeigen</p>
+              <p className="font-semibold text-foreground text-sm sm:text-base">Datei hochladen</p>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Das Beispiel-Transkript wird automatisch geladen und übersichtlich dargestellt
+                Laden Sie eine Audio- oder Videodatei hoch. Das Transkript wird automatisch erstellt und angezeigt
               </p>
             </div>
             <div className="space-y-3 p-4 sm:p-6 rounded-xl bg-muted/30 transition-all duration-200 hover:bg-muted/50 hover:shadow-md">

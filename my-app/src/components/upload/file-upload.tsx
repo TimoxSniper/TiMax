@@ -11,7 +11,7 @@ const ALLOWED_TYPES = [
 ];
 
 interface FileUploadProps {
-  onUploadSuccess?: (fileName: string) => void;
+  onUploadSuccess?: (fileName: string, transcript?: string) => void;
   onUploadError?: (error: string) => void;
 }
 
@@ -98,13 +98,17 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       });
 
       // Promise für async/await
-      const uploadPromise = new Promise<{ success: boolean; fileName?: string; error?: string }>((resolve, reject) => {
+      const uploadPromise = new Promise<{ success: boolean; fileName?: string; transcript?: string; error?: string }>((resolve, reject) => {
         xhr.addEventListener("load", () => {
           if (xhr.status >= 200 && xhr.status < 300) {
             try {
               const data = JSON.parse(xhr.responseText);
               if (data.success) {
-                resolve({ success: true, fileName: data.fileName || file.name });
+                resolve({ 
+                  success: true, 
+                  fileName: data.fileName || file.name,
+                  transcript: data.transcript 
+                });
               } else {
                 reject(new Error(data.error || "Upload fehlgeschlagen"));
               }
@@ -139,7 +143,7 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       const result = await uploadPromise;
       setProgress(100);
       setSuccess(true);
-      onUploadSuccess?.(result.fileName || file.name);
+      onUploadSuccess?.(result.fileName || file.name, result.transcript);
       
       // Alten Timeout clearen falls vorhanden
       if (resetTimeoutRef.current) {

@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-Request-Type": "chat", // Header zur Unterscheidung im n8n Workflow
       },
       body: JSON.stringify({
         body: {

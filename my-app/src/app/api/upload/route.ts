@@ -80,6 +80,9 @@ export async function POST(request: NextRequest) {
     // Upload zu n8n Form-Webhook
     const response = await fetch(env.N8N_UPLOAD_WEBHOOK_URL, {
       method: "POST",
+      headers: {
+        "X-Request-Type": "upload", // Header zur Unterscheidung im n8n Workflow
+      },
       body: n8nFormData,
     });
 
@@ -92,6 +95,7 @@ export async function POST(request: NextRequest) {
     const contentType = response.headers.get("content-type") || "";
     let status = "✅ Erfolgreich gespeichert";
     let fileName = file.name;
+    let transcript: string | undefined = undefined;
 
     if (contentType.includes("application/json")) {
       // JSON-Response (Webhook)
@@ -136,6 +140,30 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        // Extrahiere transcript mit Validierung
+        if (data && typeof data === "object") {
+          if (typeof data.transcript === "string" && data.transcript.trim().length > 0) {
+            transcript = data.transcript;
+          } else if (data.json && typeof data.json.transcript === "string" && data.json.transcript.trim().length > 0) {
+            transcript = data.json.transcript;
+          } else if (typeof data.text === "string" && data.text.trim().length > 0) {
+            transcript = data.text;
+          } else if (data.json && typeof data.json.text === "string" && data.json.text.trim().length > 0) {
+            transcript = data.json.text;
+          }
+        } else if (Array.isArray(data) && data.length > 0) {
+          const firstItem = data[0];
+          if (firstItem?.json?.transcript && typeof firstItem.json.transcript === "string" && firstItem.json.transcript.trim().length > 0) {
+            transcript = firstItem.json.transcript;
+          } else if (firstItem?.transcript && typeof firstItem.transcript === "string" && firstItem.transcript.trim().length > 0) {
+            transcript = firstItem.transcript;
+          } else if (firstItem?.json?.text && typeof firstItem.json.text === "string" && firstItem.json.text.trim().length > 0) {
+            transcript = firstItem.json.text;
+          } else if (firstItem?.text && typeof firstItem.text === "string" && firstItem.text.trim().length > 0) {
+            transcript = firstItem.text;
+          }
+        }
+
         // Validierung: fileName sollte nicht leer sein
         if (!fileName || fileName.trim().length === 0) {
           fileName = file.name; // Fallback auf Original-Dateiname
@@ -158,6 +186,7 @@ export async function POST(request: NextRequest) {
       success: true,
       status,
       fileName,
+      ...(transcript && { transcript }),
     });
   } catch (error) {
     // Sende Fehler an Sentry
