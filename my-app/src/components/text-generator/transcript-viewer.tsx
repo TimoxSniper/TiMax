@@ -43,14 +43,24 @@ export function TranscriptViewer({ transcript, wordCount }: TranscriptViewerProp
           aria-label="Transkript-Inhalt"
           tabIndex={0}
         >
-          {transcript.split('\n\n').map((paragraph, index) => (
-            <p 
-              key={index} 
-              className="text-sm sm:text-base leading-relaxed text-foreground/90 last:mb-0"
-            >
-              {paragraph}
-            </p>
-          ))}
+          {transcript.trim() ? (
+            transcript.split('\n\n').filter(p => p.trim()).map((paragraph, index) => (
+              <p 
+                key={index} 
+                className="text-sm sm:text-base leading-relaxed text-foreground/90 last:mb-0"
+              >
+                {paragraph}
+              </p>
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full min-h-[200px] text-center text-muted-foreground">
+              <FileText className="size-12 opacity-40 mb-4" aria-hidden="true" />
+              <p className="text-sm font-medium mb-2 text-foreground">Noch kein Transkript</p>
+              <p className="text-xs max-w-xs">
+                Laden Sie eine Audio- oder Videodatei hoch, um das Transkript zu sehen.
+              </p>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

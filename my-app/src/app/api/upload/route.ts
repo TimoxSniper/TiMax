@@ -111,18 +111,59 @@ export async function POST(request: NextRequest) {
     console.log("[Upload API] Response Content-Type:", contentType);
     console.log("[Upload API] Response Status:", response.status);
 
-    if (contentType.includes("application/json")) {
-      // JSON-Response (Webhook)
+    if (contentType.includes("application/json") || contentType.includes("text/plain") || contentType.includes("text/")) {
+      // JSON-Response oder Text-Response (Webhook)
       try {
-        const data = await response.json();
+        const responseText = await response.text();
+        console.log("[Upload API] Raw Response Text (erste 500 Zeichen):", responseText.substring(0, 500));
+        
+        let data: any;
+        
+        // Versuche zuerst als JSON zu parsen
+        try {
+          data = JSON.parse(responseText);
+          console.log("[Upload API] Response als JSON geparst");
+        } catch (parseError) {
+          // Wenn JSON-Parsing fehlschlägt, ist es wahrscheinlich reiner Text (Transkript)
+          console.log("[Upload API] Response ist kein JSON, behandele als reines Transkript");
+          transcript = responseText.trim();
+          if (transcript.length > 0) {
+            console.log("[Upload API] ✅ Transkript als reiner Text erkannt, Länge:", transcript.length);
+            return NextResponse.json({
+              success: true,
+              status: "✅ Erfolgreich transkribiert",
+              fileName: file.name,
+              transcript: transcript
+            });
+          }
+          // Falls leer, weiter mit Standard-Werten
+          data = null;
+        }
 
         // Debug-Logging - immer aktiv für Troubleshooting
-        console.log("[Upload API] n8n Response:", JSON.stringify(data, null, 2));
+        if (data) {
+          console.log("[Upload API] n8n Response:", JSON.stringify(data, null, 2));
+        }
+
+        // Wenn data ein String ist, ist es wahrscheinlich das Transkript
+        if (typeof data === "string" && data.trim().length > 0) {
+          transcript = data.trim();
+          console.log("[Upload API] ✅ Transkript als String in JSON erkannt, Länge:", transcript.length);
+          return NextResponse.json({
+            success: true,
+            status: "✅ Erfolgreich transkribiert",
+            fileName: file.name,
+            transcript: transcript
+          });
+        }
 
         // Validierung: Prüfe ob data existiert und ein valides Format hat
         if (!data || (typeof data !== "object" && !Array.isArray(data))) {
-          throw new Error("Ungültiges Response-Format von n8n Upload Webhook");
-        }
+          // Wenn kein valides Format, aber wir haben bereits das Transkript geprüft
+          // Verwende Standardwerte
+          status = "✅ Datei erfolgreich hochgeladen und wird verarbeitet";
+          fileName = file.name;
+        } else {
 
         // Extrahiere status mit Validierung
         if (data && typeof data === "object") {
@@ -160,6 +201,26 @@ export async function POST(request: NextRequest) {
         // Extrahiere transcript mit Validierung - erweiterte Suche
         const extractTranscript = (obj: any): string | undefined => {
           if (!obj || typeof obj !== "object") return undefined;
+
+          // ElevenLabs spezifische Struktur: words Array
+          if (Array.isArray(obj.words) && obj.words.length > 0) {
+            // Versuche zuerst words[0].text (falls nur ein Wort vorhanden)
+            const firstWord = obj.words[0];
+            if (firstWord && typeof firstWord.text === "string" && firstWord.text.trim().length > 0) {
+              // Wenn nur ein Wort, verwende es direkt
+              if (obj.words.length === 1) {
+                return firstWord.text;
+              }
+              // Wenn mehrere Wörter, kombiniere alle
+              const combinedText = obj.words
+                .map((w: any) => w?.text || "")
+                .filter((t: string) => t.trim().length > 0)
+                .join(" ");
+              if (combinedText.trim().length > 0) {
+                return combinedText;
+              }
+            }
+          }
 
           // Direkte Felder - explizite Checks
           const specificFields = ["transcript", "text", "content", "output", "result", "response", "transcription"];
