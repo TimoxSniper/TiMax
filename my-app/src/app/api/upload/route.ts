@@ -164,130 +164,130 @@ export async function POST(request: NextRequest) {
           status = "✅ Datei erfolgreich hochgeladen und wird verarbeitet";
           fileName = file.name;
         } else {
-
-        // Extrahiere status mit Validierung
-        if (data && typeof data === "object") {
-          if (typeof data.status === "string") {
-            status = data.status;
-          } else if (data.json && typeof data.json.status === "string") {
-            status = data.json.status;
-          }
-        } else if (Array.isArray(data) && data.length > 0) {
-          // Array-Response (n8n Standard-Format)
-          const firstItem = data[0];
-          if (firstItem?.json?.status && typeof firstItem.json.status === "string") {
-            status = firstItem.json.status;
-          } else if (firstItem?.status && typeof firstItem.status === "string") {
-            status = firstItem.status;
-          }
-        }
-
-        // Extrahiere fileName mit Validierung
-        if (data && typeof data === "object") {
-          if (typeof data.fileName === "string") {
-            fileName = data.fileName;
-          } else if (data.json && typeof data.json.fileName === "string") {
-            fileName = data.json.fileName;
-          }
-        } else if (Array.isArray(data) && data.length > 0) {
-          const firstItem = data[0];
-          if (firstItem?.json?.fileName && typeof firstItem.json.fileName === "string") {
-            fileName = firstItem.json.fileName;
-          } else if (firstItem?.fileName && typeof firstItem.fileName === "string") {
-            fileName = firstItem.fileName;
-          }
-        }
-
-        // Extrahiere transcript mit Validierung - erweiterte Suche
-        const extractTranscript = (obj: any): string | undefined => {
-          if (!obj || typeof obj !== "object") return undefined;
-
-          // ElevenLabs spezifische Struktur: words Array
-          if (Array.isArray(obj.words) && obj.words.length > 0) {
-            // Versuche zuerst words[0].text (falls nur ein Wort vorhanden)
-            const firstWord = obj.words[0];
-            if (firstWord && typeof firstWord.text === "string" && firstWord.text.trim().length > 0) {
-              // Wenn nur ein Wort, verwende es direkt
-              if (obj.words.length === 1) {
-                return firstWord.text;
-              }
-              // Wenn mehrere Wörter, kombiniere alle
-              const combinedText = obj.words
-                .map((w: any) => w?.text || "")
-                .filter((t: string) => t.trim().length > 0)
-                .join(" ");
-              if (combinedText.trim().length > 0) {
-                return combinedText;
-              }
+          // Extrahiere status mit Validierung
+          if (data && typeof data === "object") {
+            if (typeof data.status === "string") {
+              status = data.status;
+            } else if (data.json && typeof data.json.status === "string") {
+              status = data.json.status;
+            }
+          } else if (Array.isArray(data) && data.length > 0) {
+            // Array-Response (n8n Standard-Format)
+            const firstItem = data[0];
+            if (firstItem?.json?.status && typeof firstItem.json.status === "string") {
+              status = firstItem.json.status;
+            } else if (firstItem?.status && typeof firstItem.status === "string") {
+              status = firstItem.status;
             }
           }
 
-          // Direkte Felder - explizite Checks
-          const specificFields = ["transcript", "text", "content", "output", "result", "response", "transcription"];
-          for (const field of specificFields) {
-            if (typeof obj[field] === "string" && obj[field].trim().length > 0) {
-              return obj[field];
+          // Extrahiere fileName mit Validierung
+          if (data && typeof data === "object") {
+            if (typeof data.fileName === "string") {
+              fileName = data.fileName;
+            } else if (data.json && typeof data.json.fileName === "string") {
+              fileName = data.json.fileName;
+            }
+          } else if (Array.isArray(data) && data.length > 0) {
+            const firstItem = data[0];
+            if (firstItem?.json?.fileName && typeof firstItem.json.fileName === "string") {
+              fileName = firstItem.json.fileName;
+            } else if (firstItem?.fileName && typeof firstItem.fileName === "string") {
+              fileName = firstItem.fileName;
             }
           }
 
-          // Verschachtelte Felder - Rekursive Suche
-          const nestedFields = ["json", "body", "data", "result", "output"];
-          for (const field of nestedFields) {
-            if (obj[field] && typeof obj[field] === "object") {
-              const nested = extractTranscript(obj[field]);
-              if (nested) return nested;
-            }
-          }
+          // Extrahiere transcript mit Validierung - erweiterte Suche
+          const extractTranscript = (obj: any): string | undefined => {
+            if (!obj || typeof obj !== "object") return undefined;
 
-          // Heuristische Suche in allen String-Feldern
-          // Suche nach Feldern, die relevante Schlüsselwörter enthalten
-          for (const key in obj) {
-            const lowerKey = key.toLowerCase();
-            if (lowerKey.includes("transcript") ||
-              lowerKey.includes("text") ||
-              lowerKey.includes("content") ||
-              lowerKey.includes("out") ||
-              lowerKey.includes("res")) {
-
-              // Weniger strikte Längenprüfung (min 5 Zeichen statt 50)
-              // Damit auch kurze Tests funktionieren
-              if (typeof obj[key] === "string" && obj[key].trim().length > 5) {
-                return obj[key];
+            // ElevenLabs spezifische Struktur: words Array
+            if (Array.isArray(obj.words) && obj.words.length > 0) {
+              // Versuche zuerst words[0].text (falls nur ein Wort vorhanden)
+              const firstWord = obj.words[0];
+              if (firstWord && typeof firstWord.text === "string" && firstWord.text.trim().length > 0) {
+                // Wenn nur ein Wort, verwende es direkt
+                if (obj.words.length === 1) {
+                  return firstWord.text;
+                }
+                // Wenn mehrere Wörter, kombiniere alle
+                const combinedText = obj.words
+                  .map((w: any) => w?.text || "")
+                  .filter((t: string) => t.trim().length > 0)
+                  .join(" ");
+                if (combinedText.trim().length > 0) {
+                  return combinedText;
+                }
               }
             }
-          }
 
-          return undefined;
-        };
-
-        if (Array.isArray(data) && data.length > 0) {
-          // Array-Response: Prüfe alle Items
-          for (const item of data) {
-            const extracted = extractTranscript(item);
-            if (extracted) {
-              transcript = extracted;
-              break;
+            // Direkte Felder - explizite Checks
+            const specificFields = ["transcript", "text", "content", "output", "result", "response", "transcription"];
+            for (const field of specificFields) {
+              if (typeof obj[field] === "string" && obj[field].trim().length > 0) {
+                return obj[field];
+              }
             }
-          }
-        } else if (data && typeof data === "object") {
-          transcript = extractTranscript(data);
-        }
 
-        // Debug-Logging für Transkript - immer aktiv
-        if (transcript) {
-          console.log("[Upload API] ✅ Transkript gefunden, Länge:", transcript.length);
-          console.log("[Upload API] Transkript (erste 200 Zeichen):", transcript.substring(0, 200));
-        } else {
-          console.warn("[Upload API] ⚠️ Kein Transkript in Response gefunden");
-          console.log("[Upload API] Verfügbare Felder:", Object.keys(data).join(", "));
+            // Verschachtelte Felder - Rekursive Suche
+            const nestedFields = ["json", "body", "data", "result", "output"];
+            for (const field of nestedFields) {
+              if (obj[field] && typeof obj[field] === "object") {
+                const nested = extractTranscript(obj[field]);
+                if (nested) return nested;
+              }
+            }
+
+            // Heuristische Suche in allen String-Feldern
+            // Suche nach Feldern, die relevante Schlüsselwörter enthalten
+            for (const key in obj) {
+              const lowerKey = key.toLowerCase();
+              if (lowerKey.includes("transcript") ||
+                lowerKey.includes("text") ||
+                lowerKey.includes("content") ||
+                lowerKey.includes("out") ||
+                lowerKey.includes("res")) {
+
+                // Weniger strikte Längenprüfung (min 5 Zeichen statt 50)
+                // Damit auch kurze Tests funktionieren
+                if (typeof obj[key] === "string" && obj[key].trim().length > 5) {
+                  return obj[key];
+                }
+              }
+            }
+
+            return undefined;
+          };
+
           if (Array.isArray(data) && data.length > 0) {
-            console.log("[Upload API] Array-Item Felder:", Object.keys(data[0] || {}).join(", "));
+            // Array-Response: Prüfe alle Items
+            for (const item of data) {
+              const extracted = extractTranscript(item);
+              if (extracted) {
+                transcript = extracted;
+                break;
+              }
+            }
+          } else if (data && typeof data === "object") {
+            transcript = extractTranscript(data);
           }
-        }
 
-        // Validierung: fileName sollte nicht leer sein
-        if (!fileName || fileName.trim().length === 0) {
-          fileName = file.name; // Fallback auf Original-Dateiname
+          // Debug-Logging für Transkript - immer aktiv
+          if (transcript) {
+            console.log("[Upload API] ✅ Transkript gefunden, Länge:", transcript.length);
+            console.log("[Upload API] Transkript (erste 200 Zeichen):", transcript.substring(0, 200));
+          } else {
+            console.warn("[Upload API] ⚠️ Kein Transkript in Response gefunden");
+            console.log("[Upload API] Verfügbare Felder:", Object.keys(data).join(", "));
+            if (Array.isArray(data) && data.length > 0) {
+              console.log("[Upload API] Array-Item Felder:", Object.keys(data[0] || {}).join(", "));
+            }
+          }
+
+          // Validierung: fileName sollte nicht leer sein
+          if (!fileName || fileName.trim().length === 0) {
+            fileName = file.name; // Fallback auf Original-Dateiname
+          }
         }
       } catch (jsonError) {
         // Falls JSON-Parsing fehlschlägt, verwende Standardwerte
