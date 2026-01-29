@@ -97,6 +97,7 @@ export function middleware(request: NextRequest) {
     "'sha256-nzmdl+AXdlsLPaG5B+ouuCXbm2uL+onDzFRTXheLkqo='",
     "'sha256-NQvBp15KZHVMaUc/ogD5gUFB4cQg8Q5iMwGFG991U7U='",
     "'sha256-+213lHkxCofqBqJ8kFJKs+ftpbLSqcGFknvNU11nF4='",
+    "'sha256-weLWrWsjytXY4FB/KiYuhW7OfLGLGBRrd8ZJ6XIfSSQ='",
   ].join(" ");
 
   // CSP Header: 'strict-dynamic' entfernt, damit Next.js Chunks von 'self' geladen werden können
