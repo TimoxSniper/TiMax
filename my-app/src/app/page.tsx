@@ -78,15 +78,15 @@ const WorkflowSection = memo(function WorkflowSection() {
 
         <div className="relative">
           <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-black/10 via-black/20 to-black/10 dark:from-white/10 dark:via-white/20 dark:to-white/10 transform -translate-y-1/2 z-0" />
-          
+
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-20">
             {WORKFLOW_STEPS.map((item, index) => {
               const Icon = item.icon;
               return (
                 <AnimatedSection key={item.step} delay={index * 150} direction="up">
                   <Link href={item.href} className="block h-full">
-                    <GlassCard 
-                      variant="subtle" 
+                    <GlassCard
+                      variant="subtle"
                       hover
                       className="p-6 text-center relative h-full flex flex-col focus-within:ring-2 focus-within:ring-black/20 dark:focus-within:ring-white/20 cursor-pointer group transition-all duration-300 hover:scale-105"
                     >
@@ -184,9 +184,9 @@ const ProblemSection = memo(function ProblemSection() {
                 </p>
                 <div className="flex flex-wrap gap-3 pt-4">
                   {TARGET_AUDIENCES.map((audience) => (
-                    <Badge 
+                    <Badge
                       key={audience}
-                      variant="secondary" 
+                      variant="secondary"
                       className="text-sm px-4 py-2 bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 border-0"
                     >
                       {audience}
@@ -319,8 +319,8 @@ const DemoSection = memo(function DemoSection() {
                   Erlebe den Text Generator in Aktion. Generiere verschiedene Content-Formate aus einem Beispiel-Transkript.
                 </p>
               </div>
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="group bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90 transition-all duration-300 hover:scale-105 rounded-full px-8 py-6 text-base font-medium focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20 focus:ring-offset-2"
                 asChild
               >
@@ -340,23 +340,33 @@ const DemoSection = memo(function DemoSection() {
 // Main Page Component
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-transparent relative">
+    <div className="flex min-h-screen flex-col bg-white dark:bg-black relative">
+      {/* Skip to Content Link */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-black dark:focus:bg-white focus:text-white dark:focus:text-black focus:rounded-md focus:ring-4 focus:ring-black/50 dark:focus:ring-white/50"
+      >
+        Zum Hauptinhalt springen
+      </a>
+
       <DarkModeToggle />
       <GridBackground />
-      
-      <HeroSection />
-      <StatsSection />
-      <WorkflowSection />
-      <FeaturesSection />
-      <ProblemSection />
-      <SolutionSection />
-      <DemoVideoSection />
-      <TestimonialsSection />
-      <BenefitsSection />
-      <DemoSection />
-      <EmailSignup />
 
-      <footer className="relative mt-auto border-t border-black/5 dark:border-white/5 py-12 z-10">
+      <main id="main-content" role="main">
+        <HeroSection />
+        <StatsSection />
+        <WorkflowSection />
+        <FeaturesSection />
+        <ProblemSection />
+        <SolutionSection />
+        <DemoVideoSection />
+        <TestimonialsSection />
+        <BenefitsSection />
+        <DemoSection />
+        <EmailSignup />
+      </main>
+
+      <footer className="relative mt-auto border-t border-black/5 dark:border-white/5 py-12 z-10" role="contentinfo">
         <div className="container mx-auto max-w-5xl px-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <p className="text-sm text-black/50 dark:text-white/50">© 2026 TiMax. Coming Soon.</p>
@@ -395,6 +405,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-    </div>
+    </div >
   );
 }

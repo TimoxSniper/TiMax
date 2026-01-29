@@ -13,17 +13,29 @@ interface DarkModeToggleProps {
 export function DarkModeToggle({ variant = "fixed", className }: DarkModeToggleProps) {
   const [isDark, setIsDark] = useState(false);
 
-  // Vereinfachter Dark Mode - kein MutationObserver mehr
+  // Dark Mode mit Persistenz und System-Präferenz
   useEffect(() => {
+    // Lade gespeicherte Präferenz oder nutze System-Präferenz
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDarkMode = savedTheme === 'dark' || (!savedTheme && prefersDark);
+    
     const html = document.documentElement;
-    const isDarkMode = html.classList.contains("dark");
+    if (isDarkMode) {
+      html.classList.add('dark');
+    } else {
+      html.classList.remove('dark');
+    }
     setIsDark(isDarkMode);
   }, []);
 
   const toggleDarkMode = () => {
     const html = document.documentElement;
-    html.classList.toggle("dark");
-    setIsDark(!isDark);
+    html.classList.toggle('dark');
+    const newIsDark = !isDark;
+    setIsDark(newIsDark);
+    // Speichere Präferenz
+    localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
   };
 
   if (variant === "inline") {

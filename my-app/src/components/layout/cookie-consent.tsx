@@ -30,14 +30,17 @@ export function CookieConsent() {
       if (savedPrefs) {
         try {
           const parsed = JSON.parse(savedPrefs);
-          setPreferences({ ...preferences, ...parsed });
+          setPreferences(prev => ({ ...prev, ...parsed }));
         } catch (e) {
-          // Ignoriere Fehler
+          // Ignoriere Fehler beim Parsen
+          if (process.env.NODE_ENV === "development") {
+            console.error("Failed to parse cookie preferences:", e);
+          }
         }
       }
       setShowBanner(true);
     }
-  }, []);
+  }, []); // Leeres Dependency Array ist korrekt
 
   const acceptAll = () => {
     const allAccepted: CookiePreferences = {
@@ -68,7 +71,7 @@ export function CookieConsent() {
     localStorage.setItem("cookie_consent", "true");
     localStorage.setItem("cookie_preferences", JSON.stringify(prefs));
     localStorage.setItem("cookie_consent_date", new Date().toISOString());
-    
+
     // Setze Cookies basierend auf Präferenzen
     if (prefs.functional) {
       // Functional cookies setzen
@@ -177,11 +180,16 @@ export function CookieConsent() {
                     </p>
                   </div>
                   <div className="ml-4">
+                    <label htmlFor="necessary-cookies" className="sr-only">
+                      Technisch notwendige Cookies (immer aktiv)
+                    </label>
                     <input
+                      id="necessary-cookies"
                       type="checkbox"
                       checked={preferences.necessary}
                       disabled
                       className="w-5 h-5"
+                      aria-label="Technisch notwendige Cookies (immer aktiv)"
                     />
                   </div>
                 </div>
@@ -196,7 +204,11 @@ export function CookieConsent() {
                     </p>
                   </div>
                   <div className="ml-4">
+                    <label htmlFor="functional-cookies" className="sr-only">
+                      Funktionale Cookies aktivieren
+                    </label>
                     <input
+                      id="functional-cookies"
                       type="checkbox"
                       checked={preferences.functional}
                       onChange={(e) =>
@@ -206,6 +218,7 @@ export function CookieConsent() {
                         })
                       }
                       className="w-5 h-5"
+                      aria-label="Funktionale Cookies aktivieren"
                     />
                   </div>
                 </div>
@@ -220,7 +233,11 @@ export function CookieConsent() {
                     </p>
                   </div>
                   <div className="ml-4">
+                    <label htmlFor="analytics-cookies" className="sr-only">
+                      Analytics Cookies aktivieren
+                    </label>
                     <input
+                      id="analytics-cookies"
                       type="checkbox"
                       checked={preferences.analytics}
                       onChange={(e) =>
@@ -230,6 +247,7 @@ export function CookieConsent() {
                         })
                       }
                       className="w-5 h-5"
+                      aria-label="Analytics Cookies aktivieren"
                     />
                   </div>
                 </div>
