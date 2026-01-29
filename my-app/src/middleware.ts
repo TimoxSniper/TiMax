@@ -88,10 +88,20 @@ export function middleware(request: NextRequest) {
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("")
   ).toString("base64");
+  // Hashes für Next.js Inline-Scripts (von Browser-Fehlermeldungen)
+  const scriptHashes = [
+    "'sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo='",
+    "'sha256-785ajcyXqRN19y7eTBno8NdZZ13UmfL41I4uk0iwRS8='",
+    "'sha256-Jz+3dLASJW4r3qRWq9NV0DM6jxv9Bkiu7NE2yZ2I+Vw='",
+    "'sha256-8QGtv9j9lw2t07LbQSpKDeynV1kzA+PvAYjQDKTyYQY='",
+    "'sha256-nzmdl+AXdlsLPaG5B+ouuCXbm2uL+onDzFRTXheLkqo='",
+    "'sha256-NQvBp15KZHVMaUc/ogD5gUFB4cQg8Q5iMwGFG991U7U='",
+  ].join(" ");
+
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://vercel.live https://*.sentry.io;
-    style-src 'self' 'nonce-${nonce}' 'unsafe-inline';
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${scriptHashes} https://vercel.live https://*.sentry.io;
+    style-src 'self' 'unsafe-inline';
     img-src 'self' blob: data: https:;
     font-src 'self' data:;
     connect-src 'self' https://*.sentry.io https://*.vercel.app https://*.n8n.cloud https://*.n8n.io;
