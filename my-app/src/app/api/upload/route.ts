@@ -97,15 +97,17 @@ export async function POST(request: NextRequest) {
     let fileName = file.name;
     let transcript: string | undefined = undefined;
 
+    // Debug: Log Response-Info
+    console.log("[Upload API] Response Content-Type:", contentType);
+    console.log("[Upload API] Response Status:", response.status);
+
     if (contentType.includes("application/json")) {
       // JSON-Response (Webhook)
       try {
         const data = await response.json();
         
-        // Debug-Logging in Development
-        if (process.env.NODE_ENV === "development") {
-          console.log("[Upload API] n8n Response:", JSON.stringify(data, null, 2));
-        }
+        // Debug-Logging - immer aktiv für Troubleshooting
+        console.log("[Upload API] n8n Response:", JSON.stringify(data, null, 2));
         
         // Validierung: Prüfe ob data existiert und ein valides Format hat
         if (!data || (typeof data !== "object" && !Array.isArray(data))) {
@@ -203,12 +205,15 @@ export async function POST(request: NextRequest) {
           transcript = extractTranscript(data);
         }
         
-        // Debug-Logging für Transkript
-        if (process.env.NODE_ENV === "development") {
-          if (transcript) {
-            console.log("[Upload API] Transkript gefunden, Länge:", transcript.length);
-          } else {
-            console.warn("[Upload API] Kein Transkript in Response gefunden");
+        // Debug-Logging für Transkript - immer aktiv
+        if (transcript) {
+          console.log("[Upload API] ✅ Transkript gefunden, Länge:", transcript.length);
+          console.log("[Upload API] Transkript (erste 200 Zeichen):", transcript.substring(0, 200));
+        } else {
+          console.warn("[Upload API] ⚠️ Kein Transkript in Response gefunden");
+          console.log("[Upload API] Verfügbare Felder:", Object.keys(data).join(", "));
+          if (Array.isArray(data) && data.length > 0) {
+            console.log("[Upload API] Array-Item Felder:", Object.keys(data[0] || {}).join(", "));
           }
         }
 
@@ -227,15 +232,38 @@ export async function POST(request: NextRequest) {
       }
     } else {
       // HTML-Response (Form-Trigger) - Upload war erfolgreich wenn Status 200/201
+      console.log("[Upload API] HTML-Response erhalten (Form-Trigger)");
+      const htmlText = await response.text();
+      console.log("[Upload API] HTML-Response Länge:", htmlText.length);
       status = "✅ Datei erfolgreich hochgeladen und wird verarbeitet";
+      
+      // Versuche Transkript aus HTML zu extrahieren (falls n8n es dort einbettet)
+      // Oft sendet n8n Form-Trigger das Ergebnis in einem <script> Tag oder data-Attribut
+      const scriptMatch = htmlText.match(/<script[^>]*>[\s\S]*?transcript["\s:]+["']([^"']+)["']/i);
+      if (scriptMatch && scriptMatch[1]) {
+        transcript = scriptMatch[1];
+        console.log("[Upload API] Transkript aus HTML extrahiert");
+      }
     }
 
-    return NextResponse.json({
+    // Finales Debug-Logging
+    const responseData = {
       success: true,
       status,
       fileName,
       ...(transcript && { transcript }),
+    };
+    
+    console.log("[Upload API] Finale Response:", {
+      success: true,
+      status,
+      fileName,
+      hasTranscript: !!transcript,
+      transcriptLength: transcript?.length || 0,
+      transcriptPreview: transcript ? transcript.substring(0, 100) : undefined
     });
+
+    return NextResponse.json(responseData);
   } catch (error) {
     // Sende Fehler an Sentry
     Sentry.captureException(error, {
