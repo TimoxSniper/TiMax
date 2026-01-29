@@ -79,10 +79,11 @@ export function isFileSizeAllowed(size: number): boolean {
  * Helper-Funktion: Prüft ob MIME-Type erlaubt ist
  */
 export function isMimeTypeAllowed(mimeType: string): boolean {
-  return [
+  const allowedTypes: readonly string[] = [
     ...UPLOAD_CONFIG.allowedVideoFormats,
     ...UPLOAD_CONFIG.allowedAudioFormats,
-  ].includes(mimeType);
+  ];
+  return allowedTypes.includes(mimeType);
 }
 
 /**
