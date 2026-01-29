@@ -260,51 +260,48 @@
   - [ ] Video/Audio-Duration ⚠️ (Konfiguration vorhanden, aber Validierung benötigt Media-Metadaten-Extraktion - optional)
 
 #### 3.2 Virus Scanning
-- **Status:** ⚠️ **ENTSCHEIDUNG GETROFFEN: VirusTotal Free Tier** (kostenlos, 4 Scans/Tag)
-- **Risiko:** ⚠️ Teilweise abgedeckt (Free Tier Limit: 4 Scans/Tag)
+- **Status:** ❌ **NICHT IMPLEMENTIERT** (auf Wunsch entfernt)
+- **Risiko:** MALWARE-VERBREITUNG
 - **Zeitaufwand:** 4-6 Stunden
 - **Dringlichkeit:** 🔴 EXTREM KRITISCH
-- **Gewählte Option:** VirusTotal Free Tier (kostenlos, dauerhaft)
-  - ✅ 4 Scans/Tag kostenlos
-  - ✅ Keine Kreditkarte nötig
-  - ✅ Einfach zu implementieren
-  - ⚠️ Limit: 4 Scans/Tag (für MVP ausreichend)
-- **Alternative (später):** ClamAV selbstgehostet (komplett kostenlos, aber braucht Server)
-- **Implementierung:**
+- **Optionen:**
+  1. **ClamAV** (Open Source, selbst hosten)
+  2. **VirusTotal API** (Cloud, einfach)
+  3. **AWS S3 Malware Protection**
+- **Empfehlung:**
   ```bash
+  npm install clamav.js
+  # oder
   npm install virustotal-api
   ```
 - **Flow:**
   1. User lädt Datei hoch
   2. Temporär speichern
-  3. Virus-Scan durchführen (VirusTotal Free Tier)
-  4. Rate Limiting: Max 4 Scans/Tag
-  5. Bei sauber: In Storage verschieben
-  6. Bei Malware: Datei löschen, User benachrichtigen
-  7. Bei Limit erreicht: Warnung anzeigen, Upload trotzdem erlauben (für MVP)
+  3. Virus-Scan durchführen
+  4. Bei sauber: In Storage verschieben
+  5. Bei Malware: Datei löschen, User benachrichtigen
 
 #### 3.3 File Storage Strategy
-- **Status:** ⚠️ **ENTSCHEIDUNG GETROFFEN: Supabase Storage Free Tier** (kostenlos, 1GB)
-- **Risiko:** ⚠️ Teilweise abgedeckt (Free Tier Limit: 1GB Storage)
+- **Status:** ❌ **NICHT IMPLEMENTIERT** (auf Wunsch entfernt)
+- **Risiko:** Datenverlust, Datenleck, DSGVO-Verstoß
 - **Zeitaufwand:** 3-4 Stunden
-- **Gewählte Lösung: Supabase Storage Free Tier** (kostenlos, dauerhaft)
-  - ✅ 1GB Storage kostenlos
-  - ✅ 2GB Bandwidth/Monat kostenlos
-  - ✅ EU-Region verfügbar (DSGVO)
-  - ✅ Private Access (nicht öffentlich)
-  - ✅ Einfach zu integrieren
-  - ✅ Kann später für Auth/DB genutzt werden
-  - ⚠️ Limit: 1GB Storage (für MVP ausreichend)
-- **Implementierung:**
+- **Aktuell:** Dateien gehen direkt zu n8n, werden nicht gespeichert
+- **Empfohlene Lösung: Vercel Blob Storage**
   ```bash
-  npm install @supabase/supabase-js
+  npm install @vercel/blob
   ```
+- **Features:**
+  - Private Access (wichtig!)
+  - EU-Region wählbar (DSGVO)
+  - CDN-backed
+  - Automatische Backups
+- **Alternative:** AWS S3 (eu-central-1)
 - **Wichtig:**
-  - [x] Private Access (nicht öffentlich!) ✅ (Supabase unterstützt)
-  - [x] EU-Region (DSGVO) ✅ (Supabase unterstützt)
-  - [x] Verschlüsselung at rest ✅ (Supabase Standard)
-  - [ ] Zugriffskontrolle (nur Owner sieht Dateien) - zu implementieren
-  - [ ] Signed URLs für Downloads - zu implementieren
+  - [ ] Private Access (nicht öffentlich!)
+  - [ ] EU-Region (DSGVO)
+  - [ ] Verschlüsselung at rest
+  - [ ] Zugriffskontrolle (nur Owner sieht Dateien)
+  - [ ] Signed URLs für Downloads
 
 #### 3.4 File Cleanup & Retention Policy
 - **Status:** ✅ **KONFIGURATION & CRON-JOB-STRUKTUR ERSTELLT** (benötigt Database-Integration)

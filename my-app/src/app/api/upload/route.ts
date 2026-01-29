@@ -8,8 +8,6 @@ import {
 } from "@/lib/validation";
 import { validateCSRFToken } from "@/lib/csrf";
 import { UPLOAD_CONFIG } from "@/lib/upload-config";
-import { scanFile } from "@/lib/virus-scan";
-import { uploadFile, isStorageAvailable } from "@/lib/storage";
 
 export async function POST(request: NextRequest) {
   try {
@@ -70,45 +68,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 1. Virus-Scanning (optional, wenn API Key vorhanden)
-    let virusScanResult: { clean: boolean; message: string; limitReached?: boolean } | null = null;
-    try {
-      const fileBuffer = Buffer.from(await file.arrayBuffer());
-      virusScanResult = await scanFile(fileBuffer, file.name);
-      
-      // Wenn Malware erkannt: Upload ablehnen
-      if (!virusScanResult.clean && !virusScanResult.limitReached) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: `Virus-Scan fehlgeschlagen: ${virusScanResult.message}`,
-          },
-          { status: 400 }
-        );
-      }
-    } catch (scanError) {
-      // Bei Fehler: Warnung loggen, aber Upload erlauben (für MVP)
-      console.warn("Virus-Scan Fehler (Upload trotzdem erlaubt):", scanError);
-    }
-
-    // 2. Upload zu Supabase Storage (optional, wenn konfiguriert)
-    let storageUrl: string | undefined;
-    let storagePath: string | undefined;
-    if (isStorageAvailable()) {
-      try {
-        const storageResult = await uploadFile(file, file.name);
-        if (storageResult.success && storageResult.url) {
-          storageUrl = storageResult.url;
-          storagePath = storageResult.path;
-        } else {
-          console.warn("Storage Upload fehlgeschlagen (Upload trotzdem erlaubt):", storageResult.error);
-        }
-      } catch (storageError) {
-        console.warn("Storage Upload Fehler (Upload trotzdem erlaubt):", storageError);
-      }
-    }
-
-    // 3. Erstelle neue FormData für n8n
+    // Erstelle neue FormData für n8n
     // n8n Form-Trigger erwartet das Feld "Audio/Video Datei"
     const n8nFormData = new FormData();
     n8nFormData.append("Audio/Video Datei", file);
@@ -194,13 +154,6 @@ export async function POST(request: NextRequest) {
       success: true,
       status,
       fileName,
-      storageUrl, // Supabase Storage URL (falls verfügbar)
-      storagePath, // Supabase Storage Path (falls verfügbar)
-      virusScan: virusScanResult ? {
-        clean: virusScanResult.clean,
-        message: virusScanResult.message,
-        limitReached: virusScanResult.limitReached,
-      } : undefined,
     });
   } catch (error) {
     // Sende Fehler an Sentry
