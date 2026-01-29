@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { CookieConsent } from "@/components/layout/cookie-consent";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,7 @@ export default function RootLayout({
         <ErrorBoundary>
           <ToastProvider>
             {children}
+            <CookieConsent />
           </ToastProvider>
         </ErrorBoundary>
       </body>

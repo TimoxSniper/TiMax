@@ -357,8 +357,42 @@ export default function Home() {
       <EmailSignup />
 
       <footer className="relative mt-auto border-t border-black/5 dark:border-white/5 py-12 z-10">
-        <div className="container mx-auto max-w-5xl px-4 text-center">
-          <p className="text-sm text-black/50 dark:text-white/50">© 2026 timax. Coming Soon.</p>
+        <div className="container mx-auto max-w-5xl px-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-sm text-black/50 dark:text-white/50">© 2026 timax. Coming Soon.</p>
+            <nav className="flex flex-wrap justify-center gap-4 sm:gap-6">
+              <Link
+                href="/impressum"
+                className="text-sm text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors"
+              >
+                Impressum
+              </Link>
+              <Link
+                href="/datenschutz"
+                className="text-sm text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors"
+              >
+                Datenschutz
+              </Link>
+              <Link
+                href="/agb"
+                className="text-sm text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors"
+              >
+                AGB
+              </Link>
+              <Link
+                href="/widerruf"
+                className="text-sm text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors"
+              >
+                Widerruf
+              </Link>
+              <Link
+                href="/cookies"
+                className="text-sm text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors"
+              >
+                Cookies
+              </Link>
+            </nav>
+          </div>
         </div>
       </footer>
     </div>
