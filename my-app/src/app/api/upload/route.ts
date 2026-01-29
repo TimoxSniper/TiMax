@@ -102,6 +102,11 @@ export async function POST(request: NextRequest) {
       try {
         const data = await response.json();
         
+        // Debug-Logging in Development
+        if (process.env.NODE_ENV === "development") {
+          console.log("[Upload API] n8n Response:", JSON.stringify(data, null, 2));
+        }
+        
         // Validierung: Prüfe ob data existiert und ein valides Format hat
         if (!data || (typeof data !== "object" && !Array.isArray(data))) {
           throw new Error("Ungültiges Response-Format von n8n Upload Webhook");
@@ -140,27 +145,70 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        // Extrahiere transcript mit Validierung
-        if (data && typeof data === "object") {
-          if (typeof data.transcript === "string" && data.transcript.trim().length > 0) {
-            transcript = data.transcript;
-          } else if (data.json && typeof data.json.transcript === "string" && data.json.transcript.trim().length > 0) {
-            transcript = data.json.transcript;
-          } else if (typeof data.text === "string" && data.text.trim().length > 0) {
-            transcript = data.text;
-          } else if (data.json && typeof data.json.text === "string" && data.json.text.trim().length > 0) {
-            transcript = data.json.text;
+        // Extrahiere transcript mit Validierung - erweiterte Suche
+        const extractTranscript = (obj: any): string | undefined => {
+          if (!obj || typeof obj !== "object") return undefined;
+          
+          // Direkte Felder
+          if (typeof obj.transcript === "string" && obj.transcript.trim().length > 0) {
+            return obj.transcript;
           }
-        } else if (Array.isArray(data) && data.length > 0) {
-          const firstItem = data[0];
-          if (firstItem?.json?.transcript && typeof firstItem.json.transcript === "string" && firstItem.json.transcript.trim().length > 0) {
-            transcript = firstItem.json.transcript;
-          } else if (firstItem?.transcript && typeof firstItem.transcript === "string" && firstItem.transcript.trim().length > 0) {
-            transcript = firstItem.transcript;
-          } else if (firstItem?.json?.text && typeof firstItem.json.text === "string" && firstItem.json.text.trim().length > 0) {
-            transcript = firstItem.json.text;
-          } else if (firstItem?.text && typeof firstItem.text === "string" && firstItem.text.trim().length > 0) {
-            transcript = firstItem.text;
+          if (typeof obj.text === "string" && obj.text.trim().length > 0) {
+            return obj.text;
+          }
+          if (typeof obj.content === "string" && obj.content.trim().length > 0) {
+            return obj.content;
+          }
+          
+          // Verschachtelte Felder
+          if (obj.json) {
+            const nested = extractTranscript(obj.json);
+            if (nested) return nested;
+          }
+          
+          if (obj.body) {
+            const nested = extractTranscript(obj.body);
+            if (nested) return nested;
+          }
+          
+          if (obj.data) {
+            const nested = extractTranscript(obj.data);
+            if (nested) return nested;
+          }
+          
+          // Suche in allen String-Feldern, die wie Transkripte aussehen
+          for (const key in obj) {
+            if (key.toLowerCase().includes("transcript") || 
+                key.toLowerCase().includes("text") ||
+                key.toLowerCase().includes("content")) {
+              if (typeof obj[key] === "string" && obj[key].trim().length > 50) {
+                return obj[key];
+              }
+            }
+          }
+          
+          return undefined;
+        };
+        
+        if (Array.isArray(data) && data.length > 0) {
+          // Array-Response: Prüfe alle Items
+          for (const item of data) {
+            const extracted = extractTranscript(item);
+            if (extracted) {
+              transcript = extracted;
+              break;
+            }
+          }
+        } else if (data && typeof data === "object") {
+          transcript = extractTranscript(data);
+        }
+        
+        // Debug-Logging für Transkript
+        if (process.env.NODE_ENV === "development") {
+          if (transcript) {
+            console.log("[Upload API] Transkript gefunden, Länge:", transcript.length);
+          } else {
+            console.warn("[Upload API] Kein Transkript in Response gefunden");
           }
         }
 

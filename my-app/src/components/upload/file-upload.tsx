@@ -104,6 +104,14 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
             try {
               const data = JSON.parse(xhr.responseText);
               if (data.success) {
+                // Debug-Logging in Development
+                if (process.env.NODE_ENV === "development") {
+                  console.log("[FileUpload] Upload erfolgreich:", {
+                    fileName: data.fileName || file.name,
+                    hasTranscript: !!data.transcript,
+                    transcriptLength: data.transcript?.length || 0
+                  });
+                }
                 resolve({ 
                   success: true, 
                   fileName: data.fileName || file.name,
