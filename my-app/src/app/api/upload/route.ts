@@ -14,10 +14,12 @@ export const runtime = "nodejs";
 export const maxDuration = 60; // 60 Sekunden Timeout für große Dateien
 
 export async function POST(request: NextRequest) {
+  console.log("[Upload API] ===== Upload Request gestartet =====");
   try {
     // CSRF Protection
     const csrfToken = request.headers.get("x-csrf-token");
     if (!validateCSRFToken(csrfToken)) {
+      console.error("[Upload API] CSRF Token ungültig");
       return NextResponse.json(
         { success: false, error: "Ungültiger CSRF Token" },
         { status: 403 }
@@ -26,11 +28,20 @@ export async function POST(request: NextRequest) {
 
     // Validiere erforderliche Environment-Variablen
     const env = validateRequiredEnv();
+    console.log("[Upload API] Environment-Variablen validiert");
+    console.log("[Upload API] N8N_UPLOAD_WEBHOOK_URL:", env.N8N_UPLOAD_WEBHOOK_URL);
 
     const formData = await request.formData();
     const file = formData.get("file") as File;
 
+    console.log("[Upload API] Datei erhalten:", {
+      name: file?.name,
+      size: file?.size,
+      type: file?.type
+    });
+
     if (!file) {
+      console.error("[Upload API] Keine Datei bereitgestellt");
       return NextResponse.json(
         { success: false, error: "Keine Datei bereitgestellt" },
         { status: 400 }
@@ -77,6 +88,8 @@ export async function POST(request: NextRequest) {
     const n8nFormData = new FormData();
     n8nFormData.append("Audio/Video Datei", file);
 
+    console.log("[Upload API] Sende Request an n8n:", env.N8N_UPLOAD_WEBHOOK_URL);
+
     // Upload zu n8n Form-Webhook
     const response = await fetch(env.N8N_UPLOAD_WEBHOOK_URL, {
       method: "POST",
@@ -84,6 +97,13 @@ export async function POST(request: NextRequest) {
         "X-Request-Type": "upload", // Header zur Unterscheidung im n8n Workflow
       },
       body: n8nFormData,
+    });
+
+    console.log("[Upload API] n8n Response erhalten:", {
+      status: response.status,
+      statusText: response.statusText,
+      contentType: response.headers.get("content-type"),
+      ok: response.ok
     });
 
     if (!response.ok) {

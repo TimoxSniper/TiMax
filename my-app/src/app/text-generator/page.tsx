@@ -96,33 +96,24 @@ export default function TextGeneratorPage() {
             {/* Upload-Bereich */}
             <FileUpload 
               onUploadSuccess={(fileName, transcriptText) => {
-                // In Production: Hier würde man zu einem Analytics-Service loggen
-                // Removed console.log for production
-                
-                // Debug-Logging in Development
-                if (process.env.NODE_ENV === "development") {
-                  console.log("[TextGenerator] Upload erfolgreich:", {
-                    fileName,
-                    hasTranscript: !!transcriptText,
-                    transcriptLength: transcriptText?.length || 0
-                  });
-                }
+                // Debug-Logging - immer aktiv
+                console.log("[TextGenerator] ===== Upload Success Callback =====");
+                console.log("[TextGenerator] fileName:", fileName);
+                console.log("[TextGenerator] transcriptText:", transcriptText);
+                console.log("[TextGenerator] transcriptText type:", typeof transcriptText);
+                console.log("[TextGenerator] transcriptText length:", transcriptText?.length);
                 
                 // Setze Transkript wenn vorhanden
                 if (transcriptText && transcriptText.trim().length > 0) {
+                  console.log("[TextGenerator] ✅ Setze Transkript, Länge:", transcriptText.length);
                   setTranscript(transcriptText);
                   setError(null);
                   // Lösche generierten Text wenn neues Transkript kommt
                   setGeneratedText("");
                   setSelectedFormat(null);
-                  
-                  if (process.env.NODE_ENV === "development") {
-                    console.log("[TextGenerator] Transkript gesetzt, Länge:", transcriptText.length);
-                  }
                 } else {
-                  if (process.env.NODE_ENV === "development") {
-                    console.warn("[TextGenerator] Kein Transkript in Response");
-                  }
+                  console.warn("[TextGenerator] ⚠️ Kein Transkript in Response");
+                  console.warn("[TextGenerator] transcriptText value:", transcriptText);
                   setError("Transkript wurde nicht zurückgegeben. Bitte versuchen Sie es erneut.");
                 }
                 

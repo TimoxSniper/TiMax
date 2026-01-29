@@ -103,15 +103,15 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
           if (xhr.status >= 200 && xhr.status < 300) {
             try {
               const data = JSON.parse(xhr.responseText);
+              console.log("[FileUpload] Server Response:", data);
               if (data.success) {
-                // Debug-Logging in Development
-                if (process.env.NODE_ENV === "development") {
-                  console.log("[FileUpload] Upload erfolgreich:", {
-                    fileName: data.fileName || file.name,
-                    hasTranscript: !!data.transcript,
-                    transcriptLength: data.transcript?.length || 0
-                  });
-                }
+                // Debug-Logging - immer aktiv
+                console.log("[FileUpload] Upload erfolgreich:", {
+                  fileName: data.fileName || file.name,
+                  hasTranscript: !!data.transcript,
+                  transcriptLength: data.transcript?.length || 0,
+                  fullResponse: data
+                });
                 resolve({ 
                   success: true, 
                   fileName: data.fileName || file.name,
