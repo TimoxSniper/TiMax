@@ -8,6 +8,7 @@ const envSchema = z.object({
   // n8n Webhook URLs (erforderlich)
   N8N_CHAT_WEBHOOK_URL: z.string().url().optional(),
   N8N_UPLOAD_WEBHOOK_URL: z.string().url().optional(),
+  N8N_TRANSCRIPTION_WEBHOOK_URL: z.string().url().optional(), // Optional: Separate URL für Transkription
 
   // n8n API (optional, für MCP Server)
   N8N_API_URL: z.string().url().optional().default("http://localhost:5678"),
@@ -75,6 +76,7 @@ export function validateRequiredEnv() {
   return {
     N8N_CHAT_WEBHOOK_URL: env.N8N_CHAT_WEBHOOK_URL!,
     N8N_UPLOAD_WEBHOOK_URL: env.N8N_UPLOAD_WEBHOOK_URL!,
+    N8N_TRANSCRIPTION_WEBHOOK_URL: env.N8N_TRANSCRIPTION_WEBHOOK_URL || env.N8N_CHAT_WEBHOOK_URL!, // Fallback auf CHAT_WEBHOOK_URL wenn nicht gesetzt (beide verwenden gleiche URL)
     N8N_API_URL: env.N8N_API_URL || "http://localhost:5678",
     N8N_API_KEY: env.N8N_API_KEY,
   };
