@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
+import { deDE } from "@clerk/localizations";
 import { ToastProvider } from "@/components/ui/toast";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { CookieConsent } from "@/components/layout/cookie-consent";
@@ -44,18 +46,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="de">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ErrorBoundary>
-          <ToastProvider>
-            {children}
-            <CookieConsent />
-            <ScrollToTop />
-          </ToastProvider>
-        </ErrorBoundary>
-      </body>
-    </html>
+    <ClerkProvider localization={deDE}>
+      <html lang="de">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <ErrorBoundary>
+            <ToastProvider>
+              {children}
+              <CookieConsent />
+              <ScrollToTop />
+            </ToastProvider>
+          </ErrorBoundary>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

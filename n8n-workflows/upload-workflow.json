@@ -1,0 +1,215 @@
+{
+  "name": "TiMax Upload Workflow (Multi-User)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "timax-upload",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "upload-webhook",
+      "name": "Upload Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [100, 200],
+      "webhookId": "timax-upload"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract user_id from webhook headers or body\nconst headers = $input.first().json.headers || {};\nconst body = $input.first().json.body || {};\n\n// Try to get user_id from various sources\nlet userId = headers['x-user-id'] || body.user_id || null;\n\nif (!userId) {\n  throw new Error('User ID is required - please provide x-user-id header or user_id in body');\n}\n\nreturn {\n  json: {\n    user_id: userId,\n    file: body.file || null,\n    fileName: body.fileName || 'unknown',\n    metadata: body.metadata || {}\n  }\n};"
+      },
+      "id": "extract-user",
+      "name": "Extract User ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [300, 200]
+    },
+    {
+      "parameters": {
+        "resource": "speech",
+        "operation": "speechToText",
+        "file": "={{ $json.file }}",
+        "additionalOptions": {},
+        "requestOptions": {}
+      },
+      "id": "elevenlabs-stt",
+      "name": "ElevenLabs Speech To Text",
+      "type": "@elevenlabs/n8n-nodes-elevenlabs.elevenLabs",
+      "typeVersion": 1,
+      "position": [500, 200],
+      "credentials": {
+        "elevenLabsApi": {
+          "id": "YOUR_ELEVENLABS_CRED_ID",
+          "name": "ElevenLabs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "content",
+              "name": "content",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "user_id",
+              "name": "user_id",
+              "value": "={{ $('Extract User ID').item.json.user_id }}",
+              "type": "string"
+            },
+            {
+              "id": "fileName",
+              "name": "fileName",
+              "value": "={{ $('Extract User ID').item.json.fileName }}",
+              "type": "string"
+            },
+            {
+              "id": "uploadedAt",
+              "name": "uploadedAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "format-metadata",
+      "name": "Format Content Metadata",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [700, 200]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analysiere diesen Inhalt und extrahiere Metadaten im JSON-Format:\n\nInhalt: {{ $json.content.substring(0, 4000) }}\nDateiname: {{ $json.fileName }}\n\nLiefere:\n{\n  \"topics\": [\"tag1\", \"tag2\"],\n  \"intention\": \"bildung|motivation|argumentation|beispiel|geschichte\",\n  \"platform_suitability\": [\"reel_hook\", \"linkedin_post\", \"twitter_thread\"],\n  \"tone\": \"enthusiastisch|kritisch|sachlich|inspirierend\",\n  \"content_quality\": 7,\n  \"key_quotes\": [\"zitat1\", \"zitat2\"]\n}\n\nNUR JSON, keine Erklärung.",
+        "batching": {}
+      },
+      "id": "extract-metatags",
+      "name": "Extract Content Metatags",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "gemini-model",
+      "name": "Google Gemini",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [900, 400],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GEMINI_CRED_ID",
+          "name": "Google Gemini"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const item = $input.item.json;\nconst preparedData = $('Format Content Metadata').item.json;\n\nlet metadata = {};\ntry {\n  const cleaned = (item.output || item.text || '').replace(/```json\\n?|```\\n?/g, '').trim();\n  metadata = JSON.parse(cleaned);\n} catch (e) {\n  metadata = { topics: [], intention: 'general', platform_suitability: [], tone: 'neutral', content_quality: 5, key_quotes: [] };\n}\n\nreturn {\n  json: {\n    content: preparedData.content,\n    user_id: preparedData.user_id,\n    fileName: preparedData.fileName,\n    uploadedAt: preparedData.uploadedAt,\n    ...metadata\n  }\n};"
+      },
+      "id": "combine-metadata",
+      "name": "Combine AI Metadata",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 200]
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.content }}",
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {"name": "user_id", "value": "={{ $json.user_id }}"},
+              {"name": "fileName", "value": "={{ $json.fileName }}"},
+              {"name": "uploadedAt", "value": "={{ $json.uploadedAt }}"},
+              {"name": "topics", "value": "={{ JSON.stringify($json.topics || []) }}"},
+              {"name": "intention", "value": "={{ $json.intention || 'general' }}"},
+              {"name": "tone", "value": "={{ $json.tone || 'neutral' }}"},
+              {"name": "content_quality", "value": "={{ $json.content_quality || 5 }}"}
+            ]
+          }
+        }
+      },
+      "id": "prepare-document",
+      "name": "Prepare Document",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [1300, 400]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "qdrantCollection": {"__rl": true, "mode": "id", "value": "timax_knowledge_base"},
+        "options": {
+          "filter": {
+            "must": [{"key": "user_id", "match": {"value": "={{ $json.user_id }}"}}]
+          }
+        }
+      },
+      "id": "insert-qdrant",
+      "name": "Insert into Qdrant",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [1300, 200],
+      "credentials": {
+        "qdrantApi": {
+          "id": "YOUR_QDRANT_CRED_ID",
+          "name": "Qdrant"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "gemini-embeddings",
+      "name": "Generate Embeddings",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [1100, 400],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GEMINI_CRED_ID",
+          "name": "Google Gemini"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "id": "success-response",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [1500, 200]
+    }
+  ],
+  "connections": {
+    "Upload Webhook": {"main": [[{"node": "Extract User ID", "type": "main", "index": 0}]]},
+    "Extract User ID": {"main": [[{"node": "ElevenLabs Speech To Text", "type": "main", "index": 0}]]},
+    "ElevenLabs Speech To Text": {"main": [[{"node": "Format Content Metadata", "type": "main", "index": 0}]]},
+    "Format Content Metadata": {"main": [[{"node": "Extract Content Metatags", "type": "main", "index": 0}]]},
+    "Extract Content Metatags": {"main": [[{"node": "Combine AI Metadata", "type": "main", "index": 0}]]},
+    "Combine AI Metadata": {"main": [[{"node": "Insert into Qdrant", "type": "main", "index": 0}]]},
+    "Prepare Document": {"ai_document": [[{"node": "Insert into Qdrant", "type": "ai_document", "index": 0}]]},
+    "Generate Embeddings": {"ai_embedding": [[{"node": "Insert into Qdrant", "type": "ai_embedding", "index": 0}]]},
+    "Insert into Qdrant": {"main": [[{"node": "Success Response", "type": "main", "index": 0}]]},
+    "Google Gemini": {"ai_languageModel": [[{"node": "Extract Content Metatags", "type": "ai_languageModel", "index": 0}]]}
+  },
+  "settings": {"executionOrder": "v1"},
+  "staticData": null,
+  "tags": [],
+  "pinData": {}
+}

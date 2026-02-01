@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { validateRequiredEnv } from "@/lib/env";
 import {
@@ -15,11 +16,22 @@ export const maxDuration = 60; // 60 Sekunden Timeout für große Dateien
 export async function POST(request: NextRequest) {
   console.log("[Upload API] ===== Upload Request gestartet =====");
   try {
+    // 1. CLERK AUTH - User ID holen
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: "Nicht authentifiziert. Bitte melde dich an." },
+        { status: 401 }
+      );
+    }
+    
+    console.log("[Upload API] User authentifiziert:", userId);
+    
     // Validiere erforderliche Environment-Variablen
     const env = validateRequiredEnv();
     console.log("[Upload API] Environment-Variablen validiert");
     console.log("[Upload API] N8N_UPLOAD_WEBHOOK_URL:", env.N8N_UPLOAD_WEBHOOK_URL);
-    console.log("[Upload API] N8N_TRANSCRIPTION_WEBHOOK_URL:", env.N8N_TRANSCRIPTION_WEBHOOK_URL);
 
     const formData = await request.formData();
     const file = formData.get("file") as File;
@@ -84,7 +96,8 @@ export async function POST(request: NextRequest) {
     const response = await fetch(env.N8N_UPLOAD_WEBHOOK_URL, {
       method: "POST",
       headers: {
-        "X-Request-Type": "upload", // Header zur Unterscheidung im n8n Workflow
+        "X-Request-Type": "upload",
+        "X-User-ID": userId, // WICHTIG: User ID für Multi-User Isolation
       },
       body: n8nFormData,
     });

@@ -5,12 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DarkModeToggle } from "@/components/home/dark-mode-toggle";
-import { Menu, X, Zap, MessageSquare, FileText, Home } from "lucide-react";
+import { Menu, X, Zap, MessageSquare, FileText, Home, LogIn, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 
 const navigation = [
   { name: "Home", href: "/", icon: Home },
-  { name: "Text Generator", href: "/text-generator", icon: Zap },
+  { name: "Text Generator", href: "/text-generator", icon: FileText },
   { name: "Chat", href: "/chat", icon: MessageSquare },
 ];
 
@@ -73,9 +74,30 @@ export function MainNavigation() {
             })}
           </div>
 
-          {/* Right Side: Dark Mode + Mobile Menu */}
+          {/* Right Side: Auth + Dark Mode + Mobile Menu */}
           <div className="flex items-center gap-2">
             <DarkModeToggle variant="inline" />
+            
+            {/* Auth Buttons */}
+            <SignedOut>
+              <SignInButton mode="modal">
+                <Button variant="outline" size="sm" className="hidden md:flex gap-2">
+                  <LogIn className="h-4 w-4" />
+                  Anmelden
+                </Button>
+              </SignInButton>
+            </SignedOut>
+            
+            <SignedIn>
+              <UserButton 
+                afterSignOutUrl="/"
+                appearance={{
+                  elements: {
+                    avatarBox: "w-8 h-8",
+                  },
+                }}
+              />
+            </SignedIn>
 
             {/* Mobile Menu Button */}
             <Button
@@ -120,6 +142,25 @@ export function MainNavigation() {
                   </Button>
                 );
               })}
+              
+              {/* Mobile Auth */}
+              <div className="border-t pt-2 mt-2">
+                <SignedOut>
+                  <SignInButton mode="modal">
+                    <Button variant="outline" className="w-full justify-start gap-2">
+                      <LogIn className="h-4 w-4" />
+                      Anmelden
+                    </Button>
+                  </SignInButton>
+                </SignedOut>
+                
+                <SignedIn>
+                  <div className="flex items-center gap-2 px-3 py-2">
+                    <User className="h-4 w-4" />
+                    <UserButton afterSignOutUrl="/" />
+                  </div>
+                </SignedIn>
+              </div>
             </div>
           </div>
         )}
@@ -127,4 +168,3 @@ export function MainNavigation() {
     </header>
   );
 }
-

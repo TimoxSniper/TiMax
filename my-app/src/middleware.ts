@@ -1,3 +1,4 @@
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 // In-memory Rate Limiting Store (für Production sollte Redis verwendet werden)
@@ -11,8 +12,28 @@ const RATE_LIMITS = {
   default: { maxRequests: 100, windowMs: 60 * 1000 }, // 100 Requests/Minute für andere Endpunkte
 };
 
+// Geschützte Routen (nur für eingeloggte User)
+const isProtectedRoute = createRouteMatcher([
+  "/chat(.*)",
+  "/upload(.*)",
+  "/text-generator(.*)",
+  "/api/upload(.*)",
+  "/api/chat(.*)",
+]);
+
+// Öffentliche Routen (für alle zugänglich)
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/impressum",
+  "/datenschutz",
+  "/agb",
+  "/widerruf",
+  "/cookies",
+]);
+
 function getClientIP(request: NextRequest): string {
-  // Prüfe verschiedene Header für echte IP
   const forwarded = request.headers.get("x-forwarded-for");
   const realIP = request.headers.get("x-real-ip");
   const cfConnectingIP = request.headers.get("cf-connecting-ip");
@@ -27,7 +48,6 @@ function getClientIP(request: NextRequest): string {
     return cfConnectingIP;
   }
 
-  // Fallback
   return "unknown";
 }
 
@@ -42,9 +62,8 @@ function checkRateLimit(
   const now = Date.now();
   const stored = rateLimitStore.get(key);
 
-  // Cleanup alte Einträge (alle 5 Minuten)
+  // Cleanup alte Einträge
   if (Math.random() < 0.01) {
-    // 1% Chance bei jedem Request
     for (const [k, v] of rateLimitStore.entries()) {
       if (v.resetTime < now) {
         rateLimitStore.delete(k);
@@ -53,7 +72,6 @@ function checkRateLimit(
   }
 
   if (!stored || stored.resetTime < now) {
-    // Neuer Window
     rateLimitStore.set(key, {
       count: 1,
       resetTime: now + config.windowMs,
@@ -69,7 +87,6 @@ function checkRateLimit(
     };
   }
 
-  // Erhöhe Counter
   stored.count++;
   rateLimitStore.set(key, stored);
 
@@ -79,12 +96,12 @@ function checkRateLimit(
   };
 }
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+export default clerkMiddleware(async (auth, req) => {
+  const { pathname } = req.nextUrl;
 
   // Rate Limiting für API Routes
   if (pathname.startsWith("/api/")) {
-    const ip = getClientIP(request);
+    const ip = getClientIP(req);
     const rateLimit = checkRateLimit(pathname, ip);
 
     if (!rateLimit.allowed) {
@@ -106,7 +123,11 @@ export function middleware(request: NextRequest) {
       return response;
     }
 
-    // Rate Limit Headers hinzufügen
+    // Geschützte API Routes erfordern Auth
+    if (isProtectedRoute(req)) {
+      await auth.protect();
+    }
+
     const response = NextResponse.next();
     if (rateLimit.remaining !== undefined) {
       response.headers.set(
@@ -121,20 +142,16 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  // Für alle anderen Routes einfach durchlassen
+  // Geschützte Seiten erfordern Auth
+  if (isProtectedRoute(req)) {
+    await auth.protect();
+  }
+
   return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
-

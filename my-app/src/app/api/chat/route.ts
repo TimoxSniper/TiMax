@@ -1,10 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { validateRequiredEnv } from "@/lib/env";
 import { chatSchema, sanitizeString } from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
   try {
+    // 1. CLERK AUTH - User ID holen
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: "Nicht authentifiziert. Bitte melde dich an." },
+        { status: 401 }
+      );
+    }
+    
+    console.log("[Chat API] User authentifiziert:", userId);
+
     // Validiere erforderliche Environment-Variablen
     const env = validateRequiredEnv();
 
@@ -27,22 +40,20 @@ export async function POST(request: NextRequest) {
     // Sanitize Message
     const sanitizedMessage = sanitizeString(message);
 
-    // Request an n8n Webhook senden
+    // Request an n8n Webhook senden MIT User ID
     const response = await fetch(env.N8N_CHAT_WEBHOOK_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-Request-Type": "chat", // Header zur Unterscheidung im n8n Workflow
       },
       body: JSON.stringify({
-        body: {
-          message: sanitizedMessage,
-          sessionId,
-          chatHistory: chatHistory.map((msg) => ({
-            ...msg,
-            content: sanitizeString(msg.content),
-          })),
-        },
+        user_id: userId, // WICHTIG: User ID für Multi-User Isolation
+        message: sanitizedMessage,
+        sessionId,
+        chatHistory: chatHistory.map((msg) => ({
+          ...msg,
+          content: sanitizeString(msg.content),
+        })),
       }),
     });
 
@@ -64,20 +75,16 @@ export async function POST(request: NextRequest) {
     }
 
     // n8n gibt die Antwort in verschiedenen Formaten zurück
-    // Wir müssen die Struktur anpassen und validieren
     let output = "";
     
     if (typeof data === "string") {
-      // Direkter String-Output
       output = data.trim();
     } else if (data && typeof data === "object") {
-      // Objekt-Response - verschiedene mögliche Strukturen
       if (typeof data.output === "string") {
         output = data.output.trim();
       } else if (data.body && typeof data.body.output === "string") {
         output = data.body.output.trim();
       } else if (Array.isArray(data) && data.length > 0) {
-        // Array-Response (n8n Standard-Format)
         const firstItem = data[0];
         if (firstItem?.json?.output && typeof firstItem.json.output === "string") {
           output = firstItem.json.output.trim();
@@ -89,7 +96,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Validierung: Output muss nicht leer sein
     if (!output || output.length === 0) {
       throw new Error("n8n Webhook hat leere Antwort zurückgegeben");
     }
@@ -99,18 +105,11 @@ export async function POST(request: NextRequest) {
       output,
     });
   } catch (error) {
-    // Sende Fehler an Sentry
     Sentry.captureException(error, {
-      tags: {
-        api_route: "/api/chat",
-      },
-      extra: {
-        endpoint: "/api/chat",
-        method: "POST",
-      },
+      tags: { api_route: "/api/chat" },
+      extra: { endpoint: "/api/chat", method: "POST" },
     });
 
-    // In Development auch in Console loggen
     if (process.env.NODE_ENV === "development") {
       console.error("Chat API Fehler:", error);
     }
@@ -118,10 +117,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unbekannter Fehler bei der Chat-Anfrage",
+        error: error instanceof Error ? error.message : "Unbekannter Fehler bei der Chat-Anfrage",
       },
       { status: 500 }
     );
