@@ -53,11 +53,11 @@ const WORKFLOW_STEPS = [
 
 // Target Audiences
 const TARGET_AUDIENCES = [
-  "Content-Creator",
-  "Freelance Social-Media-Manager",
-  "Business- und Life-Coaches",
-  "Solopreneure",
-  "Kleine Businesses",
+  "Marketing-Agenturen",
+  "Content-Studios",
+  "Content-Teams",
+  "Social Media Agenturen",
+  "Erfolgreiche Solopreneure",
 ] as const;
 
 // Workflow Section Component
@@ -175,12 +175,12 @@ const ProblemSection = memo(function ProblemSection() {
                   Das Problem
                 </h2>
                 <p className="text-xl text-black/70 dark:text-white/70 leading-relaxed">
-                  Content-Creator und Coaches kämpfen damit, aus bestehenden Videos und Audios schnell neues, passendes Textmaterial zu erstellen.
+                  Marketing-Agenturen und Content-Teams kämpfen damit, aus den Video- und Audio-Bibliotheken ihrer Kunden schnell neues, passendes Textmaterial zu erstellen.
                 </p>
               </div>
               <div className="space-y-4">
                 <p className="text-lg text-black/70 dark:text-white/70 leading-relaxed">
-                  Ihre Inhalte sind unstrukturiert verteilt und kaum durchsuchbar. Aktuelle Tools fokussieren entweder nur auf Transkription oder reine Textgenerierung und verbinden Upload, Strukturierung und Dialog mit der KI kaum nahtlos. Dadurch verlieren die Nutzer Zeit, Ideen und Reichweite und können ihr Wissen nur begrenzt skalieren.
+                  Kundeninhalte sind unstrukturiert verteilt und kaum durchsuchbar. Aktuelle Tools fokussieren entweder nur auf Transkription oder reine Textgenerierung und verbinden Upload, Strukturierung und Dialog mit der KI kaum nahtlos. Dadurch verlieren Agenturen Zeit, Content-Output und skalierbare Margen.
                 </p>
                 <div className="flex flex-wrap gap-3 pt-4">
                   {TARGET_AUDIENCES.map((audience) => (
@@ -227,7 +227,7 @@ const SolutionSection = memo(function SolutionSection() {
               </div>
               <div className="space-y-6">
                 <p className="text-lg text-black/70 dark:text-white/70 leading-relaxed">
-                  Nutze deine Video- und Audio-Bibliotheken, um schnell neues Textmaterial zu generieren. Unsere Plattform vereint Upload, intelligente Strukturierung und KI-Dialog in einem einzigen Workflow. So kannst du dein Wissen effizient skalieren, ohne zwischen verschiedenen Tools wechseln zu müssen.
+                  Nutze die Video- und Audio-Bibliotheken deiner Kunden, um schnell neues Textmaterial zu generieren. Unsere Plattform vereint Upload, intelligente Strukturierung und KI-Dialog in einem einzigen Workflow. So kannst du Content-Produktion skalieren, mehr Kunden bedienen und deine Margen steigern – ohne zwischen verschiedenen Tools wechseln zu müsen.
                 </p>
                 <ul className="space-y-4 text-black/70 dark:text-white/70">
                   {solutionPoints.map((point, index) => (

@@ -1,21 +1,30 @@
 ### Zielsegmente
 
-1. **Content-Creator auf YouTube und TikTok**  
-   **Warum passend:** Sie produzieren viele Video-/Audio-Inhalte und müssen laufend neue Skripte, Captions und Snippets daraus ableiten.
+#### PRIMÄR: Marketing-Agenturen & Content-Studios (5-50 Mitarbeiter)
+**Warum passend:**
+- Höhere Budgets für Tools (50-200€/Monat)
+- Skalierbarer Mehrwert: Ein Tool für 10+ Kunden = 10x ROI
+- Definierte Tool-Budgets und Evaluierungsprozesse
+- Längere Customer Lifetime, da Tool in Agency-Workflows integriert wird
+- Schmerzpunkt: Effizienzgewinn direkt monetarisierbar (mehr Kunden, gleiche Ressourcen)
 
-2. **Business- und Life-Coaches mit Online-Programmen**  
-   **Warum passend:** Sie haben umfangreiche Video-Bibliotheken (Coachings, Kurse, Webinare), die sie in verkaufstarke Posts, Mails und Skripte übersetzen wollen.
+#### SEKUNDÄR: Internal Content-Teams bei mittelständischen Unternehmen
+**Warum passend:**
+- Enterprise-Ready Pricing möglich
+- Regelmäßige, skalierbare Content-Produktion
+- Bedarf an Konsistenz und Brand-Voice über mehrere Kanäle
+- Längere Sales-Cycle, aber höhere Deal-Sizes
+- Integration mit internen Workflows wichtig (Slack, Teams, CMS)
 
-3. **Freelance Social-Media-Manager für Solopreneure und kleine Businesses**  
-   **Warum passend:** Sie müssen aus vorhandenem Rohmaterial effizient Social-Content, LinkedIn- und Instagram-Posts erstellen, oft unter hohem Zeitdruck.
-
-4. **Trainer und Weiterbildungsanbieter mit Video-Kursen**  
-   **Warum passend:** Sie sitzen auf vielen aufgezeichneten Sessions und suchen Wege, daraus Lernmaterial, Skripte und Marketing-Content zu generieren.
-
-5. **Berater und Agenturen, die Podcasts und Webinare für Kunden produzieren**  
-   **Warum passend:** Sie brauchen wiederverwendbare Textbausteine (Show Notes, LinkedIn-Posts, Landingpage-Texte) aus bestehenden Audio-/Video-Formaten.
+#### TERTIÄR: Erfolgreiche Solopreneure (5-stellige Umsätze/Monat)
+**Warum passend:**
+- Budget vorhanden für Premium-Tools
+- Skalierung durch Assistenz-Teams oder Outsourcing
+- Hohe Zeitersparnis direkt umsetzbar in mehr Content-Monetarisierung
+- Decision-Maker selbst = kurze Sales-Cycle
+- Test-Market für B2B-Features vor Agency-Rollout
 
 ### Empfehlung
 
-**Bestes Zielsegment:** Freelance Social-Media-Manager für Solopreneure und kleine Businesses – sie haben ein klares, wiederkehrendes Pain-Point (kontinuierlich Content aus vorhandenem Material generieren), sind stark auf Effizienz angewiesen und der Mehrwert ist direkt in Zeitersparnis und besserer Output messbar.
+**Bestes Zielsegment:** Marketing-Agenturen & Content-Studios (5-50 Mitarbeiter) – sie haben die höchste Zahlungsbereitschaft, skalierbareste Business-Modelle und bieten die größte Möglichkeit für Umsatzwachstum durch Multi-Customer-Nutzung.
 
