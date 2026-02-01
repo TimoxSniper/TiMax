@@ -8,11 +8,24 @@ import { EmailSignup } from "@/components/home/email-signup";
 import { GridBackground } from "@/components/home/grid-background";
 import { TestimonialsSection } from "@/components/home/testimonials-section";
 import { DemoVideoSection } from "@/components/home/demo-video-section";
-import { GlassCard } from "@/components/magic-ui/glass-card";
+import { Card } from "@/components/magic-ui/glass-card";
 import { AnimatedSection } from "@/components/magic-ui/animated-section";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Sparkles, MessageSquare, Zap, Clock, TrendingUp, Users, ChevronRight, FileText, Network, ArrowRight } from "lucide-react";
+import { 
+  Upload, 
+  Sparkles, 
+  MessageSquare, 
+  Zap, 
+  Clock, 
+  TrendingUp, 
+  Users,
+  ChevronRight,
+  FileText, 
+  Network,
+  ArrowRight,
+  CheckCircle2
+} from "lucide-react";
 import Link from "next/link";
 
 // Konstanten
@@ -27,7 +40,7 @@ const FEATURES = [
     description: "Lade Videos und Audios einfach hoch – ohne Umwege",
   },
   {
-    icon: Sparkles,
+    icon: Network,
     title: "Intelligente Strukturierung",
     description: "Deine Inhalte werden automatisch organisiert und durchsuchbar",
   },
@@ -43,7 +56,7 @@ const FEATURES = [
   },
 ] as const;
 
-// Workflow Steps - Jetzt mit Links
+// Workflow Steps
 const WORKFLOW_STEPS = [
   { step: "1", icon: Upload, title: "Upload", desc: "Lade Videos oder Audios hoch", href: "/text-generator", action: "Upload starten" },
   { step: "2", icon: FileText, title: "Transkription", desc: "Automatische Umwandlung in Text", href: "/text-generator", action: "Transkript ansehen" },
@@ -67,47 +80,52 @@ const WorkflowSection = memo(function WorkflowSection() {
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-black dark:text-white">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-foreground">
               So funktioniert's
             </h2>
-            <p className="text-xl text-black/70 dark:text-white/70 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Ein einfacher Workflow in vier Schritten
             </p>
           </div>
         </AnimatedSection>
 
         <div className="relative">
-          <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-black/10 via-black/20 to-black/10 dark:from-white/10 dark:via-white/20 dark:to-white/10 transform -translate-y-1/2 z-0" />
+          {/* Verbindungslinie */}
+          <div className="hidden md:block absolute top-[72px] left-[12.5%] right-[12.5%] h-0.5 bg-gradient-to-r from-border via-foreground/20 to-border transform -translate-y-1/2 z-0" />
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-20">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
             {WORKFLOW_STEPS.map((item, index) => {
               const Icon = item.icon;
               return (
                 <AnimatedSection key={item.step} delay={index * 150} direction="up">
                   <Link href={item.href} className="block h-full">
-                    <GlassCard
+                    <Card
                       variant="subtle"
                       hover
-                      className="p-6 text-center relative h-full flex flex-col focus-within:ring-2 focus-within:ring-black/20 dark:focus-within:ring-white/20 cursor-pointer group transition-all duration-300 hover:scale-105"
+                      className="p-6 text-center h-full flex flex-col cursor-pointer group transition-all duration-300 hover:scale-105"
                     >
-                      <div className="w-12 h-12 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center mx-auto mb-4 font-bold text-lg transition-transform group-hover:scale-110">
+                      <div className="w-12 h-12 rounded-full bg-foreground text-background flex items-center justify-center mx-auto mb-4 font-bold text-lg transition-transform group-hover:scale-110 z-10">
                         <Icon className="w-6 h-6" aria-hidden="true" />
                       </div>
-                      <h3 className="text-lg font-semibold mb-2 text-black dark:text-white">
+                      <h3 className="text-lg font-semibold mb-2 text-foreground">
                         {item.title}
                       </h3>
-                      <p className="text-sm text-black/70 dark:text-white/70 flex-grow mb-3">
+                      <p className="text-sm text-muted-foreground flex-grow mb-3">
                         {item.desc}
                       </p>
-                      <div className="mt-auto pt-3 border-t border-black/10 dark:border-white/10">
-                        <span className="text-xs font-medium text-black/60 dark:text-white/60 group-hover:text-black dark:group-hover:text-white transition-colors">
+                      <div className="mt-auto pt-3 border-t border-border">
+                        <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
                           {item.action} →
                         </span>
                       </div>
-                      {index < 3 && (
-                        <ChevronRight className="hidden md:block absolute top-1/2 -right-3 transform -translate-y-1/2 text-black/20 dark:text-white/20 w-6 h-6 group-hover:text-black/40 dark:group-hover:text-white/40 transition-colors" aria-hidden="true" />
-                      )}
-                    </GlassCard>
+                    </Card>
+                    
+                    {/* Pfeil nach rechts (außer beim letzten Item) */}
+                    {index < 3 && (
+                      <div className="hidden md:block absolute top-[72px] -right-3 transform -translate-y-1/2 z-20">
+                        <ChevronRight className="text-foreground/30 w-6 h-6" aria-hidden="true" />
+                      </div>
+                    )}
                   </Link>
                 </AnimatedSection>
               );
@@ -140,10 +158,10 @@ const FeaturesSection = memo(function FeaturesSection() {
             const Icon = feature.icon;
             return (
               <AnimatedSection key={feature.title} delay={index * 100} direction="up">
-                <GlassCard hover variant="subtle" className="p-8 h-full focus-within:ring-2 focus-within:ring-black/20 dark:focus-within:ring-white/20">
+                <Card hover variant="subtle" className="p-8 h-full focus-within:ring-2 focus-within:ring-black/20 dark:focus-within:ring-white/20">
                   <div className="flex flex-col h-full">
-                    <div className="w-14 h-14 rounded-2xl bg-black/5 dark:bg-white/5 flex items-center justify-center mb-6 transition-colors group-hover:bg-black/10 dark:group-hover:bg-white/10">
-                      <Icon className="h-7 w-7 text-black dark:text-white" aria-hidden="true" />
+                    <div className="w-14 h-14 rounded-2xl bg-foreground/5 flex items-center justify-center mb-6 transition-colors group-hover:bg-foreground/10">
+                      <Icon className="h-7 w-7 text-foreground" aria-hidden="true" />
                     </div>
                     <h3 className="text-xl font-semibold mb-3 text-black dark:text-white">
                       {feature.title}
@@ -152,7 +170,7 @@ const FeaturesSection = memo(function FeaturesSection() {
                       {feature.description}
                     </p>
                   </div>
-                </GlassCard>
+                </Card>
               </AnimatedSection>
             );
           })}
@@ -168,7 +186,7 @@ const ProblemSection = memo(function ProblemSection() {
     <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="problem">
       <div className="container mx-auto max-w-4xl">
         <AnimatedSection direction="up">
-          <GlassCard variant="elevated" className="p-10 sm:p-12">
+          <Card variant="default" className="p-10 sm:p-12">
             <div className="space-y-8">
               <div>
                 <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-black dark:text-white">
@@ -195,7 +213,7 @@ const ProblemSection = memo(function ProblemSection() {
                 </div>
               </div>
             </div>
-          </GlassCard>
+          </Card>
         </AnimatedSection>
       </div>
     </section>
@@ -215,7 +233,7 @@ const SolutionSection = memo(function SolutionSection() {
     <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="solution">
       <div className="container mx-auto max-w-4xl">
         <AnimatedSection direction="up">
-          <GlassCard variant="elevated" className="p-10 sm:p-12">
+          <Card variant="default" className="p-10 sm:p-12">
             <div className="space-y-8">
               <div>
                 <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-black dark:text-white">
@@ -229,17 +247,17 @@ const SolutionSection = memo(function SolutionSection() {
                 <p className="text-lg text-black/70 dark:text-white/70 leading-relaxed">
                   Nutze die Video- und Audio-Bibliotheken deiner Kunden, um schnell neues Textmaterial zu generieren. Unsere Plattform vereint Upload, intelligente Strukturierung und KI-Dialog in einem einzigen Workflow. So kannst du Content-Produktion skalieren, mehr Kunden bedienen und deine Margen steigern – ohne zwischen verschiedenen Tools wechseln zu müsen.
                 </p>
-                <ul className="space-y-4 text-black/70 dark:text-white/70">
+                <ul className="space-y-4 text-foreground/70">
                   {solutionPoints.map((point, index) => (
                     <li key={index} className="flex items-start gap-4">
-                      <div className="w-2 h-2 rounded-full bg-black dark:bg-white mt-2 flex-shrink-0" aria-hidden="true" />
+                      <CheckCircle2 className="w-5 h-5 text-foreground flex-shrink-0 mt-1" aria-hidden="true" />
                       <span className="text-lg">{point}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
-          </GlassCard>
+          </Card>
         </AnimatedSection>
       </div>
     </section>
@@ -285,15 +303,15 @@ const BenefitsSection = memo(function BenefitsSection() {
             const Icon = benefit.icon;
             return (
               <AnimatedSection key={benefit.title} delay={index * 100} direction="up">
-                <GlassCard variant="subtle" className="p-8 h-full focus-within:ring-2 focus-within:ring-black/20 dark:focus-within:ring-white/20">
-                  <Icon className="h-10 w-10 text-black dark:text-white mb-4" aria-hidden="true" />
+                <Card variant="subtle" className="p-8 h-full focus-within:ring-2 focus-within:ring-foreground/20">
+                  <Icon className="h-10 w-10 text-foreground mb-4" aria-hidden="true" />
                   <h3 className="text-xl font-semibold mb-3 text-black dark:text-white">
                     {benefit.title}
                   </h3>
                   <p className="text-black/70 dark:text-white/70">
                     {benefit.description}
                   </p>
-                </GlassCard>
+                </Card>
               </AnimatedSection>
             );
           })}
@@ -309,7 +327,7 @@ const DemoSection = memo(function DemoSection() {
     <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="demo">
       <div className="container mx-auto max-w-4xl">
         <AnimatedSection direction="up">
-          <GlassCard variant="elevated" className="p-10 sm:p-12">
+          <Card variant="default" className="p-10 sm:p-12">
             <div className="text-center space-y-10">
               <div className="space-y-6">
                 <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-black dark:text-white">
@@ -330,7 +348,7 @@ const DemoSection = memo(function DemoSection() {
                 </Link>
               </Button>
             </div>
-          </GlassCard>
+          </Card>
         </AnimatedSection>
       </div>
     </section>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { GlassCard } from "@/components/magic-ui/glass-card";
+import { Card } from "@/components/magic-ui/glass-card";
 import { AnimatedSection } from "@/components/magic-ui/animated-section";
 import { useToast } from "@/components/ui/toast";
 import { Loader2 } from "lucide-react";
@@ -49,7 +49,7 @@ export function EmailSignup() {
     <section className="relative px-4 py-24 sm:px-6 lg:px-8 z-10" id="cta">
       <div className="container mx-auto max-w-2xl">
         <AnimatedSection direction="up">
-          <GlassCard variant="elevated" className="p-10 sm:p-12">
+          <Card variant="default" className="p-10 sm:p-12">
             <div className="space-y-8 text-center">
               <div>
                 <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-black dark:text-white">
@@ -71,14 +71,14 @@ export function EmailSignup() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full bg-white/70 dark:bg-black/70 backdrop-blur-md sm:backdrop-blur-lg border border-black/10 dark:border-white/10 focus:border-black/20 dark:focus:border-white/20 rounded-full px-6 py-4 text-base transition-all shadow-lg focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20 focus:ring-offset-2"
+                    className="w-full bg-card border-border focus:border-primary rounded-lg px-6 py-4 text-base transition-all shadow-sm focus:ring-2 focus:ring-primary/20"
                     aria-label="E-Mail-Adresse für Anmeldung"
                   />
                 </div>
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90 transition-all duration-300 hover:scale-[1.02] rounded-full px-8 py-6 text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20 focus:ring-offset-2" 
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 rounded-lg px-8 py-6 text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-primary/20" 
                   size="lg"
                 >
                   {isSubmitting ? (
@@ -92,7 +92,7 @@ export function EmailSignup() {
                 </Button>
               </form>
             </div>
-          </GlassCard>
+          </Card>
         </AnimatedSection>
       </div>
     </section>
