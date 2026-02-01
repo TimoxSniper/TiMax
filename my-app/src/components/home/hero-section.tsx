@@ -17,10 +17,10 @@ export function HeroSection() {
         
         <AnimatedSection delay={200} direction="up">
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            {/* Primary CTA - Schwarz/Weiß wie vorher */}
+            {/* Primary CTA */}
             <Button 
               size="lg" 
-              className="group bg-foreground text-background hover:bg-foreground/90 transition-all duration-200 rounded-xl px-8 py-6 text-base font-medium shadow-lg focus:ring-2 focus:ring-foreground/20"
+              className="group bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 transition-all duration-200 rounded-xl px-8 py-6 text-base font-medium shadow-lg"
               asChild
             >
               <Link href="/text-generator">
@@ -33,7 +33,7 @@ export function HeroSection() {
             <Button 
               size="lg" 
               variant="outline"
-              className="group border-2 border-foreground/20 bg-transparent text-foreground hover:bg-foreground/5 hover:border-foreground/40 rounded-xl px-8 py-6 text-base font-medium"
+              className="group border-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500 rounded-xl px-8 py-6 text-base font-medium"
               asChild
             >
               <Link href="/chat">
