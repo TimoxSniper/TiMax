@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/upload/file-upload";
 import { MainNavigation } from "@/components/layout/main-navigation";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { TIMEOUTS, BREAKPOINTS } from "@/lib/constants";
 import Link from "next/link";
 
 export default function TextGeneratorPage() {
@@ -40,11 +41,11 @@ export default function TextGeneratorPage() {
           setError(null);
           
           // Smooth scroll zum Output-Bereich auf Mobile
-          if (typeof window !== "undefined" && window.innerWidth < 1024) {
+          if (typeof window !== "undefined" && window.innerWidth < BREAKPOINTS.MOBILE) {
             setTimeout(() => {
               const outputElement = document.getElementById("text-output");
               outputElement?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-            }, 100);
+            }, TIMEOUTS.SCROLL_DELAY);
           }
         } else {
           setError(result.error || "Fehler bei der Text-Generierung");
@@ -96,24 +97,14 @@ export default function TextGeneratorPage() {
             {/* Upload-Bereich */}
             <FileUpload 
               onUploadSuccess={(fileName, transcriptText) => {
-                // Debug-Logging - immer aktiv
-                console.log("[TextGenerator] ===== Upload Success Callback =====");
-                console.log("[TextGenerator] fileName:", fileName);
-                console.log("[TextGenerator] transcriptText:", transcriptText);
-                console.log("[TextGenerator] transcriptText type:", typeof transcriptText);
-                console.log("[TextGenerator] transcriptText length:", transcriptText?.length);
-                
                 // Setze Transkript wenn vorhanden
                 if (transcriptText && transcriptText.trim().length > 0) {
-                  console.log("[TextGenerator] ✅ Setze Transkript, Länge:", transcriptText.length);
                   setTranscript(transcriptText);
                   setError(null);
                   // Lösche generierten Text wenn neues Transkript kommt
                   setGeneratedText("");
                   setSelectedFormat(null);
                 } else {
-                  console.warn("[TextGenerator] ⚠️ Kein Transkript in Response");
-                  console.warn("[TextGenerator] transcriptText value:", transcriptText);
                   setError("Transkript wurde nicht zurückgegeben. Bitte versuchen Sie es erneut.");
                 }
                 
@@ -123,7 +114,7 @@ export default function TextGeneratorPage() {
                   if (formatSelector) {
                     formatSelector.scrollIntoView({ behavior: "smooth", block: "nearest" });
                   }
-                }, 500);
+                }, TIMEOUTS.UPLOAD_SCROLL_DELAY);
               }}
               onUploadError={(error) => {
                 // In Production: Hier würde man zu einem Error-Tracking-Service loggen

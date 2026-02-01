@@ -4,11 +4,10 @@ import { useState, useRef, useEffect, DragEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Upload, X, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { TIMEOUTS, UPLOAD_CONFIG } from "@/lib/constants";
 
-const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
-const ALLOWED_TYPES = [
-  "audio/mpeg", "audio/mp4", "audio/wav", "audio/m4a", "video/mp4", "video/webm"
-];
+const MAX_FILE_SIZE = UPLOAD_CONFIG.MAX_FILE_SIZE;
+const ALLOWED_TYPES: string[] = [...UPLOAD_CONFIG.ALLOWED_TYPES];
 
 interface FileUploadProps {
   onUploadSuccess?: (fileName: string, transcript?: string) => void;
@@ -95,15 +94,7 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
           if (xhr.status >= 200 && xhr.status < 300) {
             try {
               const data = JSON.parse(xhr.responseText);
-              console.log("[FileUpload] Server Response:", data);
               if (data.success) {
-                // Debug-Logging - immer aktiv
-                console.log("[FileUpload] Upload erfolgreich:", {
-                  fileName: data.fileName || file.name,
-                  hasTranscript: !!data.transcript,
-                  transcriptLength: data.transcript?.length || 0,
-                  fullResponse: data
-                });
                 resolve({ 
                   success: true, 
                   fileName: data.fileName || file.name,
@@ -148,13 +139,13 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
         clearTimeout(resetTimeoutRef.current);
       }
       
-      // Reset nach 3 Sekunden
+      // Reset nach konfigurierter Zeit
       resetTimeoutRef.current = setTimeout(() => {
         setFile(null);
         setSuccess(false);
         setProgress(0);
         resetTimeoutRef.current = null;
-      }, 3000);
+      }, TIMEOUTS.UPLOAD_RESET);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unbekannter Upload-Fehler";
       setError(errorMessage);
