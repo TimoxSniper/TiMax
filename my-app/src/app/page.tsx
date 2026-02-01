@@ -3,11 +3,11 @@
 import { memo, useMemo } from "react";
 import { HeroSection } from "@/components/home/hero-section";
 import { StatsSection } from "@/components/home/stats-section";
-import { DarkModeToggle } from "@/components/home/dark-mode-toggle";
 import { EmailSignup } from "@/components/home/email-signup";
 import { GridBackground } from "@/components/home/grid-background";
 import { TestimonialsSection } from "@/components/home/testimonials-section";
 import { DemoVideoSection } from "@/components/home/demo-video-section";
+import { MainNavigation } from "@/components/layout/main-navigation";
 import { Card } from "@/components/magic-ui/glass-card";
 import { AnimatedSection } from "@/components/magic-ui/animated-section";
 import { Button } from "@/components/ui/button";
@@ -354,7 +354,7 @@ export default function Home() {
         Zum Hauptinhalt springen
       </a>
 
-      <DarkModeToggle />
+      <MainNavigation />
       <GridBackground />
 
       <main id="main-content" role="main">

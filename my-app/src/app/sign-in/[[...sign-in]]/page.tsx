@@ -20,6 +20,7 @@ export default function SignInPage() {
         <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-xl">
           <SignIn 
             routing="hash"
+            fallbackRedirectUrl="/chat"
             appearance={{
               elements: {
                 card: "bg-transparent shadow-none",
