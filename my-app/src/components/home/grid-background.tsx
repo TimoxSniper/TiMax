@@ -9,17 +9,7 @@ export function GridBackground() {
         aria-hidden="true" 
       />
       
-      {/* Sehr subtiler neutraler Gradient - Light Mode */}
-      <div 
-        className="fixed inset-0 pointer-events-none z-0 bg-gradient-radial from-gray-400/[0.015] via-transparent to-transparent dark:hidden"
-        aria-hidden="true"
-      />
-      
-      {/* Sehr subtiler neutraler Gradient - Dark Mode */}
-      <div 
-        className="fixed inset-0 pointer-events-none z-0 bg-gradient-radial from-gray-500/[0.02] via-transparent to-transparent hidden dark:block"
-        aria-hidden="true"
-      />
+
       
       {/* Sehr subtiler Grid - Light Mode */}
       <div 
