@@ -33,7 +33,7 @@ export function HeroSection() {
             <Button 
               size="lg" 
               variant="outline"
-              className="group border-2 border-border hover:bg-secondary transition-all duration-200 rounded-xl px-8 py-6 text-base font-medium"
+              className="group border-2 border-foreground/20 bg-transparent text-foreground hover:bg-foreground/5 hover:border-foreground/40 rounded-xl px-8 py-6 text-base font-medium"
               asChild
             >
               <Link href="/chat">

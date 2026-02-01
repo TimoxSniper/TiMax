@@ -20,7 +20,6 @@ import {
   Clock, 
   TrendingUp, 
   Users,
-  ChevronRight,
   FileText, 
   Network,
   ArrowRight,
@@ -89,48 +88,36 @@ const WorkflowSection = memo(function WorkflowSection() {
           </div>
         </AnimatedSection>
 
-        <div className="relative">
-          {/* Verbindungslinie */}
-          <div className="hidden md:block absolute top-[72px] left-[12.5%] right-[12.5%] h-0.5 bg-gradient-to-r from-border via-foreground/20 to-border transform -translate-y-1/2 z-0" />
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
-            {WORKFLOW_STEPS.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <AnimatedSection key={item.step} delay={index * 150} direction="up">
-                  <Link href={item.href} className="block h-full">
-                    <Card
-                      variant="subtle"
-                      hover
-                      className="p-6 text-center h-full flex flex-col cursor-pointer group transition-all duration-300 hover:scale-105"
-                    >
-                      <div className="w-12 h-12 rounded-full bg-foreground text-background flex items-center justify-center mx-auto mb-4 font-bold text-lg transition-transform group-hover:scale-110 z-10">
-                        <Icon className="w-6 h-6" aria-hidden="true" />
-                      </div>
-                      <h3 className="text-lg font-semibold mb-2 text-foreground">
-                        {item.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground flex-grow mb-3">
-                        {item.desc}
-                      </p>
-                      <div className="mt-auto pt-3 border-t border-border">
-                        <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
-                          {item.action} →
-                        </span>
-                      </div>
-                    </Card>
-                    
-                    {/* Pfeil nach rechts (außer beim letzten Item) */}
-                    {index < 3 && (
-                      <div className="hidden md:block absolute top-[72px] -right-3 transform -translate-y-1/2 z-20">
-                        <ChevronRight className="text-foreground/30 w-6 h-6" aria-hidden="true" />
-                      </div>
-                    )}
-                  </Link>
-                </AnimatedSection>
-              );
-            })}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {WORKFLOW_STEPS.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <AnimatedSection key={item.step} delay={index * 150} direction="up">
+                <Link href={item.href} className="block h-full">
+                  <Card
+                    variant="subtle"
+                    hover
+                    className="p-6 text-center h-full flex flex-col cursor-pointer group transition-all duration-300 hover:scale-105"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-foreground text-background flex items-center justify-center mx-auto mb-4 font-bold text-lg transition-transform group-hover:scale-110">
+                      <Icon className="w-6 h-6" aria-hidden="true" />
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2 text-foreground">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground flex-grow mb-3">
+                      {item.desc}
+                    </p>
+                    <div className="mt-auto pt-3 border-t border-border">
+                      <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+                        {item.action} →
+                      </span>
+                    </div>
+                  </Card>
+                </Link>
+              </AnimatedSection>
+            );
+          })}
         </div>
       </div>
     </section>
