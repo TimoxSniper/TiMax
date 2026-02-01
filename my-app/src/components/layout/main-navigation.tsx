@@ -9,8 +9,11 @@ import { Menu, X, Zap, MessageSquare, FileText, Home, LogIn, User } from "lucide
 import { cn } from "@/lib/utils";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 
-const navigation = [
+const publicNavigation = [
   { name: "Home", href: "/", icon: Home },
+];
+
+const protectedNavigation = [
   { name: "Text Generator", href: "/text-generator", icon: FileText },
   { name: "Chat", href: "/chat", icon: MessageSquare },
 ];
@@ -52,7 +55,8 @@ export function MainNavigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:gap-1">
-            {navigation.map((item) => {
+            {/* Öffentliche Links (immer sichtbar) */}
+            {publicNavigation.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
               return (
@@ -72,6 +76,30 @@ export function MainNavigation() {
                 </Button>
               );
             })}
+            
+            {/* Geschützte Links (nur für eingeloggte User) */}
+            <SignedIn>
+              {protectedNavigation.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.href;
+                return (
+                  <Button
+                    key={item.name}
+                    variant={isActive ? "default" : "ghost"}
+                    asChild
+                    className={cn(
+                      "gap-2",
+                      isActive && "bg-primary text-primary-foreground"
+                    )}
+                  >
+                    <Link href={item.href}>
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                      {item.name}
+                    </Link>
+                  </Button>
+                );
+              })}
+            </SignedIn>
           </div>
 
           {/* Right Side: Auth + Dark Mode + Mobile Menu */}
@@ -121,7 +149,8 @@ export function MainNavigation() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t py-4">
             <div className="flex flex-col gap-2">
-              {navigation.map((item) => {
+              {/* Öffentliche Links (immer sichtbar) */}
+              {publicNavigation.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
                 return (
@@ -142,6 +171,31 @@ export function MainNavigation() {
                   </Button>
                 );
               })}
+              
+              {/* Geschützte Links (nur für eingeloggte User) */}
+              <SignedIn>
+                {protectedNavigation.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname === item.href;
+                  return (
+                    <Button
+                      key={item.name}
+                      variant={isActive ? "default" : "ghost"}
+                      asChild
+                      className={cn(
+                        "justify-start gap-2 w-full",
+                        isActive && "bg-primary text-primary-foreground"
+                      )}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Link href={item.href}>
+                        <Icon className="h-4 w-4" aria-hidden="true" />
+                        {item.name}
+                      </Link>
+                    </Button>
+                  );
+                })}
+              </SignedIn>
               
               {/* Mobile Auth */}
               <div className="border-t pt-2 mt-2">
