@@ -108,7 +108,7 @@ export function MainNavigation() {
               size="icon"
               className="md:hidden"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Menü öffnen"
+              aria-label={mobileMenuOpen ? "Menü schließen" : "Menü öffnen"}
               aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? (
