@@ -7,19 +7,19 @@ import { checkRateLimit } from "./lib/rate-limit";
 // Rate Limit Konfiguration aus Environment Variables
 const RATE_LIMITS = {
   "/api/upload": {
-    maxRequests: parseInt(process.env.RATE_LIMIT_UPLOAD_MAX || "5"),
+    maxRequests: Number(process.env.RATE_LIMIT_UPLOAD_MAX) || 5,
     windowMs: 60 * 60 * 1000
   },
   "/api/chat": {
-    maxRequests: parseInt(process.env.RATE_LIMIT_CHAT_MAX || "20"),
+    maxRequests: Number(process.env.RATE_LIMIT_CHAT_MAX) || 20,
     windowMs: 60 * 1000
   },
   "/api/generate": {
-    maxRequests: parseInt(process.env.RATE_LIMIT_GENERATE_MAX || "10"),
+    maxRequests: Number(process.env.RATE_LIMIT_GENERATE_MAX) || 10,
     windowMs: 60 * 60 * 1000
   },
   default: {
-    maxRequests: parseInt(process.env.RATE_LIMIT_DEFAULT_MAX || "100"),
+    maxRequests: Number(process.env.RATE_LIMIT_DEFAULT_MAX) || 100,
     windowMs: 60 * 1000
   },
 };
