@@ -14,6 +14,7 @@ const protectedNavigation = [
   { name: "Home", href: "/", icon: Home },
   { name: "Text Generator", href: "/text-generator", icon: FileText },
   { name: "Chat", href: "/chat", icon: MessageSquare },
+  { name: "Uploads", href: "/uploads", icon: FileText },
 ];
 
 const landingPageNavigation = [
@@ -108,7 +109,7 @@ export function MainNavigation() {
           {/* Right Side: Auth + Dark Mode + Mobile Menu */}
           <div className="flex items-center gap-2">
             <DarkModeToggle variant="inline" />
-            
+
             {/* Auth Buttons */}
             <SignedOut>
               <SignInButton mode="modal">
@@ -118,9 +119,9 @@ export function MainNavigation() {
                 </Button>
               </SignInButton>
             </SignedOut>
-            
+
             <SignedIn>
-              <UserButton 
+              <UserButton
                 afterSignOutUrl="/"
                 appearance={{
                   elements: {
@@ -177,7 +178,6 @@ export function MainNavigation() {
                     </Button>
                   );
                 })}
-
                 <div className="my-2 border-t border-border/50" />
 
                 {/* Navigation nur für eingeloggte User */}

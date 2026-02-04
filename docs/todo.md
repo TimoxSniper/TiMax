@@ -39,11 +39,11 @@ Dieser Plan strukturiert die restlichen Aufgaben in logische Batches, die nachei
 
 ---
 
-## 📦 Batch 4: File Management & Dashboards (Prio: Mittel)
-- [ ] **Upload Dashboard:** Übersicht über bisherige Uploads und deren Status
-- [ ] **Transcript Linking:** Verknüpfung von Transkripten mit spezifischen Chat-Sessions
-- [ ] **File Deletion:** Löschen von Dateien aus der DB (und optional S3/Supabase Storage)
-- [ ] **Transkript Preview:** Schnelle Ansicht der generierten Transkripte vor dem Chat
+## ✅ Batch 4: File Management & Dashboards (Erledigt)
+- [x] **Upload Dashboard:** Übersicht über bisherige Uploads und deren Status
+- [x] **Transcript Linking:** Verknüpfung von Transkripten mit spezifischen Chat-Sessions
+- [x] **File Deletion:** Löschen von Dateien aus der DB (und optional S3/Supabase Storage)
+- [x] **Transkript Preview:** Schnelle Ansicht der generierten Transkripte vor dem Chat
 
 ---
 

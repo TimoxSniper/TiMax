@@ -29,13 +29,26 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
   const requestIdRef = useRef<number>(0);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Session-ID mit UUID generieren, falls nicht vorhanden
+  // Session-ID und Transcript-Context laden
   useEffect(() => {
     if (!sessionId) {
       const newSessionId = `chat-${uuidv4()}`;
       setSessionId(newSessionId);
     }
-  }, [sessionId]);
+
+    // Prüfe auf Transkript-Übergabe aus Dashboard
+    const pendingTranscript = localStorage.getItem("pending_transcript");
+    if (pendingTranscript && messages.length === 0) {
+      const initialMessage: Message = {
+        id: `context-${uuidv4()}`,
+        role: "user",
+        content: `Hier ist ein Transkript als Kontext:\n\n${pendingTranscript}\n\nBitte hilf mir, dieses Transkript zu analysieren oder Inhalte daraus zu generieren.`,
+        timestamp: new Date(),
+      };
+      setMessages([initialMessage]);
+      localStorage.removeItem("pending_transcript");
+    }
+  }, [sessionId, messages.length]);
 
   // Lade Historie wenn chatId gesetzt wird
   useEffect(() => {
