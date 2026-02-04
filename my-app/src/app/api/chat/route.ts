@@ -11,14 +11,14 @@ async function chatHandler(request: NextRequest) {
   try {
     // 1. CLERK AUTH - User ID holen
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json(
         { success: false, error: "Nicht authentifiziert. Bitte melde dich an." },
         { status: 401 }
       );
     }
-    
+
     console.log("[Chat API] User authentifiziert:", userId);
 
     // 2. Supabase Client erstellen
@@ -28,7 +28,7 @@ async function chatHandler(request: NextRequest) {
     const env = validateRequiredEnv();
 
     const body = await request.json();
-    
+
     // Validiere Input mit Zod Schema
     const validationResult = chatSchema.safeParse(body);
     if (!validationResult.success) {
@@ -48,7 +48,7 @@ async function chatHandler(request: NextRequest) {
 
     // 3. CHAT IN SUPABASE ERSTELLEN/FINDEN
     let currentChatId = chat_id;
-    
+
     if (!currentChatId) {
       // Neuen Chat erstellen
       const { data: newChat, error: chatError } = await supabase
@@ -60,12 +60,12 @@ async function chatHandler(request: NextRequest) {
         })
         .select("id")
         .single();
-      
+
       if (chatError) {
         console.error("[Chat API] Fehler beim Erstellen des Chats:", chatError);
         throw new Error("Chat konnte nicht erstellt werden");
       }
-      
+
       currentChatId = newChat.id;
       console.log("[Chat API] Neuer Chat erstellt:", currentChatId);
     }
@@ -78,7 +78,7 @@ async function chatHandler(request: NextRequest) {
         role: "user",
         content: sanitizedMessage,
       });
-    
+
     if (messageError) {
       console.error("[Chat API] Fehler beim Speichern der Nachricht:", messageError);
     }
@@ -120,7 +120,7 @@ async function chatHandler(request: NextRequest) {
 
     // n8n gibt die Antwort in verschiedenen Formaten zurück
     let output = "";
-    
+
     if (typeof data === "string") {
       output = data.trim();
     } else if (data && typeof data === "object") {
@@ -176,7 +176,7 @@ export const POST = withCsrfProtection(chatHandler);
 async function getChatsHandler(request: NextRequest) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json(
         { success: false, error: "Nicht authentifiziert" },
@@ -192,14 +192,24 @@ async function getChatsHandler(request: NextRequest) {
       // Einzelnen Chat mit Nachrichten laden
       const { data: chat, error: chatError } = await supabase
         .from("chats")
-        .select("*, messages(*)")
+        .select(`
+          *,
+          messages (
+            id,
+            role,
+            content,
+            created_at
+          )
+        `)
         .eq("id", chatId)
         .eq("user_id", userId)
+        .order("created_at", { foreignTable: "messages", ascending: true })
         .single();
 
       if (chatError) {
+        console.error("[Chat API] Fehler beim Laden des Chats:", chatError);
         return NextResponse.json(
-          { success: false, error: "Chat nicht gefunden" },
+          { success: false, error: "Chat nicht gefunden oder Zugriff verweigert" },
           { status: 404 }
         );
       }

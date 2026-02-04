@@ -41,29 +41,61 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
   useEffect(() => {
     if (!chatId) return;
 
+    const abortController = new AbortController();
+
     const loadHistory = async () => {
       setIsLoading(true);
+      setError(null);
       try {
-        const response = await fetch(`/api/chat?chat_id=${chatId}`);
-        if (!response.ok) throw new Error("Historie konnte nicht geladen werden");
+        const response = await fetch(`/api/chat?chat_id=${chatId}`, {
+          signal: abortController.signal,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || CHAT_ERROR_TEXTS.HISTORY_LOAD_ERROR || "Historie konnte nicht geladen werden");
+        }
+
         const data = await response.json();
+
         if (data.success && data.chat) {
-          const loadedMessages = data.chat.messages.map((m: any) => ({
+          const loadedMessages = (data.chat.messages || []).map((m: any) => ({
             id: m.id,
-            role: m.role,
+            role: m.role as "user" | "assistant",
             content: m.content,
-            timestamp: new Date(m.created_at),
+            timestamp: new Date(m.created_at || m.timestamp),
           }));
+
+          // Wenn der Chat eine Session-ID hat, übernehmen wir diese
+          if (data.chat.session_id) {
+            setSessionId(data.chat.session_id);
+          }
+
           setMessages(loadedMessages);
+        } else {
+          throw new Error(data.error || "Unerwartetes Format der Historien-Daten");
         }
       } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") {
+          return;
+        }
+
         console.error("Fehler beim Laden der Historie:", err);
+        setError(err instanceof Error ? err.message : "Historie konnte nicht geladen werden");
+
+        Sentry.captureException(err, {
+          extra: { chatId, action: "loadHistory" }
+        });
       } finally {
         setIsLoading(false);
       }
     };
 
     loadHistory();
+
+    return () => {
+      abortController.abort();
+    };
   }, [chatId]);
 
   const handleSendMessage = async (content: string) => {
@@ -177,6 +209,11 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
     const newSessionId = `chat-${uuidv4()}`;
     setSessionId(newSessionId);
     setError(null);
+    setIsLoading(false);
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
   };
 
   return {

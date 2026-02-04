@@ -44,6 +44,7 @@ export const CHAT_UI_TEXTS = {
 export const CHAT_ERROR_TEXTS = {
   DEFAULT_API_ERROR: "Fehler bei der Chat-Anfrage",
   UNKNOWN_ERROR: "Unbekannter Fehler",
+  HISTORY_LOAD_ERROR: "Historie konnte nicht geladen werden",
   CHAT_ERROR_LOG_PREFIX: "Chat-Fehler:",
 } as const;
 
