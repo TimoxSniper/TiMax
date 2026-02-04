@@ -248,6 +248,7 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
                     variant="ghost"
                     size="icon"
                     onClick={handleRemove}
+                    aria-label="Datei entfernen"
                   >
                     <X className="w-4 h-4" />
                   </Button>

@@ -35,6 +35,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
+          aria-label="Nachricht eingeben"
           placeholder="Nachricht eingeben... (Enter zum Senden, Shift+Enter für neue Zeile)"
           disabled={disabled}
           rows={1}

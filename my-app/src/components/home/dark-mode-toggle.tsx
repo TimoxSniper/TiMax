@@ -45,7 +45,7 @@ export function DarkModeToggle({ variant = "fixed", className }: DarkModeToggleP
         size="icon"
         onClick={toggleDarkMode}
         className={cn("h-9 w-9", className)}
-        aria-label="Dark Mode umschalten"
+        aria-label={isDark ? "In den hellen Modus wechseln" : "In den dunklen Modus wechseln"}
       >
         {isDark ? (
           <Sun className="h-4 w-4" aria-hidden="true" />
@@ -64,7 +64,7 @@ export function DarkModeToggle({ variant = "fixed", className }: DarkModeToggleP
         "fixed top-4 right-4 sm:top-6 sm:right-6 z-50 p-3 rounded-full bg-card border border-border hover:bg-secondary transition-all duration-200 shadow-lg focus:ring-2 focus:ring-foreground/20",
         className
       )}
-      aria-label="Dark Mode umschalten"
+      aria-label={isDark ? "In den hellen Modus wechseln" : "In den dunklen Modus wechseln"}
     >
       {isDark ? (
         <Sun className="w-5 h-5 text-foreground" aria-hidden="true" />
