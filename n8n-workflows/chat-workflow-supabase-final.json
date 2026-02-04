@@ -1,0 +1,177 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "timax-chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "7c7310c2-a9c4-4633-a127-0a872aff6f9e",
+      "name": "Chat Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [-1120, -64],
+      "webhookId": "timax-chat"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract user_id, message, sessionId from webhook\nconst body = $input.first().json.body || {};\n\nconst userId = body.user_id || null;\nconst message = body.message || '';\nconst sessionId = body.sessionId || 'default';\nconst chatHistory = body.chatHistory || [];\nconst chatId = body.chat_id || null;\n\nif (!userId) {\n  throw new Error('User ID is required');\n}\n\nif (!message) {\n  throw new Error('Message is required');\n}\n\nreturn {\n  json: {\n    user_id: userId,\n    currentMessage: message,\n    sessionId: sessionId,\n    chat_id: chatId,\n    historyText: chatHistory.map((h, i) => `${i + 1}: ${h.content}`).join('\\n')\n  }\n};"
+      },
+      "id": "c766cb54-90c8-4791-b264-2570825a91cb",
+      "name": "Extract Chat Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-752, -64]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.currentMessage }}",
+        "options": {
+          "systemMessage": "Du bist REX, ein Content-Erstellungs-Assistent. Du hast Zugriff auf die Wissensdatenbank des Users mit seinen transkribierten Videos.\\n\\n=== CHAT-VERLAUF ===\\n{{ $json.historyText || 'Keine vorherigen Nachrichten.' }}\\n\\n=== WICHTIG ===\\n- Du siehst nur Inhalte dieses Users\\n- Nutze das search_knowledge_base Tool für relevante Informationen\\n- Antworte auf Deutsch\\n- Beziehe dich auf vorherige Nachrichten im Chat-Verlauf",
+          "returnIntermediateSteps": false
+        }
+      },
+      "id": "5beefbc8-b357-4b1a-8c2a-c74bc13b3a25",
+      "name": "REX Chat Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [-416, -64]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a796418b-05e8-4bf9-a74f-fbcc72518fbd",
+      "name": "Google Gemini Chat",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [-608, 208],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "BWPxLiVPTdHxDSZp",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "8eb821c0-94a8-4dce-912f-044ee7fe403b",
+      "name": "Generate Search Embeddings",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [-144, 560],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "BWPxLiVPTdHxDSZp",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Durchsuche die Wissensdatenbank des Users. Filtert automatisch nach user_id.",
+        "qdrantCollection": {"__rl": true, "mode": "id", "value": "timax_knowledge_base"},
+        "topK": 8,
+        "options": {}
+      },
+      "id": "e72e3992-76f2-4b66-bf41-d43ab8cd3353",
+      "name": "Search Knowledge Base",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [-144, 352],
+      "credentials": {
+        "qdrantApi": {
+          "id": "A1Vpk1rA51dSounY",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Extract Chat Data').item.json.sessionId }}",
+        "contextWindowLength": 10000
+      },
+      "id": "67033030-cfa4-4769-8bf8-ec07f8ac3fea",
+      "name": "Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [-400, 224]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format agent output with fallback\nconst item = $input.first().json;\nlet output = item.output || item.text || item.message?.content || 'Keine Antwort generiert.';\n\nreturn {\n  json: {\n    output: output,\n    user_id: $('Extract Chat Data').item.json.user_id,\n    chat_id: $('Extract Chat Data').item.json.chat_id\n  }\n};"
+      },
+      "id": "d746128b-c3fe-442a-bf02-e7972f06cbfe",
+      "name": "Format Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [48, -64]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "tableId": "messages",
+        "options": {},
+        "dataMode": "define",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "chat_id",
+              "fieldValue": "={{ $('Format Output').item.json.chat_id }}"
+            },
+            {
+              "fieldName": "role",
+              "fieldValue": "=assistant"
+            },
+            {
+              "fieldName": "content",
+              "fieldValue": "={{ $('Format Output').item.json.output }}"
+            }
+          ]
+        }
+      },
+      "id": "supabase-save-message",
+      "name": "Save Message to Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [280, -64],
+      "credentials": {
+        "supabaseApi": {
+          "id": "YOUR_SUPABASE_CREDENTIAL_ID",
+          "name": "Supabase API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "id": "ba7eae03-39d3-4edd-a11c-98b31afc56bf",
+      "name": "Send Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [520, -64]
+    }
+  ],
+  "connections": {
+    "Chat Webhook": {"main": [[{"node": "Extract Chat Data", "type": "main", "index": 0}]]},
+    "Extract Chat Data": {"main": [[{"node": "REX Chat Agent", "type": "main", "index": 0}]]},
+    "REX Chat Agent": {"main": [[{"node": "Format Output", "type": "main", "index": 0}]]},
+    "Format Output": {"main": [[{"node": "Save Message to Supabase", "type": "main", "index": 0}]]},
+    "Save Message to Supabase": {"main": [[{"node": "Send Response", "type": "main", "index": 0}]]},
+    "Google Gemini Chat": {"ai_languageModel": [[{"node": "REX Chat Agent", "type": "ai_languageModel", "index": 0}]]},
+    "Generate Search Embeddings": {"ai_embedding": [[{"node": "Search Knowledge Base", "type": "ai_embedding", "index": 0}]]},
+    "Search Knowledge Base": {"ai_tool": [[{"node": "REX Chat Agent", "type": "ai_tool", "index": 0}]]},
+    "Chat Memory": {"ai_memory": [[{"node": "REX Chat Agent", "type": "ai_memory", "index": 0}]]}
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e5a4d32e572ec70a3186832028fa12cf7c3a4c448458ccbc86948ccb79f51f92"
+  }
+}

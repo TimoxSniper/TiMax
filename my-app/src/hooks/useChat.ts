@@ -22,6 +22,7 @@ interface UseChatOptions {
 export function useChat({ initialSessionId }: UseChatOptions = {}) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [sessionId, setSessionId] = useState<string>(initialSessionId || "");
+  const [chatId, setChatId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,6 +36,35 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
       setSessionId(newSessionId);
     }
   }, [sessionId]);
+
+  // Lade Historie wenn chatId gesetzt wird
+  useEffect(() => {
+    if (!chatId) return;
+
+    const loadHistory = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`/api/chat?chat_id=${chatId}`);
+        if (!response.ok) throw new Error("Historie konnte nicht geladen werden");
+        const data = await response.json();
+        if (data.success && data.chat) {
+          const loadedMessages = data.chat.messages.map((m: any) => ({
+            id: m.id,
+            role: m.role,
+            content: m.content,
+            timestamp: new Date(m.created_at),
+          }));
+          setMessages(loadedMessages);
+        }
+      } catch (err) {
+        console.error("Fehler beim Laden der Historie:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadHistory();
+  }, [chatId]);
 
   const handleSendMessage = async (content: string) => {
     if (!content.trim() || isLoading) return;
@@ -66,6 +96,7 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
         body: JSON.stringify({
           message: content.trim(),
           sessionId,
+          chat_id: chatId, // Sende bestehende chat_id mit
           chatHistory: [...messages, userMessage].map((msg) => ({
             role: msg.role,
             content: msg.content,
@@ -86,6 +117,11 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
 
       if (!data.success) {
         throw new Error(data.error || CHAT_ERROR_TEXTS.DEFAULT_API_ERROR);
+      }
+
+      // Speichere die chat_id vom Server
+      if (data.chat_id && !chatId) {
+        setChatId(data.chat_id);
       }
 
       const assistantMessage: Message = {
@@ -112,6 +148,7 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
         Sentry.captureException(err, {
           extra: {
             sessionId,
+            chatId,
             messageCount: messages.length,
             requestId: currentRequestId
           }
@@ -127,11 +164,22 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
     }
   };
 
+  const startNewChat = () => {
+    setMessages([]);
+    setChatId(null);
+    const newSessionId = `chat-${uuidv4()}`;
+    setSessionId(newSessionId);
+    setError(null);
+  };
+
   return {
     messages,
     sessionId,
+    chatId,
     isLoading,
     error,
     handleSendMessage,
+    startNewChat,
+    setChatId,
   };
 }
