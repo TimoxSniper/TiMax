@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
+import { createClient } from "@/lib/supabase/server";
 import { validateRequiredEnv } from "@/lib/env";
 import { chatSchema, sanitizeString } from "@/lib/validation";
+import { withCsrfProtection } from "@/lib/csrf";
 
-export async function POST(request: NextRequest) {
+// Haupt-Handler für Chat
+async function chatHandler(request: NextRequest) {
   try {
     // 1. CLERK AUTH - User ID holen
     const { userId } = await auth();
@@ -17,6 +20,9 @@ export async function POST(request: NextRequest) {
     }
     
     console.log("[Chat API] User authentifiziert:", userId);
+
+    // 2. Supabase Client erstellen
+    const supabase = await createClient();
 
     // Validiere erforderliche Environment-Variablen
     const env = validateRequiredEnv();
@@ -35,19 +41,57 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { message, sessionId, chatHistory = [] } = validationResult.data;
+    const { message, sessionId, chatHistory = [], chat_id } = validationResult.data;
 
     // Sanitize Message
     const sanitizedMessage = sanitizeString(message);
 
-    // Request an n8n Webhook senden MIT User ID
+    // 3. CHAT IN SUPABASE ERSTELLEN/FINDEN
+    let currentChatId = chat_id;
+    
+    if (!currentChatId) {
+      // Neuen Chat erstellen
+      const { data: newChat, error: chatError } = await supabase
+        .from("chats")
+        .insert({
+          user_id: userId,
+          session_id: sessionId,
+          title: sanitizedMessage.substring(0, 50) + "...", // Erste Nachricht als Titel
+        })
+        .select("id")
+        .single();
+      
+      if (chatError) {
+        console.error("[Chat API] Fehler beim Erstellen des Chats:", chatError);
+        throw new Error("Chat konnte nicht erstellt werden");
+      }
+      
+      currentChatId = newChat.id;
+      console.log("[Chat API] Neuer Chat erstellt:", currentChatId);
+    }
+
+    // 4. USER MESSAGE IN SUPABASE SPEICHERN
+    const { error: messageError } = await supabase
+      .from("messages")
+      .insert({
+        chat_id: currentChatId,
+        role: "user",
+        content: sanitizedMessage,
+      });
+    
+    if (messageError) {
+      console.error("[Chat API] Fehler beim Speichern der Nachricht:", messageError);
+    }
+
+    // 5. REQUEST AN N8N SENDEN
     const response = await fetch(env.N8N_CHAT_WEBHOOK_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_id: userId, // WICHTIG: User ID für Multi-User Isolation
+        user_id: userId,
+        chat_id: currentChatId, // WICHTIG: chat_id für n8n
         message: sanitizedMessage,
         sessionId,
         chatHistory: chatHistory.map((msg) => ({
@@ -103,6 +147,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       output,
+      chat_id: currentChatId, // WICHTIG: Frontend braucht die chat_id
     });
   } catch (error) {
     Sentry.captureException(error, {
@@ -123,3 +168,65 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// Export POST mit CSRF-Schutz
+export const POST = withCsrfProtection(chatHandler);
+
+// GET Handler mit CSRF-Schutz
+async function getChatsHandler(request: NextRequest) {
+  try {
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: "Nicht authentifiziert" },
+        { status: 401 }
+      );
+    }
+
+    const supabase = await createClient();
+    const { searchParams } = new URL(request.url);
+    const chatId = searchParams.get("chat_id");
+
+    if (chatId) {
+      // Einzelnen Chat mit Nachrichten laden
+      const { data: chat, error: chatError } = await supabase
+        .from("chats")
+        .select("*, messages(*)")
+        .eq("id", chatId)
+        .eq("user_id", userId)
+        .single();
+
+      if (chatError) {
+        return NextResponse.json(
+          { success: false, error: "Chat nicht gefunden" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({ success: true, chat });
+    } else {
+      // Alle Chats des Users laden
+      const { data: chats, error } = await supabase
+        .from("chats")
+        .select("*")
+        .eq("user_id", userId)
+        .order("updated_at", { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      return NextResponse.json({ success: true, chats });
+    }
+  } catch (error) {
+    Sentry.captureException(error);
+    return NextResponse.json(
+      { success: false, error: "Fehler beim Laden der Chats" },
+      { status: 500 }
+    );
+  }
+}
+
+// Export GET mit CSRF-Schutz (für Idempotent-Operationen ist CSRF optional aber empfohlen)
+export const GET = withCsrfProtection(getChatsHandler);

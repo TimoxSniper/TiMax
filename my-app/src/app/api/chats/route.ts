@@ -1,0 +1,93 @@
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import * as Sentry from "@sentry/nextjs";
+import { createClient } from "@/lib/supabase/server";
+import { withCsrfProtection } from "@/lib/csrf";
+
+// GET Handler
+async function getChatsHandler(request: NextRequest) {
+  try {
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: "Nicht authentifiziert" },
+        { status: 401 }
+      );
+    }
+
+    const supabase = await createClient();
+
+    // Alle Chats des Users laden, sortiert nach updated_at
+    const { data: chats, error } = await supabase
+      .from("chats")
+      .select("*")
+      .eq("user_id", userId)
+      .order("updated_at", { ascending: false });
+
+    if (error) {
+      console.error("[Chats API] Fehler beim Laden:", error);
+      throw error;
+    }
+
+    return NextResponse.json({ success: true, chats });
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { api_route: "/api/chats" },
+    });
+
+    return NextResponse.json(
+      { success: false, error: "Fehler beim Laden der Chats" },
+      { status: 500 }
+    );
+  }
+}
+
+// POST Handler (mit CSRF-Schutz - kritische Operation)
+async function postChatsHandler(request: NextRequest) {
+  try {
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: "Nicht authentifiziert" },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const { title = "Neuer Chat", sessionId } = body;
+
+    const supabase = await createClient();
+
+    const { data: chat, error } = await supabase
+      .from("chats")
+      .insert({
+        user_id: userId,
+        session_id: sessionId || crypto.randomUUID(),
+        title,
+      })
+      .select("*")
+      .single();
+
+    if (error) {
+      console.error("[Chats API] Fehler beim Erstellen:", error);
+      throw error;
+    }
+
+    return NextResponse.json({ success: true, chat });
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { api_route: "/api/chats" },
+    });
+
+    return NextResponse.json(
+      { success: false, error: "Fehler beim Erstellen des Chats" },
+      { status: 500 }
+    );
+  }
+}
+
+// Export Handler mit CSRF-Schutz
+export const GET = withCsrfProtection(getChatsHandler);
+export const POST = withCsrfProtection(postChatsHandler);
