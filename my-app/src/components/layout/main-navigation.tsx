@@ -17,7 +17,11 @@ const protectedNavigation = [
   { name: "Uploads", href: "/uploads", icon: FileText },
 ];
 
-const landingPageNavigation = [];
+const landingPageNavigation: Array<{
+  name: string;
+  href: string;
+  icon: typeof Sparkles;
+}> = [];
 
 export function MainNavigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
