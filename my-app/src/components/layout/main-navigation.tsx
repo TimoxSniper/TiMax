@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DarkModeToggle } from "@/components/home/dark-mode-toggle";
-import { Menu, X, Zap, MessageSquare, FileText, Home, LogIn, User, Sparkles, HelpCircle, CheckCircle2, ShieldAlert } from "lucide-react";
+import { Menu, X, Zap, MessageSquare, FileText, Home, LogIn, User, Sparkles, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,9 +19,6 @@ const protectedNavigation = [
 
 const landingPageNavigation = [
   { name: "Funktionen", href: "/#features", icon: Sparkles },
-  { name: "Workflow", href: "/#workflow", icon: Zap },
-  { name: "Problem", href: "/#problem", icon: ShieldAlert },
-  { name: "Lösung", href: "/#solution", icon: CheckCircle2 },
 ];
 
 export function MainNavigation() {
