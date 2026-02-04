@@ -64,7 +64,7 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       handleFileSelect(droppedFile);
     }
   };
-  
+
   const handleUpload = async () => {
     if (!file) return;
 
@@ -74,6 +74,10 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
     setSuccess(false);
 
     try {
+      // CSRF-Token holen
+      const csrfResponse = await fetch("/api/csrf");
+      const { csrfToken } = await csrfResponse.json();
+
       const formData = new FormData();
       formData.append("file", file);
 
@@ -95,10 +99,10 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
             try {
               const data = JSON.parse(xhr.responseText);
               if (data.success) {
-                resolve({ 
-                  success: true, 
+                resolve({
+                  success: true,
                   fileName: data.fileName || file.name,
-                  transcript: data.transcript 
+                  transcript: data.transcript
                 });
               } else {
                 reject(new Error(data.error || "Upload fehlgeschlagen"));
@@ -126,6 +130,8 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
         });
 
         xhr.open("POST", "/api/upload");
+        // CSRF Header setzen
+        xhr.setRequestHeader("x-csrf-token", csrfToken);
         xhr.send(formData);
       });
 
@@ -133,12 +139,12 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       setProgress(100);
       setSuccess(true);
       onUploadSuccess?.(result.fileName || file.name, result.transcript);
-      
+
       // Alten Timeout clearen falls vorhanden
       if (resetTimeoutRef.current) {
         clearTimeout(resetTimeoutRef.current);
       }
-      
+
       // Reset nach konfigurierter Zeit
       resetTimeoutRef.current = setTimeout(() => {
         setFile(null);
@@ -191,11 +197,10 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-            isDragging
+          className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${isDragging
               ? "border-primary bg-primary/5"
               : "border-muted-foreground/25"
-          }`}
+            }`}
         >
           {!file ? (
             <>

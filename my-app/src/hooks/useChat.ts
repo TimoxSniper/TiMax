@@ -89,9 +89,16 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
     setError(null);
 
     try {
+      // Hole CSRF-Token vor dem POST
+      const csrfResponse = await fetch("/api/csrf");
+      const { csrfToken } = await csrfResponse.json();
+
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrf-token": csrfToken,
+        },
         signal: abortController.signal,
         body: JSON.stringify({
           message: content.trim(),

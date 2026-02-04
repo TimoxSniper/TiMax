@@ -43,6 +43,7 @@ const isPublicRoute = createRouteMatcher([
   "/agb",
   "/widerruf",
   "/cookies",
+  "/monitoring(.*)", // Sentry Tunnel explizit ignorieren
 ]);
 
 function getClientIP(request: NextRequest): string {
