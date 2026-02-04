@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
+import { createClient } from "@/lib/supabase/server";
 import { validateRequiredEnv } from "@/lib/env";
 import {
   uploadSchema,
@@ -8,30 +9,66 @@ import {
   validateFileType,
 } from "@/lib/validation";
 import { UPLOAD_CONFIG } from "@/lib/upload-config";
+import { withCsrfProtection } from "@/lib/csrf";
+
+// =============================================================================
+// TYPE DEFINITIONS - Sicherer Code durch strict typing
+// =============================================================================
+
+interface N8nWord {
+  text?: string;
+}
+
+interface N8nResponseItem {
+  status?: string;
+  fileName?: string;
+  transcript?: string;
+  text?: string;
+  content?: string;
+  output?: string;
+  result?: string;
+  response?: string;
+  transcription?: string;
+  words?: N8nWord[];
+  json?: {
+    status?: string;
+    fileName?: string;
+    output?: string;
+    transcript?: string;
+  };
+  body?: N8nResponseItem;
+  data?: N8nResponseItem;
+}
+
+type N8nResponse = N8nResponseItem | N8nResponseItem[] | string;
 
 // Vercel-Konfiguration für größere Dateien
 export const runtime = "nodejs";
 export const maxDuration = 60; // 60 Sekunden Timeout für große Dateien
 
-export async function POST(request: NextRequest) {
+// Haupt-Handler mit CSRF-Schutz
+async function uploadHandler(request: NextRequest) {
   console.log("[Upload API] ===== Upload Request gestartet =====");
   try {
     // 1. CLERK AUTH - User ID holen
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json(
         { success: false, error: "Nicht authentifiziert. Bitte melde dich an." },
         { status: 401 }
       );
     }
-    
+
     console.log("[Upload API] User authentifiziert:", userId);
-    
+
+    // 2. Supabase Client erstellen
+    const supabase = await createClient();
+
     // Validiere erforderliche Environment-Variablen
     const env = validateRequiredEnv();
-    console.log("[Upload API] Environment-Variablen validiert");
-    console.log("[Upload API] N8N_UPLOAD_WEBHOOK_URL:", env.N8N_UPLOAD_WEBHOOK_URL);
+    // SICHERHEIT: Webhook URLs niemals loggen!
+    // console.log("[Upload API] N8N_UPLOAD_WEBHOOK_URL:", env.N8N_UPLOAD_WEBHOOK_URL);
 
     const formData = await request.formData();
     const file = formData.get("file") as File;
@@ -85,12 +122,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 3. UPLOAD IN SUPABASE EINTRAG ERSTELLEN
+    const { data: uploadRecord, error: uploadError } = await supabase
+      .from("uploads")
+      .insert({
+        user_id: userId,
+        file_name: file.name,
+        file_size: file.size,
+        file_type: file.type,
+        status: "processing",
+      })
+      .select("id")
+      .single();
+
+    if (uploadError) {
+      console.error("[Upload API] Fehler beim Erstellen des Upload-Eintrags:", uploadError);
+      throw new Error("Upload konnte nicht erstellt werden");
+    }
+
+    const uploadId = uploadRecord.id;
+    console.log("[Upload API] Upload-Eintrag erstellt:", uploadId);
+
     // Erstelle neue FormData für n8n
     // n8n Form-Trigger erwartet das Feld "Audio/Video Datei"
     const n8nFormData = new FormData();
     n8nFormData.append("Audio/Video Datei", file);
 
-    console.log("[Upload API] Sende Request an n8n:", env.N8N_UPLOAD_WEBHOOK_URL);
+    // SICHERHEIT: Webhook URL niemals loggen!
+    // console.log("[Upload API] Sende Request an n8n:", env.N8N_UPLOAD_WEBHOOK_URL);
 
     // Upload zu n8n Form-Webhook
     const response = await fetch(env.N8N_UPLOAD_WEBHOOK_URL, {
@@ -129,9 +188,9 @@ export async function POST(request: NextRequest) {
       try {
         const responseText = await response.text();
         console.log("[Upload API] Raw Response Text (erste 500 Zeichen):", responseText.substring(0, 500));
-        
-        let data: any;
-        
+
+        let data: N8nResponse | null;
+
         // Versuche zuerst als JSON zu parsen
         try {
           data = JSON.parse(responseText);
@@ -178,7 +237,7 @@ export async function POST(request: NextRequest) {
           fileName = file.name;
         } else {
           // Extrahiere status mit Validierung
-          if (data && typeof data === "object") {
+          if (data && typeof data === "object" && !Array.isArray(data)) {
             if (typeof data.status === "string") {
               status = data.status;
             } else if (data.json && typeof data.json.status === "string") {
@@ -195,7 +254,7 @@ export async function POST(request: NextRequest) {
           }
 
           // Extrahiere fileName mit Validierung
-          if (data && typeof data === "object") {
+          if (data && typeof data === "object" && !Array.isArray(data)) {
             if (typeof data.fileName === "string") {
               fileName = data.fileName;
             } else if (data.json && typeof data.json.fileName === "string") {
@@ -211,21 +270,27 @@ export async function POST(request: NextRequest) {
           }
 
           // Extrahiere transcript mit Validierung - erweiterte Suche
-          const extractTranscript = (obj: any): string | undefined => {
-            if (!obj || typeof obj !== "object") return undefined;
+          const extractTranscript = (obj: unknown): string | undefined => {
+            if (!obj || typeof obj !== "object" || obj === null) return undefined;
+
+            // Type-safe cast für weitere Prüfungen
+            const record = obj as Record<string, unknown>;
 
             // ElevenLabs spezifische Struktur: words Array
-            if (Array.isArray(obj.words) && obj.words.length > 0) {
+            if (Array.isArray(record.words) && record.words.length > 0) {
               // Versuche zuerst words[0].text (falls nur ein Wort vorhanden)
-              const firstWord = obj.words[0];
+              const firstWord = record.words[0] as Record<string, unknown>;
               if (firstWord && typeof firstWord.text === "string" && firstWord.text.trim().length > 0) {
                 // Wenn nur ein Wort, verwende es direkt
-                if (obj.words.length === 1) {
+                if (record.words.length === 1) {
                   return firstWord.text;
                 }
                 // Wenn mehrere Wörter, kombiniere alle
-                const combinedText = obj.words
-                  .map((w: any) => w?.text || "")
+                const combinedText = record.words
+                  .map((w: unknown) => {
+                    const word = w as Record<string, unknown>;
+                    return typeof word?.text === "string" ? word.text : "";
+                  })
                   .filter((t: string) => t.trim().length > 0)
                   .join(" ");
                 if (combinedText.trim().length > 0) {
@@ -237,23 +302,23 @@ export async function POST(request: NextRequest) {
             // Direkte Felder - explizite Checks
             const specificFields = ["transcript", "text", "content", "output", "result", "response", "transcription"];
             for (const field of specificFields) {
-              if (typeof obj[field] === "string" && obj[field].trim().length > 0) {
-                return obj[field];
+              if (typeof record[field] === "string" && (record[field] as string).trim().length > 0) {
+                return record[field] as string;
               }
             }
 
             // Verschachtelte Felder - Rekursive Suche
             const nestedFields = ["json", "body", "data", "result", "output"];
             for (const field of nestedFields) {
-              if (obj[field] && typeof obj[field] === "object") {
-                const nested = extractTranscript(obj[field]);
+              if (record[field] && typeof record[field] === "object") {
+                const nested = extractTranscript(record[field]);
                 if (nested) return nested;
               }
             }
 
             // Heuristische Suche in allen String-Feldern
             // Suche nach Feldern, die relevante Schlüsselwörter enthalten
-            for (const key in obj) {
+            for (const key in record) {
               const lowerKey = key.toLowerCase();
               if (lowerKey.includes("transcript") ||
                 lowerKey.includes("text") ||
@@ -263,8 +328,8 @@ export async function POST(request: NextRequest) {
 
                 // Weniger strikte Längenprüfung (min 5 Zeichen statt 50)
                 // Damit auch kurze Tests funktionieren
-                if (typeof obj[key] === "string" && obj[key].trim().length > 5) {
-                  return obj[key];
+                if (typeof record[key] === "string" && (record[key] as string).trim().length > 5) {
+                  return record[key] as string;
                 }
               }
             }
@@ -374,3 +439,6 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// Export mit CSRF-Schutz
+export const POST = withCsrfProtection(uploadHandler);
