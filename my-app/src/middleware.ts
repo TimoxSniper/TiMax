@@ -47,12 +47,7 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 function getClientIP(request: NextRequest): string {
-  // 1. Try Next.js built-in IP detection (reliable on Vercel)
-  if (request.ip) {
-    return request.ip;
-  }
-
-  // 2. Fallback to common proxy headers
+  // 1. Try common proxy headers
   const cfConnectingIP = request.headers.get("cf-connecting-ip");
   if (cfConnectingIP) {
     return cfConnectingIP;

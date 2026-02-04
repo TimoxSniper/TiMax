@@ -7,5 +7,5 @@
 
 ## 2025-05-15 - [IP Spoofing in Middleware]
 **Vulnerability:** Rate limit bypass via IP spoofing.
-**Learning:** Trusting the first IP in `X-Forwarded-For` without validating the proxy chain is unsafe as clients can easily spoof this header.
-**Prevention:** Prioritize platform-provided IP (like `request.ip` on Vercel) or specific headers from trusted proxies (like `CF-Connecting-IP`).
+**Learning:** Trusting the first IP in `X-Forwarded-For` without validating the proxy chain is unsafe as clients can easily spoof this header. Note: `request.ip` was unavailable in this project's Next.js version (v16), so we rely on trusted headers.
+**Prevention:** Prioritize trusted headers from proxies (like `CF-Connecting-IP` or `X-Real-IP`) and be cautious with `X-Forwarded-For`.
