@@ -8,6 +8,7 @@ import { GridBackground } from "@/components/home/grid-background";
 import { TestimonialsSection } from "@/components/home/testimonials-section";
 import { DemoVideoSection } from "@/components/home/demo-video-section";
 import { MainNavigation } from "@/components/layout/main-navigation";
+import { Footer } from "@/components/layout/footer";
 import { Card } from "@/components/magic-ui/glass-card";
 import { AnimatedSection } from "@/components/magic-ui/animated-section";
 import { Button } from "@/components/ui/button";
@@ -75,7 +76,7 @@ const TARGET_AUDIENCES = [
 // Workflow Section Component
 const WorkflowSection = memo(function WorkflowSection() {
   return (
-    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`}>
+    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="workflow">
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
           <div className="text-center mb-12 sm:mb-16">
@@ -371,45 +372,7 @@ export default function Home() {
         <EmailSignup />
       </main>
 
-      <footer className="relative mt-auto border-t border-black/5 dark:border-white/5 py-12 z-10" role="contentinfo">
-        <div className="container mx-auto max-w-5xl px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-sm text-black/50 dark:text-white/50">© 2026 TiMax. Coming Soon.</p>
-            <nav className="flex flex-wrap justify-center gap-4 sm:gap-6">
-              <Link
-                href="/impressum"
-                className="text-sm text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors"
-              >
-                Impressum
-              </Link>
-              <Link
-                href="/datenschutz"
-                className="text-sm text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors"
-              >
-                Datenschutz
-              </Link>
-              <Link
-                href="/agb"
-                className="text-sm text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors"
-              >
-                AGB
-              </Link>
-              <Link
-                href="/widerruf"
-                className="text-sm text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors"
-              >
-                Widerruf
-              </Link>
-              <Link
-                href="/cookies"
-                className="text-sm text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors"
-              >
-                Cookies
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div >
   );
 }

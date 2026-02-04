@@ -5,14 +5,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DarkModeToggle } from "@/components/home/dark-mode-toggle";
-import { Menu, X, Zap, MessageSquare, FileText, Home, LogIn, User } from "lucide-react";
+import { Menu, X, Zap, MessageSquare, FileText, Home, LogIn, User, Sparkles, HelpCircle, CheckCircle2, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
+import { motion, AnimatePresence } from "framer-motion";
 
 const protectedNavigation = [
   { name: "Home", href: "/", icon: Home },
   { name: "Text Generator", href: "/text-generator", icon: FileText },
   { name: "Chat", href: "/chat", icon: MessageSquare },
+];
+
+const landingPageNavigation = [
+  { name: "Funktionen", href: "/#features", icon: Sparkles },
+  { name: "Workflow", href: "/#workflow", icon: Zap },
+  { name: "Problem", href: "/#problem", icon: ShieldAlert },
+  { name: "Lösung", href: "/#solution", icon: CheckCircle2 },
 ];
 
 export function MainNavigation() {
@@ -52,8 +60,28 @@ export function MainNavigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:gap-1">
-            {/* Navigation nur für eingeloggte User */}
+            {/* Landing Page Links (immer sichtbar auf Home, sonst optional) */}
+            {landingPageNavigation.map((item) => {
+              const Icon = item.icon;
+              // Wir markieren diese Links nicht als active, da sie Anchor-Links sind
+              return (
+                <Button
+                  key={item.name}
+                  variant="ghost"
+                  asChild
+                  className="gap-2"
+                >
+                  <Link href={item.href}>
+                    <Icon className="h-4 w-4" aria-hidden="true" />
+                    {item.name}
+                  </Link>
+                </Button>
+              );
+            })}
+
+            {/* Separator wenn eingeloggt */}
             <SignedIn>
+              <div className="w-px h-6 bg-border mx-2" aria-hidden="true" />
               {protectedNavigation.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
@@ -67,7 +95,7 @@ export function MainNavigation() {
                       isActive && "bg-primary text-primary-foreground"
                     )}
                   >
-                    <Link href={item.href}>
+                    <Link href={item.href} aria-current={isActive ? "page" : undefined}>
                       <Icon className="h-4 w-4" aria-hidden="true" />
                       {item.name}
                     </Link>
@@ -121,23 +149,25 @@ export function MainNavigation() {
         </div>
 
         {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t py-4">
-            <div className="flex flex-col gap-2">
-              {/* Navigation nur für eingeloggte User */}
-              <SignedIn>
-                {protectedNavigation.map((item) => {
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+              className="md:hidden border-t overflow-hidden"
+            >
+              <div className="flex flex-col gap-2 py-4">
+                {/* Landing Page Links für alle */}
+                {landingPageNavigation.map((item) => {
                   const Icon = item.icon;
-                  const isActive = pathname === item.href;
                   return (
                     <Button
                       key={item.name}
-                      variant={isActive ? "default" : "ghost"}
+                      variant="ghost"
                       asChild
-                      className={cn(
-                        "justify-start gap-2 w-full",
-                        isActive && "bg-primary text-primary-foreground"
-                      )}
+                      className="justify-start gap-2 w-full"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <Link href={item.href}>
@@ -147,29 +177,59 @@ export function MainNavigation() {
                     </Button>
                   );
                 })}
-              </SignedIn>
-              
-              {/* Mobile Auth */}
-              <div className="border-t pt-2 mt-2">
-                <SignedOut>
-                  <SignInButton mode="modal">
-                    <Button variant="outline" className="w-full justify-start gap-2">
-                      <LogIn className="h-4 w-4" />
-                      Anmelden
-                    </Button>
-                  </SignInButton>
-                </SignedOut>
-                
+
+                <div className="my-2 border-t border-border/50" />
+
+                {/* Navigation nur für eingeloggte User */}
                 <SignedIn>
-                  <div className="flex items-center gap-2 px-3 py-2">
-                    <User className="h-4 w-4" />
-                    <UserButton afterSignOutUrl="/" />
-                  </div>
+                  {protectedNavigation.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = pathname === item.href;
+                    return (
+                      <Button
+                        key={item.name}
+                        variant={isActive ? "default" : "ghost"}
+                        asChild
+                        className={cn(
+                          "justify-start gap-2 w-full",
+                          isActive && "bg-primary text-primary-foreground"
+                        )}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Link href={item.href} aria-current={isActive ? "page" : undefined}>
+                          <Icon className="h-4 w-4" aria-hidden="true" />
+                          {item.name}
+                        </Link>
+                      </Button>
+                    );
+                  })}
                 </SignedIn>
+
+                {/* Mobile Auth */}
+                <div className="border-t pt-2 mt-2">
+                  <SignedOut>
+                    <SignInButton mode="modal">
+                      <Button variant="outline" className="w-full justify-start gap-2">
+                        <LogIn className="h-4 w-4" />
+                        Anmelden
+                      </Button>
+                    </SignInButton>
+                  </SignedOut>
+
+                  <SignedIn>
+                    <div className="flex items-center justify-between px-3 py-2 bg-accent/50 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm font-medium text-foreground">Mein Konto</span>
+                      </div>
+                      <UserButton afterSignOutUrl="/" />
+                    </div>
+                  </SignedIn>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
     </header>
   );
