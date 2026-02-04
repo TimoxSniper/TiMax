@@ -146,7 +146,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Unbekannter Fehler",
+        error: process.env.NODE_ENV === "development" && error instanceof Error
+          ? error.message
+          : "Ein interner Fehler ist aufgetreten.",
       },
       { status: 500 }
     );

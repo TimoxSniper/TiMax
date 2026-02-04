@@ -162,7 +162,9 @@ async function chatHandler(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Unbekannter Fehler bei der Chat-Anfrage",
+        error: process.env.NODE_ENV === "development" && error instanceof Error
+          ? error.message
+          : "Ein interner Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
       },
       { status: 500 }
     );

@@ -431,9 +431,9 @@ async function uploadHandler(request: NextRequest) {
       {
         success: false,
         error:
-          error instanceof Error
+          process.env.NODE_ENV === "development" && error instanceof Error
             ? error.message
-            : "Unbekannter Fehler beim Upload",
+            : "Ein interner Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
       },
       { status: 500 }
     );

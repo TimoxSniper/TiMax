@@ -78,10 +78,20 @@ export async function validateCsrfToken(
   }
 
   // Compare tokens using timing-safe comparison
-  const isValid = crypto.timingSafeEqual(
-    Buffer.from(headerToken, "utf8"),
-    Buffer.from(cookieToken, "utf8")
-  );
+  const headerBuffer = Buffer.from(headerToken, "utf8");
+  const cookieBuffer = Buffer.from(cookieToken, "utf8");
+
+  if (headerBuffer.length !== cookieBuffer.length) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Invalid CSRF token. Please refresh the page and try again.",
+      },
+      { status: 403 }
+    );
+  }
+
+  const isValid = crypto.timingSafeEqual(headerBuffer, cookieBuffer);
 
   if (!isValid) {
     return NextResponse.json(

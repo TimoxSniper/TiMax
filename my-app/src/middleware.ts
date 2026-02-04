@@ -47,18 +47,21 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 function getClientIP(request: NextRequest): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  const realIP = request.headers.get("x-real-ip");
+  // 1. Try common proxy headers
   const cfConnectingIP = request.headers.get("cf-connecting-ip");
-
-  if (forwarded) {
-    return forwarded.split(",")[0].trim();
+  if (cfConnectingIP) {
+    return cfConnectingIP;
   }
+
+  const realIP = request.headers.get("x-real-ip");
   if (realIP) {
     return realIP;
   }
-  if (cfConnectingIP) {
-    return cfConnectingIP;
+
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    // Note: The first element can be spoofed by the client if not behind a trusted proxy.
+    return forwarded.split(",")[0].trim();
   }
 
   return "unknown";
