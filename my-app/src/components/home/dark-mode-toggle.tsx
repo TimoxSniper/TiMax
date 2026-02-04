@@ -15,18 +15,32 @@ export function DarkModeToggle({ variant = "fixed", className }: DarkModeToggleP
 
   // Dark Mode mit Persistenz und System-Präferenz
   useEffect(() => {
+    const applyTheme = (isDarkMode: boolean) => {
+      const html = document.documentElement;
+      if (isDarkMode) {
+        html.classList.add('dark');
+      } else {
+        html.classList.remove('dark');
+      }
+      setIsDark(isDarkMode);
+    };
+
     // Lade gespeicherte Präferenz oder nutze System-Präferenz
     const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const isDarkMode = savedTheme === 'dark' || (!savedTheme && prefersDark);
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
-    const html = document.documentElement;
-    if (isDarkMode) {
-      html.classList.add('dark');
-    } else {
-      html.classList.remove('dark');
-    }
-    setIsDark(isDarkMode);
+    const initialIsDark = savedTheme === 'dark' || (!savedTheme && mediaQuery.matches);
+    applyTheme(initialIsDark);
+
+    // Listener für System-Änderungen
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (!localStorage.getItem('theme')) {
+        applyTheme(e.matches);
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
   const toggleDarkMode = () => {
