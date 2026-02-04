@@ -23,11 +23,11 @@ Dieser Plan strukturiert die restlichen Aufgaben in logische Batches, die nachei
 
 ---
 
-## 📦 Batch 2: Chat Persistence & History (Prio: Kritisch)
-- [ ] **Frontend State Management:** `useChat` Hook erweitern, um `chat_id` aus der DB zu verwalten
-- [ ] **History Loading:** Automatisches Laden der Nachrichten-Historie beim Mounten oder bei Auswahl eines Chats
-- [ ] **New Chat Logic:** Funktion zum Zurücksetzen des aktuellen Chats und Starten einer neuen DB-Session
-- [ ] **Error Handling:** Verbesserte UI-Feedbacks bei DB-Verbindungsfehlern
+## ✅ Batch 2: Chat Persistence & History (Erledigt)
+- [x] **Frontend State Management:** `useChat` Hook erweitern, um `chat_id` aus der DB zu verwalten
+- [x] **History Loading:** Automatisches Laden der Nachrichten-Historie beim Mounten oder bei Auswahl eines Chats
+- [x] **New Chat Logic:** Funktion zum Zurücksetzen des aktuellen Chats und Starten einer neuen DB-Session
+- [x] **Error Handling:** Verbesserte UI-Feedbacks bei DB-Verbindungsfehlern
 
 ---
 
