@@ -38,6 +38,7 @@ export const CHAT_UI_TEXTS = {
   ],
   THINKING: "REX denkt nach...",
   ASSISTANT_DEFAULT_RESPONSE: "Keine Antwort erhalten",
+  SEND_EXAMPLE: "Beispiel-Anfrage senden",
 } as const;
 
 // Chat Fehler Texte
