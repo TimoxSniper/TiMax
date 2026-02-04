@@ -31,11 +31,11 @@ Dieser Plan strukturiert die restlichen Aufgaben in logische Batches, die nachei
 
 ---
 
-## 📦 Batch 3: User Experience & Sidebar (Prio: Mittel)
-- [ ] **Chat Sidebar:** Entwicklung einer Sidebar-Komponente zur Anzeige der letzten Chats
-- [ ] **Sidebar Integration:** Integration in das `ChatInterface` (Responsive: Drawer auf Mobile)
-- [ ] **Chat Management:** Löschen von Chats und Umbenennen von Chat-Titeln (API + UI)
-- [ ] **Empty State:** Optimierung des "No Chats" Screens
+## ✅ Batch 3: User Experience & Sidebar (Erledigt)
+- [x] **Chat Sidebar:** Entwicklung einer Sidebar-Komponente zur Anzeige der letzten Chats
+- [x] **Sidebar Integration:** Integration in das `ChatInterface` (Responsive: Drawer auf Mobile)
+- [x] **Chat Management:** Löschen von Chats und Umbenennen von Chat-Titeln (API + UI)
+- [x] **Empty State:** Optimierung des "No Chats" Screens
 
 ---
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { MessageSquare, Plus, Trash2, Clock } from "lucide-react";
+import { MessageSquare, Plus, Trash2, Clock, Edit2, Check, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +24,8 @@ export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, onRe
   const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
 
   const loadChats = async () => {
     try {
@@ -46,13 +48,13 @@ export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, onRe
   const handleDeleteChat = async (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();
     if (!confirm("Diesen Chat wirklich löschen?")) return;
-    
+
     setDeletingId(chatId);
     try {
       const response = await fetch(`/api/chats/${chatId}`, {
         method: "DELETE",
       });
-      
+
       if (response.ok) {
         setChats((prev) => prev.filter((chat) => chat.id !== chatId));
         if (currentChatId === chatId) {
@@ -66,11 +68,47 @@ export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, onRe
     }
   };
 
+  const handleStartEdit = (e: React.MouseEvent, chat: Chat) => {
+    e.stopPropagation();
+    setEditingId(chat.id);
+    setEditTitle(chat.title || "Neuer Chat");
+  };
+
+  const handleCancelEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingId(null);
+    setEditTitle("");
+  };
+
+  const handleSaveEdit = async (e: React.MouseEvent, chatId: string) => {
+    e.stopPropagation();
+    if (!editTitle.trim()) return;
+
+    try {
+      const response = await fetch(`/api/chats/${chatId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: editTitle }),
+      });
+
+      if (response.ok) {
+        setChats((prev) =>
+          prev.map((chat) =>
+            chat.id === chatId ? { ...chat, title: editTitle } : chat
+          )
+        );
+        setEditingId(null);
+      }
+    } catch (error) {
+      console.error("Failed to rename chat:", error);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 0) {
       return "Heute";
     } else if (diffDays === 1) {
@@ -93,7 +131,7 @@ export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, onRe
           <span>Neuer Chat</span>
         </button>
       </CardContent>
-      
+
       <CardContent className="flex-1 overflow-y-auto p-4 space-y-2">
         {loading ? (
           <div className="text-center text-sm text-muted-foreground py-4">
@@ -119,25 +157,63 @@ export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, onRe
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2 mb-1">
-                  <h3 className="text-sm font-medium truncate text-foreground">
-                    {chat.title || "Neuer Chat"}
-                  </h3>
-                  <button
-                    onClick={(e) => handleDeleteChat(e, chat.id)}
-                    disabled={deletingId === chat.id}
-                    className={cn(
-                      "opacity-0 group-hover:opacity-100 transition-opacity",
-                      "p-1 hover:bg-destructive/10 hover:text-destructive rounded",
-                      "disabled:opacity-50"
-                    )}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  {editingId === chat.id ? (
+                    <div className="flex items-center gap-1 w-full" onClick={(e) => e.stopPropagation()}>
+                      <input
+                        autoFocus
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                        className="flex-1 bg-background border rounded px-1.5 py-0.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleSaveEdit(e as any, chat.id);
+                          if (e.key === "Escape") handleCancelEdit(e as any);
+                        }}
+                      />
+                      <button
+                        onClick={(e) => handleSaveEdit(e, chat.id)}
+                        className="p-1 hover:bg-primary/10 text-primary rounded"
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        className="p-1 hover:bg-destructive/10 text-destructive rounded"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <h3 className="text-sm font-medium truncate text-foreground flex-1">
+                        {chat.title || "Neuer Chat"}
+                      </h3>
+                      <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={(e) => handleStartEdit(e, chat)}
+                          className="p-1 hover:bg-muted-foreground/10 hover:text-foreground rounded"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={(e) => handleDeleteChat(e, chat.id)}
+                          disabled={deletingId === chat.id}
+                          className={cn(
+                            "p-1 hover:bg-destructive/10 hover:text-destructive rounded",
+                            "disabled:opacity-50"
+                          )}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Clock className="w-3 h-3" />
-                  <span>{formatDate(chat.updated_at)}</span>
-                </div>
+                {editingId !== chat.id && (
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Clock className="w-3 h-3" />
+                    <span>{formatDate(chat.updated_at)}</span>
+                  </div>
+                )}
               </div>
             </div>
           ))

@@ -5,11 +5,14 @@ import { MessageList } from "./message-list";
 import { ChatInput } from "./chat-input";
 import { ChatHeader } from "./chat-header";
 import { Card } from "@/components/ui/card";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, Sparkles } from "lucide-react";
 import { CHAT_UI_TEXTS } from "@/lib/constants";
 import { useChat, Message } from "@/hooks/useChat";
 
 import { ChatSidebar } from "./chat-sidebar";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export type { Message };
 
@@ -39,8 +42,29 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
   }, [messages]);
 
   return (
-    <div className="flex flex-col lg:flex-row h-[--height-chat-desktop] sm:h-[--height-chat-mobile] max-h-[800px] w-full gap-4">
-      {/* Sidebar - auf Desktop links, auf Mobile im Moment ausgeblendet oder in einem Drawer (hier Desktop) */}
+    <div className="flex flex-col lg:flex-row h-[--height-chat-desktop] sm:h-[--height-chat-mobile] max-h-[800px] w-full gap-4 relative">
+      {/* Mobile Sidebar Trigger (Drawer) */}
+      <div className="lg:hidden absolute top-4 left-4 z-10">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="icon" className="h-10 w-10">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="p-0 w-72">
+            <ChatSidebar
+              currentChatId={chatId}
+              onSelectChat={(id) => {
+                setChatId(id);
+              }}
+              onCreateNewChat={startNewChat}
+              onRefresh={() => { }}
+            />
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Desktop Sidebar */}
       <div className="hidden lg:block w-72 flex-shrink-0 h-full overflow-hidden rounded-xl border bg-card shadow-sm">
         <ChatSidebar
           currentChatId={chatId}
@@ -51,23 +75,33 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
       </div>
 
       {/* Haupt-Chatbereich */}
-      <Card className="flex-1 flex flex-col h-full overflow-hidden">
+      <Card className="flex-1 flex flex-col h-full overflow-hidden relative">
         <ChatHeader sessionId={sessionId} messageCount={messages.length} />
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground px-4">
-              <p className="text-lg font-medium mb-2 text-foreground">{CHAT_UI_TEXTS.WELCOME_TITLE}</p>
-              <p className="text-sm mb-4 max-w-md">
+            <div className="flex flex-col items-center justify-center h-full text-center px-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
+                <Sparkles className="w-8 h-8 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2 text-foreground">{CHAT_UI_TEXTS.WELCOME_TITLE}</h2>
+              <p className="text-muted-foreground mb-8 max-w-sm">
                 {CHAT_UI_TEXTS.WELCOME_SUBTITLE}
               </p>
-              <div className="space-y-2 text-xs text-muted-foreground">
-                <p className="font-medium text-foreground mb-3">{CHAT_UI_TEXTS.EXAMPLE_REQUESTS_TITLE}</p>
-                <div className="space-y-1 text-left bg-muted/50 rounded-lg p-3 max-w-md">
-                  {CHAT_UI_TEXTS.EXAMPLE_REQUESTS.map((req, index) => (
-                    <p key={index}>{req}</p>
-                  ))}
-                </div>
+
+              <div className="w-full max-w-md grid gap-3">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                  {CHAT_UI_TEXTS.EXAMPLE_REQUESTS_TITLE}
+                </p>
+                {CHAT_UI_TEXTS.EXAMPLE_REQUESTS.map((req, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSendMessage(req.replace(/^[•\s"]+|["]+$/g, ""))}
+                    className="text-sm text-left px-4 py-3 bg-muted/50 hover:bg-muted border rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    {req}
+                  </button>
+                ))}
               </div>
             </div>
           ) : (
