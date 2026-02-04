@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Copy, Check, FileText, Sparkles, Loader2, AlertCircle } from "lucide-react";
 import { useState } from "react";
 import type { FormatType } from "@/lib/text-templates";
+import { logger } from "@/lib/logger";
 
 interface TextOutputProps {
   generatedText: string;
@@ -40,7 +41,7 @@ export function TextOutput({ generatedText, format, onCopy, isLoading = false, e
     } catch (err) {
       // In Production: Hier würde man zu einem Error-Tracking-Service loggen
       if (process.env.NODE_ENV === "development") {
-        console.error("Fehler beim Kopieren:", err);
+        logger.error("Fehler beim Kopieren:", err);
       }
       // Fallback für ältere Browser
       const textArea = document.createElement("textarea");
@@ -59,7 +60,7 @@ export function TextOutput({ generatedText, format, onCopy, isLoading = false, e
         }, 2000);
       } catch (fallbackErr) {
         if (process.env.NODE_ENV === "development") {
-          console.error("Fallback-Kopieren fehlgeschlagen:", fallbackErr);
+          logger.error("Fallback-Kopieren fehlgeschlagen:", fallbackErr);
         }
       } finally {
         // Stelle sicher, dass textArea immer entfernt wird

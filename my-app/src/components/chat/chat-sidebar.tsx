@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { MessageSquare, Plus, Trash2, Clock, Edit2, Check, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { logger } from "@/lib/logger";
 
 export interface Chat {
   id: string;
@@ -35,7 +36,7 @@ export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, onRe
         setChats(data.chats);
       }
     } catch (error) {
-      console.error("Failed to load chats:", error);
+      logger.error("Failed to load chats:", error);
     } finally {
       setLoading(false);
     }
@@ -62,7 +63,7 @@ export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, onRe
         }
       }
     } catch (error) {
-      console.error("Failed to delete chat:", error);
+      logger.error("Failed to delete chat:", error);
     } finally {
       setDeletingId(null);
     }
@@ -100,7 +101,7 @@ export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, onRe
         setEditingId(null);
       }
     } catch (error) {
-      console.error("Failed to rename chat:", error);
+      logger.error("Failed to rename chat:", error);
     }
   };
 

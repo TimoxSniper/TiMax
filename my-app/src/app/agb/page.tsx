@@ -76,11 +76,12 @@ export default function AGBPage() {
                 4. Preise und Zahlungsbedingungen
               </h2>
               <p className="mb-4">
-                {/* TODO: Preise eintragen, falls kostenpflichtig */}
-                Die Preise für die Nutzung von timax richten sich nach dem gewählten Tarif. Alle Preise verstehen sich in Euro und enthalten die gesetzliche Mehrwertsteuer.
+                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                  [PREISE HIER EINTRAGEN - z.B. "Kostenlos" oder "Ab 9,99€/Monat"]
+                </span>
               </p>
-              <p className="mb-4">
-                Zahlungen sind sofort fällig. Bei Zahlungsverzug behält sich timax vor, den Zugang zum Service zu sperren.
+              <p className="mb-4 text-gray-600 dark:text-gray-400">
+                Beispiel: Die Preise für die Nutzung von timax richten sich nach dem gewählten Tarif. Alle Preise verstehen sich in Euro und enthalten die gesetzliche Mehrwertsteuer. Zahlungen sind sofort fällig.
               </p>
             </div>
 

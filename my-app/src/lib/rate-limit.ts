@@ -1,4 +1,6 @@
 import { redis } from './redis';
+import { checkRateLimitMemory } from './rate-limit-memory';
+import { logger } from './logger';
 
 export interface RateLimitResult {
     allowed: boolean;
@@ -11,10 +13,26 @@ export type RateLimitConfig = {
     windowMs: number;
 };
 
+// Check if Redis is configured
+const isRedisConfigured = !!(
+    process.env.UPSTASH_REDIS_REST_URL &&
+    process.env.UPSTASH_REDIS_REST_TOKEN &&
+    process.env.UPSTASH_REDIS_REST_URL !== 'https://example.upstash.io' &&
+    process.env.UPSTASH_REDIS_REST_TOKEN !== 'your_token_here'
+);
+
 export async function checkRateLimit(
     descriptor: string,
     config: RateLimitConfig
 ): Promise<RateLimitResult> {
+    // Use in-memory fallback if Redis is not configured
+    if (!isRedisConfigured) {
+        if (process.env.NODE_ENV === 'development') {
+            logger.warn('[Rate Limit] Using in-memory fallback (development only). Configure Upstash Redis for production.');
+        }
+        return checkRateLimitMemory(descriptor, config);
+    }
+
     const key = `ratelimit:${descriptor}`;
     const now = Date.now();
 
@@ -54,12 +72,8 @@ export async function checkRateLimit(
         };
 
     } catch (error) {
-        console.error('Rate Limit Error:', error);
-        // Fail Open: Wenn Redis nicht erreichbar ist, erlauben wir den Request
-        return {
-            allowed: true,
-            remaining: 1,
-            resetTime: now + config.windowMs,
-        };
+        logger.error('Rate Limit Error (falling back to memory):', error);
+        // Fallback to in-memory if Redis fails
+        return checkRateLimitMemory(descriptor, config);
     }
 }

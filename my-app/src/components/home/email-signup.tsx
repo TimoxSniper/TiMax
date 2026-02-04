@@ -7,6 +7,7 @@ import { Card } from "@/components/magic-ui/glass-card";
 import { AnimatedSection } from "@/components/magic-ui/animated-section";
 import { useToast } from "@/components/ui/toast";
 import { Loader2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 
 // Konstanten
 const EMAIL_SUBMIT_DELAY = 1000;
@@ -38,7 +39,7 @@ export function EmailSignup() {
     } catch (error) {
       showToast("Es ist ein Fehler aufgetreten. Bitte versuche es später erneut.", "error");
       if (process.env.NODE_ENV === "development") {
-        console.error("Email-Submit Fehler:", error);
+        logger.error("Email-Submit Fehler:", error);
       }
     } finally {
       setIsSubmitting(false);

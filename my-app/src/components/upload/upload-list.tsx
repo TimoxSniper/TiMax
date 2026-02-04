@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { logger } from "@/lib/logger";
 
 interface Upload {
     id: string;
@@ -55,7 +56,7 @@ export function UploadList() {
                 setUploads(data.uploads);
             }
         } catch (error) {
-            console.error("Failed to fetch uploads:", error);
+            logger.error("Failed to fetch uploads:", error);
         } finally {
             setLoading(false);
         }
@@ -77,7 +78,7 @@ export function UploadList() {
                 toast.success("Datei gelöscht");
             }
         } catch (error) {
-            console.error("Failed to delete upload:", error);
+            logger.error("Failed to delete upload:", error);
             toast.error("Löschen fehlgeschlagen");
         }
     };

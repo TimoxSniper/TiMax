@@ -10,6 +10,7 @@ import {
 } from "@/lib/validation";
 import { UPLOAD_CONFIG } from "@/lib/upload-config";
 import { withCsrfProtection } from "@/lib/csrf";
+import { logger } from "@/lib/logger";
 
 // =============================================================================
 // TYPE DEFINITIONS - Sicherer Code durch strict typing
@@ -48,7 +49,7 @@ export const maxDuration = 60; // 60 Sekunden Timeout für große Dateien
 
 // Haupt-Handler mit CSRF-Schutz
 async function uploadHandler(request: NextRequest) {
-  console.log("[Upload API] ===== Upload Request gestartet =====");
+  logger.log("[Upload API] ===== Upload Request gestartet =====");
   try {
     // 1. CLERK AUTH - User ID holen
     const { userId } = await auth();
@@ -60,7 +61,7 @@ async function uploadHandler(request: NextRequest) {
       );
     }
 
-    console.log("[Upload API] User authentifiziert:", userId);
+    logger.log("[Upload API] User authentifiziert:", userId);
 
     // 2. Supabase Client erstellen
     const supabase = await createClient();
@@ -68,19 +69,19 @@ async function uploadHandler(request: NextRequest) {
     // Validiere erforderliche Environment-Variablen
     const env = validateRequiredEnv();
     // SICHERHEIT: Webhook URLs niemals loggen!
-    // console.log("[Upload API] N8N_UPLOAD_WEBHOOK_URL:", env.N8N_UPLOAD_WEBHOOK_URL);
+    // logger.log("[Upload API] N8N_UPLOAD_WEBHOOK_URL:", env.N8N_UPLOAD_WEBHOOK_URL);
 
     const formData = await request.formData();
     const file = formData.get("file") as File;
 
-    console.log("[Upload API] Datei erhalten:", {
+    logger.log("[Upload API] Datei erhalten:", {
       name: file?.name,
       size: file?.size,
       type: file?.type
     });
 
     if (!file) {
-      console.error("[Upload API] Keine Datei bereitgestellt");
+      logger.error("[Upload API] Keine Datei bereitgestellt");
       return NextResponse.json(
         { success: false, error: "Keine Datei bereitgestellt" },
         { status: 400 }
@@ -136,12 +137,12 @@ async function uploadHandler(request: NextRequest) {
       .single();
 
     if (uploadError) {
-      console.error("[Upload API] Fehler beim Erstellen des Upload-Eintrags:", uploadError);
+      logger.error("[Upload API] Fehler beim Erstellen des Upload-Eintrags:", uploadError);
       throw new Error("Upload konnte nicht erstellt werden");
     }
 
     const uploadId = uploadRecord.id;
-    console.log("[Upload API] Upload-Eintrag erstellt:", uploadId);
+    logger.log("[Upload API] Upload-Eintrag erstellt:", uploadId);
 
     // Erstelle neue FormData für n8n
     // n8n Form-Trigger erwartet das Feld "Audio/Video Datei"
@@ -149,7 +150,7 @@ async function uploadHandler(request: NextRequest) {
     n8nFormData.append("Audio/Video Datei", file);
 
     // SICHERHEIT: Webhook URL niemals loggen!
-    // console.log("[Upload API] Sende Request an n8n:", env.N8N_UPLOAD_WEBHOOK_URL);
+    // logger.log("[Upload API] Sende Request an n8n:", env.N8N_UPLOAD_WEBHOOK_URL);
 
     // Upload zu n8n Form-Webhook
     const response = await fetch(env.N8N_UPLOAD_WEBHOOK_URL, {
@@ -161,7 +162,7 @@ async function uploadHandler(request: NextRequest) {
       body: n8nFormData,
     });
 
-    console.log("[Upload API] n8n Response erhalten:", {
+    logger.log("[Upload API] n8n Response erhalten:", {
       status: response.status,
       statusText: response.statusText,
       contentType: response.headers.get("content-type"),
@@ -180,27 +181,27 @@ async function uploadHandler(request: NextRequest) {
     let transcript: string | undefined = undefined;
 
     // Debug: Log Response-Info
-    console.log("[Upload API] Response Content-Type:", contentType);
-    console.log("[Upload API] Response Status:", response.status);
+    logger.log("[Upload API] Response Content-Type:", contentType);
+    logger.log("[Upload API] Response Status:", response.status);
 
     if (contentType.includes("application/json") || contentType.includes("text/plain") || contentType.includes("text/")) {
       // JSON-Response oder Text-Response (Webhook)
       try {
         const responseText = await response.text();
-        console.log("[Upload API] Raw Response Text (erste 500 Zeichen):", responseText.substring(0, 500));
+        logger.log("[Upload API] Raw Response Text (erste 500 Zeichen):", responseText.substring(0, 500));
 
         let data: N8nResponse | null;
 
         // Versuche zuerst als JSON zu parsen
         try {
           data = JSON.parse(responseText);
-          console.log("[Upload API] Response als JSON geparst");
+          logger.log("[Upload API] Response als JSON geparst");
         } catch (parseError) {
           // Wenn JSON-Parsing fehlschlägt, ist es wahrscheinlich reiner Text (Transkript)
-          console.log("[Upload API] Response ist kein JSON, behandele als reines Transkript");
+          logger.log("[Upload API] Response ist kein JSON, behandele als reines Transkript");
           transcript = responseText.trim();
           if (transcript.length > 0) {
-            console.log("[Upload API] ✅ Transkript als reiner Text erkannt, Länge:", transcript.length);
+            logger.log("[Upload API] ✅ Transkript als reiner Text erkannt, Länge:", transcript.length);
             return NextResponse.json({
               success: true,
               status: "✅ Erfolgreich transkribiert",
@@ -214,13 +215,13 @@ async function uploadHandler(request: NextRequest) {
 
         // Debug-Logging - immer aktiv für Troubleshooting
         if (data) {
-          console.log("[Upload API] n8n Response:", JSON.stringify(data, null, 2));
+          logger.log("[Upload API] n8n Response:", JSON.stringify(data, null, 2));
         }
 
         // Wenn data ein String ist, ist es wahrscheinlich das Transkript
         if (typeof data === "string" && data.trim().length > 0) {
           transcript = data.trim();
-          console.log("[Upload API] ✅ Transkript als String in JSON erkannt, Länge:", transcript.length);
+          logger.log("[Upload API] ✅ Transkript als String in JSON erkannt, Länge:", transcript.length);
           return NextResponse.json({
             success: true,
             status: "✅ Erfolgreich transkribiert",
@@ -352,13 +353,13 @@ async function uploadHandler(request: NextRequest) {
 
           // Debug-Logging für Transkript - immer aktiv
           if (transcript) {
-            console.log("[Upload API] ✅ Transkript gefunden, Länge:", transcript.length);
-            console.log("[Upload API] Transkript (erste 200 Zeichen):", transcript.substring(0, 200));
+            logger.log("[Upload API] ✅ Transkript gefunden, Länge:", transcript.length);
+            logger.log("[Upload API] Transkript (erste 200 Zeichen):", transcript.substring(0, 200));
           } else {
-            console.warn("[Upload API] ⚠️ Kein Transkript in Response gefunden");
-            console.log("[Upload API] Verfügbare Felder:", Object.keys(data).join(", "));
+            logger.warn("[Upload API] ⚠️ Kein Transkript in Response gefunden");
+            logger.log("[Upload API] Verfügbare Felder:", Object.keys(data).join(", "));
             if (Array.isArray(data) && data.length > 0) {
-              console.log("[Upload API] Array-Item Felder:", Object.keys(data[0] || {}).join(", "));
+              logger.log("[Upload API] Array-Item Felder:", Object.keys(data[0] || {}).join(", "));
             }
           }
 
@@ -370,7 +371,7 @@ async function uploadHandler(request: NextRequest) {
       } catch (jsonError) {
         // Falls JSON-Parsing fehlschlägt, verwende Standardwerte
         if (process.env.NODE_ENV === "development") {
-          console.warn("Konnte JSON-Response nicht parsen:", jsonError);
+          logger.warn("Konnte JSON-Response nicht parsen:", jsonError);
         }
         // Verwende Standardwerte - Upload war erfolgreich (Status 200)
         status = "✅ Datei erfolgreich hochgeladen und wird verarbeitet";
@@ -378,9 +379,9 @@ async function uploadHandler(request: NextRequest) {
       }
     } else {
       // HTML-Response (Form-Trigger) - Upload war erfolgreich wenn Status 200/201
-      console.log("[Upload API] HTML-Response erhalten (Form-Trigger)");
+      logger.log("[Upload API] HTML-Response erhalten (Form-Trigger)");
       const htmlText = await response.text();
-      console.log("[Upload API] HTML-Response Länge:", htmlText.length);
+      logger.log("[Upload API] HTML-Response Länge:", htmlText.length);
       status = "✅ Datei erfolgreich hochgeladen und wird verarbeitet";
 
       // Versuche Transkript aus HTML zu extrahieren (falls n8n es dort einbettet)
@@ -388,7 +389,7 @@ async function uploadHandler(request: NextRequest) {
       const scriptMatch = htmlText.match(/<script[^>]*>[\s\S]*?transcript["\s:]+["']([^"']+)["']/i);
       if (scriptMatch && scriptMatch[1]) {
         transcript = scriptMatch[1];
-        console.log("[Upload API] Transkript aus HTML extrahiert");
+        logger.log("[Upload API] Transkript aus HTML extrahiert");
       }
     }
 
@@ -400,7 +401,7 @@ async function uploadHandler(request: NextRequest) {
       ...(transcript && { transcript }),
     };
 
-    console.log("[Upload API] Finale Response:", {
+    logger.log("[Upload API] Finale Response:", {
       success: true,
       status,
       fileName,
@@ -424,7 +425,7 @@ async function uploadHandler(request: NextRequest) {
 
     // In Development auch in Console loggen
     if (process.env.NODE_ENV === "development") {
-      console.error("Upload API Fehler:", error);
+      logger.error("Upload API Fehler:", error);
     }
 
     return NextResponse.json(

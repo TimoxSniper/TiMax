@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Upload, X, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { TIMEOUTS, UPLOAD_CONFIG } from "@/lib/constants";
+import { logger } from "@/lib/logger";
 
 const MAX_FILE_SIZE = UPLOAD_CONFIG.MAX_FILE_SIZE;
 const ALLOWED_TYPES: string[] = [...UPLOAD_CONFIG.ALLOWED_TYPES];
@@ -159,7 +160,7 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       setProgress(0);
       // In Production: Hier würde man zu einem Error-Tracking-Service loggen
       if (process.env.NODE_ENV === "development") {
-        console.error("Upload-Fehler:", err);
+        logger.error("Upload-Fehler:", err);
       }
     } finally {
       setIsUploading(false);

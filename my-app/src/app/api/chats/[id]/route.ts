@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { createClient } from "@/lib/supabase/server";
+import { logger } from "@/lib/logger";
 
 // GET Handler (idempotent - CSRF optional)
 export async function GET(
@@ -33,7 +34,7 @@ export async function GET(
       .single();
 
     if (error) {
-      console.error("[Chat API] Fehler beim Laden:", error);
+      logger.error("[Chat API] Fehler beim Laden:", error);
       return NextResponse.json(
         { success: false, error: "Chat nicht gefunden" },
         { status: 404 }
@@ -86,7 +87,7 @@ export async function DELETE(
       .eq("user_id", userId);
 
     if (error) {
-      console.error("[Chat API] Fehler beim Löschen:", error);
+      logger.error("[Chat API] Fehler beim Löschen:", error);
       throw error;
     }
 
@@ -133,7 +134,7 @@ export async function PATCH(
       .single();
 
     if (error) {
-      console.error("[Chat API] Fehler beim Aktualisieren:", error);
+      logger.error("[Chat API] Fehler beim Aktualisieren:", error);
       throw error;
     }
 

@@ -15,6 +15,7 @@ import { Footer } from "@/components/layout/footer";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { TIMEOUTS, BREAKPOINTS } from "@/lib/constants";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
 
 export default function TextGeneratorPage() {
   const [selectedFormat, setSelectedFormat] = useState<FormatType | null>(null);
@@ -58,7 +59,7 @@ export default function TextGeneratorPage() {
         setGeneratedText("");
         // In Production: Hier würde man zu einem Error-Tracking-Service loggen
         if (process.env.NODE_ENV === "development") {
-          console.error("Fehler bei handleFormatSelect:", err);
+          logger.error("Fehler bei handleFormatSelect:", err);
         }
       }
     });
@@ -120,7 +121,7 @@ export default function TextGeneratorPage() {
               onUploadError={(error) => {
                 // In Production: Hier würde man zu einem Error-Tracking-Service loggen
                 if (process.env.NODE_ENV === "development") {
-                  console.error("Upload-Fehler:", error);
+                  logger.error("Upload-Fehler:", error);
                 }
                 setError(error);
               }}

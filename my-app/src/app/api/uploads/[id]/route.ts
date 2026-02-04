@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { createClient } from "@/lib/supabase/server";
+import { logger } from "@/lib/logger";
 
 // DELETE: Upload-Eintrag löschen
 export async function DELETE(
@@ -29,7 +30,7 @@ export async function DELETE(
             .eq("user_id", userId);
 
         if (error) {
-            console.error("[Upload API] Fehler beim Löschen:", error);
+            logger.error("[Upload API] Fehler beim Löschen:", error);
             throw error;
         }
 
@@ -72,7 +73,7 @@ export async function GET(
             .single();
 
         if (error) {
-            console.error("[Upload API] Fehler beim Laden:", error);
+            logger.error("[Upload API] Fehler beim Laden:", error);
             return NextResponse.json(
                 { success: false, error: "Datei nicht gefunden" },
                 { status: 404 }

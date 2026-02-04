@@ -36,12 +36,17 @@ export default function DatenschutzPage() {
                 Verantwortlicher für die Datenverarbeitung auf dieser Website ist:
               </p>
               <p className="mb-2">
-                {/* TODO: Firmendaten eintragen */}
-                timax
+                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                  [FIRMENNAME HIER EINTRAGEN]
+                </span>
                 <br />
-                [Anschrift]
+                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                  [VOLLSTÄNDIGE ANSCHRIFT]
+                </span>
                 <br />
-                [PLZ Ort]
+                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                  [PLZ ORT]
+                </span>
               </p>
               <p className="mb-2">
                 E-Mail: <a href="mailto:info@timax.app" className="text-primary hover:underline">info@timax.app</a>
@@ -52,9 +57,15 @@ export default function DatenschutzPage() {
               <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
                 2. Datenschutzbeauftragter
               </h2>
-              <p>
-                {/* TODO: Falls vorhanden (bei >20 Mitarbeitern verpflichtend) */}
+              <p className="mb-2">
                 Bei Fragen zum Datenschutz können Sie sich an unseren Datenschutzbeauftragten wenden:
+              </p>
+              <p>
+                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                  [NAME DES DATENSCHUTZBEAUFTRAGTEN - falls vorhanden (bei >20 Mitarbeitern verpflichtend)]
+                </span>
+                <br />
+                E-Mail: <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">[datenschutz@firma.de]</span>
               </p>
             </div>
 

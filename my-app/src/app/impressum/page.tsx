@@ -36,12 +36,17 @@ export default function ImpressumPage() {
                 <strong>timax</strong>
               </p>
               <p className="mb-2">
-                {/* TODO: Hier die tatsächlichen Firmendaten eintragen */}
-                [Firmenname / Name]
+                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                  [FIRMENNAME HIER EINTRAGEN]
+                </span>
                 <br />
-                [Vollständige Anschrift - kein Postfach!]
+                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                  [VOLLSTÄNDIGE ANSCHRIFT - KEIN POSTFACH!]
+                </span>
                 <br />
-                [PLZ Ort]
+                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                  [PLZ ORT LAND]
+                </span>
               </p>
             </div>
 
@@ -53,7 +58,7 @@ export default function ImpressumPage() {
                 E-Mail: <a href="mailto:info@timax.app" className="text-primary hover:underline">info@timax.app</a>
               </p>
               <p className="mb-2">
-                Telefon: {/* TODO: Telefonnummer eintragen */}
+                Telefon: <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">[+49 XXX XXXXXXX]</span>
               </p>
             </div>
 
@@ -62,7 +67,9 @@ export default function ImpressumPage() {
                 Vertretungsberechtigte Person(en)
               </h3>
               <p>
-                {/* TODO: Name der vertretungsberechtigten Person(en) */}
+                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                  [NAME DES GESCHÄFTSFÜHRERS / VERTRETUNGSBERECHTIGTEN]
+                </span>
               </p>
             </div>
 
@@ -71,10 +78,10 @@ export default function ImpressumPage() {
                 Handelsregister
               </h3>
               <p className="mb-2">
-                Registergericht: {/* TODO: Falls vorhanden */}
+                Registergericht: <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">[z.B. Amtsgericht München - falls GmbH/UG]</span>
               </p>
               <p>
-                Registernummer: {/* TODO: Falls vorhanden */}
+                Registernummer: <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">[z.B. HRB 123456 - falls GmbH/UG]</span>
               </p>
             </div>
 
@@ -83,7 +90,7 @@ export default function ImpressumPage() {
                 Umsatzsteuer-ID
               </h3>
               <p>
-                Umsatzsteuer-Identifikationsnummer gemäß §27 a Umsatzsteuergesetz: {/* TODO: Falls vorhanden */}
+                Umsatzsteuer-Identifikationsnummer gemäß §27 a Umsatzsteuergesetz: <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">[DE123456789 - falls vorhanden]</span>
               </p>
             </div>
 
@@ -92,7 +99,9 @@ export default function ImpressumPage() {
                 Aufsichtsbehörde
               </h3>
               <p>
-                {/* TODO: Falls relevant, z.B. für bestimmte Branchen */}
+                <span className="text-gray-500 dark:text-gray-400 italic">
+                  [Falls relevant für bestimmte Branchen, sonst leer lassen]
+                </span>
               </p>
             </div>
 

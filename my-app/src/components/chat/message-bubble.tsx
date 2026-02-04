@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Copy, Check, User, Bot } from "lucide-react";
 import { useState, useEffect } from "react";
+import { logger } from "@/lib/logger";
 
 interface MessageBubbleProps {
   message: Message;
@@ -28,7 +29,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
     } catch (err) {
       // In Production: Hier würde man zu einem Error-Tracking-Service loggen
       if (process.env.NODE_ENV === "development") {
-        console.error("Kopieren fehlgeschlagen:", err);
+        logger.error("Kopieren fehlgeschlagen:", err);
       }
       // Fehler wird stillschweigend ignoriert, da Copy-Funktionalität optional ist
     }

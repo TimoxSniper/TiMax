@@ -42,10 +42,19 @@ export default function WiderrufPage() {
                 Um Ihr Widerrufsrecht auszuüben, müssen Sie uns
               </p>
               <p className="mb-2 mt-4">
-                <strong>timax</strong>
+                <strong>
+                  <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                    [FIRMENNAME HIER EINTRAGEN]
+                  </span>
+                </strong>
                 <br />
-                {/* TODO: Firmendaten eintragen */}
-                [Anschrift]
+                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                  [VOLLSTÄNDIGE ANSCHRIFT]
+                </span>
+                <br />
+                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                  [PLZ ORT]
+                </span>
                 <br />
                 E-Mail: <a href="mailto:info@timax.app" className="text-primary hover:underline">info@timax.app</a>
               </p>

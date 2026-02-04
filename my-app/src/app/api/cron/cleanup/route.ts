@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { RETENTION_POLICY } from "@/lib/upload-config";
+import { logger } from "@/lib/logger";
+import { createClient } from "@/lib/supabase/server";
 
 /**
  * Cron Job für File Cleanup & Retention Policy
@@ -31,118 +33,111 @@ export async function GET(request: NextRequest) {
     const now = new Date();
     const deletedCounts = {
       uploadsWithoutTranscript: 0,
-      inactiveTranscripts: 0,
-      deletedAccounts: 0,
+      inactiveChats: 0,
+      oldUploads: 0,
     };
 
-    // TODO: Database-Integration implementieren
-    // Beispiel-Struktur:
-    /*
+    const supabase = await createClient();
+
     // 1. Lösche Uploads ohne Transkript (älter als 7 Tage)
-    const uploadsToDelete = await prisma.upload.findMany({
-      where: {
-        transcript: null,
-        createdAt: {
-          lt: new Date(now.getTime() - RETENTION_POLICY.uploadsWithoutTranscript),
-        },
-      },
-      include: {
-        blobUrl: true, // Für Datei-Löschung aus Storage
-      },
-    });
+    const uploadsWithoutTranscriptCutoff = new Date(
+      now.getTime() - RETENTION_POLICY.uploadsWithoutTranscript
+    );
 
-    for (const upload of uploadsToDelete) {
-      // Lösche Datei aus Storage (Vercel Blob, S3, etc.)
-      await deleteFileFromStorage(upload.blobUrl);
-      
-      // Lösche aus Database
-      await prisma.upload.delete({
-        where: { id: upload.id },
-      });
-      
-      deletedCounts.uploadsWithoutTranscript++;
-    }
+    const { data: uploadsToDelete, error: uploadsError } = await supabase
+      .from("uploads")
+      .select("id")
+      .is("transcript", null)
+      .lt("created_at", uploadsWithoutTranscriptCutoff.toISOString());
 
-    // 2. Lösche inaktive Transkripte (90 Tage ohne Aktivität)
-    const inactiveTranscripts = await prisma.transcript.findMany({
-      where: {
-        updatedAt: {
-          lt: new Date(now.getTime() - RETENTION_POLICY.transcriptsInactive),
-        },
-      },
-      include: {
-        upload: {
-          include: {
-            blobUrl: true,
-          },
-        },
-      },
-    });
+    if (!uploadsError && uploadsToDelete) {
+      for (const upload of uploadsToDelete) {
+        const { error: deleteError } = await supabase
+          .from("uploads")
+          .delete()
+          .eq("id", upload.id);
 
-    for (const transcript of inactiveTranscripts) {
-      // Lösche Datei aus Storage
-      if (transcript.upload?.blobUrl) {
-        await deleteFileFromStorage(transcript.upload.blobUrl);
-      }
-      
-      // Lösche Transkript und Upload
-      await prisma.transcript.delete({
-        where: { id: transcript.id },
-      });
-      
-      if (transcript.upload) {
-        await prisma.upload.delete({
-          where: { id: transcript.upload.id },
-        });
-      }
-      
-      deletedCounts.inactiveTranscripts++;
-    }
-
-    // 3. Lösche Daten von gelöschten Accounts (SOFORT)
-    const deletedAccounts = await prisma.user.findMany({
-      where: {
-        deletedAt: {
-          not: null,
-        },
-      },
-      include: {
-        uploads: {
-          include: {
-            blobUrl: true,
-          },
-        },
-        transcripts: true,
-        generations: true,
-      },
-    });
-
-    for (const user of deletedAccounts) {
-      // Lösche alle Dateien
-      for (const upload of user.uploads) {
-        if (upload.blobUrl) {
-          await deleteFileFromStorage(upload.blobUrl);
+        if (!deleteError) {
+          deletedCounts.uploadsWithoutTranscript++;
+        } else {
+          logger.error("[Cleanup] Fehler beim Löschen von Upload:", deleteError);
         }
       }
-      
-      // Lösche alle Daten
-      await prisma.user.delete({
-        where: { id: user.id },
-      });
-      
-      deletedCounts.deletedAccounts++;
+    } else if (uploadsError) {
+      logger.error("[Cleanup] Fehler beim Abrufen von Uploads:", uploadsError);
     }
-    */
+
+    // 2. Lösche inaktive Chats (90 Tage ohne Aktivität)
+    // Hinweis: Chats haben kein updated_at in RLS Policies, daher nutzen wir created_at
+    const inactiveChatsCutoff = new Date(
+      now.getTime() - RETENTION_POLICY.transcriptsInactive
+    );
+
+    const { data: chatsToDelete, error: chatsError } = await supabase
+      .from("chats")
+      .select("id")
+      .lt("created_at", inactiveChatsCutoff.toISOString());
+
+    if (!chatsError && chatsToDelete) {
+      for (const chat of chatsToDelete) {
+        // Messages werden durch CASCADE automatisch gelöscht
+        const { error: deleteError } = await supabase
+          .from("chats")
+          .delete()
+          .eq("id", chat.id);
+
+        if (!deleteError) {
+          deletedCounts.inactiveChats++;
+        } else {
+          logger.error("[Cleanup] Fehler beim Löschen von Chat:", deleteError);
+        }
+      }
+    } else if (chatsError) {
+      logger.error("[Cleanup] Fehler beim Abrufen von Chats:", chatsError);
+    }
+
+    // 3. Lösche alte Uploads mit Transkript (älter als 90 Tage)
+    const oldUploadsCutoff = new Date(
+      now.getTime() - RETENTION_POLICY.transcriptsInactive
+    );
+
+    const { data: oldUploads, error: oldUploadsError } = await supabase
+      .from("uploads")
+      .select("id")
+      .not("transcript", "is", null)
+      .lt("created_at", oldUploadsCutoff.toISOString());
+
+    if (!oldUploadsError && oldUploads) {
+      for (const upload of oldUploads) {
+        const { error: deleteError } = await supabase
+          .from("uploads")
+          .delete()
+          .eq("id", upload.id);
+
+        if (!deleteError) {
+          deletedCounts.oldUploads++;
+        } else {
+          logger.error("[Cleanup] Fehler beim Löschen von altem Upload:", deleteError);
+        }
+      }
+    } else if (oldUploadsError) {
+      logger.error("[Cleanup] Fehler beim Abrufen von alten Uploads:", oldUploadsError);
+    }
+
+    logger.log("[Cleanup] Erfolgreich ausgeführt:", deletedCounts);
 
     return NextResponse.json({
       success: true,
-      message: "Cleanup Job ausgeführt",
+      message: "Cleanup Job erfolgreich ausgeführt",
       timestamp: now.toISOString(),
       deletedCounts,
-      note: "Database-Integration noch nicht implementiert. Siehe Code-Kommentare.",
+      retentionPolicy: {
+        uploadsWithoutTranscript: `${RETENTION_POLICY.uploadsWithoutTranscript / (1000 * 60 * 60 * 24)} Tage`,
+        inactiveData: `${RETENTION_POLICY.transcriptsInactive / (1000 * 60 * 60 * 24)} Tage`,
+      },
     });
   } catch (error) {
-    console.error("Cleanup Job Fehler:", error);
+    logger.error("Cleanup Job Fehler:", error);
     return NextResponse.json(
       {
         success: false,

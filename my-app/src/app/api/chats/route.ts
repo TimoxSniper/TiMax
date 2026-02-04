@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { createClient } from "@/lib/supabase/server";
 import { withCsrfProtection } from "@/lib/csrf";
+import { logger } from "@/lib/logger";
 
 // GET Handler
 async function getChatsHandler(request: NextRequest) {
@@ -26,7 +27,7 @@ async function getChatsHandler(request: NextRequest) {
       .order("updated_at", { ascending: false });
 
     if (error) {
-      console.error("[Chats API] Fehler beim Laden:", error);
+      logger.error("[Chats API] Fehler beim Laden:", error);
       throw error;
     }
 
@@ -71,7 +72,7 @@ async function postChatsHandler(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error("[Chats API] Fehler beim Erstellen:", error);
+      logger.error("[Chats API] Fehler beim Erstellen:", error);
       throw error;
     }
 

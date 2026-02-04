@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { CHAT_UI_TEXTS, CHAT_ERROR_TEXTS } from "@/lib/constants";
 import * as Sentry from "@sentry/nextjs";
+import { logger } from "@/lib/logger";
 
 // Das Message-Interface wird von der Komponente importiert,
 // daher definieren wir es hier wieder oder importieren es von einem geteilten Ort.
@@ -93,7 +94,7 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
           return;
         }
 
-        console.error("Fehler beim Laden der Historie:", err);
+        logger.error("Fehler beim Laden der Historie:", err);
         setError(err instanceof Error ? err.message : "Historie konnte nicht geladen werden");
 
         Sentry.captureException(err, {
@@ -206,7 +207,7 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
           }
         });
 
-        console.error(CHAT_ERROR_TEXTS.CHAT_ERROR_LOG_PREFIX, err);
+        logger.error(CHAT_ERROR_TEXTS.CHAT_ERROR_LOG_PREFIX, err);
       }
     } finally {
       if (currentRequestId === requestIdRef.current) {

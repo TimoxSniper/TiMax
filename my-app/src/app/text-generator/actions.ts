@@ -1,6 +1,7 @@
 "use server";
 
 import { generateText, type FormatType } from "@/lib/text-templates";
+import { logger } from "@/lib/logger";
 
 /**
  * Server Action für Text-Generierung
@@ -28,7 +29,7 @@ export async function generateTextAction(
     if (!format || !["instagram", "twitter", "blog", "caption"].includes(format)) {
       // In Production: Hier würde man zu einem Error-Tracking-Service loggen
       if (process.env.NODE_ENV === "development") {
-        console.error("[generateTextAction] Ungültiges Format:", format);
+        logger.error("[generateTextAction] Ungültiges Format:", format);
       }
       return {
         success: false,
@@ -38,7 +39,7 @@ export async function generateTextAction(
 
     if (!transcript || transcript.trim().length === 0) {
       if (process.env.NODE_ENV === "development") {
-        console.error("[generateTextAction] Leeres Transkript");
+        logger.error("[generateTextAction] Leeres Transkript");
       }
       return {
         success: false,
@@ -51,7 +52,7 @@ export async function generateTextAction(
 
     if (!generatedText || generatedText.trim().length === 0) {
       if (process.env.NODE_ENV === "development") {
-        console.error("[generateTextAction] Generierung fehlgeschlagen - leerer Text");
+        logger.error("[generateTextAction] Generierung fehlgeschlagen - leerer Text");
       }
       return {
         success: false,
@@ -66,7 +67,7 @@ export async function generateTextAction(
   } catch (error) {
     // In Production: Hier würde man zu einem Error-Tracking-Service loggen
     if (process.env.NODE_ENV === "development") {
-      console.error("[generateTextAction] Fehler:", error);
+      logger.error("[generateTextAction] Fehler:", error);
     }
     return {
       success: false,

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { validateRequiredEnv } from "@/lib/env";
 import { chatSchema, sanitizeString } from "@/lib/validation";
 import { withCsrfProtection } from "@/lib/csrf";
+import { logger } from "@/lib/logger";
 
 // Haupt-Handler für Chat
 async function chatHandler(request: NextRequest) {
@@ -19,7 +20,7 @@ async function chatHandler(request: NextRequest) {
       );
     }
 
-    console.log("[Chat API] User authentifiziert:", userId);
+    logger.log("[Chat API] User authentifiziert:", userId);
 
     // 2. Supabase Client erstellen
     const supabase = await createClient();
@@ -62,12 +63,12 @@ async function chatHandler(request: NextRequest) {
         .single();
 
       if (chatError) {
-        console.error("[Chat API] Fehler beim Erstellen des Chats:", chatError);
+        logger.error("[Chat API] Fehler beim Erstellen des Chats:", chatError);
         throw new Error("Chat konnte nicht erstellt werden");
       }
 
       currentChatId = newChat.id;
-      console.log("[Chat API] Neuer Chat erstellt:", currentChatId);
+      logger.log("[Chat API] Neuer Chat erstellt:", currentChatId);
     }
 
     // 4. USER MESSAGE IN SUPABASE SPEICHERN
@@ -80,7 +81,7 @@ async function chatHandler(request: NextRequest) {
       });
 
     if (messageError) {
-      console.error("[Chat API] Fehler beim Speichern der Nachricht:", messageError);
+      logger.error("[Chat API] Fehler beim Speichern der Nachricht:", messageError);
     }
 
     // 5. REQUEST AN N8N SENDEN
@@ -156,7 +157,7 @@ async function chatHandler(request: NextRequest) {
     });
 
     if (process.env.NODE_ENV === "development") {
-      console.error("Chat API Fehler:", error);
+      logger.error("Chat API Fehler:", error);
     }
 
     return NextResponse.json(
@@ -209,7 +210,7 @@ async function getChatsHandler(request: NextRequest) {
         .single();
 
       if (chatError) {
-        console.error("[Chat API] Fehler beim Laden des Chats:", chatError);
+        logger.error("[Chat API] Fehler beim Laden des Chats:", chatError);
         return NextResponse.json(
           { success: false, error: "Chat nicht gefunden oder Zugriff verweigert" },
           { status: 404 }

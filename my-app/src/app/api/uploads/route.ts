@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { createClient } from "@/lib/supabase/server";
+import { logger } from "@/lib/logger";
 
 // GET: Alle Uploads des Users laden
 export async function GET(request: NextRequest) {
@@ -34,7 +35,7 @@ export async function GET(request: NextRequest) {
     const { data: uploads, error } = await query;
 
     if (error) {
-      console.error("[Uploads API] Fehler beim Laden:", error);
+      logger.error("[Uploads API] Fehler beim Laden:", error);
       throw error;
     }
 
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error("[Uploads API] Fehler beim Erstellen:", error);
+      logger.error("[Uploads API] Fehler beim Erstellen:", error);
       throw error;
     }
 

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { X, Cookie, Settings } from "lucide-react";
+import { logger } from "@/lib/logger";
 
 type CookiePreferences = {
   necessary: boolean;
@@ -34,7 +35,7 @@ export function CookieConsent() {
         } catch (e) {
           // Ignoriere Fehler beim Parsen
           if (process.env.NODE_ENV === "development") {
-            console.error("Failed to parse cookie preferences:", e);
+            logger.error("Failed to parse cookie preferences:", e);
           }
         }
       }
