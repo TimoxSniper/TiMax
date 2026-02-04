@@ -3,6 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 
+import { CHAT_UI_TEXTS, CHAT_ERROR_TEXTS } from "@/lib/constants";
+import * as Sentry from "@sentry/nextjs";
+
 // Das Message-Interface wird von der Komponente importiert,
 // daher definieren wir es hier wieder oder importieren es von einem geteilten Ort.
 export interface Message {
@@ -76,19 +79,19 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        throw new Error(data.error || "Fehler bei der Chat-Anfrage");
+        throw new Error(data.error || CHAT_ERROR_TEXTS.DEFAULT_API_ERROR);
       }
-      
+
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error(data.error || "Fehler bei der Chat-Anfrage");
+        throw new Error(data.error || CHAT_ERROR_TEXTS.DEFAULT_API_ERROR);
       }
 
       const assistantMessage: Message = {
         id: `msg-${uuidv4()}`,
         role: "assistant",
-        content: data.output || "Keine Antwort erhalten",
+        content: data.output || CHAT_UI_TEXTS.ASSISTANT_DEFAULT_RESPONSE,
         timestamp: new Date(),
       };
 
@@ -102,10 +105,19 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
       }
 
       if (currentRequestId === requestIdRef.current) {
-        const errorMessage = err instanceof Error ? err.message : "Unbekannter Fehler";
+        const errorMessage = err instanceof Error ? err.message : CHAT_ERROR_TEXTS.UNKNOWN_ERROR;
         setError(errorMessage);
-        // Hier sollte Sentry oder ein anderer Error-Tracker integriert werden
-        console.error("Chat-Fehler:", err);
+
+        // Sentry Integration für Production Error-Tracking
+        Sentry.captureException(err, {
+          extra: {
+            sessionId,
+            messageCount: messages.length,
+            requestId: currentRequestId
+          }
+        });
+
+        console.error(CHAT_ERROR_TEXTS.CHAT_ERROR_LOG_PREFIX, err);
       }
     } finally {
       if (currentRequestId === requestIdRef.current) {

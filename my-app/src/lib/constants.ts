@@ -26,6 +26,27 @@ export const CHAT_CONFIG = {
   MIN_MESSAGE_LENGTH: 1,
 } as const;
 
+// Chat UI Texte
+export const CHAT_UI_TEXTS = {
+  WELCOME_TITLE: "Willkommen bei REX!",
+  WELCOME_SUBTITLE: "Chatte mit deiner KI über deine Transkripte und lass dir Content generieren.",
+  EXAMPLE_REQUESTS_TITLE: "Beispiel-Anfragen:",
+  EXAMPLE_REQUESTS: [
+    '• "Erstelle einen Instagram Post über Produktivität"',
+    '• "Generiere einen Twitter Thread aus meinem letzten Video"',
+    '• "Was sind die wichtigsten Punkte aus dem Transkript?"',
+  ],
+  THINKING: "REX denkt nach...",
+  ASSISTANT_DEFAULT_RESPONSE: "Keine Antwort erhalten",
+} as const;
+
+// Chat Fehler Texte
+export const CHAT_ERROR_TEXTS = {
+  DEFAULT_API_ERROR: "Fehler bei der Chat-Anfrage",
+  UNKNOWN_ERROR: "Unbekannter Fehler",
+  CHAT_ERROR_LOG_PREFIX: "Chat-Fehler:",
+} as const;
+
 // Breakpoints für Responsive Design
 export const BREAKPOINTS = {
   MOBILE: 1024,
