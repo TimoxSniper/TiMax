@@ -32,9 +32,9 @@ export const CHAT_UI_TEXTS = {
   WELCOME_SUBTITLE: "Chatte mit deiner KI über deine Transkripte und lass dir Content generieren.",
   EXAMPLE_REQUESTS_TITLE: "Beispiel-Anfragen:",
   EXAMPLE_REQUESTS: [
-    '• "Erstelle einen Instagram Post über Produktivität"',
-    '• "Generiere einen Twitter Thread aus meinem letzten Video"',
-    '• "Was sind die wichtigsten Punkte aus dem Transkript?"',
+    "Erstelle einen Instagram Post über Produktivität",
+    "Generiere einen Twitter Thread aus meinem letzten Video",
+    "Was sind die wichtigsten Punkte aus dem Transkript?",
   ],
   THINKING: "REX denkt nach...",
   ASSISTANT_DEFAULT_RESPONSE: "Keine Antwort erhalten",

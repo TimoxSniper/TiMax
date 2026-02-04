@@ -40,21 +40,19 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
             <div className="space-y-3 text-xs text-muted-foreground w-full max-w-md">
               <p className="font-medium text-foreground text-center">{CHAT_UI_TEXTS.EXAMPLE_REQUESTS_TITLE}</p>
               <div className="space-y-2">
-                {CHAT_UI_TEXTS.EXAMPLE_REQUESTS.map((req, index) => {
-                  // Bereinige den Text für den Versand (entferne Aufzählungszeichen und Anführungszeichen)
-                  const cleanMessage = req.replace(/^[•\s"]+|["]+$/g, '');
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => handleSendMessage(cleanMessage)}
-                      className="w-full text-left p-3 rounded-lg bg-muted/50 hover:bg-primary/10 hover:text-primary transition-all border border-transparent hover:border-primary/20 cursor-pointer group flex items-center gap-2"
-                      aria-label={`${CHAT_UI_TEXTS.SEND_EXAMPLE}: ${cleanMessage}`}
-                    >
-                      <span className="shrink-0 group-hover:scale-110 transition-transform text-primary/50 group-hover:text-primary" aria-hidden="true">✨</span>
-                      <span className="flex-1 group-hover:translate-x-0.5 transition-transform">{req}</span>
-                    </button>
-                  );
-                })}
+                {CHAT_UI_TEXTS.EXAMPLE_REQUESTS.map((req, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSendMessage(req)}
+                    className="w-full text-left p-3 rounded-lg bg-muted/50 hover:bg-primary/10 hover:text-primary transition-all border border-transparent hover:border-primary/20 cursor-pointer group flex items-center gap-2"
+                    aria-label={`${CHAT_UI_TEXTS.SEND_EXAMPLE}: ${req}`}
+                  >
+                    <span className="shrink-0 group-hover:scale-110 transition-transform text-primary/50 group-hover:text-primary" aria-hidden="true">✨</span>
+                    <span className="flex-1 group-hover:translate-x-0.5 transition-transform">
+                      &bull; &ldquo;{req}&rdquo;
+                    </span>
+                  </button>
+                ))}
               </div>
             </div>
           </div>
