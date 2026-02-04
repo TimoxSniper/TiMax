@@ -15,11 +15,11 @@ Dieser Plan strukturiert die restlichen Aufgaben in logische Batches, die nachei
 
 ---
 
-## 📦 Batch 1: Middleware & Config Polish (Prio: Hoch)
-- [ ] **Middleware Warning beheben:** Analyse der `middleware-to-proxy` Warnung (Sentry Tunnel vs. Next.js Middleware)
-- [ ] **Redis Connection:** Sicherstellen, dass die Redis-Verbindung für Production stabil ist (Timeout-Handling)
-- [ ] **Environment Sync:** `.env.example` mit allen aktuell benötigten Keys (Clerk, Supabase, Redis, n8n) synchronisieren
-- [ ] **API Header:** CSRF-Schutz und Security-Header (CSP) finalisieren
+## ✅ Batch 1: Middleware & Config Polish (Erledigt)
+- [x] **Middleware Warning beheben:** Analyse der `middleware-to-proxy` Warnung (Sentry Tunnel vs. Next.js Middleware)
+- [x] **Redis Connection:** Sicherstellen, dass die Redis-Verbindung für Production stabil ist (Timeout-Handling)
+- [x] **Environment Sync:** `.env.example` mit allen aktuell benötigten Keys (Clerk, Supabase, Redis, n8n) synchronisieren
+- [x] **API Header:** CSRF-Schutz und Security-Header (CSP) finalisieren
 
 ---
 
