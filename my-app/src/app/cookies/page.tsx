@@ -2,9 +2,20 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const metadata = {
-  title: "Cookie-Richtlinie - timax",
-  description: "Informationen über die Verwendung von Cookies",
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Cookie-Richtlinie",
+  description: "Cookie-Richtlinie von timax - Informationen über die Verwendung von Cookies auf unserer Website",
+  alternates: {
+    canonical: '/cookies',
+  },
+  openGraph: {
+    title: "Cookie-Richtlinie - timax",
+    description: "Informationen über die Verwendung von Cookies",
+    type: "website",
+    locale: "de_DE",
+  },
 };
 
 export default function CookiesPage() {

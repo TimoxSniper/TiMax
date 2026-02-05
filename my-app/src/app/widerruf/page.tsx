@@ -2,9 +2,20 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const metadata = {
-  title: "Widerrufsbelehrung - timax",
-  description: "Widerrufsbelehrung für Verbraucher",
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Widerrufsbelehrung",
+  description: "Widerrufsbelehrung für Verbraucher - 14-tägiges Widerrufsrecht bei timax",
+  alternates: {
+    canonical: '/widerruf',
+  },
+  openGraph: {
+    title: "Widerrufsbelehrung - timax",
+    description: "Widerrufsbelehrung für Verbraucher",
+    type: "website",
+    locale: "de_DE",
+  },
 };
 
 export default function WiderrufPage() {

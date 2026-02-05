@@ -2,9 +2,20 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const metadata = {
-  title: "Datenschutzerklärung - timax",
-  description: "Datenschutzerklärung gemäß DSGVO",
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Datenschutzerklärung",
+  description: "Datenschutzerklärung von timax gemäß DSGVO - Informationen zur Datenverarbeitung",
+  alternates: {
+    canonical: '/datenschutz',
+  },
+  openGraph: {
+    title: "Datenschutzerklärung - timax",
+    description: "Datenschutzerklärung gemäß DSGVO",
+    type: "website",
+    locale: "de_DE",
+  },
 };
 
 export default function DatenschutzPage() {

@@ -2,9 +2,20 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const metadata = {
-  title: "Allgemeine Geschäftsbedingungen - timax",
-  description: "AGB von timax",
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Allgemeine Geschäftsbedingungen",
+  description: "AGB von timax - Nutzungsbedingungen für die KI-gestützte Transkriptions- und Textgenerierungsplattform",
+  alternates: {
+    canonical: '/agb',
+  },
+  openGraph: {
+    title: "Allgemeine Geschäftsbedingungen - timax",
+    description: "AGB von timax",
+    type: "website",
+    locale: "de_DE",
+  },
 };
 
 export default function AGBPage() {

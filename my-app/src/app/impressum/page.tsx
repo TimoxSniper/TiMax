@@ -2,9 +2,20 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const metadata = {
-  title: "Impressum - timax",
-  description: "Impressum und rechtliche Angaben zu timax",
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Impressum",
+  description: "Impressum und rechtliche Angaben zu timax - Angaben gemäß § 5 TMG",
+  alternates: {
+    canonical: '/impressum',
+  },
+  openGraph: {
+    title: "Impressum - timax",
+    description: "Impressum und rechtliche Angaben zu timax",
+    type: "website",
+    locale: "de_DE",
+  },
 };
 
 export default function ImpressumPage() {
