@@ -62,26 +62,27 @@ export function MainNavigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:gap-1">
-            {/* Landing Page Links (immer sichtbar auf Home, sonst optional) */}
-            {landingPageNavigation.map((item) => {
-              const Icon = item.icon;
-              // Wir markieren diese Links nicht als active, da sie Anchor-Links sind
-              return (
-                <Button
-                  key={item.name}
-                  variant="ghost"
-                  asChild
-                  className="gap-2"
-                >
-                  <Link href={item.href}>
-                    <Icon className="h-4 w-4" aria-hidden="true" />
-                    {item.name}
-                  </Link>
-                </Button>
-              );
-            })}
+            {/* Landing Page Links nur für nicht angemeldete User */}
+            <SignedOut>
+              {landingPageNavigation.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Button
+                    key={item.name}
+                    variant="ghost"
+                    asChild
+                    className="gap-2"
+                  >
+                    <Link href={item.href}>
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                      {item.name}
+                    </Link>
+                  </Button>
+                );
+              })}
+            </SignedOut>
 
-            {/* Separator wenn eingeloggt */}
+            {/* Navigation für eingeloggte User */}
             <SignedIn>
               <div className="w-px h-6 bg-border mx-2" aria-hidden="true" />
               {protectedNavigation.map((item) => {
@@ -172,25 +173,27 @@ export function MainNavigation() {
               className="md:hidden border-t border-border/50 overflow-hidden"
             >
               <div className="flex flex-col gap-2 py-4">
-                {/* Landing Page Links für alle */}
-                {landingPageNavigation.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <Button
-                      key={item.name}
-                      variant="ghost"
-                      asChild
-                      className="justify-start gap-2 w-full"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Link href={item.href}>
-                        <Icon className="h-4 w-4" aria-hidden="true" />
-                        {item.name}
-                      </Link>
-                    </Button>
-                  );
-                })}
-                <div className="my-2 border-t border-border/50" />
+                {/* Landing Page Links nur für nicht angemeldete User */}
+                <SignedOut>
+                  {landingPageNavigation.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Button
+                        key={item.name}
+                        variant="ghost"
+                        asChild
+                        className="justify-start gap-2 w-full"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Link href={item.href}>
+                          <Icon className="h-4 w-4" aria-hidden="true" />
+                          {item.name}
+                        </Link>
+                      </Button>
+                    );
+                  })}
+                  <div className="my-2 border-t border-border/50" />
+                </SignedOut>
 
                 {/* Navigation nur für eingeloggte User */}
                 <SignedIn>
