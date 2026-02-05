@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdmin } from "@/lib/auth/admin";
@@ -10,6 +10,11 @@ interface UserStats {
   chatCount: number;
   uploadCount: number;
   lastActivity: string | null;
+  // Clerk user info
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
+  imageUrl: string | null;
 }
 
 export async function GET(request: NextRequest) {
@@ -93,11 +98,37 @@ export async function GET(request: NextRequest) {
       });
 
     const total = allUsers.length;
-    const users = allUsers.slice(offset, offset + limit);
+    const paginatedUsers = allUsers.slice(offset, offset + limit);
+
+    // Clerk-Benutzerdaten für die paginierten User laden
+    const clerk = await clerkClient();
+    const usersWithClerkData = await Promise.all(
+      paginatedUsers.map(async (user) => {
+        try {
+          const clerkUser = await clerk.users.getUser(user.userId);
+          return {
+            ...user,
+            firstName: clerkUser.firstName,
+            lastName: clerkUser.lastName,
+            email: clerkUser.emailAddresses[0]?.emailAddress || null,
+            imageUrl: clerkUser.imageUrl,
+          };
+        } catch {
+          // User nicht in Clerk gefunden (z.B. gelöscht)
+          return {
+            ...user,
+            firstName: null,
+            lastName: null,
+            email: null,
+            imageUrl: null,
+          };
+        }
+      })
+    );
 
     return NextResponse.json({
       success: true,
-      users,
+      users: usersWithClerkData,
       pagination: {
         page,
         limit,

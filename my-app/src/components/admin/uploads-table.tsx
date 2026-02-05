@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { UserIdDisplay } from "./user-display";
 
 interface Upload {
   id: string;
@@ -85,10 +86,6 @@ export function UploadsTable({
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  const truncateUserId = (userId: string) => {
-    if (userId.length <= 16) return userId;
-    return `${userId.slice(0, 8)}...${userId.slice(-6)}`;
-  };
 
   const getFileIcon = (fileType: string | null) => {
     if (!fileType) return File;
@@ -190,7 +187,7 @@ export function UploadsTable({
                 return (
                   <div
                     key={upload.id}
-                    className="grid grid-cols-[1fr_120px_80px_80px_100px_140px_60px] gap-4 px-4 py-3 items-center hover:bg-muted/50 transition-colors"
+                    className="group grid grid-cols-[1fr_120px_80px_80px_100px_140px_60px] gap-4 px-4 py-3 items-center hover:bg-muted/50 transition-colors"
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <FileIcon className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -198,9 +195,7 @@ export function UploadsTable({
                         {upload.file_name}
                       </span>
                     </div>
-                    <div className="font-mono text-xs text-muted-foreground" title={upload.user_id}>
-                      {truncateUserId(upload.user_id)}
-                    </div>
+                    <UserIdDisplay userId={upload.user_id} />
                     <div className="text-right text-sm text-muted-foreground">
                       {formatFileSize(upload.file_size)}
                     </div>

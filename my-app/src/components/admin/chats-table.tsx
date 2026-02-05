@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { UserIdDisplay } from "./user-display";
 
 interface Chat {
   id: string;
@@ -48,11 +49,6 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
-
-  const truncateUserId = (userId: string) => {
-    if (userId.length <= 16) return userId;
-    return `${userId.slice(0, 8)}...${userId.slice(-6)}`;
   };
 
   const handleDelete = async () => {
@@ -120,14 +116,12 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
               chats.map((chat) => (
                 <div
                   key={chat.id}
-                  className="grid grid-cols-[1fr_120px_80px_140px_80px] gap-4 px-4 py-3 items-center hover:bg-muted/50 transition-colors"
+                  className="group grid grid-cols-[1fr_120px_80px_140px_80px] gap-4 px-4 py-3 items-center hover:bg-muted/50 transition-colors"
                 >
                   <div className="font-medium truncate" title={chat.title}>
                     {chat.title}
                   </div>
-                  <div className="font-mono text-xs text-muted-foreground" title={chat.user_id}>
-                    {truncateUserId(chat.user_id)}
-                  </div>
+                  <UserIdDisplay userId={chat.user_id} />
                   <div className="flex items-center justify-center gap-1.5">
                     <MessageSquare className="h-4 w-4 text-muted-foreground" />
                     <span>{chat.messageCount}</span>

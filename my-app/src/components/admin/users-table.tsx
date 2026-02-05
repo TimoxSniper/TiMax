@@ -5,12 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, ChevronRight, MessageSquare, FileAudio } from "lucide-react";
 import Link from "next/link";
+import { UserDisplay } from "./user-display";
 
 interface User {
   userId: string;
   chatCount: number;
   uploadCount: number;
   lastActivity: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  email?: string | null;
+  imageUrl?: string | null;
 }
 
 interface UsersTableProps {
@@ -34,11 +39,6 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
-
-  const truncateUserId = (userId: string) => {
-    if (userId.length <= 20) return userId;
-    return `${userId.slice(0, 10)}...${userId.slice(-8)}`;
   };
 
   if (isLoading) {
@@ -77,8 +77,8 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
       </CardHeader>
       <CardContent>
         {/* Table Header */}
-        <div className="grid grid-cols-[1fr_100px_100px_150px] gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b border-border">
-          <div>User ID</div>
+        <div className="grid grid-cols-[1fr_80px_80px_140px] gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b border-border">
+          <div>Benutzer</div>
           <div className="text-center">Chats</div>
           <div className="text-center">Uploads</div>
           <div className="text-right">Letzte Aktivität</div>
@@ -94,11 +94,16 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
             users.map((user) => (
               <div
                 key={user.userId}
-                className="grid grid-cols-[1fr_100px_100px_150px] gap-4 px-4 py-3 items-center hover:bg-muted/50 transition-colors"
+                className="grid grid-cols-[1fr_80px_80px_140px] gap-4 px-4 py-3 items-center hover:bg-muted/50 transition-colors"
               >
-                <div className="font-mono text-sm" title={user.userId}>
-                  {truncateUserId(user.userId)}
-                </div>
+                <UserDisplay
+                  userId={user.userId}
+                  firstName={user.firstName}
+                  lastName={user.lastName}
+                  email={user.email}
+                  imageUrl={user.imageUrl}
+                  showEmail
+                />
                 <div className="flex items-center justify-center gap-1.5">
                   <MessageSquare className="h-4 w-4 text-muted-foreground" />
                   <Link
