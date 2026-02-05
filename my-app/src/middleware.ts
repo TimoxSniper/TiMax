@@ -5,22 +5,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit } from "./lib/rate-limit";
 
 // Rate Limit Konfiguration aus Environment Variables
+// SICHERHEIT: Strikte Limits pro User UND IP
 const RATE_LIMITS = {
   "/api/upload": {
     maxRequests: Number(process.env.RATE_LIMIT_UPLOAD_MAX) || 5,
-    windowMs: 60 * 60 * 1000
+    windowMs: 60 * 60 * 1000 // 5 Uploads pro Stunde
   },
   "/api/chat": {
-    maxRequests: Number(process.env.RATE_LIMIT_CHAT_MAX) || 20,
-    windowMs: 60 * 1000
+    maxRequests: Number(process.env.RATE_LIMIT_CHAT_MAX) || 30,
+    windowMs: 60 * 1000 // 30 Nachrichten pro Minute
   },
   "/api/generate": {
     maxRequests: Number(process.env.RATE_LIMIT_GENERATE_MAX) || 10,
-    windowMs: 60 * 60 * 1000
+    windowMs: 60 * 60 * 1000 // 10 Generierungen pro Stunde
   },
   default: {
     maxRequests: Number(process.env.RATE_LIMIT_DEFAULT_MAX) || 100,
-    windowMs: 60 * 1000
+    windowMs: 60 * 1000 // 100 Anfragen pro Minute
   },
 };
 
@@ -35,18 +36,7 @@ const isProtectedRoute = createRouteMatcher([
   "/api/admin(.*)",
 ]);
 
-// Öffentliche Routen (für alle zugänglich)
-const isPublicRoute = createRouteMatcher([
-  "/",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/impressum",
-  "/datenschutz",
-  "/agb",
-  "/widerruf",
-  "/cookies",
-  "/monitoring(.*)", // Sentry Tunnel explizit ignorieren
-]);
+// Hinweis: Öffentliche Routen werden implizit behandelt (alles was nicht protected ist)
 
 function getClientIP(request: NextRequest): string {
   // 1. Try common proxy headers
@@ -77,8 +67,22 @@ export default clerkMiddleware(async (auth, req) => {
     const ip = getClientIP(req);
     const config = RATE_LIMITS[pathname as keyof typeof RATE_LIMITS] || RATE_LIMITS.default;
 
-    // Redis Check
-    const rateLimit = await checkRateLimit(`${ip}:${pathname}`, config);
+    // SICHERHEIT: Hole User ID für user-spezifisches Rate Limiting
+    let rateLimitKey = `ip:${ip}:${pathname}`;
+    
+    // Versuche User ID zu bekommen (falls eingeloggt)
+    try {
+      const { userId } = await auth();
+      if (userId) {
+        // User-basiertes Rate Limiting (sicherer, kann nicht durch IP-Wechsel umgangen werden)
+        rateLimitKey = `user:${userId}:${pathname}`;
+      }
+    } catch {
+      // Falls Auth fehlschlägt, nutze IP-basiertes Rate Limiting
+    }
+
+    // Redis Check mit User-spezifischem Key
+    const rateLimit = await checkRateLimit(rateLimitKey, config);
 
     if (!rateLimit.allowed) {
       const response = NextResponse.json(

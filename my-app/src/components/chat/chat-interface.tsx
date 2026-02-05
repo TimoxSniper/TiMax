@@ -98,7 +98,7 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
             <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-accent" />
             </div>
-            <span className="font-medium text-sm">REX Assistant</span>
+            <span className="font-medium text-sm">TiMax</span>
           </div>
 
           <Button 

@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { validateRequiredEnv } from "@/lib/env";
-import { chatSchema, sanitizeString } from "@/lib/validation";
+import { chatSchema, sanitizeString, sanitizeAIOutput } from "@/lib/validation";
 import { withCsrfProtection } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
@@ -20,7 +20,10 @@ async function chatHandler(request: NextRequest) {
       );
     }
 
-    logger.log("[Chat API] User authentifiziert:", userId);
+    // SICHERHEIT: User ID nur in Development loggen
+    if (process.env.NODE_ENV === "development") {
+      logger.log("[Chat API] User authentifiziert:", userId);
+    }
 
     // 2. Supabase Admin Client erstellen (bypassed RLS, Sicherheit durch Clerk-Auth)
     const supabase = createAdminClient();
@@ -145,9 +148,12 @@ async function chatHandler(request: NextRequest) {
       throw new Error("n8n Webhook hat leere Antwort zurückgegeben");
     }
 
+    // SICHERHEIT: AI Output sanitizen bevor es an Frontend gesendet wird
+    const sanitizedOutput = sanitizeAIOutput(output);
+
     return NextResponse.json({
       success: true,
-      output,
+      output: sanitizedOutput,
       chat_id: currentChatId, // WICHTIG: Frontend braucht die chat_id
     });
   } catch (error) {

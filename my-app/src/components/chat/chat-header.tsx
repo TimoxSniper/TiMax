@@ -16,7 +16,7 @@ export function ChatHeader({ sessionId, messageCount }: ChatHeaderProps) {
           <Sparkles className="w-5 h-5 text-accent" />
         </div>
         <div className="flex-1">
-          <CardTitle className="text-lg">REX Content Assistant</CardTitle>
+          <CardTitle className="text-lg">TiMax</CardTitle>
           <CardDescription className="text-xs">
             {messageCount > 0
               ? `${messageCount} Nachrichten in dieser Session`

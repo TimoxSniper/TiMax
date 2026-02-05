@@ -61,7 +61,10 @@ async function uploadHandler(request: NextRequest) {
       );
     }
 
-    logger.log("[Upload API] User authentifiziert:", userId);
+    // SICHERHEIT: User ID nur in Development loggen
+    if (process.env.NODE_ENV === "development") {
+      logger.log("[Upload API] User authentifiziert:", userId);
+    }
 
     // 2. Supabase Client erstellen
     const supabase = await createClient();

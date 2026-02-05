@@ -28,15 +28,15 @@ export const CHAT_CONFIG = {
 
 // Chat UI Texte
 export const CHAT_UI_TEXTS = {
-  WELCOME_TITLE: "Willkommen bei REX!",
-  WELCOME_SUBTITLE: "Chatte mit deiner KI über deine Transkripte und lass dir Content generieren.",
-  EXAMPLE_REQUESTS_TITLE: "Beispiel-Anfragen:",
+  WELCOME_TITLE: "Hey! Ich bin TiMax.",
+  WELCOME_SUBTITLE: "Ich verwandle deine Videos und Audios in Posts, Artikel und mehr. Lade etwas hoch und sag mir, was du daraus machen willst.",
+  EXAMPLE_REQUESTS_TITLE: "Das kann ich für dich tun:",
   EXAMPLE_REQUESTS: [
-    '• "Erstelle einen Instagram Post über Produktivität"',
-    '• "Generiere einen Twitter Thread aus meinem letzten Video"',
-    '• "Was sind die wichtigsten Punkte aus dem Transkript?"',
+    '• "Mach einen LinkedIn-Post aus meinem letzten Video"',
+    '• "Fasse mein Interview in 3 Punkten zusammen"',
+    '• "Schreib einen Newsletter aus meinem Podcast"',
   ],
-  THINKING: "REX denkt nach...",
+  THINKING: "TiMax denkt nach...",
   ASSISTANT_DEFAULT_RESPONSE: "Keine Antwort erhalten",
 } as const;
 

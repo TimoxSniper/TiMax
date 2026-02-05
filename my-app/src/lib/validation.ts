@@ -73,7 +73,19 @@ export const chatSchema = z.object({
     .array(
       z.object({
         role: z.enum(["user", "assistant", "system"]),
-        content: z.string().max(10000),
+        content: z.string().max(10000).refine(
+          (content) => {
+            // SICHERHEIT: Auch Chat-History auf gefährliche Inhalte prüfen
+            const dangerousPatterns = [
+              /<script/i,
+              /javascript:/i,
+              /on\w+\s*=/i,
+              /data:text\/html/i,
+            ];
+            return !dangerousPatterns.some((pattern) => pattern.test(content));
+          },
+          { message: "Chat-Historie enthält unerlaubte Inhalte" }
+        ),
       })
     )
     .max(100, "Chat-Historie ist zu lang")
@@ -93,7 +105,7 @@ export const generationSchema = z.object({
 });
 
 /**
- * Helper-Funktion zum Sanitizen von Strings
+ * Helper-Funktion zum Sanitizen von User-Input
  */
 export function sanitizeString(input: string): string {
   return input
@@ -101,6 +113,80 @@ export function sanitizeString(input: string): string {
     .replace(/javascript:/gi, "") // Entferne javascript:
     .replace(/on\w+\s*=/gi, "") // Entferne Event-Handler
     .trim();
+}
+
+/**
+ * Sanitize AI Output - Entfernt potenziell gefährliche Inhalte aus AI-Antworten
+ * Wird verwendet bevor AI Output an Frontend gesendet oder angezeigt wird
+ */
+export function sanitizeAIOutput(input: string): string {
+  if (!input || typeof input !== 'string') {
+    return '';
+  }
+
+  return input
+    // HTML Tags entfernen (außer erlaubte)
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+    .replace(/<iframe\b[^>]*>/gi, '')
+    .replace(/<object\b[^>]*>/gi, '')
+    .replace(/<embed\b[^>]*>/gi, '')
+    .replace(/<form\b[^>]*>/gi, '')
+    .replace(/<input\b[^>]*>/gi, '')
+    .replace(/<button\b[^>]*>/gi, '')
+    // JavaScript-Protokoll entfernen
+    .replace(/javascript:/gi, '')
+    .replace(/vbscript:/gi, '')
+    .replace(/data:text\/html/gi, '')
+    // Event-Handler entfernen
+    .replace(/on\w+\s*=/gi, '')
+    // Base64-encoded scripts erkennen und entfernen
+    .replace(/data:.*?base64[^"'\s]*/gi, '')
+    // Potenziell gefährliche URLs
+    .replace(/href\s*=\s*["']?javascript:/gi, 'href="#"')
+    // SVG mit Script entfernen
+    .replace(/<svg[^>]*>[\s\S]*?<\/svg>/gi, (match) => {
+      if (/<script|on\w+=/i.test(match)) {
+        return '[SVG entfernt]';
+      }
+      return match;
+    })
+    // Null-Bytes entfernen (können Filter umgehen)
+    .replace(/\0/g, '')
+    // Unicode-Tricks entfernen (Zero-Width Characters)
+    .replace(/[\u200B-\u200D\uFEFF\u00AD]/g, '')
+    // Right-to-Left Override entfernen
+    .replace(/[\u202A-\u202E\u2066-\u2069]/g, '')
+    .trim();
+}
+
+/**
+ * Prüft ob ein String potenziell gefährliche Inhalte enthält
+ */
+export function containsDangerousContent(input: string): boolean {
+  if (!input || typeof input !== 'string') {
+    return false;
+  }
+
+  const dangerousPatterns = [
+    /<script/i,
+    /javascript:/i,
+    /vbscript:/i,
+    /on\w+\s*=/i,
+    /data:text\/html/i,
+    /<iframe/i,
+    /<object/i,
+    /<embed/i,
+    /<form/i,
+    /document\.(cookie|location|write)/i,
+    /window\.(location|open)/i,
+    /eval\s*\(/i,
+    /Function\s*\(/i,
+    /setTimeout\s*\(/i,
+    /setInterval\s*\(/i,
+  ];
+
+  return dangerousPatterns.some((pattern) => pattern.test(input));
 }
 
 /**
