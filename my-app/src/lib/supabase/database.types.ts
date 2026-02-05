@@ -84,10 +84,13 @@ export interface Database {
           file_name: string;
           file_size: number | null;
           file_type: string | null;
+          storage_path: string | null;
           transcript: string | null;
           status: string;
+          error_message: string | null;
           metadata: UploadMetadata | null;
           created_at: string;
+          updated_at: string;
         };
         Insert: {
           id?: string;
@@ -95,10 +98,13 @@ export interface Database {
           file_name: string;
           file_size?: number | null;
           file_type?: string | null;
+          storage_path?: string | null;
           transcript?: string | null;
           status?: string;
+          error_message?: string | null;
           metadata?: UploadMetadata | null;
           created_at?: string;
+          updated_at?: string;
         };
         Update: {
           id?: string;
@@ -106,10 +112,13 @@ export interface Database {
           file_name?: string;
           file_size?: number | null;
           file_type?: string | null;
+          storage_path?: string | null;
           transcript?: string | null;
           status?: string;
+          error_message?: string | null;
           metadata?: UploadMetadata | null;
           created_at?: string;
+          updated_at?: string;
         };
         Relationships: [];
       };

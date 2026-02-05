@@ -456,7 +456,7 @@ async function uploadHandler(request: NextRequest) {
             .from("uploads")
             .update({ 
               status: "failed", 
-              metadata: { error: errorMessage } 
+              error_message: errorMessage 
             })
             .eq("id", latestUpload.id);
           
