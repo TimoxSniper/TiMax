@@ -334,9 +334,9 @@ export default function PricingPage() {
                         <td className="p-4 text-muted-foreground flex items-center gap-2">
                           <Shield className="w-4 h-4" /> Datenspeicherung
                         </td>
-                        <td className="p-4 text-center text-foreground">30 Tage</td>
-                        <td className="p-4 text-center text-accent font-medium">90 Tage</td>
-                        <td className="p-4 text-center text-foreground">1 Jahr</td>
+                        <td className="p-4 text-center text-foreground">90 Tage</td>
+                        <td className="p-4 text-center text-accent font-medium">1 Jahr</td>
+                        <td className="p-4 text-center text-foreground">∞</td>
                       </tr>
                       <tr>
                         <td className="p-4 text-muted-foreground flex items-center gap-2">
