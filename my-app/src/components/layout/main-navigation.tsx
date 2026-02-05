@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DarkModeToggle } from "@/components/home/dark-mode-toggle";
-import { Menu, X, Zap, MessageSquare, FileText, Home, LogIn, User, Sparkles, HelpCircle, Upload, FolderOpen } from "lucide-react";
+import { Menu, X, Zap, MessageSquare, FileText, Home, LogIn, User, Sparkles, HelpCircle, Upload, FolderOpen, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,7 +21,9 @@ const landingPageNavigation: Array<{
   name: string;
   href: string;
   icon: typeof Sparkles;
-}> = [];
+}> = [
+  { name: "Preise", href: "/pricing", icon: CreditCard },
+];
 
 export function MainNavigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
