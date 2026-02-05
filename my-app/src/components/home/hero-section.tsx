@@ -14,7 +14,7 @@ export function HeroSection() {
         <div className="w-full">
           <Hero
             heading="Transformiere deine Videos und Audios in kraftvolle Texte"
-            subheading="Du hast was zu sagen. Wir helfen dir, es aufzuschreiben. Video hochladen, Transkript bekommen, fertige Texte generieren."
+            subheading="Ob Podcast, Vortrag oder Sprachmemo – dein Wissen verdient es, gelesen zu werden. Lade hoch, lass transkribieren, generiere fertige Texte."
             align="center"
           />
         </div>

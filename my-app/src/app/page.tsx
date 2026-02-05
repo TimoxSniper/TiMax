@@ -64,12 +64,12 @@ const WORKFLOW_STEPS = [
   { step: "4", icon: Sparkles, title: "Text generieren", desc: "KI-Dialog für deine Formate", href: "/chat", action: "Text generieren" },
 ] as const;
 
-// Target Audiences
+// Target Audiences - Was Nutzer haben
 const TARGET_AUDIENCES = [
-  "LinkedIn-Posts",
-  "Newsletter",
-  "Blog-Artikel",
-  "Social Media Content",
+  "Podcasts",
+  "Videos",
+  "Vorträge & Workshops",
+  "Sprachmemos & Ideen",
 ] as const;
 
 // Workflow Section Component - Editorial Modernism with bronze step numbers

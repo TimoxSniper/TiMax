@@ -2,24 +2,23 @@
 
 ## Für wen ist TiMax?
 
-Für alle, die **LinkedIn-Posts, Newsletter oder Blog-Artikel** aus ihren eigenen Videos und Audios erstellen wollen.
+Für Menschen, die **Wissen in Videos oder Audios haben** und daraus Texte machen wollen.
 
-Das können sein:
-- Jemand der einen Podcast aufnimmt
-- Jemand der Videos macht
-- Jemand der Vorträge oder Workshops hält
-- Jemand der einfach Sprachnachrichten mit Ideen aufnimmt
-- ...oder irgendjemand anderes mit Audio/Video-Material
+Du erkennst dich wieder, wenn du:
+- Einen **Podcast** aufnimmst und daraus LinkedIn-Posts machen willst
+- **Videos** drehst und einen Newsletter daraus schreiben möchtest
+- **Vorträge oder Workshops** hältst und das Wissen nicht verloren gehen soll
+- **Sprachmemos** mit Ideen aufnimmst und sie endlich ausformulieren willst
 
-**Egal wer du bist** – wenn du Content hast, der in einem Video oder Audio steckt, und daraus Text machen willst, ist TiMax für dich.
+**Kurzum:** Du hast was zu sagen – und TiMax hilft dir, es aufzuschreiben.
 
 ---
 
 ## Das Problem
 
 Du hast Videos oder Audios aufgenommen, aber:
-- Das Wissen bleibt "gefangen" in der Aufnahme
-- Keiner schaut sich 1-Stunden-Videos an
+- Dein Wissen bleibt "gefangen" in der Aufnahme
+- Niemand schaut sich 1-Stunden-Videos an
 - Du weißt, du könntest daraus Posts machen – aber der Aufwand ist zu groß
 - Selbst hinsetzen und alles abtippen? Keine Zeit.
 
@@ -35,13 +34,15 @@ TiMax macht aus deinen Videos und Audios **fertige Texte** – LinkedIn-Posts, N
 
 ---
 
-## Typische Anwendungen
+## Was du daraus machen kannst
 
-- Video/Podcast → LinkedIn-Post(s)
-- Workshop-Aufzeichnung → Newsletter
-- Vortrag → Blog-Artikel
-- Sprachmemo → ausformulierter Text
-- Interview → Zusammenfassung
+| Du hast... | Daraus wird... |
+|------------|----------------|
+| Podcast-Episode | LinkedIn-Posts, Newsletter |
+| Video | Blog-Artikel, Social Media Posts |
+| Vortrag/Workshop | Zusammenfassung, Artikel-Serie |
+| Sprachmemo | ausformulierter Text, Post |
+| Interview | Zitate, Zusammenfassung |
 
 ---
 
