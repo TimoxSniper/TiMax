@@ -28,7 +28,7 @@ export function HeroSection() {
               className="group min-h-12 sm:min-h-14 px-6 sm:px-8 w-full sm:w-auto"
               asChild
             >
-              <Link href="/text-generator">
+              <Link href="/upload">
                 Jetzt starten
                 <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>

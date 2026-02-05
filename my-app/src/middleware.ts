@@ -28,7 +28,7 @@ const RATE_LIMITS = {
 const isProtectedRoute = createRouteMatcher([
   "/chat(.*)",
   "/upload(.*)",
-  "/text-generator(.*)",
+  "/uploads(.*)",
   "/api/upload(.*)",
   "/api/chat(.*)",
 ]);

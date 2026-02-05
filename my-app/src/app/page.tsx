@@ -58,10 +58,10 @@ const FEATURES = [
 
 // Workflow Steps
 const WORKFLOW_STEPS = [
-  { step: "1", icon: Upload, title: "Upload", desc: "Lade Videos oder Audios hoch", href: "/text-generator", action: "Upload starten" },
-  { step: "2", icon: FileText, title: "Transkription", desc: "Automatische Umwandlung in Text", href: "/text-generator", action: "Transkript ansehen" },
-  { step: "3", icon: Network, title: "Strukturierung", desc: "Intelligente Organisation", href: "/text-generator", action: "Strukturierung sehen" },
-  { step: "4", icon: Sparkles, title: "Text generieren", desc: "KI-Dialog für deine Formate", href: "/text-generator", action: "Text generieren" },
+  { step: "1", icon: Upload, title: "Upload", desc: "Lade Videos oder Audios hoch", href: "/upload", action: "Upload starten" },
+  { step: "2", icon: FileText, title: "Transkription", desc: "Automatische Umwandlung in Text", href: "/upload", action: "Transkript ansehen" },
+  { step: "3", icon: Network, title: "Strukturierung", desc: "Intelligente Organisation", href: "/chat", action: "Strukturierung sehen" },
+  { step: "4", icon: Sparkles, title: "Text generieren", desc: "KI-Dialog für deine Formate", href: "/chat", action: "Text generieren" },
 ] as const;
 
 // Target Audiences
@@ -327,7 +327,7 @@ const DemoSection = memo(function DemoSection() {
                 </h2>
                 <div className="w-16 sm:w-24 h-1 bg-accent mx-auto" />
                 <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-2">
-                  Erlebe den Text Generator in Aktion. Generiere verschiedene Content-Formate aus einem Beispiel-Transkript.
+                  Lade deine Audio- oder Videodatei hoch und lass die KI das Transkript erstellen.
                 </p>
               </div>
               {/* Bronze CTA - Editorial Modernism, NO scale, NO rounded-full */}
@@ -336,8 +336,8 @@ const DemoSection = memo(function DemoSection() {
                 className="group min-h-12 sm:min-h-14 px-6 sm:px-10 w-full sm:w-auto"
                 asChild
               >
-                <Link href="/text-generator">
-                  Zum Text Generator
+                <Link href="/upload">
+                  Datei hochladen
                   <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>

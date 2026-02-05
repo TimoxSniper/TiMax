@@ -5,16 +5,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DarkModeToggle } from "@/components/home/dark-mode-toggle";
-import { Menu, X, Zap, MessageSquare, FileText, Home, LogIn, User, Sparkles, HelpCircle } from "lucide-react";
+import { Menu, X, Zap, MessageSquare, FileText, Home, LogIn, User, Sparkles, HelpCircle, Upload, FolderOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
 
 const protectedNavigation = [
   { name: "Home", href: "/", icon: Home },
-  { name: "Text Generator", href: "/text-generator", icon: FileText },
+  { name: "Upload", href: "/upload", icon: Upload },
   { name: "Chat", href: "/chat", icon: MessageSquare },
-  { name: "Uploads", href: "/uploads", icon: FileText },
+  { name: "Meine Dateien", href: "/uploads", icon: FolderOpen },
 ];
 
 const landingPageNavigation: Array<{
