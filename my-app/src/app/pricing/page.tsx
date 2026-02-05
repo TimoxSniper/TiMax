@@ -163,7 +163,7 @@ export default function PricingPage() {
         {/* Pricing Cards */}
         <section className={`relative ${SECTION_PADDING} pb-16 sm:pb-24 z-10`}>
           <div className="container mx-auto max-w-6xl">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 pt-4">
               {PRICING_TIERS.map((tier, index) => {
                 const Icon = tier.icon;
                 const price = isYearly ? tier.yearlyPrice : tier.monthlyPrice;
@@ -172,22 +172,23 @@ export default function PricingPage() {
 
                 return (
                   <AnimatedSection key={tier.name} direction="up" delay={index * 100}>
-                    <div className={cn("relative h-full", tier.popular && "pt-4")}>
-                      {/* Popular Badge - außerhalb der Card für bessere Sichtbarkeit */}
+                    <Card 
+                      variant={tier.popular ? "accent" : "default"} 
+                      hover={false}
+                      overflow={tier.popular ? "visible" : "hidden"}
+                      className={cn(
+                        "p-6 sm:p-8 h-full flex flex-col relative",
+                        tier.popular && "ring-2 ring-accent"
+                      )}
+                    >
+                      {/* Popular Badge */}
                       {tier.popular && (
-                        <div className="absolute -top-1 left-1/2 -translate-x-1/2 z-10">
-                          <Badge className="bg-accent text-accent-foreground px-4 py-1.5 text-xs uppercase tracking-wide shadow-lg">
+                        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
+                          <Badge className="bg-accent text-accent-foreground px-4 py-1.5 text-xs uppercase tracking-wide shadow-lg whitespace-nowrap">
                             Beliebt
                           </Badge>
                         </div>
                       )}
-                      <Card 
-                        variant={tier.popular ? "accent" : "default"} 
-                        className={cn(
-                          "p-6 sm:p-8 h-full flex flex-col",
-                          tier.popular && "ring-2 ring-accent"
-                        )}
-                      >
 
                       {/* Header */}
                       <div className="text-center mb-6">
@@ -254,8 +255,7 @@ export default function PricingPage() {
                           </li>
                         ))}
                       </ul>
-                      </Card>
-                    </div>
+                    </Card>
                   </AnimatedSection>
                 );
               })}
