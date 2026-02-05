@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { withCsrfProtection } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
@@ -17,7 +17,7 @@ async function getChatsHandler(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // Alle Chats des Users laden, sortiert nach updated_at
     const { data: chats, error } = await supabase
@@ -59,7 +59,7 @@ async function postChatsHandler(request: NextRequest) {
     const body = await request.json();
     const { title = "Neuer Chat", sessionId } = body;
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     const { data: chat, error } = await supabase
       .from("chats")

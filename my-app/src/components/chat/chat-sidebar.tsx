@@ -46,6 +46,13 @@ export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, onRe
     loadChats();
   }, []);
 
+  // Refresh wenn ein neuer Chat erstellt wurde (currentChatId ändert sich)
+  useEffect(() => {
+    if (currentChatId) {
+      loadChats();
+    }
+  }, [currentChatId]);
+
   const handleDeleteChat = async (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();
     if (!confirm("Diesen Chat wirklich löschen?")) return;

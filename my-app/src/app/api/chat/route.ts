@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { validateRequiredEnv } from "@/lib/env";
 import { chatSchema, sanitizeString } from "@/lib/validation";
 import { withCsrfProtection } from "@/lib/csrf";
@@ -22,8 +22,8 @@ async function chatHandler(request: NextRequest) {
 
     logger.log("[Chat API] User authentifiziert:", userId);
 
-    // 2. Supabase Client erstellen
-    const supabase = await createClient();
+    // 2. Supabase Admin Client erstellen (bypassed RLS, Sicherheit durch Clerk-Auth)
+    const supabase = createAdminClient();
 
     // Validiere erforderliche Environment-Variablen
     const env = validateRequiredEnv();
@@ -187,7 +187,7 @@ async function getChatsHandler(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const { searchParams } = new URL(request.url);
     const chatId = searchParams.get("chat_id");
 

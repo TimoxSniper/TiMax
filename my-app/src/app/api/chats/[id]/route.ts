@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
 // GET Handler (idempotent - CSRF optional)
@@ -20,7 +20,7 @@ export async function GET(
     }
 
     const { id } = await params;
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // Chat mit allen Nachrichten laden
     const { data: chat, error } = await supabase
@@ -77,7 +77,7 @@ export async function DELETE(
     }
 
     const { id } = await params;
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // Lösche Chat (cascade löscht auch Nachrichten)
     const { error } = await supabase
@@ -123,7 +123,7 @@ export async function PATCH(
     const body = await request.json();
     const { title } = body;
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     const { data: chat, error } = await supabase
       .from("chats")
