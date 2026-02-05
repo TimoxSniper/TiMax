@@ -10,10 +10,10 @@ interface ProgressProps {
 export function Progress({ value, className }: ProgressProps) {
   return (
     <div
-      className={`w-full bg-muted rounded-full overflow-hidden ${className || ""}`}
+      className={`w-full bg-secondary rounded-[4px] overflow-hidden ${className || ""}`}
     >
       <div
-        className="h-2 bg-accent rounded-full transition-all duration-500 ease-out"
+        className="h-2 bg-accent transition-all duration-500 ease-out cubic-bezier(0.4, 0, 0.2, 1)"
         style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
       />
     </div>

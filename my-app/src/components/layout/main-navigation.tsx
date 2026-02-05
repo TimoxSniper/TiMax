@@ -43,7 +43,7 @@ export function MainNavigation() {
   }, [mobileMenuOpen]);
 
   return (
-    <header ref={navRef} className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/60 transition-all duration-300">
+    <header ref={navRef} className="sticky top-0 z-50 w-full border-b border-border bg-background transition-all duration-300">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8" aria-label="Hauptnavigation">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -86,20 +86,20 @@ export function MainNavigation() {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
                 return (
-                  <Button
+                  <Link
                     key={item.name}
-                    variant={isActive ? "default" : "ghost"}
-                    asChild
+                    href={item.href}
+                    aria-current={isActive ? "page" : undefined}
                     className={cn(
-                      "gap-2",
-                      isActive && "bg-primary text-primary-foreground"
+                      "gap-2 px-3 py-2 text-sm font-medium uppercase tracking-wide transition-all duration-300 relative group",
+                      "text-foreground hover:text-accent",
+                      "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-accent after:transition-all after:duration-300",
+                      isActive ? "after:w-full" : "after:w-0 group-hover:after:w-full"
                     )}
                   >
-                    <Link href={item.href} aria-current={isActive ? "page" : undefined}>
-                      <Icon className="h-4 w-4" aria-hidden="true" />
-                      {item.name}
-                    </Link>
-                  </Button>
+                    <Icon className="h-4 w-4 inline mr-1" aria-hidden="true" />
+                    {item.name}
+                  </Link>
                 );
               })}
             </SignedIn>

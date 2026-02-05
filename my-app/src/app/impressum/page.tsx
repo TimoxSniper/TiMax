@@ -9,12 +9,12 @@ export const metadata = {
 
 export default function ImpressumPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
-      <div className="container mx-auto max-w-4xl px-4 py-12 sm:py-16">
+    <main className="min-h-screen bg-background">
+      <div className="container mx-auto max-w-3xl px-4 py-16 lg:py-24">
         <Button
           variant="ghost"
           asChild
-          className="mb-8 text-muted-foreground hover:text-black dark:hover:text-white"
+          className="mb-8 text-muted-foreground hover:text-accent"
         >
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -22,14 +22,20 @@ export default function ImpressumPage() {
           </Link>
         </Button>
 
-        <article className="prose prose-lg dark:prose-invert max-w-none">
-          <h1 className="text-4xl font-bold mb-8 text-foreground">
-            Impressum
-          </h1>
+        <article className="max-w-none">
+          <header className="mb-16">
+            <h1 className="font-serif text-5xl lg:text-6xl font-bold mb-6 text-foreground">
+              Impressum
+            </h1>
+            <div className="w-24 h-1 bg-accent mb-8" />
+            <p className="font-sans text-xs uppercase tracking-wide text-muted-foreground font-medium">
+              Angaben gemäß § 5 TMG
+            </p>
+          </header>
 
-          <section className="space-y-6 text-black/80 dark:text-white/80">
-            <div>
-              <h2 className="text-2xl font-semibold mb-4 text-foreground">
+          <section className="space-y-12 font-sans text-base lg:text-lg leading-relaxed text-foreground">
+            <div className="border-t border-border pt-8">
+              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
                 Angaben gemäß § 5 TMG
               </h2>
               <p className="mb-2">
@@ -113,7 +119,7 @@ export default function ImpressumPage() {
           </section>
         </article>
       </div>
-    </div>
+    </main>
   );
 }
 

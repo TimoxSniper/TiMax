@@ -16,33 +16,33 @@ interface BreadcrumbsProps {
 
 export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
   return (
-    <nav 
-      aria-label="Breadcrumb" 
-      className={cn("flex items-center gap-2 text-sm text-muted-foreground", className)}
+    <nav
+      aria-label="Breadcrumb"
+      className={cn("flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground font-medium", className)}
     >
-      <Link 
-        href="/" 
-        className="hover:text-foreground transition-colors flex items-center gap-1"
+      <Link
+        href="/"
+        className="hover:text-accent transition-colors flex items-center gap-1"
         aria-label="Zur Startseite"
       >
         <Home className="h-4 w-4" aria-hidden="true" />
         <span className="sr-only sm:not-sr-only">Home</span>
       </Link>
-      
+
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
-        
+
         return (
           <div key={index} className="flex items-center gap-2">
-            <ChevronRight className="h-4 w-4 text-muted-foreground/50" aria-hidden="true" />
+            <ChevronRight className="h-3 w-3 text-muted-foreground/50" aria-hidden="true" />
             {isLast ? (
               <span className="text-foreground font-medium" aria-current="page">
                 {item.label}
               </span>
             ) : (
-              <Link 
-                href={item.href || "#"} 
-                className="hover:text-foreground transition-colors"
+              <Link
+                href={item.href || "#"}
+                className="hover:text-accent transition-colors duration-300"
               >
                 {item.label}
               </Link>

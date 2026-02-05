@@ -10,25 +10,25 @@ export default function UploadsPage() {
         <div className="flex flex-col min-h-screen bg-background">
             <MainNavigation />
 
-            <main className="flex-1 container mx-auto px-4 py-8 max-w-5xl">
-                <div className="flex flex-col gap-6">
-                    <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                            <FileText className="w-6 h-6 text-primary" />
-                        </div>
-                        <div>
-                            <h1 className="text-3xl font-bold tracking-tight">Deine Dateien</h1>
-                            <p className="text-muted-foreground">
-                                Verwalte deine hochgeladenen Transkripte und erstelle daraus KI-Inhalte.
-                            </p>
-                        </div>
-                    </div>
+            <main className="flex-1 container mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+                <div className="space-y-10">
+                    {/* Editorial Modernism Header */}
+                    <header>
+                        <h1 className="font-serif text-5xl lg:text-6xl font-bold text-foreground mb-4">
+                            Ihre Dateien
+                        </h1>
+                        <div className="w-24 h-1 bg-accent mb-6" />
+                        <p className="text-lg text-muted-foreground max-w-2xl">
+                            Verwalten Sie Ihre hochgeladenen Transkripte und erstellen Sie daraus KI-Inhalte.
+                        </p>
+                    </header>
 
+                    {/* Uploads Card */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Gespeicherte Transkripte</CardTitle>
                             <CardDescription>
-                                Hier findest du alle bisher verarbeiteten Audio- und Videodateien.
+                                Hier finden Sie alle bisher verarbeiteten Audio- und Videodateien.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>

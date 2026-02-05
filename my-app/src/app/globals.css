@@ -6,8 +6,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-dm-sans);
+  --font-serif: var(--font-crimson);
+  --font-mono: var(--font-jetbrains-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -50,98 +51,98 @@
 
 :root {
   --radius: 0.5rem;
-  /* Refined warm tones with better contrast */
-  --background: #fafaf9;
-  --foreground: #18181b;
-  --card: #ffffff;
-  --card-foreground: #18181b;
-  --popover: #ffffff;
-  --popover-foreground: #18181b;
-  /* Elegant dark primary */
-  --primary: #18181b;
-  --primary-foreground: #fafaf9;
-  /* Softer secondary */
-  --secondary: #f4f4f5;
-  --secondary-foreground: #18181b;
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  /* Indigo accent - more sophisticated */
-  --accent: #6366f1;
-  --accent-foreground: #ffffff;
-  --destructive: #dc2626;
-  /* Softer borders */
-  --border: #e4e4e7;
-  --input: #e4e4e7;
-  --ring: #18181b;
+  /* Editorial Modernism: Warm Editorial Paper */
+  --background: #F8F7F4;
+  --foreground: #1A1A1A;
+  --card: #FFFFFF;
+  --card-foreground: #1A1A1A;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1A1A;
+  /* Luxury Bronze Primary */
+  --primary: #9A6F4F;
+  --primary-foreground: #FFFFFF;
+  /* Warm Gray Secondary */
+  --secondary: #E8E6E1;
+  --secondary-foreground: #1A1A1A;
+  --muted: #E8E6E1;
+  --muted-foreground: #666461;
+  /* Bronze Accent - THE luxury element */
+  --accent: #9A6F4F;
+  --accent-foreground: #FFFFFF;
+  --destructive: #B23A2F;
+  /* Soft Warm Gray Borders */
+  --border: #D4D2CC;
+  --input: #D4D2CC;
+  --ring: #9A6F4F;
   /* Charts */
-  --chart-1: #18181b;
-  --chart-2: #6366f1;
-  --chart-3: #059669;
-  --chart-4: #ea580c;
-  --chart-5: #dc2626;
+  --chart-1: #1A1A1A;
+  --chart-2: #9A6F4F;
+  --chart-3: #3D6E4E;
+  --chart-4: #D4A574;
+  --chart-5: #B23A2F;
   /* Sidebar */
-  --sidebar: #f4f4f5;
-  --sidebar-foreground: #18181b;
-  --sidebar-primary: #18181b;
-  --sidebar-primary-foreground: #fafaf9;
-  --sidebar-accent: #e4e4e7;
-  --sidebar-accent-foreground: #18181b;
-  --sidebar-border: #e4e4e7;
-  --sidebar-ring: #18181b;
-  /* Subtle shadows */
-  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.03);
-  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-  /* Subtle accent variations */
-  --accent-subtle: #eef2ff;
-  --accent-muted: #c7d2fe;
-  --accent-rgb: 99, 102, 241;
+  --sidebar: #F8F7F4;
+  --sidebar-foreground: #1A1A1A;
+  --sidebar-primary: #9A6F4F;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #E8E6E1;
+  --sidebar-accent-foreground: #1A1A1A;
+  --sidebar-border: #D4D2CC;
+  --sidebar-ring: #9A6F4F;
+  /* Editorial Modernism: Brutalist Sharp Shadows */
+  --shadow-xs: 0 1px 0 0 rgba(26, 26, 26, 0.08);
+  --shadow-sm: 0 2px 0 0 rgba(26, 26, 26, 0.12);
+  --shadow-md: 0 4px 0 0 rgba(26, 26, 26, 0.14);
+  --shadow-lg: 0 8px 0 0 rgba(26, 26, 26, 0.16);
+  /* Bronze accent variations */
+  --accent-subtle: #F4EDE7;
+  --accent-muted: #C9A68A;
+  --accent-rgb: 154, 111, 79;
 }
 
 .dark {
-  /* Deep, rich black */
-  --background: #09090b;
-  --foreground: #fafafa;
-  --card: #18181b;
-  --card-foreground: #fafafa;
-  --popover: #18181b;
-  --popover-foreground: #fafafa;
-  /* Crisp white primary for contrast */
-  --primary: #fafafa;
-  --primary-foreground: #09090b;
-  /* Rich dark secondary */
-  --secondary: #27272a;
-  --secondary-foreground: #fafafa;
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
-  /* Lighter indigo for dark mode */
-  --accent: #818cf8;
-  --accent-foreground: #09090b;
-  --destructive: #ef4444;
-  /* Subtle dark borders */
-  --border: #27272a;
-  --input: #27272a;
-  --ring: #fafafa;
+  /* Editorial Modernism: Near Black */
+  --background: #0F0F0F;
+  --foreground: #EFEDE8;
+  --card: #1A1A1A;
+  --card-foreground: #EFEDE8;
+  --popover: #1A1A1A;
+  --popover-foreground: #EFEDE8;
+  /* Lighter Bronze for Dark Mode Contrast */
+  --primary: #D4A574;
+  --primary-foreground: #0F0F0F;
+  /* Slightly Lighter Dark Secondary */
+  --secondary: #242424;
+  --secondary-foreground: #EFEDE8;
+  --muted: #242424;
+  --muted-foreground: #A8A6A0;
+  /* Lighter Bronze for Dark Mode */
+  --accent: #D4A574;
+  --accent-foreground: #0F0F0F;
+  --destructive: #E85D4F;
+  /* Dark Borders */
+  --border: #2A2A2A;
+  --input: #2A2A2A;
+  --ring: #D4A574;
   /* Charts */
-  --chart-1: #fafafa;
-  --chart-2: #818cf8;
-  --chart-3: #10b981;
-  --chart-4: #f97316;
-  --chart-5: #ef4444;
+  --chart-1: #EFEDE8;
+  --chart-2: #D4A574;
+  --chart-3: #5FA068;
+  --chart-4: #E8B388;
+  --chart-5: #E85D4F;
   /* Sidebar */
-  --sidebar: #18181b;
-  --sidebar-foreground: #fafafa;
-  --sidebar-primary: #818cf8;
-  --sidebar-primary-foreground: #09090b;
-  --sidebar-accent: #27272a;
-  --sidebar-accent-foreground: #fafafa;
-  --sidebar-border: #27272a;
-  --sidebar-ring: #fafafa;
+  --sidebar: #1A1A1A;
+  --sidebar-foreground: #EFEDE8;
+  --sidebar-primary: #D4A574;
+  --sidebar-primary-foreground: #0F0F0F;
+  --sidebar-accent: #242424;
+  --sidebar-accent-foreground: #EFEDE8;
+  --sidebar-border: #2A2A2A;
+  --sidebar-ring: #D4A574;
   /* Dark mode accent variations */
-  --accent-subtle: rgba(129, 140, 248, 0.1);
-  --accent-muted: rgba(129, 140, 248, 0.3);
-  --accent-rgb: 129, 140, 248;
+  --accent-subtle: rgba(212, 165, 116, 0.1);
+  --accent-muted: rgba(212, 165, 116, 0.3);
+  --accent-rgb: 212, 165, 116;
 }
 
 @layer base {
@@ -201,33 +202,71 @@
 }
 
 @layer utilities {
-  /* Radial gradients */
-  .bg-gradient-radial {
-    background-image: radial-gradient(circle at center, var(--tw-gradient-stops));
+  /* Editorial Modernism: Brutalist Sharp Shadows */
+  .shadow-editorial-sm {
+    box-shadow: 0 2px 0 0 rgba(26, 26, 26, 0.12);
   }
-  .bg-gradient-radial-top {
-    background-image: radial-gradient(circle at top, var(--tw-gradient-stops));
-  }
-
-  /* Subtle gradient overlay */
-  .bg-gradient-subtle {
-    background: linear-gradient(to bottom, transparent, rgb(var(--accent-rgb) / 0.02));
+  .dark .shadow-editorial-sm {
+    box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.4);
   }
 
-  /* Text gradient with accent */
-  .text-gradient-accent {
-    background: linear-gradient(135deg, var(--accent), var(--accent-muted));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  .shadow-editorial-md {
+    box-shadow: 0 4px 0 0 rgba(26, 26, 26, 0.14);
+  }
+  .dark .shadow-editorial-md {
+    box-shadow: 0 4px 0 0 rgba(0, 0, 0, 0.4);
   }
 
-  /* Glass effect utility */
-  .glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px) saturate(180%);
+  .shadow-editorial-lg {
+    box-shadow: 0 8px 0 0 rgba(26, 26, 26, 0.16);
   }
-  .dark .glass {
-    background: rgba(24, 24, 27, 0.8);
+  .dark .shadow-editorial-lg {
+    box-shadow: 0 8px 0 0 rgba(0, 0, 0, 0.4);
+  }
+
+  .shadow-editorial-brutalist {
+    box-shadow: 8px 8px 0 0 rgba(26, 26, 26, 0.2);
+  }
+  .dark .shadow-editorial-brutalist {
+    box-shadow: 8px 8px 0 0 rgba(0, 0, 0, 0.5);
+  }
+
+  /* Lift effect on hover (for cards) */
+  .hover\:shadow-editorial-lift:hover {
+    box-shadow: 0 6px 0 0 rgba(26, 26, 26, 0.16);
+    transform: translateY(-2px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .dark .hover\:shadow-editorial-lift:hover {
+    box-shadow: 0 6px 0 0 rgba(0, 0, 0, 0.4);
+  }
+
+  /* Bronze accent line on left */
+  .accent-line {
+    border-left: 4px solid var(--accent);
+  }
+
+  /* Editorial typography class for serif headings */
+  .text-editorial {
+    font-family: var(--font-crimson);
+    font-weight: 600;
+  }
+
+  /* Underline grow effect left-to-right */
+  .underline-grow {
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent) 0%, transparent 0%);
+    background-size: 100% 2px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .hover\:underline-grow:hover {
+    background-size: 100% 2px;
+  }
+
+  /* Uppercase text with tracking for Editorial Modernism */
+  .text-uppercase-tracked {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 }

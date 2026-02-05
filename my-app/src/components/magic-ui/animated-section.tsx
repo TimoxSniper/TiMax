@@ -65,9 +65,9 @@ export const AnimatedSection = memo(function AnimatedSection({
     <div
       ref={ref}
       className={cn(
-        "transition-all duration-700 ease-out",
-        isVisible 
-          ? "opacity-100 translate-y-0 translate-x-0" 
+        "transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1)",
+        isVisible
+          ? "opacity-100 translate-y-0 translate-x-0"
           : `opacity-0 ${directionClasses[direction]}`,
         className
       )}

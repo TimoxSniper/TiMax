@@ -15,7 +15,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-auto border-t border-border/50 py-12 z-10 bg-gradient-to-b from-background to-secondary/30" role="contentinfo">
+    <footer className="relative mt-auto border-t border-border py-12 z-10 bg-background" role="contentinfo">
       <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex flex-col items-center md:items-start gap-4">
@@ -32,12 +32,12 @@ export function Footer() {
             </p>
           </div>
 
-          <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2" aria-label="Footer Navigation">
-            {FOOTER_LINKS.map((link) => (
+          <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 divide-x divide-border" aria-label="Footer Navigation">
+            {FOOTER_LINKS.map((link, index) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:translate-x-0.5"
+                className="text-sm text-muted-foreground hover:text-accent transition-colors duration-300 font-medium uppercase tracking-wide pl-6 first:pl-0"
               >
                 {link.name}
               </Link>

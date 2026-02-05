@@ -91,9 +91,9 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
   };
 
   const styles = {
-    success: "bg-green-50 dark:bg-green-950/30 border-green-200/60 dark:border-green-800/40 text-green-900 dark:text-green-100",
-    error: "bg-red-50 dark:bg-red-950/30 border-red-200/60 dark:border-red-800/40 text-red-900 dark:text-red-100",
-    info: "bg-[rgb(var(--accent-rgb)_/_0.05)] dark:bg-[rgb(var(--accent-rgb)_/_0.1)] border-[rgb(var(--accent-rgb)_/_0.2)] dark:border-[rgb(var(--accent-rgb)_/_0.2)] text-foreground",
+    success: "bg-white dark:bg-card border-l-4 border-green-600 text-foreground",
+    error: "bg-white dark:bg-card border-l-4 border-destructive text-foreground",
+    info: "bg-white dark:bg-card border-l-4 border-accent text-foreground",
   };
 
   const Icon = icons[toast.type];
@@ -101,7 +101,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
   return (
     <div
       className={cn(
-        "pointer-events-auto flex items-start gap-3 rounded-xl border p-4 shadow-lg backdrop-blur-md transition-all animate-in slide-in-from-right-full",
+        "pointer-events-auto flex items-start gap-3 rounded-[6px] border p-4 shadow-editorial-md transition-all animate-in slide-in-from-right-full",
         styles[toast.type]
       )}
       role="alert"

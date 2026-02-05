@@ -28,8 +28,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-// Konstanten
-const SECTION_SPACING = "py-16 sm:py-20 lg:py-24";
+// Konstanten - Editorial Modernism Spacing
+const SECTION_SPACING = "py-20 sm:py-24 lg:py-32";
 const SECTION_PADDING = "px-4 sm:px-6 lg:px-8";
 
 // Features als Konstante
@@ -79,11 +79,12 @@ const WorkflowSection = memo(function WorkflowSection() {
     <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="workflow">
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-foreground">
+          <div className="text-center mb-16 sm:mb-20">
+            <h2 className="font-serif text-5xl sm:text-6xl md:text-7xl font-bold mb-6 text-foreground">
               So funktioniert's
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <div className="w-24 h-1 bg-accent mx-auto mb-6" />
+            <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto">
               Ein einfacher Workflow in vier Schritten
             </p>
           </div>
@@ -224,10 +225,11 @@ const SolutionSection = memo(function SolutionSection() {
           <Card variant="default" className="p-10 sm:p-12">
             <div className="space-y-8">
               <div>
-                <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-foreground">
+                <h2 className="font-serif text-5xl sm:text-6xl font-bold mb-4 text-foreground">
                   Die Lösung
                 </h2>
-                <p className="text-xl text-muted-foreground leading-relaxed">
+                <div className="w-24 h-1 bg-accent mb-6" />
+                <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed">
                   Eine Plattform, die den gesamten Prozess nahtlos verbindet.
                 </p>
               </div>
@@ -276,27 +278,28 @@ const BenefitsSection = memo(function BenefitsSection() {
     <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`}>
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-foreground">
+          <div className="text-center mb-16 sm:mb-20">
+            <h2 className="font-serif text-5xl sm:text-6xl md:text-7xl font-bold mb-6 text-foreground">
               Warum timax?
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <div className="w-24 h-1 bg-accent mx-auto mb-6" />
+            <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto">
               Die Vorteile auf einen Blick
             </p>
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
           {benefits.map((benefit, index) => {
             const Icon = benefit.icon;
             return (
               <AnimatedSection key={benefit.title} delay={index * 100} direction="up">
-                <Card variant="subtle" className="p-8 h-full focus-within:ring-2 focus-within:ring-foreground/20">
-                  <Icon className="h-10 w-10 text-foreground mb-4" aria-hidden="true" />
-                  <h3 className="text-xl font-semibold mb-3 text-foreground">
+                <Card variant="default" className="p-8 h-full">
+                  <Icon className="h-10 w-10 text-accent mb-4" aria-hidden="true" />
+                  <h3 className="font-serif text-2xl font-semibold mb-3 text-foreground">
                     {benefit.title}
                   </h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground text-base leading-relaxed">
                     {benefit.description}
                   </p>
                 </Card>
@@ -346,17 +349,16 @@ const DemoSection = memo(function DemoSection() {
 // Main Page Component
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-transparent relative">
+    <div className="flex min-h-screen flex-col bg-background relative">
       {/* Skip to Content Link */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-black dark:focus:bg-white focus:text-white dark:focus:text-black focus:rounded-md focus:ring-4 focus:ring-black/50 dark:focus:ring-white/50"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-accent focus:text-accent-foreground focus:rounded-[4px] focus:ring-2 focus:ring-accent focus:ring-offset-2"
       >
         Zum Hauptinhalt springen
       </a>
 
       <MainNavigation />
-      <GridBackground />
 
       <main id="main-content" role="main">
         <HeroSection />
