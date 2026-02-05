@@ -63,7 +63,7 @@ export const chatSchema = z.object({
         message: "Nachricht enthält unerlaubte Inhalte",
       }
     ),
-  chat_id: z.string().optional(),
+  chat_id: z.string().nullish(),  // nullish = undefined ODER null erlaubt
   sessionId: z
     .string()
     .min(1, "sessionId ist erforderlich")
