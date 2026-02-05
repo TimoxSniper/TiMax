@@ -173,7 +173,7 @@ export default function PricingPage() {
                 return (
                   <AnimatedSection key={tier.name} direction="up" delay={index * 100}>
                     <Card 
-                      variant={tier.popular ? "accent" : "default"} 
+                      variant="accent"
                       hover={false}
                       overflow={tier.popular ? "visible" : "hidden"}
                       className={cn(
