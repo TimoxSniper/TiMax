@@ -1,18 +1,20 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { JsonLd } from "@/components/seo/json-ld";
+import { getLegalPageSchema } from "@/lib/schema";
 
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Impressum",
-  description: "Impressum und rechtliche Angaben zu timax - Angaben gemäß § 5 TMG",
+  description: "Impressum und rechtliche Angaben zu timax - Angaben gemäß § 5 TMG. Firmensitz, Kontaktdaten und Handelsregistereintrag.",
   alternates: {
     canonical: '/impressum',
   },
   openGraph: {
     title: "Impressum - timax",
-    description: "Impressum und rechtliche Angaben zu timax",
+    description: "Impressum und rechtliche Angaben zu timax gemäß § 5 TMG",
     type: "website",
     locale: "de_DE",
   },
@@ -21,6 +23,7 @@ export const metadata: Metadata = {
 export default function ImpressumPage() {
   return (
     <main className="min-h-screen bg-background">
+      <JsonLd data={getLegalPageSchema('impressum')} />
       <div className="container mx-auto max-w-3xl px-4 py-16 lg:py-24">
         <Button
           variant="ghost"

@@ -1,18 +1,20 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { JsonLd } from "@/components/seo/json-ld";
+import { getLegalPageSchema } from "@/lib/schema";
 
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Datenschutzerklärung",
-  description: "Datenschutzerklärung von timax gemäß DSGVO - Informationen zur Datenverarbeitung",
+  description: "Datenschutzerklärung von timax gemäß DSGVO - Informationen zur Datenverarbeitung, Ihre Rechte und wie wir Ihre Daten schützen.",
   alternates: {
     canonical: '/datenschutz',
   },
   openGraph: {
     title: "Datenschutzerklärung - timax",
-    description: "Datenschutzerklärung gemäß DSGVO",
+    description: "DSGVO-konforme Datenschutzerklärung von timax",
     type: "website",
     locale: "de_DE",
   },
@@ -21,6 +23,7 @@ export const metadata: Metadata = {
 export default function DatenschutzPage() {
   return (
     <main className="min-h-screen bg-background">
+      <JsonLd data={getLegalPageSchema('datenschutz')} />
       <div className="container mx-auto max-w-3xl px-4 py-16 lg:py-24">
         <Button
           variant="ghost"

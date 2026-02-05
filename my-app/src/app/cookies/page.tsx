@@ -1,18 +1,20 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { JsonLd } from "@/components/seo/json-ld";
+import { getLegalPageSchema } from "@/lib/schema";
 
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Cookie-Richtlinie",
-  description: "Cookie-Richtlinie von timax - Informationen über die Verwendung von Cookies auf unserer Website",
+  description: "Cookie-Richtlinie von timax - Welche Cookies wir verwenden und wie Sie Ihre Einstellungen verwalten können. DSGVO-konform.",
   alternates: {
     canonical: '/cookies',
   },
   openGraph: {
     title: "Cookie-Richtlinie - timax",
-    description: "Informationen über die Verwendung von Cookies",
+    description: "Informationen über die Verwendung von Cookies auf timax",
     type: "website",
     locale: "de_DE",
   },
@@ -21,6 +23,7 @@ export const metadata: Metadata = {
 export default function CookiesPage() {
   return (
     <main className="min-h-screen bg-background">
+      <JsonLd data={getLegalPageSchema('cookies')} />
       <div className="container mx-auto max-w-3xl px-4 py-16 lg:py-24">
         <Button
           variant="ghost"

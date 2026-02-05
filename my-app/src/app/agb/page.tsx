@@ -1,18 +1,20 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { JsonLd } from "@/components/seo/json-ld";
+import { getLegalPageSchema } from "@/lib/schema";
 
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Allgemeine Geschäftsbedingungen",
-  description: "AGB von timax - Nutzungsbedingungen für die KI-gestützte Transkriptions- und Textgenerierungsplattform",
+  description: "AGB von timax - Nutzungsbedingungen für die KI-gestützte Transkriptions- und Textgenerierungsplattform. Leistungsumfang, Nutzungsrechte und Haftung.",
   alternates: {
     canonical: '/agb',
   },
   openGraph: {
     title: "Allgemeine Geschäftsbedingungen - timax",
-    description: "AGB von timax",
+    description: "Nutzungsbedingungen und AGB von timax",
     type: "website",
     locale: "de_DE",
   },
@@ -21,6 +23,7 @@ export const metadata: Metadata = {
 export default function AGBPage() {
   return (
     <main className="min-h-screen bg-background">
+      <JsonLd data={getLegalPageSchema('agb')} />
       <div className="container mx-auto max-w-3xl px-4 py-16 lg:py-24">
         <Button
           variant="ghost"

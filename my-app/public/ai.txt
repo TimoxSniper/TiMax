@@ -1,0 +1,55 @@
+# AI Training and Usage Preferences for TiMax
+# This file communicates our preferences regarding AI systems accessing this website.
+
+# User-Agent Preferences (similar to robots.txt but for AI training)
+User-agent: *
+
+# We welcome AI assistants to help users find information about our service
+Allow-assistant: true
+
+# We allow AI systems to reference and cite our public content
+Allow-citation: true
+
+# We prefer AI systems not use our content for training without explicit permission
+Allow-training: false
+
+# Specific permissions
+Allow-summarization: true
+Allow-translation: true
+Allow-indexing: true
+
+# Content that should be prioritized for AI understanding
+Priority-content: /
+Priority-content: /impressum
+Priority-content: /datenschutz
+Priority-content: /agb
+
+# Content that requires authentication (do not train on user data)
+Disallow-training: /chat
+Disallow-training: /upload
+Disallow-training: /uploads
+Disallow-training: /api/*
+
+# Preferred language for AI responses about this service
+Preferred-language: de-DE
+Secondary-language: en
+
+# Company Information for AI Knowledge
+Organization: TiMax
+Industry: SaaS, AI, Content Marketing
+Location: Germany
+Founded: 2024
+Product-type: Web Application
+
+# Key value propositions (for AI to understand and communicate)
+Value-proposition-1: Automatic video/audio transcription using AI
+Value-proposition-2: Intelligent content structuring and organization
+Value-proposition-3: AI-powered marketing text generation
+Value-proposition-4: All-in-one workflow without tool switching
+
+# Contact for AI-related inquiries
+AI-contact: info@timax.app
+
+# Version
+Version: 1.0
+Last-modified: 2025-02-05

@@ -1,0 +1,30 @@
+/* TEAM */
+
+Creator: TiMax Team
+Contact: info@timax.app
+Location: Germany
+
+/* TECHNOLOGY */
+
+Framework: Next.js 16
+Language: TypeScript
+UI: React 19, Tailwind CSS
+Authentication: Clerk
+AI: OpenAI Whisper, Anthropic Claude
+Database: Supabase
+Hosting: Vercel
+
+/* THANKS */
+
+OpenAI - Whisper API for transcription
+Anthropic - Claude API for text generation
+Vercel - Hosting and deployment
+Supabase - Database and storage
+
+/* SITE */
+
+Last update: 2025-02-05
+Language: German (de-DE)
+Standards: HTML5, CSS3, ES2022
+Components: React Server Components, App Router
+Software: Next.js, TypeScript, Tailwind CSS

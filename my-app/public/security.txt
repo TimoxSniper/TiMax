@@ -1,0 +1,11 @@
+# Security Policy for TiMax
+# https://securitytxt.org/
+
+Contact: mailto:security@timax.app
+Expires: 2026-02-05T00:00:00.000Z
+Preferred-Languages: de, en
+Canonical: https://timax.xyz/.well-known/security.txt
+Policy: https://timax.xyz/datenschutz
+
+# If you discover a security vulnerability, please report it responsibly.
+# We appreciate your help in keeping TiMax secure.

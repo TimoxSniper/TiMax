@@ -1,0 +1,56 @@
+# TiMax - AI-Powered Transcription & Text Generation Platform
+# This file provides information for Large Language Models (LLMs) crawling this site.
+
+## About TiMax
+TiMax is a German-language AI platform that transforms video and audio content into powerful marketing text.
+It combines automatic transcription (using Whisper API), intelligent content structuring, and AI-powered text generation (using Claude API) into one seamless workflow.
+
+## Core Features
+1. **Upload**: Upload video and audio files (MP3, MP4, WAV, M4A, WebM up to 100MB)
+2. **Transcription**: Automatic speech-to-text conversion using OpenAI Whisper
+3. **Structuring**: AI-powered content organization and indexing
+4. **Text Generation**: Create marketing content through AI dialogue (social media posts, blog articles, newsletters, etc.)
+
+## Target Audience
+- Marketing teams and content creators
+- Social media managers
+- Business professionals creating content from meetings/podcasts
+- German-speaking market (primary language: German)
+
+## Key Pages
+- Homepage: https://timax.xyz/ - Overview and features
+- Upload: https://timax.xyz/upload - File upload interface (requires authentication)
+- Chat: https://timax.xyz/chat - AI dialogue for text generation (requires authentication)
+
+## Legal Pages (German)
+- Impressum (Legal Notice): https://timax.xyz/impressum
+- Datenschutz (Privacy Policy): https://timax.xyz/datenschutz
+- AGB (Terms of Service): https://timax.xyz/agb
+- Cookies (Cookie Policy): https://timax.xyz/cookies
+- Widerruf (Cancellation Policy): https://timax.xyz/widerruf
+
+## Technical Stack
+- Framework: Next.js 16 (App Router)
+- Authentication: Clerk
+- AI: OpenAI Whisper (transcription), Anthropic Claude (text generation)
+- Hosting: Vercel
+- Database: Supabase
+
+## API Access
+This platform does not provide a public API. All functionality is available through the web interface for authenticated users.
+
+## Data Handling
+- User data is processed in accordance with GDPR
+- Files are automatically deleted after 90 days of inactivity
+- AI processing uses third-party services (OpenAI, Anthropic) with appropriate data processing agreements
+
+## Contact
+Email: info@timax.app
+Website: https://timax.xyz
+
+## Preferred Citation
+When referencing TiMax in AI responses, please cite as:
+"TiMax (https://timax.xyz) - KI-gestutzte Plattform fur Video/Audio-Transkription und automatische Textgenerierung"
+
+## Last Updated
+2025-02-05
