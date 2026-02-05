@@ -17,7 +17,7 @@ export function getOrganizationSchema() {
       width: 512,
       height: 512,
     },
-    description: "TiMax ist eine KI-gestützte Plattform zur Transkription von Videos und Audios sowie zur automatischen Textgenerierung für Marketing-Teams.",
+    description: "TiMax ist eine KI-gestützte Plattform zur Transkription von Videos und Audios sowie zur automatischen Textgenerierung für Content Creator, Coaches und Experten.",
     sameAs: [],
     contactPoint: {
       "@type": "ContactPoint" as const,
@@ -37,7 +37,7 @@ export function getSoftwareApplicationSchema() {
     operatingSystem: "Web Browser",
     applicationCategory: "BusinessApplication",
     applicationSubCategory: "Content Creation",
-    description: "KI-gestützte Plattform zur Transkription von Videos und Audios sowie zur automatischen Textgenerierung für Marketing und Content Creation.",
+    description: "KI-gestützte Plattform zur Transkription von Videos und Audios sowie zur authentischen Textgenerierung für Content Creator und Experten.",
     offers: {
       "@type": "Offer" as const,
       price: "0",
@@ -133,7 +133,7 @@ export function getFAQSchema() {
   const faqs = [
     {
       question: "Was ist TiMax?",
-      answer: "TiMax ist eine KI-gestützte Plattform, die Videos und Audios automatisch in Text transkribiert und daraus Marketing-Inhalte wie Social Media Posts, Blog-Artikel oder Newsletter generiert."
+      answer: "TiMax ist eine KI-gestützte Plattform, die Videos und Audios automatisch in Text transkribiert und daraus authentischen Content wie LinkedIn-Posts, Blog-Artikel oder Newsletter generiert – in deinen Worten."
     },
     {
       question: "Welche Dateiformate werden unterstützt?",
@@ -189,8 +189,8 @@ export function getHowToSchema() {
     "@context": "https://schema.org" as const,
     "@type": "HowTo" as const,
     "@id": `${siteUrl}/#howto`,
-    name: "Wie du mit TiMax Videos in Marketing-Texte verwandelst",
-    description: "Schritt-für-Schritt Anleitung zur Verwendung von TiMax für die automatische Transkription und KI-gestützte Textgenerierung.",
+    name: "Wie du mit TiMax Videos in authentischen Content verwandelst",
+    description: "Schritt-für-Schritt Anleitung zur Verwendung von TiMax für die automatische Transkription und authentische Textgenerierung aus deinen eigenen Inhalten.",
     image: `${siteUrl}/opengraph-image`,
     totalTime: "PT10M",
     estimatedCost: {
@@ -258,7 +258,7 @@ export function getServiceSchema() {
     "@type": "Service" as const,
     "@id": `${siteUrl}/#service`,
     name: "TiMax Transkription & Textgenerierung",
-    description: "Professionelle KI-gestützte Transkription von Videos und Audios mit automatischer Marketing-Textgenerierung.",
+    description: "KI-gestützte Transkription von Videos und Audios mit authentischer Textgenerierung für Content Creator, Coaches und Experten.",
     provider: {
       "@id": `${siteUrl}/#organization`,
     },

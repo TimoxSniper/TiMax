@@ -32,7 +32,7 @@ const PRICING_TIERS = [
   {
     name: "Starter",
     icon: User,
-    description: "Perfekt für Einsteiger und Solopreneure",
+    description: "Perfekt für den Einstieg in Content Repurposing",
     monthlyPrice: 29,
     yearlyPrice: 290,
     popular: false,
@@ -48,7 +48,7 @@ const PRICING_TIERS = [
   {
     name: "Pro",
     icon: Star,
-    description: "Für Content-Creator und kleine Teams",
+    description: "Für aktive Creator und Experten",
     monthlyPrice: 49,
     yearlyPrice: 490,
     popular: true,
@@ -64,7 +64,7 @@ const PRICING_TIERS = [
   {
     name: "Business",
     icon: Building2,
-    description: "Für Agenturen und große Teams",
+    description: "Für Creator mit hohem Content-Output",
     monthlyPrice: 79,
     yearlyPrice: 790,
     popular: false,
@@ -83,7 +83,7 @@ const PRICING_TIERS = [
 const FAQ_ITEMS = [
   {
     question: "Warum muss ich bezahlen, um einen Account zu erstellen?",
-    answer: "timax ist ein professionelles Tool für Marketing-Agenturen und Content-Teams. Wir bieten keine eingeschränkte Gratis-Version, sondern von Anfang an ein vollwertiges Erlebnis. So können wir dir den besten Service und Support bieten."
+    answer: "timax ist für Creator und Experten, die ihre Zeit effizient nutzen wollen. Wir bieten keine eingeschränkte Gratis-Version, sondern von Anfang an ein vollwertiges Erlebnis. So können wir dir den besten Service und Support bieten."
   },
   {
     question: "Was passiert, wenn ich mein Limit erreiche?",

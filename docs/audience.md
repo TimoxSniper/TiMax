@@ -1,30 +1,36 @@
 ### Zielsegmente
 
-#### PRIMÄR: Marketing-Agenturen & Content-Studios (5-50 Mitarbeiter)
+#### PRIMÄR: Content Creator & Podcaster
 **Warum passend:**
-- Höhere Budgets für Tools (50-200€/Monat)
-- Skalierbarer Mehrwert: Ein Tool für 10+ Kunden = 10x ROI
-- Definierte Tool-Budgets und Evaluierungsprozesse
-- Längere Customer Lifetime, da Tool in Agency-Workflows integriert wird
-- Schmerzpunkt: Effizienzgewinn direkt monetarisierbar (mehr Kunden, gleiche Ressourcen)
+- Produzieren regelmäßig Video-/Audio-Content (YouTube, Podcasts, TikTok)
+- Haben Repurposing-Bedarf: aus einem Video mehrere Posts machen
+- Zeitdruck bei Content-Produktion
+- Authentizität ist entscheidend – wollen ihre eigene Stimme behalten
+- Technisch affin, aber keine Zeit für komplexe Workflows
 
-#### SEKUNDÄR: Internal Content-Teams bei mittelständischen Unternehmen
+#### SEKUNDÄR: Coaches, Berater & Speaker
 **Warum passend:**
-- Enterprise-Ready Pricing möglich
-- Regelmäßige, skalierbare Content-Produktion
-- Bedarf an Konsistenz und Brand-Voice über mehrere Kanäle
-- Längere Sales-Cycle, aber höhere Deal-Sizes
-- Integration mit internen Workflows wichtig (Slack, Teams, CMS)
+- Geben Workshops, halten Vorträge, führen Coachings durch
+- Wissen liegt in Videos/Audios, aber ungenutzt
+- LinkedIn und Newsletter sind wichtige Kanäle für Personal Branding
+- Wollen authentisch kommunizieren, nicht generisch
+- Zahlungsbereit für Tools, die Zeit sparen
 
-#### TERTIÄR: Erfolgreiche Solopreneure (5-stellige Umsätze/Monat)
+#### TERTIÄR: Selbstständige & Unternehmer
 **Warum passend:**
-- Budget vorhanden für Premium-Tools
-- Skalierung durch Assistenz-Teams oder Outsourcing
-- Hohe Zeitersparnis direkt umsetzbar in mehr Content-Monetarisierung
-- Decision-Maker selbst = kurze Sales-Cycle
-- Test-Market für B2B-Features vor Agency-Rollout
+- Nutzen LinkedIn aktiv für Sichtbarkeit
+- Haben wenig Zeit, aber viel Expertise zu teilen
+- Suchen effiziente Wege, Content zu erstellen
+- Authentizität wichtiger als Perfektion
+
+#### QUARTÄR: Trainer, Dozenten & Kursersteller
+**Warum passend:**
+- Erstellen Online-Kurse und Schulungsmaterial
+- Haben Aufzeichnungen, die wiederverwendet werden können
+- Bedarf an Begleitmaterial (Zusammenfassungen, Arbeitsblätter)
+- Regelmäßiger Content-Bedarf
 
 ### Empfehlung
 
-**Bestes Zielsegment:** Marketing-Agenturen & Content-Studios (5-50 Mitarbeiter) – sie haben die höchste Zahlungsbereitschaft, skalierbareste Business-Modelle und bieten die größte Möglichkeit für Umsatzwachstum durch Multi-Customer-Nutzung.
+**Kernbotschaft:** TiMax hilft dir, dein Wissen aus Videos und Audios in authentischen Content zu verwandeln – LinkedIn-Posts, Newsletter, Blog-Artikel. Keine generischen KI-Texte, sondern deine echten Worte, nur schneller formatiert.
 

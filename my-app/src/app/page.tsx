@@ -66,11 +66,10 @@ const WORKFLOW_STEPS = [
 
 // Target Audiences
 const TARGET_AUDIENCES = [
-  "Marketing-Agenturen",
-  "Content-Studios",
-  "Content-Teams",
-  "Social Media Agenturen",
-  "Erfolgreiche Solopreneure",
+  "Content Creator & Podcaster",
+  "Coaches & Berater",
+  "Selbstständige & Unternehmer",
+  "Trainer & Kursersteller",
 ] as const;
 
 // Workflow Section Component - Editorial Modernism with bronze step numbers
@@ -182,12 +181,12 @@ const ProblemSection = memo(function ProblemSection() {
                 </h2>
                 <div className="w-16 sm:w-24 h-1 bg-accent mb-4 sm:mb-6" />
                 <p className="text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed">
-                  Marketing-Agenturen und Content-Teams kämpfen damit, aus den Video- und Audio-Bibliotheken ihrer Kunden schnell neues, passendes Textmaterial zu erstellen.
+                  Du hast Podcasts aufgenommen, Videos gedreht oder Workshops gehalten – aber dein Wissen liegt ungenutzt auf der Festplatte.
                 </p>
               </div>
               <div className="space-y-4">
                 <p className="text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed">
-                  Kundeninhalte sind unstrukturiert verteilt und kaum durchsuchbar. Aktuelle Tools fokussieren entweder nur auf Transkription oder reine Textgenerierung und verbinden Upload, Strukturierung und Dialog mit der KI kaum nahtlos. Dadurch verlieren Agenturen Zeit, Content-Output und skalierbare Margen.
+                  Der Aufwand, daraus LinkedIn-Posts, Newsletter oder Blog-Artikel zu machen, ist riesig. Aktuelle Tools fokussieren entweder nur auf Transkription oder reine Textgenerierung – nichts verbindet beides nahtlos. So bleibt dein bester Content ungenutzt.
                 </p>
                 <div className="flex flex-wrap gap-2 sm:gap-3 pt-3 sm:pt-4">
                   {TARGET_AUDIENCES.map((audience) => (
@@ -213,9 +212,9 @@ const ProblemSection = memo(function ProblemSection() {
 const SolutionSection = memo(function SolutionSection() {
   const solutionPoints = useMemo(() => [
     "Nahtloser Upload von Videos und Audios",
-    "Intelligente Strukturierung deiner Inhalte",
-    "KI-Dialog für schnelle Textgenerierung",
-    "Alles in einem Workflow – keine Tool-Wechsel mehr",
+    "Automatische Transkription deiner Inhalte",
+    "KI-Dialog für authentische Textgenerierung",
+    "Von Podcast zu LinkedIn-Post in Minuten",
   ], []);
 
   return (
@@ -230,12 +229,12 @@ const SolutionSection = memo(function SolutionSection() {
                 </h2>
                 <div className="w-16 sm:w-24 h-1 bg-accent mb-4 sm:mb-6" />
                 <p className="text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed">
-                  Eine Plattform, die den gesamten Prozess nahtlos verbindet.
+                  Verwandle deine Videos und Audios in authentischen Content.
                 </p>
               </div>
               <div className="space-y-4 sm:space-y-6">
                 <p className="text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed">
-                  Nutze die Video- und Audio-Bibliotheken deiner Kunden, um schnell neues Textmaterial zu generieren. Unsere Plattform vereint Upload, intelligente Strukturierung und KI-Dialog in einem einzigen Workflow. So kannst du Content-Produktion skalieren, mehr Kunden bedienen und deine Margen steigern – ohne zwischen verschiedenen Tools wechseln zu müsen.
+                  Kein Ghostwriting, sondern deine echten Worte – nur schneller formatiert. Unsere Plattform vereint Upload, Transkription und KI-Dialog in einem einzigen Workflow. So wird aus deinem Podcast ein LinkedIn-Post, aus deinem Workshop ein Newsletter – authentisch und in deiner Stimme.
                 </p>
                 <ul className="space-y-3 sm:space-y-4 text-foreground/70">
                   {solutionPoints.map((point, index) => (
