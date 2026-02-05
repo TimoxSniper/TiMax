@@ -67,11 +67,7 @@ export default function AdminDashboardPage() {
       }
     } catch (error) {
       console.error("Fehler beim Laden der Dashboard-Daten:", error);
-      showToast({
-        title: "Fehler",
-        description: "Dashboard-Daten konnten nicht geladen werden",
-        variant: "destructive",
-      });
+      showToast("Dashboard-Daten konnten nicht geladen werden", "error");
     } finally {
       setIsLoading(false);
     }
@@ -85,34 +81,20 @@ export default function AdminDashboardPage() {
   const handleDeleteChat = async (chatId: string) => {
     const res = await fetch(`/api/admin/chats/${chatId}`, { method: "DELETE" });
     if (res.ok) {
-      showToast({
-        title: "Erfolg",
-        description: "Chat wurde gelöscht",
-      });
+      showToast("Chat wurde gelöscht", "success");
       fetchData();
     } else {
-      showToast({
-        title: "Fehler",
-        description: "Chat konnte nicht gelöscht werden",
-        variant: "destructive",
-      });
+      showToast("Chat konnte nicht gelöscht werden", "error");
     }
   };
 
   const handleDeleteUpload = async (uploadId: string) => {
     const res = await fetch(`/api/admin/uploads/${uploadId}`, { method: "DELETE" });
     if (res.ok) {
-      showToast({
-        title: "Erfolg",
-        description: "Upload wurde gelöscht",
-      });
+      showToast("Upload wurde gelöscht", "success");
       fetchData();
     } else {
-      showToast({
-        title: "Fehler",
-        description: "Upload konnte nicht gelöscht werden",
-        variant: "destructive",
-      });
+      showToast("Upload konnte nicht gelöscht werden", "error");
     }
   };
 

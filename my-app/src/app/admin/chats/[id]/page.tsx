@@ -59,20 +59,12 @@ export default function AdminChatDetailPage({ params }: PageProps) {
           setChat(data.chat);
           setMessages(data.messages || []);
         } else if (res.status === 404) {
-          showToast({
-            title: "Nicht gefunden",
-            description: "Chat existiert nicht",
-            variant: "destructive",
-          });
+          showToast("Chat existiert nicht", "error");
           router.push("/admin/chats");
         }
       } catch (error) {
         console.error("Fehler beim Laden des Chats:", error);
-        showToast({
-          title: "Fehler",
-          description: "Chat konnte nicht geladen werden",
-          variant: "destructive",
-        });
+        showToast("Chat konnte nicht geladen werden", "error");
       } finally {
         setIsLoading(false);
       }
@@ -96,20 +88,13 @@ export default function AdminChatDetailPage({ params }: PageProps) {
     try {
       const res = await fetch(`/api/admin/chats/${chatId}`, { method: "DELETE" });
       if (res.ok) {
-        showToast({
-          title: "Erfolg",
-          description: "Chat wurde gelöscht",
-        });
+        showToast("Chat wurde gelöscht", "success");
         router.push("/admin/chats");
       } else {
         throw new Error("Löschen fehlgeschlagen");
       }
     } catch {
-      showToast({
-        title: "Fehler",
-        description: "Chat konnte nicht gelöscht werden",
-        variant: "destructive",
-      });
+      showToast("Chat konnte nicht gelöscht werden", "error");
     } finally {
       setIsDeleting(false);
       setShowDeleteDialog(false);

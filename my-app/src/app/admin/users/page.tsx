@@ -38,11 +38,7 @@ export default function AdminUsersPage() {
       }
     } catch (error) {
       console.error("Fehler beim Laden der Benutzer:", error);
-      showToast({
-        title: "Fehler",
-        description: "Benutzer konnten nicht geladen werden",
-        variant: "destructive",
-      });
+      showToast("Benutzer konnten nicht geladen werden", "error");
     } finally {
       setIsLoading(false);
     }

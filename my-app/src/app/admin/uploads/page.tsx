@@ -57,11 +57,7 @@ export default function AdminUploadsPage() {
       }
     } catch (error) {
       console.error("Fehler beim Laden der Uploads:", error);
-      showToast({
-        title: "Fehler",
-        description: "Uploads konnten nicht geladen werden",
-        variant: "destructive",
-      });
+      showToast("Uploads konnten nicht geladen werden", "error");
     } finally {
       setIsLoading(false);
     }
@@ -92,17 +88,10 @@ export default function AdminUploadsPage() {
   const handleDelete = async (uploadId: string) => {
     const res = await fetch(`/api/admin/uploads/${uploadId}`, { method: "DELETE" });
     if (res.ok) {
-      showToast({
-        title: "Erfolg",
-        description: "Upload wurde gelöscht",
-      });
+      showToast("Upload wurde gelöscht", "success");
       fetchUploads(currentPage, statusFilter);
     } else {
-      showToast({
-        title: "Fehler",
-        description: "Upload konnte nicht gelöscht werden",
-        variant: "destructive",
-      });
+      showToast("Upload konnte nicht gelöscht werden", "error");
     }
   };
 

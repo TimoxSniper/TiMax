@@ -51,11 +51,7 @@ export default function AdminChatsPage() {
       }
     } catch (error) {
       console.error("Fehler beim Laden der Chats:", error);
-      showToast({
-        title: "Fehler",
-        description: "Chats konnten nicht geladen werden",
-        variant: "destructive",
-      });
+      showToast("Chats konnten nicht geladen werden", "error");
     } finally {
       setIsLoading(false);
     }
@@ -81,17 +77,10 @@ export default function AdminChatsPage() {
   const handleDelete = async (chatId: string) => {
     const res = await fetch(`/api/admin/chats/${chatId}`, { method: "DELETE" });
     if (res.ok) {
-      showToast({
-        title: "Erfolg",
-        description: "Chat wurde gelöscht",
-      });
+      showToast("Chat wurde gelöscht", "success");
       fetchChats(currentPage);
     } else {
-      showToast({
-        title: "Fehler",
-        description: "Chat konnte nicht gelöscht werden",
-        variant: "destructive",
-      });
+      showToast("Chat konnte nicht gelöscht werden", "error");
     }
   };
 
