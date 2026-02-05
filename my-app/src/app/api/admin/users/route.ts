@@ -67,6 +67,10 @@ export async function GET(request: NextRequest) {
           chatCount: 1,
           uploadCount: 0,
           lastActivity: chat.updated_at,
+          firstName: null,
+          lastName: null,
+          email: null,
+          imageUrl: null,
         });
       }
     });
@@ -85,6 +89,10 @@ export async function GET(request: NextRequest) {
           chatCount: 0,
           uploadCount: 1,
           lastActivity: upload.updated_at,
+          firstName: null,
+          lastName: null,
+          email: null,
+          imageUrl: null,
         });
       }
     });
