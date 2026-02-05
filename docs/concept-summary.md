@@ -1,6 +1,6 @@
-Content Creator, Coaches und Experten haben wertvolles Wissen in Videos und Audios – Podcasts, Workshops, Vorträge – aber es liegt ungenutzt auf der Festplatte. Der Aufwand, daraus LinkedIn-Posts, Newsletter oder Blog-Artikel zu machen, ist riesig.
+Du hast Videos oder Audios aufgenommen – Podcasts, Vorträge, Workshops, Sprachmemos – aber das Wissen bleibt "gefangen" in der Aufnahme. Der Aufwand, daraus LinkedIn-Posts, Newsletter oder Blog-Artikel zu machen, ist riesig.
 
-**Zielgruppe:** Content Creator & Podcaster, Coaches & Berater, Selbstständige & Unternehmer, sowie Trainer & Kursersteller – Menschen, die ihr eigenes Wissen teilen und authentisch kommunizieren wollen.
+**Zielgruppe:** Alle, die aus ihren eigenen Videos und Audios Texte machen wollen – egal ob für LinkedIn, Newsletter, Blog oder Social Media.
 
-Die Lösung ist eine Plattform, die Upload, Transkription und KI-Dialog in einem einzigen Workflow vereint. Nutzer können so aus ihren eigenen Videos und Audios schnell authentischen Content generieren – in ihren Worten, nicht generisch. Kein Ghostwriting, sondern die eigene Stimme, nur schneller formatiert.
+Die Lösung ist eine Plattform, die Upload, Transkription und KI-Dialog in einem einzigen Workflow vereint. Video hochladen, Transkript bekommen, fertige Texte generieren. Authentisch in deinen Worten, nur schneller formatiert.
 

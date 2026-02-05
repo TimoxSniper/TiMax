@@ -66,10 +66,10 @@ const WORKFLOW_STEPS = [
 
 // Target Audiences
 const TARGET_AUDIENCES = [
-  "Content Creator & Podcaster",
-  "Coaches & Berater",
-  "Selbstständige & Unternehmer",
-  "Trainer & Kursersteller",
+  "LinkedIn-Posts",
+  "Newsletter",
+  "Blog-Artikel",
+  "Social Media Content",
 ] as const;
 
 // Workflow Section Component - Editorial Modernism with bronze step numbers
