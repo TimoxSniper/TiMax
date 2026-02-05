@@ -4,8 +4,21 @@ import { ChatInterface } from "@/components/chat/chat-interface";
 import { MainNavigation } from "@/components/layout/main-navigation";
 import { Footer } from "@/components/layout/footer";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { useMobileDevice } from "@/hooks/useMobileDevice";
 
 export default function ChatPage() {
+  const isMobileDevice = useMobileDevice();
+
+  // Auf echten Mobilgeräten: Vollbild-Chat ohne Header/Footer
+  if (isMobileDevice) {
+    return (
+      <div className="h-[100dvh] bg-background flex flex-col overflow-hidden">
+        <ChatInterface />
+      </div>
+    );
+  }
+
+  // Desktop: Normale Ansicht mit Header und Footer
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <MainNavigation />

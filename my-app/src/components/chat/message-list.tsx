@@ -5,13 +5,14 @@ import { MessageBubble } from "./message-bubble";
 
 interface MessageListProps {
   messages: Message[];
+  isMobile?: boolean;
 }
 
-export function MessageList({ messages }: MessageListProps) {
+export function MessageList({ messages, isMobile = false }: MessageListProps) {
   return (
-    <div className="space-y-4">
+    <div className={isMobile ? "space-y-3" : "space-y-4"}>
       {messages.map((message) => (
-        <MessageBubble key={message.id} message={message} />
+        <MessageBubble key={message.id} message={message} isMobile={isMobile} />
       ))}
     </div>
   );
