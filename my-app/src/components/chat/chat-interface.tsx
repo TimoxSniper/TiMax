@@ -38,10 +38,15 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Beim Laden der Seite zum Chat-Bereich scrollen
+  // Beim Laden der Seite zum Chat-Bereich scrollen (mit kleinem Offset)
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      const rect = chatContainerRef.current.getBoundingClientRect();
+      const offset = window.innerHeight * 0.1; // 10% weniger scrollen
+      window.scrollTo({
+        top: window.scrollY + rect.top - offset,
+        behavior: "smooth"
+      });
     }
   }, []);
 
