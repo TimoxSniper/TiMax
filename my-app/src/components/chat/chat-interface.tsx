@@ -36,6 +36,14 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  // Beim Laden der Seite zum Chat-Bereich scrollen
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
 
   // Auto-Scroll zu letzter Nachricht (nur innerhalb des Chat-Containers)
   useEffect(() => {
@@ -45,7 +53,7 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
   }, [messages]);
 
   return (
-    <div className="flex flex-col lg:flex-row h-[--height-chat-desktop] sm:h-[--height-chat-mobile] max-h-[800px] w-full gap-4 relative">
+    <div ref={chatContainerRef} className="flex flex-col lg:flex-row h-[--height-chat-desktop] sm:h-[--height-chat-mobile] max-h-[800px] w-full gap-4 relative">
       {/* Mobile Sidebar Trigger (Drawer) */}
       <div className="lg:hidden absolute top-4 left-4 z-10">
         <Sheet>
