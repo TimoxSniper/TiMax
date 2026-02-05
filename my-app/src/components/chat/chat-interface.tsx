@@ -35,11 +35,12 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-Scroll zu letzter Nachricht (nur wenn Nachrichten vorhanden)
+  // Auto-Scroll zu letzter Nachricht (nur innerhalb des Chat-Containers)
   useEffect(() => {
-    if (messages.length > 0) {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messages.length > 0 && scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
   }, [messages]);
 
@@ -80,7 +81,7 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
       <Card className="flex-1 flex flex-col h-full overflow-hidden relative">
         <ChatHeader sessionId={sessionId} messageCount={messages.length} />
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center px-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
               {/* Square icon container - Editorial Modernism */}
