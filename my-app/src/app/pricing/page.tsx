@@ -172,21 +172,22 @@ export default function PricingPage() {
 
                 return (
                   <AnimatedSection key={tier.name} direction="up" delay={index * 100}>
-                    <Card 
-                      variant={tier.popular ? "accent" : "default"} 
-                      className={cn(
-                        "p-6 sm:p-8 h-full flex flex-col relative",
-                        tier.popular && "ring-2 ring-accent"
-                      )}
-                    >
-                      {/* Popular Badge */}
+                    <div className={cn("relative h-full", tier.popular && "pt-4")}>
+                      {/* Popular Badge - außerhalb der Card für bessere Sichtbarkeit */}
                       {tier.popular && (
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                          <Badge className="bg-accent text-accent-foreground px-4 py-1 text-xs uppercase tracking-wide">
+                        <div className="absolute -top-1 left-1/2 -translate-x-1/2 z-10">
+                          <Badge className="bg-accent text-accent-foreground px-4 py-1.5 text-xs uppercase tracking-wide shadow-lg">
                             Beliebt
                           </Badge>
                         </div>
                       )}
+                      <Card 
+                        variant={tier.popular ? "accent" : "default"} 
+                        className={cn(
+                          "p-6 sm:p-8 h-full flex flex-col",
+                          tier.popular && "ring-2 ring-accent"
+                        )}
+                      >
 
                       {/* Header */}
                       <div className="text-center mb-6">
@@ -253,7 +254,8 @@ export default function PricingPage() {
                           </li>
                         ))}
                       </ul>
-                    </Card>
+                      </Card>
+                    </div>
                   </AnimatedSection>
                 );
               })}
