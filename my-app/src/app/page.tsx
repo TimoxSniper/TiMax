@@ -28,8 +28,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-// Konstanten - Editorial Modernism Spacing
-const SECTION_SPACING = "py-20 sm:py-24 lg:py-32";
+// Konstanten - Editorial Modernism Spacing (mobile-optimized)
+const SECTION_SPACING = "py-12 sm:py-20 lg:py-28";
 const SECTION_PADDING = "px-4 sm:px-6 lg:px-8";
 
 // Features als Konstante
@@ -79,18 +79,18 @@ const WorkflowSection = memo(function WorkflowSection() {
     <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10 border-t border-border`} id="workflow">
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
-          <div className="text-center mb-16 sm:mb-20">
-            <h2 className="font-serif text-5xl sm:text-6xl md:text-7xl font-bold mb-6 text-foreground">
+          <div className="text-center mb-10 sm:mb-16 lg:mb-20">
+            <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 text-foreground">
               So funktioniert's
             </h2>
-            <div className="w-24 h-1 bg-accent mx-auto mb-6" />
-            <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto">
+            <div className="w-16 sm:w-24 h-1 bg-accent mx-auto mb-4 sm:mb-6" />
+            <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-2">
               Ein einfacher Workflow in vier Schritten
             </p>
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 lg:gap-12">
           {WORKFLOW_STEPS.map((item, index) => {
             const Icon = item.icon;
             return (
@@ -98,17 +98,17 @@ const WorkflowSection = memo(function WorkflowSection() {
                 <Link href={item.href} className="block h-full group">
                   <div className="text-center h-full flex flex-col">
                     {/* Bronze step number - Editorial Modernism style */}
-                    <div className="font-serif text-6xl lg:text-7xl font-bold text-accent mb-4">
+                    <div className="font-serif text-4xl sm:text-5xl lg:text-7xl font-bold text-accent mb-2 sm:mb-4">
                       0{item.step}
                     </div>
-                    <h3 className="font-sans text-lg font-medium uppercase tracking-wide mb-3 text-foreground group-hover:text-accent transition-colors">
+                    <h3 className="font-sans text-sm sm:text-base lg:text-lg font-medium uppercase tracking-wide mb-2 sm:mb-3 text-foreground group-hover:text-accent transition-colors">
                       {item.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed flex-grow mb-4">
+                    <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed flex-grow mb-2 sm:mb-4 hidden sm:block">
                       {item.desc}
                     </p>
                     <div className="mt-auto">
-                      <span className="text-xs font-medium text-muted-foreground group-hover:text-accent transition-colors uppercase tracking-wide">
+                      <span className="text-[10px] sm:text-xs font-medium text-muted-foreground group-hover:text-accent transition-colors uppercase tracking-wide">
                         {item.action} →
                       </span>
                     </div>
@@ -129,32 +129,32 @@ const FeaturesSection = memo(function FeaturesSection() {
     <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="features">
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
-          <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-            <h2 className="font-serif text-5xl sm:text-6xl md:text-7xl font-bold mb-6 text-foreground">
+          <div className="text-center mb-8 sm:mb-12 lg:mb-20">
+            <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 text-foreground">
               Alles was du brauchst
             </h2>
-            <div className="w-24 h-1 bg-accent mx-auto mb-6" />
-            <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto">
+            <div className="w-16 sm:w-24 h-1 bg-accent mx-auto mb-4 sm:mb-6" />
+            <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-2">
               Eine Plattform, die den gesamten Prozess nahtlos verbindet
             </p>
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {FEATURES.map((feature, index) => {
             const Icon = feature.icon;
             return (
               <AnimatedSection key={feature.title} delay={index * 100} direction="up">
-                <Card hover variant="subtle" className="p-8 h-full">
+                <Card hover variant="subtle" className="p-5 sm:p-8 h-full">
                   <div className="flex flex-col h-full">
                     {/* Square icon container - Editorial Modernism */}
-                    <div className="w-14 h-14 rounded-[6px] bg-secondary flex items-center justify-center mb-6">
-                      <Icon className="h-7 w-7 text-accent" aria-hidden="true" />
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-[6px] bg-secondary flex items-center justify-center mb-4 sm:mb-6">
+                      <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-accent" aria-hidden="true" />
                     </div>
-                    <h3 className="font-serif text-xl font-semibold mb-3 text-foreground">
+                    <h3 className="font-serif text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-foreground">
                       {feature.title}
                     </h3>
-                    <p className="text-muted-foreground leading-relaxed">
+                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
                       {feature.description}
                     </p>
                   </div>
@@ -174,27 +174,27 @@ const ProblemSection = memo(function ProblemSection() {
     <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="problem">
       <div className="container mx-auto max-w-4xl">
         <AnimatedSection direction="up">
-          <Card variant="accent" className="p-10 sm:p-12">
-            <div className="space-y-8">
+          <Card variant="accent" className="p-6 sm:p-10 lg:p-12">
+            <div className="space-y-6 sm:space-y-8">
               <div>
-                <h2 className="font-serif text-5xl sm:text-6xl font-bold mb-4 text-foreground">
+                <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 text-foreground">
                   Das Problem
                 </h2>
-                <div className="w-24 h-1 bg-accent mb-6" />
-                <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed">
+                <div className="w-16 sm:w-24 h-1 bg-accent mb-4 sm:mb-6" />
+                <p className="text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed">
                   Marketing-Agenturen und Content-Teams kämpfen damit, aus den Video- und Audio-Bibliotheken ihrer Kunden schnell neues, passendes Textmaterial zu erstellen.
                 </p>
               </div>
               <div className="space-y-4">
-                <p className="text-base lg:text-lg text-muted-foreground leading-relaxed">
+                <p className="text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed">
                   Kundeninhalte sind unstrukturiert verteilt und kaum durchsuchbar. Aktuelle Tools fokussieren entweder nur auf Transkription oder reine Textgenerierung und verbinden Upload, Strukturierung und Dialog mit der KI kaum nahtlos. Dadurch verlieren Agenturen Zeit, Content-Output und skalierbare Margen.
                 </p>
-                <div className="flex flex-wrap gap-3 pt-4">
+                <div className="flex flex-wrap gap-2 sm:gap-3 pt-3 sm:pt-4">
                   {TARGET_AUDIENCES.map((audience) => (
                     <Badge
                       key={audience}
                       variant="secondary"
-                      className="text-sm px-4 py-2"
+                      className="text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2"
                     >
                       {audience}
                     </Badge>
@@ -222,26 +222,26 @@ const SolutionSection = memo(function SolutionSection() {
     <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="solution">
       <div className="container mx-auto max-w-4xl">
         <AnimatedSection direction="up">
-          <Card variant="default" className="p-10 sm:p-12">
-            <div className="space-y-8">
+          <Card variant="default" className="p-6 sm:p-10 lg:p-12">
+            <div className="space-y-6 sm:space-y-8">
               <div>
-                <h2 className="font-serif text-5xl sm:text-6xl font-bold mb-4 text-foreground">
+                <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 text-foreground">
                   Die Lösung
                 </h2>
-                <div className="w-24 h-1 bg-accent mb-6" />
-                <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed">
+                <div className="w-16 sm:w-24 h-1 bg-accent mb-4 sm:mb-6" />
+                <p className="text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed">
                   Eine Plattform, die den gesamten Prozess nahtlos verbindet.
                 </p>
               </div>
-              <div className="space-y-6">
-                <p className="text-lg text-muted-foreground leading-relaxed">
+              <div className="space-y-4 sm:space-y-6">
+                <p className="text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed">
                   Nutze die Video- und Audio-Bibliotheken deiner Kunden, um schnell neues Textmaterial zu generieren. Unsere Plattform vereint Upload, intelligente Strukturierung und KI-Dialog in einem einzigen Workflow. So kannst du Content-Produktion skalieren, mehr Kunden bedienen und deine Margen steigern – ohne zwischen verschiedenen Tools wechseln zu müsen.
                 </p>
-                <ul className="space-y-4 text-foreground/70">
+                <ul className="space-y-3 sm:space-y-4 text-foreground/70">
                   {solutionPoints.map((point, index) => (
-                    <li key={index} className="flex items-start gap-4">
-                      <CheckCircle2 className="w-5 h-5 text-foreground flex-shrink-0 mt-1" aria-hidden="true" />
-                      <span className="text-lg">{point}</span>
+                    <li key={index} className="flex items-start gap-3 sm:gap-4">
+                      <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-foreground flex-shrink-0 mt-0.5 sm:mt-1" aria-hidden="true" />
+                      <span className="text-sm sm:text-base lg:text-lg">{point}</span>
                     </li>
                   ))}
                 </ul>
@@ -278,29 +278,29 @@ const BenefitsSection = memo(function BenefitsSection() {
     <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10 border-t border-border`}>
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
-          <div className="text-center mb-16 sm:mb-20">
-            <h2 className="font-serif text-5xl sm:text-6xl md:text-7xl font-bold mb-6 text-foreground">
+          <div className="text-center mb-10 sm:mb-16 lg:mb-20">
+            <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 text-foreground">
               Warum timax?
             </h2>
-            <div className="w-24 h-1 bg-accent mx-auto mb-6" />
-            <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto">
+            <div className="w-16 sm:w-24 h-1 bg-accent mx-auto mb-4 sm:mb-6" />
+            <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-2">
               Die Vorteile auf einen Blick
             </p>
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 lg:gap-12">
           {benefits.map((benefit, index) => {
             const Icon = benefit.icon;
             return (
               <AnimatedSection key={benefit.title} delay={index * 100} direction="up">
-                <Card variant="default" className="p-8 lg:p-10 h-full">
+                <Card variant="default" className="p-5 sm:p-8 lg:p-10 h-full">
                   {/* Bronze icon - Editorial Modernism */}
-                  <Icon className="h-10 w-10 text-accent mb-6" aria-hidden="true" />
-                  <h3 className="font-serif text-2xl lg:text-3xl font-semibold mb-4 text-foreground">
+                  <Icon className="h-8 w-8 sm:h-10 sm:w-10 text-accent mb-4 sm:mb-6" aria-hidden="true" />
+                  <h3 className="font-serif text-xl sm:text-2xl lg:text-3xl font-semibold mb-2 sm:mb-4 text-foreground">
                     {benefit.title}
                   </h3>
-                  <p className="text-muted-foreground text-base lg:text-lg leading-relaxed">
+                  <p className="text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed">
                     {benefit.description}
                   </p>
                 </Card>
@@ -319,26 +319,26 @@ const DemoSection = memo(function DemoSection() {
     <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10 border-t border-border`} id="demo">
       <div className="container mx-auto max-w-4xl">
         <AnimatedSection direction="up">
-          <Card variant="default" className="p-10 sm:p-12">
-            <div className="text-center space-y-10">
-              <div className="space-y-6">
-                <h2 className="font-serif text-5xl sm:text-6xl md:text-7xl font-bold text-foreground">
+          <Card variant="default" className="p-6 sm:p-10 lg:p-12">
+            <div className="text-center space-y-6 sm:space-y-10">
+              <div className="space-y-4 sm:space-y-6">
+                <h2 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground">
                   Probiere es aus
                 </h2>
-                <div className="w-24 h-1 bg-accent mx-auto" />
-                <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto">
+                <div className="w-16 sm:w-24 h-1 bg-accent mx-auto" />
+                <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-2">
                   Erlebe den Text Generator in Aktion. Generiere verschiedene Content-Formate aus einem Beispiel-Transkript.
                 </p>
               </div>
               {/* Bronze CTA - Editorial Modernism, NO scale, NO rounded-full */}
               <Button
                 size="lg"
-                className="group min-h-14 px-10"
+                className="group min-h-12 sm:min-h-14 px-6 sm:px-10 w-full sm:w-auto"
                 asChild
               >
                 <Link href="/text-generator">
                   Zum Text Generator
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
             </div>

@@ -71,22 +71,22 @@ export const StatsSection = memo(function StatsSection({ onVisible }: StatsSecti
   ];
 
   return (
-    <section id="stats-section" className="relative px-4 py-20 sm:py-24 lg:py-32 z-10 border-t border-b border-border">
+    <section id="stats-section" className="relative px-4 py-12 sm:py-20 lg:py-28 z-10 border-t border-b border-border">
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
           {/* Horizontal stats layout with vertical dividers */}
-          <div className="flex flex-col md:flex-row items-center justify-center md:divide-x divide-border">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-0 md:divide-x divide-border">
             {stats.map((stat, index) => (
               <div 
                 key={stat.label}
-                className="flex flex-col items-center text-center px-8 lg:px-16 py-6 md:py-0"
+                className="flex flex-col items-center text-center px-2 sm:px-8 lg:px-16 py-3 sm:py-6 md:py-0"
               >
                 {/* Large bronze number - Editorial Modernism style */}
-                <div className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold text-accent leading-none mb-3">
+                <div className="font-serif text-3xl sm:text-5xl lg:text-7xl font-bold text-accent leading-none mb-1 sm:mb-3">
                   {stat.value}
                 </div>
                 {/* Small uppercase label */}
-                <div className="text-xs sm:text-sm font-medium uppercase tracking-widest text-muted-foreground">
+                <div className="text-[10px] sm:text-xs lg:text-sm font-medium uppercase tracking-wider sm:tracking-widest text-muted-foreground">
                   {stat.label}
                 </div>
               </div>

@@ -43,27 +43,27 @@ export function EmailSignup() {
   };
 
   return (
-    <section className="relative px-4 py-20 sm:py-24 lg:py-32 z-10 border-t border-border" id="cta">
+    <section className="relative px-4 py-12 sm:py-20 lg:py-28 z-10 border-t border-border" id="cta">
       <div className="container mx-auto max-w-2xl">
         <AnimatedSection direction="up">
-          <Card variant="default" className="p-10 sm:p-12 lg:p-16">
-            <div className="space-y-8 text-center">
+          <Card variant="default" className="p-6 sm:p-10 lg:p-16">
+            <div className="space-y-6 sm:space-y-8 text-center">
               <div>
-                <h2 className="font-serif text-5xl sm:text-6xl font-bold mb-4 text-foreground">
+                <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 text-foreground">
                   Bereit loszulegen?
                 </h2>
-                <div className="w-24 h-1 bg-accent mx-auto mb-6" />
-                <p className="text-lg text-muted-foreground">
+                <div className="w-16 sm:w-24 h-1 bg-accent mx-auto mb-4 sm:mb-6" />
+                <p className="text-base sm:text-lg text-muted-foreground px-2">
                   Melde dich an und sei einer der Ersten, die Zugang erhalten.
                 </p>
               </div>
               
               {/* Editorial Modernism Form */}
-              <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6 max-w-md mx-auto">
                 <div className="space-y-2">
                   <label 
                     htmlFor="email" 
-                    className="block text-xs font-medium uppercase tracking-widest text-muted-foreground text-left"
+                    className="block text-xs font-medium uppercase tracking-wider sm:tracking-widest text-muted-foreground text-left"
                   >
                     E-Mail-Adresse
                   </label>
@@ -75,7 +75,7 @@ export function EmailSignup() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full h-12 bg-transparent border-0 border-b-2 border-border px-0 text-base transition-all duration-300 outline-none placeholder:text-muted-foreground/50 focus:border-accent"
+                    className="w-full h-11 sm:h-12 bg-transparent border-0 border-b-2 border-border px-0 text-base transition-all duration-300 outline-none placeholder:text-muted-foreground/50 focus:border-accent"
                     aria-label="E-Mail-Adresse für Anmeldung"
                   />
                 </div>
@@ -84,18 +84,18 @@ export function EmailSignup() {
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="w-full min-h-14 group"
+                  className="w-full min-h-12 sm:min-h-14 group"
                   size="lg"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      <Loader2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
                       Wird gesendet...
                     </>
                   ) : (
                     <>
                       Jetzt anmelden
-                      <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                      <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
                     </>
                   )}
                 </Button>
