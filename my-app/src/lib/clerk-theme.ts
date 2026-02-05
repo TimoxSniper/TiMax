@@ -1,5 +1,3 @@
-import type { Appearance } from "@clerk/types";
-
 /**
  * Editorial Modernism Theme für Clerk
  * 
@@ -12,7 +10,7 @@ import type { Appearance } from "@clerk/types";
  * - Uppercase tracking für Labels
  */
 
-export const clerkAppearance: Appearance = {
+export const clerkAppearance = {
   variables: {
     // Farben - nutzen CSS-Variablen für Dark Mode Support
     colorPrimary: "#9A6F4F",
