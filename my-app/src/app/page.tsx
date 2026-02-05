@@ -73,10 +73,10 @@ const TARGET_AUDIENCES = [
   "Erfolgreiche Solopreneure",
 ] as const;
 
-// Workflow Section Component
+// Workflow Section Component - Editorial Modernism with bronze step numbers
 const WorkflowSection = memo(function WorkflowSection() {
   return (
-    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="workflow">
+    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10 border-t border-border`} id="workflow">
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
           <div className="text-center mb-16 sm:mb-20">
@@ -90,32 +90,29 @@ const WorkflowSection = memo(function WorkflowSection() {
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
           {WORKFLOW_STEPS.map((item, index) => {
             const Icon = item.icon;
             return (
-              <AnimatedSection key={item.step} delay={index * 150} direction="up">
-                <Link href={item.href} className="block h-full">
-                  <Card
-                    variant="subtle"
-                    hover
-                    className="p-6 text-center h-full flex flex-col cursor-pointer group transition-all duration-300 hover:scale-105"
-                  >
-                    <div className="w-12 h-12 rounded-full bg-foreground text-background flex items-center justify-center mx-auto mb-4 font-bold text-lg transition-transform group-hover:scale-110">
-                      <Icon className="w-6 h-6" aria-hidden="true" />
+              <AnimatedSection key={item.step} delay={index * 100} direction="up">
+                <Link href={item.href} className="block h-full group">
+                  <div className="text-center h-full flex flex-col">
+                    {/* Bronze step number - Editorial Modernism style */}
+                    <div className="font-serif text-6xl lg:text-7xl font-bold text-accent mb-4">
+                      0{item.step}
                     </div>
-                    <h3 className="text-lg font-semibold mb-2 text-foreground">
+                    <h3 className="font-sans text-lg font-medium uppercase tracking-wide mb-3 text-foreground group-hover:text-accent transition-colors">
                       {item.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground flex-grow mb-3">
+                    <p className="text-sm text-muted-foreground leading-relaxed flex-grow mb-4">
                       {item.desc}
                     </p>
-                    <div className="mt-auto pt-3 border-t border-border">
-                      <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+                    <div className="mt-auto">
+                      <span className="text-xs font-medium text-muted-foreground group-hover:text-accent transition-colors uppercase tracking-wide">
                         {item.action} →
                       </span>
                     </div>
-                  </Card>
+                  </div>
                 </Link>
               </AnimatedSection>
             );
@@ -126,33 +123,35 @@ const WorkflowSection = memo(function WorkflowSection() {
   );
 });
 
-// Features Section Component
+// Features Section Component - Editorial Modernism
 const FeaturesSection = memo(function FeaturesSection() {
   return (
     <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="features">
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
           <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-foreground">
+            <h2 className="font-serif text-5xl sm:text-6xl md:text-7xl font-bold mb-6 text-foreground">
               Alles was du brauchst
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <div className="w-24 h-1 bg-accent mx-auto mb-6" />
+            <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto">
               Eine Plattform, die den gesamten Prozess nahtlos verbindet
             </p>
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {FEATURES.map((feature, index) => {
             const Icon = feature.icon;
             return (
               <AnimatedSection key={feature.title} delay={index * 100} direction="up">
-                <Card hover variant="subtle" className="p-8 h-full focus-within:ring-2 focus-within:ring-black/20 dark:focus-within:ring-white/20">
+                <Card hover variant="subtle" className="p-8 h-full">
                   <div className="flex flex-col h-full">
-                    <div className="w-14 h-14 rounded-2xl bg-foreground/5 flex items-center justify-center mb-6 transition-colors group-hover:bg-foreground/10">
-                      <Icon className="h-7 w-7 text-foreground" aria-hidden="true" />
+                    {/* Square icon container - Editorial Modernism */}
+                    <div className="w-14 h-14 rounded-[6px] bg-secondary flex items-center justify-center mb-6">
+                      <Icon className="h-7 w-7 text-accent" aria-hidden="true" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-3 text-foreground">
+                    <h3 className="font-serif text-xl font-semibold mb-3 text-foreground">
                       {feature.title}
                     </h3>
                     <p className="text-muted-foreground leading-relaxed">
@@ -169,24 +168,25 @@ const FeaturesSection = memo(function FeaturesSection() {
   );
 });
 
-// Problem Section Component
+// Problem Section Component - Editorial Modernism
 const ProblemSection = memo(function ProblemSection() {
   return (
     <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="problem">
       <div className="container mx-auto max-w-4xl">
         <AnimatedSection direction="up">
-          <Card variant="default" className="p-10 sm:p-12">
+          <Card variant="accent" className="p-10 sm:p-12">
             <div className="space-y-8">
               <div>
-                <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-foreground">
+                <h2 className="font-serif text-5xl sm:text-6xl font-bold mb-4 text-foreground">
                   Das Problem
                 </h2>
-                <p className="text-xl text-muted-foreground leading-relaxed">
+                <div className="w-24 h-1 bg-accent mb-6" />
+                <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed">
                   Marketing-Agenturen und Content-Teams kämpfen damit, aus den Video- und Audio-Bibliotheken ihrer Kunden schnell neues, passendes Textmaterial zu erstellen.
                 </p>
               </div>
               <div className="space-y-4">
-                <p className="text-lg text-muted-foreground leading-relaxed">
+                <p className="text-base lg:text-lg text-muted-foreground leading-relaxed">
                   Kundeninhalte sind unstrukturiert verteilt und kaum durchsuchbar. Aktuelle Tools fokussieren entweder nur auf Transkription oder reine Textgenerierung und verbinden Upload, Strukturierung und Dialog mit der KI kaum nahtlos. Dadurch verlieren Agenturen Zeit, Content-Output und skalierbare Margen.
                 </p>
                 <div className="flex flex-wrap gap-3 pt-4">
@@ -194,7 +194,7 @@ const ProblemSection = memo(function ProblemSection() {
                     <Badge
                       key={audience}
                       variant="secondary"
-                      className="text-sm px-4 py-2 bg-black/5 dark:bg-white/5 text-muted-foreground border-0"
+                      className="text-sm px-4 py-2"
                     >
                       {audience}
                     </Badge>
@@ -254,7 +254,7 @@ const SolutionSection = memo(function SolutionSection() {
   );
 });
 
-// Benefits Section Component
+// Benefits Section Component - Editorial Modernism
 const BenefitsSection = memo(function BenefitsSection() {
   const benefits = useMemo(() => [
     {
@@ -275,7 +275,7 @@ const BenefitsSection = memo(function BenefitsSection() {
   ], []);
 
   return (
-    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`}>
+    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10 border-t border-border`}>
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
           <div className="text-center mb-16 sm:mb-20">
@@ -294,12 +294,13 @@ const BenefitsSection = memo(function BenefitsSection() {
             const Icon = benefit.icon;
             return (
               <AnimatedSection key={benefit.title} delay={index * 100} direction="up">
-                <Card variant="default" className="p-8 h-full">
-                  <Icon className="h-10 w-10 text-accent mb-4" aria-hidden="true" />
-                  <h3 className="font-serif text-2xl font-semibold mb-3 text-foreground">
+                <Card variant="default" className="p-8 lg:p-10 h-full">
+                  {/* Bronze icon - Editorial Modernism */}
+                  <Icon className="h-10 w-10 text-accent mb-6" aria-hidden="true" />
+                  <h3 className="font-serif text-2xl lg:text-3xl font-semibold mb-4 text-foreground">
                     {benefit.title}
                   </h3>
-                  <p className="text-muted-foreground text-base leading-relaxed">
+                  <p className="text-muted-foreground text-base lg:text-lg leading-relaxed">
                     {benefit.description}
                   </p>
                 </Card>
@@ -312,30 +313,32 @@ const BenefitsSection = memo(function BenefitsSection() {
   );
 });
 
-// Demo Section Component
+// Demo Section Component - Editorial Modernism style
 const DemoSection = memo(function DemoSection() {
   return (
-    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="demo">
+    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10 border-t border-border`} id="demo">
       <div className="container mx-auto max-w-4xl">
         <AnimatedSection direction="up">
           <Card variant="default" className="p-10 sm:p-12">
             <div className="text-center space-y-10">
               <div className="space-y-6">
-                <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground">
+                <h2 className="font-serif text-5xl sm:text-6xl md:text-7xl font-bold text-foreground">
                   Probiere es aus
                 </h2>
-                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                <div className="w-24 h-1 bg-accent mx-auto" />
+                <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto">
                   Erlebe den Text Generator in Aktion. Generiere verschiedene Content-Formate aus einem Beispiel-Transkript.
                 </p>
               </div>
+              {/* Bronze CTA - Editorial Modernism, NO scale, NO rounded-full */}
               <Button
                 size="lg"
-                className="group bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90 transition-all duration-300 hover:scale-105 rounded-full px-8 py-6 text-base font-medium focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20 focus:ring-offset-2"
+                className="group min-h-14 px-10"
                 asChild
               >
                 <Link href="/text-generator">
                   Zum Text Generator
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
             </div>

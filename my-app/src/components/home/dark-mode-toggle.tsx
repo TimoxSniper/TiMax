@@ -70,18 +70,18 @@ export function DarkModeToggle({ variant = "fixed", className }: DarkModeToggleP
     );
   }
 
-  // Fixed variant (für Homepage)
+  // Fixed variant (für Homepage) - Editorial Modernism
   return (
     <button
       onClick={toggleDarkMode}
       className={cn(
-        "fixed top-4 right-4 sm:top-6 sm:right-6 z-50 p-3 rounded-full bg-card/80 border border-border/50 backdrop-blur-sm hover:bg-secondary hover:shadow-md transition-all duration-300 shadow-lg focus:ring-2 focus:ring-[rgb(var(--accent-rgb)_/_0.2)]",
+        "fixed top-4 right-4 sm:top-6 sm:right-6 z-50 p-3 rounded-[6px] bg-card border border-border shadow-editorial-sm hover:shadow-editorial-md transition-all duration-300 focus:ring-2 focus:ring-accent focus:ring-offset-2",
         className
       )}
       aria-label={isDark ? "In den hellen Modus wechseln" : "In den dunklen Modus wechseln"}
     >
       {isDark ? (
-        <Sun className="w-5 h-5 text-foreground" aria-hidden="true" />
+        <Sun className="w-5 h-5 text-accent" aria-hidden="true" />
       ) : (
         <Moon className="w-5 h-5 text-foreground" aria-hidden="true" />
       )}

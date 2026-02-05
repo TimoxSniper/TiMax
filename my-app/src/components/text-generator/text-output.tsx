@@ -80,7 +80,7 @@ export function TextOutput({ generatedText, format, onCopy, isLoading = false, e
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center size-8 rounded-lg bg-primary/10 text-primary">
+              <div className="flex items-center justify-center size-8 rounded-[4px] bg-secondary text-accent">
                 <Sparkles className="size-4" aria-hidden="true" />
               </div>
               <CardTitle className="text-lg sm:text-xl">
@@ -175,7 +175,7 @@ export function TextOutput({ generatedText, format, onCopy, isLoading = false, e
           <Button 
             onClick={handleCopy}
             disabled={copied || isLoading}
-            className="w-full transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full"
             variant={copied ? "secondary" : "default"}
             size="lg"
             aria-label={copied ? "Text wurde kopiert" : "Text in Zwischenablage kopieren"}

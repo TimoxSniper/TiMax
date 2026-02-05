@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card } from "@/components/magic-ui/glass-card";
 import { AnimatedSection } from "@/components/magic-ui/animated-section";
 import { useToast } from "@/components/ui/toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 import { logger } from "@/lib/logger";
 
 // Konstanten
@@ -29,9 +28,6 @@ export function EmailSignup() {
 
     try {
       // TODO (Phase 2): Backend-Integration implementieren
-      // - Email-API-Route erstellen (/api/email/subscribe)
-      // - Email-Service integrieren (z.B. Resend, SendGrid)
-      // - Email in Datenbank speichern (Supabase)
       await new Promise((resolve) => setTimeout(resolve, EMAIL_SUBMIT_DELAY));
       
       showToast("Vielen Dank für dein Interesse! Die Anmeldung ist aktuell noch in Entwicklung.", "success");
@@ -47,48 +43,60 @@ export function EmailSignup() {
   };
 
   return (
-    <section className="relative px-4 py-24 sm:px-6 lg:px-8 z-10" id="cta">
+    <section className="relative px-4 py-20 sm:py-24 lg:py-32 z-10 border-t border-border" id="cta">
       <div className="container mx-auto max-w-2xl">
         <AnimatedSection direction="up">
-          <Card variant="default" className="p-10 sm:p-12">
+          <Card variant="default" className="p-10 sm:p-12 lg:p-16">
             <div className="space-y-8 text-center">
               <div>
-                <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-foreground">
+                <h2 className="font-serif text-5xl sm:text-6xl font-bold mb-4 text-foreground">
                   Bereit loszulegen?
                 </h2>
-                <p className="text-xl text-muted-foreground">
+                <div className="w-24 h-1 bg-accent mx-auto mb-6" />
+                <p className="text-lg text-muted-foreground">
                   Melde dich an und sei einer der Ersten, die Zugang erhalten.
                 </p>
               </div>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label htmlFor="email" className="sr-only">
+              
+              {/* Editorial Modernism Form */}
+              <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto">
+                <div className="space-y-2">
+                  <label 
+                    htmlFor="email" 
+                    className="block text-xs font-medium uppercase tracking-widest text-muted-foreground text-left"
+                  >
                     E-Mail-Adresse
                   </label>
-                  <Input
+                  {/* Bottom-border only input - Editorial Modernism */}
+                  <input
                     id="email"
                     type="email"
                     placeholder="deine@email.de"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full bg-card border-border focus:border-primary rounded-lg px-6 py-4 text-base transition-all shadow-sm focus:ring-2 focus:ring-primary/20"
+                    className="w-full h-12 bg-transparent border-0 border-b-2 border-border px-0 text-base transition-all duration-300 outline-none placeholder:text-muted-foreground/50 focus:border-accent"
                     aria-label="E-Mail-Adresse für Anmeldung"
                   />
                 </div>
+                
+                {/* Bronze submit button - Editorial Modernism */}
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 rounded-lg px-8 py-6 text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-primary/20" 
+                  className="w-full min-h-14 group"
                   size="lg"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                       Wird gesendet...
                     </>
                   ) : (
-                    "Jetzt anmelden"
+                    <>
+                      Jetzt anmelden
+                      <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                    </>
                   )}
                 </Button>
               </form>
@@ -99,4 +107,3 @@ export function EmailSignup() {
     </section>
   );
 }
-

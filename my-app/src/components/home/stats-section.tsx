@@ -1,18 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { GlassCard } from "@/components/magic-ui/glass-card";
+import { useEffect, useState, memo } from "react";
 import { AnimatedSection } from "@/components/magic-ui/animated-section";
 
-// Vereinfachte Konstanten
-const ANIMATION_DURATION = 1500; // Reduziert von 3000ms
-const ANIMATION_STEPS = 50; // Reduziert von 100
+// Animation settings
+const ANIMATION_DURATION = 1500;
+const ANIMATION_STEPS = 50;
 
 interface StatsSectionProps {
   onVisible?: () => void;
 }
 
-export function StatsSection({ onVisible }: StatsSectionProps) {
+export const StatsSection = memo(function StatsSection({ onVisible }: StatsSectionProps) {
   const [statsVisible, setStatsVisible] = useState(false);
   const [countedStats, setCountedStats] = useState({ speed: 0, seamless: 0, scalable: 0, workflow: 0 });
 
@@ -40,7 +39,6 @@ export function StatsSection({ onVisible }: StatsSectionProps) {
   useEffect(() => {
     if (!statsVisible) return;
 
-    // Vereinfachte Animation - keine Exponential-Funktionen mehr
     const interval = ANIMATION_DURATION / ANIMATION_STEPS;
     let currentStep = 0;
     
@@ -48,7 +46,6 @@ export function StatsSection({ onVisible }: StatsSectionProps) {
       currentStep++;
       const progress = Math.min(currentStep / ANIMATION_STEPS, 1);
 
-      // Einfache lineare/quadratische Interpolation
       setCountedStats({
         speed: Math.floor(10 * progress),
         seamless: Math.floor(100 * progress),
@@ -66,39 +63,37 @@ export function StatsSection({ onVisible }: StatsSectionProps) {
     return () => clearInterval(timer);
   }, [statsVisible]);
 
+  const stats = [
+    { value: `${countedStats.speed}x`, label: "Schneller" },
+    { value: `${countedStats.seamless}%`, label: "Nahtlos" },
+    { value: countedStats.scalable === Infinity ? "∞" : countedStats.scalable.toLocaleString('de-DE'), label: "Skalierbar" },
+    { value: `${countedStats.workflow}`, label: "Workflow" },
+  ];
+
   return (
-    <section id="stats-section" className="relative px-4 py-16 sm:px-6 lg:px-8 z-10">
+    <section id="stats-section" className="relative px-4 py-20 sm:py-24 lg:py-32 z-10 border-t border-b border-border">
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <GlassCard variant="subtle" className="p-6 text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
-                {countedStats.speed}x
+          {/* Horizontal stats layout with vertical dividers */}
+          <div className="flex flex-col md:flex-row items-center justify-center md:divide-x divide-border">
+            {stats.map((stat, index) => (
+              <div 
+                key={stat.label}
+                className="flex flex-col items-center text-center px-8 lg:px-16 py-6 md:py-0"
+              >
+                {/* Large bronze number - Editorial Modernism style */}
+                <div className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold text-accent leading-none mb-3">
+                  {stat.value}
+                </div>
+                {/* Small uppercase label */}
+                <div className="text-xs sm:text-sm font-medium uppercase tracking-widest text-muted-foreground">
+                  {stat.label}
+                </div>
               </div>
-              <div className="text-sm text-muted-foreground">Schneller</div>
-            </GlassCard>
-            <GlassCard variant="subtle" className="p-6 text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
-                {countedStats.seamless}%
-              </div>
-              <div className="text-sm text-muted-foreground">Nahtlos</div>
-            </GlassCard>
-            <GlassCard variant="subtle" className="p-6 text-center">
-              <div className="text-3xl sm:text-4xl font-bold mb-2 text-foreground transition-all duration-1000 ease-out">
-                {countedStats.scalable === Infinity ? "∞" : countedStats.scalable.toLocaleString('de-DE')}
-              </div>
-              <div className="text-sm text-muted-foreground">Skalierbar</div>
-            </GlassCard>
-            <GlassCard variant="subtle" className="p-6 text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
-                {countedStats.workflow}
-              </div>
-              <div className="text-sm text-muted-foreground">Workflow</div>
-            </GlassCard>
+            ))}
           </div>
         </AnimatedSection>
       </div>
     </section>
   );
-}
-
+});

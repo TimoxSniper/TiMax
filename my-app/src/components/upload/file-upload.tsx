@@ -198,14 +198,14 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${isDragging
-              ? "border-primary bg-primary/5"
-              : "border-muted-foreground/25"
+          className={`border-2 border-dashed rounded-[6px] p-8 text-center transition-all duration-300 ${isDragging
+              ? "border-accent bg-accent/5"
+              : "border-border hover:border-accent/50"
             }`}
         >
           {!file ? (
             <>
-              <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+              <Upload className="w-12 h-12 mx-auto mb-4 text-accent" />
               <p className="text-sm font-medium mb-2">
                 Datei hier ablegen oder klicken zum Auswählen
               </p>

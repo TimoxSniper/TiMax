@@ -7,25 +7,30 @@ import { memo } from "react";
 
 export const DemoVideoSection = memo(function DemoVideoSection() {
   return (
-    <section className="relative px-4 py-24 sm:px-6 lg:px-8 z-10">
+    <section className="relative px-4 py-20 sm:py-24 lg:py-32 z-10">
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-foreground">
+          <div className="text-center mb-16">
+            <h2 className="font-serif text-5xl sm:text-6xl md:text-7xl font-bold mb-6 text-foreground">
               Sieh es in Aktion
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <div className="w-24 h-1 bg-accent mx-auto mb-6" />
+            <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto">
               Demo-Video - Coming Soon
             </p>
           </div>
         </AnimatedSection>
 
         <AnimatedSection delay={200} direction="up">
-          <Card variant="default" className="p-4 sm:p-6 overflow-hidden">
-            <div className="relative aspect-video bg-gradient-to-br from-black/5 via-black/10 to-black/5 dark:from-white/5 dark:via-white/10 dark:to-white/5 rounded-2xl flex items-center justify-center">
+          <Card variant="default" className="p-6 sm:p-8 overflow-hidden">
+            {/* Clean video container - Editorial Modernism, no gradient */}
+            <div className="relative aspect-video bg-secondary rounded-[6px] flex items-center justify-center border border-border">
               <div className="text-center space-y-4">
-                <Play className="w-16 h-16 mx-auto text-black/40 dark:text-white/40" aria-hidden="true" />
-                <p className="text-muted-foreground text-sm">
+                {/* Bronze play button - Editorial Modernism */}
+                <div className="w-20 h-20 rounded-[6px] bg-accent flex items-center justify-center mx-auto shadow-editorial-md transition-all duration-300 hover:-translate-y-1 hover:shadow-editorial-lg cursor-pointer">
+                  <Play className="w-10 h-10 text-accent-foreground ml-1" aria-hidden="true" />
+                </div>
+                <p className="text-sm uppercase tracking-widest text-muted-foreground">
                   Demo-Video kommt bald
                 </p>
               </div>
@@ -36,4 +41,3 @@ export const DemoVideoSection = memo(function DemoVideoSection() {
     </section>
   );
 });
-

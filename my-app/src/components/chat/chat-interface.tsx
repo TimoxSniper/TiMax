@@ -81,23 +81,24 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center px-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-                <Sparkles className="w-8 h-8 text-primary" />
+              {/* Square icon container - Editorial Modernism */}
+              <div className="w-16 h-16 rounded-[6px] bg-secondary flex items-center justify-center mb-6">
+                <Sparkles className="w-8 h-8 text-accent" />
               </div>
-              <h2 className="text-2xl font-bold mb-2 text-foreground">{CHAT_UI_TEXTS.WELCOME_TITLE}</h2>
+              <h2 className="font-serif text-2xl font-bold mb-2 text-foreground">{CHAT_UI_TEXTS.WELCOME_TITLE}</h2>
               <p className="text-muted-foreground mb-8 max-w-sm">
                 {CHAT_UI_TEXTS.WELCOME_SUBTITLE}
               </p>
 
               <div className="w-full max-w-md grid gap-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-1">
                   {CHAT_UI_TEXTS.EXAMPLE_REQUESTS_TITLE}
                 </p>
                 {CHAT_UI_TEXTS.EXAMPLE_REQUESTS.map((req, index) => (
                   <button
                     key={index}
                     onClick={() => handleSendMessage(req.replace(/^[•\s"]+|["]+$/g, ""))}
-                    className="text-sm text-left px-4 py-3 bg-muted/50 hover:bg-muted border rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    className="text-sm text-left px-4 py-3 bg-secondary hover:bg-secondary/80 border border-border rounded-[6px] transition-all duration-300 hover:-translate-y-[2px] hover:shadow-editorial-sm"
                   >
                     {req}
                   </button>

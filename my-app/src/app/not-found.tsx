@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 export default function NotFound() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
-  const [messageIndex, setMessageIndex] = useState(0);
 
   // Track mouse for parallax effect
   useEffect(() => {
@@ -22,30 +21,39 @@ export default function NotFound() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Witty German messages that rotate
+  // Witty messages that rotate
   const funnyMessages = [
-    "Diese Seite hat wohl ihren Karriereplan geändert.",
+    "Diese Seite hat wohl ihren Karriereplan geaendert.",
     "404: Die Seite ist auf Kaffeepause.",
-    "Ups! Diese URL hat gekündigt.",
+    "Ups! Diese URL hat gekuendigt.",
     "Die Seite wurde zu einem besseren Angebot weitergezogen.",
     "Hier war mal eine Seite... bevor es cool war.",
   ];
+
+  const [messageIndex, setMessageIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setMessageIndex((prev) => (prev + 1) % funnyMessages.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [funnyMessages.length]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 overflow-hidden relative">
       {/* Animated background elements */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+      <div className="absolute inset-0 opacity-[0.03]">
         <div
-          className="absolute top-1/4 left-1/4 w-96 h-96 border-4 border-accent animate-pulse"
+          className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full border-4 border-accent animate-pulse"
           style={{
             transform: `translate(${mousePos.x}px, ${mousePos.y}px)`,
+            transition: "transform 0.3s ease-out",
+          }}
+        />
+        <div
+          className="absolute bottom-1/4 right-1/4 w-64 h-64 border-4 border-accent rotate-45"
+          style={{
+            transform: `translate(${-mousePos.x}px, ${-mousePos.y}px) rotate(45deg)`,
             transition: "transform 0.3s ease-out",
           }}
         />
@@ -59,7 +67,7 @@ export default function NotFound() {
           onMouseLeave={() => setIsHovering(false)}
         >
           <h1
-            className="font-serif text-8xl lg:text-9xl font-bold text-accent leading-none tracking-tighter select-none cursor-pointer transition-all duration-500"
+            className="font-serif text-[180px] lg:text-[240px] font-bold text-accent leading-none tracking-tighter select-none cursor-pointer transition-all duration-500"
             style={{
               transform: isHovering
                 ? `rotate(-5deg) scale(1.05) translate(${mousePos.x / 2}px, ${mousePos.y / 2}px)`
@@ -71,7 +79,7 @@ export default function NotFound() {
           </h1>
           {/* Animated underline */}
           <div
-            className="h-1 bg-accent mx-auto transition-all duration-700 ease-out"
+            className="h-[3px] bg-accent mx-auto transition-all duration-700 ease-out"
             style={{
               width: isHovering ? "200px" : "128px",
             }}
@@ -88,7 +96,7 @@ export default function NotFound() {
 
         {/* Rotating Funny Messages */}
         <div className="space-y-4 min-h-[160px]">
-          <h2 className="font-serif text-4xl lg:text-5xl font-semibold text-foreground">
+          <h2 className="font-serif text-3xl lg:text-4xl font-semibold">
             Seite nicht gefunden
           </h2>
           <p
@@ -98,13 +106,17 @@ export default function NotFound() {
             {funnyMessages[messageIndex]}
           </p>
           <p className="font-sans text-sm text-muted-foreground italic">
-            Aber keine Sorge, wir helfen Ihnen zurück auf den richtigen Weg.
+            Aber keine Sorge, wir helfen Ihnen zurueck auf den richtigen Weg.
           </p>
         </div>
 
         {/* Actions with hover effects */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
-          <Button asChild size="lg" className="min-w-[200px] group">
+          <Button
+            asChild
+            size="lg"
+            className="min-w-[200px] min-h-14 group"
+          >
             <Link href="/">
               <Home className="w-5 h-5 mr-2 group-hover:animate-pulse" />
               Zur Startseite
@@ -114,19 +126,18 @@ export default function NotFound() {
             asChild
             variant="secondary"
             size="lg"
-            className="min-w-[200px] group"
-            onClick={() => window.history.back()}
+            className="min-w-[200px] min-h-14 group"
           >
-            <button>
+            <Link href="javascript:history.back()">
               <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
-              Zurück
-            </button>
+              Zurueck
+            </Link>
           </Button>
         </div>
 
         {/* Subtle animated hint */}
         <p className="text-xs text-muted-foreground animate-pulse font-mono">
-          Tipp: Bewege deine Maus über die "404" 🎨
+          Tipp: Bewege deine Maus ueber die &quot;404&quot;
         </p>
       </div>
     </div>

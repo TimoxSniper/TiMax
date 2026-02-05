@@ -18,7 +18,7 @@ export function TranscriptViewer({ transcript, wordCount }: TranscriptViewerProp
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center size-8 rounded-lg bg-primary/10 text-primary">
+              <div className="flex items-center justify-center size-8 rounded-[4px] bg-secondary text-accent">
                 <FileText className="size-4" aria-hidden="true" />
               </div>
               <CardTitle className="text-lg sm:text-xl">Original-Transkript</CardTitle>

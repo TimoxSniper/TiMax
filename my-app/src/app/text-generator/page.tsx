@@ -168,50 +168,51 @@ export default function TextGeneratorPage() {
           </div>
         </div>
 
-        {/* Info Section */}
-        <Separator className="my-12 lg:my-16" />
-        
+        {/* Info Section - Editorial Modernism */}
         <section 
-          className="max-w-4xl mx-auto text-center space-y-6 sm:space-y-8"
+          className="mt-24 lg:mt-32 pt-16 border-t border-border"
           aria-labelledby="how-it-works-heading"
         >
-          <div className="space-y-2">
+          <div className="text-center mb-16">
             <h2 
               id="how-it-works-heading" 
-              className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight"
+              className="font-serif text-4xl lg:text-5xl font-semibold mb-4"
             >
-              Wie funktioniert der Text Generator?
+              Wie funktioniert es?
             </h2>
-            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
-              In drei einfachen Schritten zum perfekten Content für deine Social-Media-Kanäle
+            <div className="w-24 h-1 bg-accent mx-auto mb-6" />
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              In drei einfachen Schritten zum perfekten Content
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-left sm:text-center">
-            <div className="space-y-3 p-4 sm:p-6 rounded-xl bg-muted/30 transition-all duration-200 hover:bg-muted/50 hover:shadow-md">
-              <div className="size-12 sm:size-14 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mx-auto sm:mx-auto mb-3 transition-transform hover:scale-110">
-                <span className="text-primary font-bold text-lg sm:text-xl" aria-label="Schritt 1">1</span>
-              </div>
-              <p className="font-semibold text-foreground text-sm sm:text-base">Datei hochladen</p>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Laden Sie eine Audio- oder Videodatei hoch. Das Transkript wird automatisch erstellt und angezeigt
+          
+          {/* Editorial Modernism: Bronze numbers, no gradient circles */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+            <div className="text-center space-y-4">
+              <div className="text-accent font-serif text-6xl lg:text-7xl font-bold">01</div>
+              <h3 className="font-sans text-lg font-medium uppercase tracking-wide">
+                Datei hochladen
+              </h3>
+              <p className="font-sans text-muted-foreground leading-relaxed">
+                Laden Sie eine Audio- oder Videodatei hoch. Das Transkript wird automatisch erstellt und angezeigt.
               </p>
             </div>
-            <div className="space-y-3 p-4 sm:p-6 rounded-xl bg-muted/30 transition-all duration-200 hover:bg-muted/50 hover:shadow-md">
-              <div className="size-12 sm:size-14 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mx-auto sm:mx-auto mb-3 transition-transform hover:scale-110">
-                <span className="text-primary font-bold text-lg sm:text-xl" aria-label="Schritt 2">2</span>
-              </div>
-              <p className="font-semibold text-foreground text-sm sm:text-base">Format wählen</p>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Wähle aus 4 verschiedenen Content-Formaten für deine Zielplattform
+            <div className="text-center space-y-4">
+              <div className="text-accent font-serif text-6xl lg:text-7xl font-bold">02</div>
+              <h3 className="font-sans text-lg font-medium uppercase tracking-wide">
+                Format wählen
+              </h3>
+              <p className="font-sans text-muted-foreground leading-relaxed">
+                Wähle aus 4 verschiedenen Content-Formaten für deine Zielplattform.
               </p>
             </div>
-            <div className="space-y-3 p-4 sm:p-6 rounded-xl bg-muted/30 transition-all duration-200 hover:bg-muted/50 hover:shadow-md">
-              <div className="size-12 sm:size-14 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mx-auto sm:mx-auto mb-3 transition-transform hover:scale-110">
-                <span className="text-primary font-bold text-lg sm:text-xl" aria-label="Schritt 3">3</span>
-              </div>
-              <p className="font-semibold text-foreground text-sm sm:text-base">Text kopieren</p>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Generierter Text wird sofort angezeigt und kann mit einem Klick kopiert werden
+            <div className="text-center space-y-4">
+              <div className="text-accent font-serif text-6xl lg:text-7xl font-bold">03</div>
+              <h3 className="font-sans text-lg font-medium uppercase tracking-wide">
+                Text kopieren
+              </h3>
+              <p className="font-sans text-muted-foreground leading-relaxed">
+                Generierter Text wird sofort angezeigt und kann mit einem Klick kopiert werden.
               </p>
             </div>
           </div>

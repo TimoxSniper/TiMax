@@ -16,6 +16,7 @@ export default function Error({
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
+    // Log error to monitoring service (Sentry in production)
     console.error(error);
 
     // Glitch effect on mount
@@ -26,12 +27,12 @@ export default function Error({
 
   // Funny server error messages
   const funnyMessages = [
-    "Unser Server braucht gerade eine Kaffeepause ☕",
+    "Unser Server braucht gerade eine Kaffeepause",
     "Die Bits sind durcheinander geraten. Sortieren sie gerade...",
-    "Error 500: Der Code hat Existenzängste.",
+    "Error 500: Der Code hat Existenzaengste.",
     "Unsere KI hat beschlossen, kreativ zu sein. Zu kreativ.",
-    "Server-Hamster ist aus dem Rad gefallen 🐹",
-    "Die Serverräume sind zu heiß. Ventilatoren unterwegs.",
+    "Server-Hamster ist aus dem Rad gefallen",
+    "Die Serverraeume sind zu heiss. Ventilatoren unterwegs.",
   ];
 
   const [message, setMessage] = useState(funnyMessages[0]);
@@ -58,8 +59,8 @@ export default function Error({
             key={i}
             className="absolute text-destructive animate-ping"
             style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
+              top: `${20 + i * 15}%`,
+              left: `${10 + i * 15}%`,
               width: "48px",
               height: "48px",
               animationDelay: `${i * 0.5}s`,
@@ -73,7 +74,7 @@ export default function Error({
         {/* Glitching Editorial Number */}
         <div className="space-y-4 relative">
           <h1
-            className={`font-serif text-8xl lg:text-9xl font-bold text-destructive leading-none tracking-tighter select-none transition-all duration-100 ${
+            className={`font-serif text-[180px] lg:text-[240px] font-bold text-destructive leading-none tracking-tighter select-none transition-all duration-100 ${
               glitchActive ? "animate-pulse" : ""
             }`}
             style={{
@@ -99,21 +100,18 @@ export default function Error({
           </div>
         </div>
 
-        {/* Animated error icon */}
+        {/* Animated error icons */}
         <div className="flex justify-center gap-4">
           <Zap className="w-12 h-12 text-destructive animate-bounce" />
           <Coffee
-            className="w-12 h-12 text-accent"
-            style={{
-              animation: "bounce 2s infinite",
-              animationDelay: "0.5s",
-            }}
+            className="w-12 h-12 text-accent animate-bounce"
+            style={{ animationDelay: "0.5s" }}
           />
         </div>
 
         {/* Funny Message */}
         <div className="space-y-4 min-h-[200px]">
-          <h2 className="font-serif text-4xl lg:text-5xl font-semibold text-destructive">
+          <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-destructive">
             Houston, wir haben ein Problem
           </h2>
           <p className="font-sans text-xl text-foreground max-w-lg mx-auto leading-relaxed font-medium">
@@ -125,7 +123,7 @@ export default function Error({
           </p>
           {retryCount > 2 && (
             <p className="font-sans text-sm text-muted-foreground italic animate-in fade-in">
-              ({retryCount} Versuche... Sie sind hartnäckig! 💪)
+              ({retryCount} Versuche... Sie sind hartnaeckig!)
             </p>
           )}
           {process.env.NODE_ENV === "development" && error.digest && (
@@ -137,7 +135,7 @@ export default function Error({
                 <summary className="cursor-pointer font-mono text-xs text-muted-foreground hover:text-foreground">
                   Stack Trace (Dev Mode)
                 </summary>
-                <pre className="mt-2 text-[10px] text-left bg-secondary p-4 rounded-[4px] overflow-auto max-h-40 border border-border">
+                <pre className="mt-2 text-[10px] text-left bg-secondary p-4 rounded-[4px] overflow-auto max-h-40">
                   {error.stack}
                 </pre>
               </details>
@@ -147,13 +145,17 @@ export default function Error({
 
         {/* Animated Actions */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
-          <Button onClick={handleRetry} size="lg" className="min-w-[200px] group">
+          <Button
+            onClick={handleRetry}
+            size="lg"
+            className="min-w-[200px] min-h-14 group"
+          >
             <RefreshCw className="w-5 h-5 mr-2 group-hover:rotate-180 transition-transform duration-500" />
             Nochmal versuchen
           </Button>
-          <Button asChild variant="secondary" size="lg" className="min-w-[200px] group">
+          <Button asChild variant="secondary" size="lg" className="min-w-[200px] min-h-14 group">
             <Link href="/">
-              <Home className="w-5 h-5 mr-2 group-hover:translate-y-0 transition-transform" />
+              <Home className="w-5 h-5 mr-2" />
               Zur Startseite
             </Link>
           </Button>
@@ -166,7 +168,6 @@ export default function Error({
               className="h-full bg-accent animate-pulse"
               style={{
                 width: "40%",
-                animation: "pulse 2s ease-in-out infinite",
               }}
             />
           </div>

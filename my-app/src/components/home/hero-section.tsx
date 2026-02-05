@@ -8,20 +8,24 @@ import Link from "next/link";
 
 export function HeroSection() {
   return (
-    <section className="relative flex min-h-[70vh] flex-col items-center justify-center px-4 py-20 sm:px-6 lg:px-8 overflow-hidden z-10">
-      <div className="container mx-auto max-w-4xl relative z-10">
-        <Hero
-          heading="Transformiere deine Videos und Audios in kraftvolle Texte"
-          subheading="Vereine Upload, intelligente Strukturierung und KI-Dialog in einem nahtlosen Workflow – ohne zwischen Tools wechseln zu müssen."
-        />
+    <section className="relative flex min-h-[70vh] flex-col justify-center px-4 py-20 sm:px-6 lg:px-8 overflow-hidden z-10">
+      <div className="container mx-auto max-w-5xl relative z-10">
+        {/* Left-aligned hero - Editorial Modernism asymmetric layout */}
+        <div className="max-w-[65%] lg:max-w-[60%]">
+          <Hero
+            heading="Transformiere deine Videos und Audios in kraftvolle Texte"
+            subheading="Vereine Upload, intelligente Strukturierung und KI-Dialog in einem nahtlosen Workflow – ohne zwischen Tools wechseln zu müssen."
+            align="left"
+          />
+        </div>
         
         <AnimatedSection delay={200} direction="up">
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            {/* Primary CTA */}
+          <div className="mt-10 flex flex-col sm:flex-row items-start gap-4">
+            {/* Primary CTA - Bronze, 56px height, NO scale */}
             <Button
               size="lg"
               variant="default"
-              className="group rounded-xl px-8 py-6 text-base font-medium shadow-lg hover:shadow-xl hover:scale-[1.03] transition-all duration-300"
+              className="group min-h-14 px-8"
               asChild
             >
               <Link href="/text-generator">
@@ -30,11 +34,11 @@ export function HeroSection() {
               </Link>
             </Button>
 
-            {/* Secondary CTA - Outline */}
+            {/* Secondary CTA - Outline, NO scale */}
             <Button
               size="lg"
               variant="outline"
-              className="group border rounded-xl px-8 py-6 text-base font-medium hover:scale-[1.03] hover:border-[rgb(var(--accent-rgb)_/_0.3)] hover:shadow-md transition-all duration-300"
+              className="group min-h-14 px-8"
               asChild
             >
               <Link href="/chat">

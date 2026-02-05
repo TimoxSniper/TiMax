@@ -154,27 +154,30 @@ export function UploadList() {
                 />
             </div>
 
-            <div className="grid gap-3">
+            <div className="grid gap-0 divide-y divide-border">
                 {filteredUploads.map((upload) => (
                     <div
                         key={upload.id}
-                        className="group flex items-center gap-4 p-4 border rounded-xl hover:bg-muted/30 transition-all"
+                        className="group flex items-center gap-4 p-4 transition-all duration-300 hover:bg-secondary/50 border-l-4 border-l-transparent hover:border-l-accent"
                     >
-                        <div className="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center flex-shrink-0">
+                        {/* Square icon container - Editorial Modernism */}
+                        <div className="w-10 h-10 rounded-[4px] bg-secondary flex items-center justify-center flex-shrink-0">
                             {upload.file_type.startsWith("video") ? (
-                                <FileVideo className="w-5 h-5 text-primary" />
+                                <FileVideo className="w-5 h-5 text-accent" />
                             ) : (
-                                <FileAudio className="w-5 h-5 text-primary" />
+                                <FileAudio className="w-5 h-5 text-accent" />
                             )}
                         </div>
 
                         <div className="flex-1 min-w-0">
-                            <h3 className="text-sm font-semibold truncate pr-4">
+                            {/* File name - DM Sans Medium */}
+                            <h3 className="text-base font-medium truncate pr-4 text-foreground">
                                 {upload.file_name}
                             </h3>
-                            <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
+                            {/* Metadata - uppercase, muted */}
+                            <div className="flex items-center gap-3 text-xs uppercase tracking-wide text-muted-foreground mt-1">
                                 <span>{formatFileSize(upload.file_size)}</span>
-                                <span>•</span>
+                                <span>|</span>
                                 <span>{new Date(upload.created_at).toLocaleDateString("de-DE")}</span>
                             </div>
                         </div>
