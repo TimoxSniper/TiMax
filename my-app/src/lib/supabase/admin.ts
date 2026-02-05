@@ -1,27 +1,35 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "./database.types";
 
-export async function createAdminClient() {
-  const cookieStore = await cookies();
+/**
+ * Admin Client mit Service Role Key
+ * WICHTIG: Nur für Server-zu-Server Kommunikation verwenden!
+ * - Bypass RLS (Row Level Security)
+ * - Für n8n Webhooks, Cron Jobs, Admin-Operationen
+ * - NIEMALS im Client verwenden!
+ */
+export function createAdminClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          } catch {
-            // Ignore if called from Server Component
-          }
-        },
-      },
-    }
-  );
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error(
+      "Supabase Admin Client: NEXT_PUBLIC_SUPABASE_URL und SUPABASE_SERVICE_ROLE_KEY sind erforderlich"
+    );
+  }
+
+  return createClient<Database>(supabaseUrl, serviceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
+}
+
+/**
+ * Alias für ältere Imports - Async-Version für Kompatibilität
+ * @deprecated Verwende createAdminClient() direkt
+ */
+export async function getAdminClient() {
+  return createAdminClient();
 }

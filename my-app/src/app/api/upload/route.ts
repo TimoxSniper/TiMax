@@ -153,11 +153,14 @@ async function uploadHandler(request: NextRequest) {
     // logger.log("[Upload API] Sende Request an n8n:", env.N8N_UPLOAD_WEBHOOK_URL);
 
     // Upload zu n8n Form-Webhook
+    // WICHTIG: X-Upload-ID wird gesendet, damit n8n den bestehenden Eintrag aktualisieren kann
     const response = await fetch(env.N8N_UPLOAD_WEBHOOK_URL, {
       method: "POST",
       headers: {
         "X-Request-Type": "upload",
-        "X-User-ID": userId, // WICHTIG: User ID für Multi-User Isolation
+        "X-User-ID": userId,           // User ID für Multi-User Isolation
+        "X-Upload-ID": uploadId,       // Upload ID für Supabase Update
+        "X-File-Name": file.name,      // Original-Dateiname
       },
       body: n8nFormData,
     });
@@ -398,6 +401,7 @@ async function uploadHandler(request: NextRequest) {
       success: true,
       status,
       fileName,
+      uploadId,  // WICHTIG: Frontend kann damit den Status abfragen
       ...(transcript && { transcript }),
     };
 
@@ -405,6 +409,7 @@ async function uploadHandler(request: NextRequest) {
       success: true,
       status,
       fileName,
+      uploadId,
       hasTranscript: !!transcript,
       transcriptLength: transcript?.length || 0,
       transcriptPreview: transcript ? transcript.substring(0, 100) : undefined
@@ -426,6 +431,41 @@ async function uploadHandler(request: NextRequest) {
     // In Development auch in Console loggen
     if (process.env.NODE_ENV === "development") {
       logger.error("Upload API Fehler:", error);
+    }
+
+    // Versuche den Upload-Status auf "failed" zu setzen
+    // (nur wenn wir eine uploadId haben und supabase initialisiert wurde)
+    try {
+      const { userId } = await auth();
+      if (userId) {
+        const supabase = await createClient();
+        const errorMessage = error instanceof Error ? error.message : "Unbekannter Fehler";
+        
+        // Suche nach dem neuesten Upload dieses Users mit Status "processing"
+        const { data: latestUpload } = await supabase
+          .from("uploads")
+          .select("id")
+          .eq("user_id", userId)
+          .eq("status", "processing")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .single();
+
+        if (latestUpload?.id) {
+          await supabase
+            .from("uploads")
+            .update({ 
+              status: "failed", 
+              metadata: { error: errorMessage } 
+            })
+            .eq("id", latestUpload.id);
+          
+          logger.log("[Upload API] Upload als fehlgeschlagen markiert:", latestUpload.id);
+        }
+      }
+    } catch (updateError) {
+      // Ignoriere Fehler beim Status-Update
+      logger.error("[Upload API] Fehler beim Markieren als fehlgeschlagen:", updateError);
     }
 
     return NextResponse.json(

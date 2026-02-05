@@ -5,29 +5,25 @@ import { z } from "zod";
  * Validiert alle benötigten ENV-Vars beim Start der Anwendung
  */
 const envSchema = z.object({
-  // n8n Webhook URLs (erforderlich)
+  // n8n Webhook URLs (erforderlich für API-Routen)
   N8N_CHAT_WEBHOOK_URL: z.string().url().optional(),
   N8N_UPLOAD_WEBHOOK_URL: z.string().url().optional(),
-  N8N_TRANSCRIPTION_WEBHOOK_URL: z.string().url().optional(), // Optional: Separate URL für Transkription
+  N8N_TRANSCRIPTION_WEBHOOK_URL: z.string().url().optional(),
 
   // n8n API (optional, für MCP Server)
   N8N_API_URL: z.string().url().optional().default("http://localhost:5678"),
   N8N_API_KEY: z.string().optional(),
 
-  // NextAuth.js (für Phase 2 - optional für jetzt)
-  NEXTAUTH_SECRET: z.string().min(32).optional(),
-  NEXTAUTH_URL: z.string().url().optional(),
-
-  // Supabase (für Phase 2 - optional für jetzt)
+  // Supabase (erforderlich für Datenbankoperationen)
   NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
 
-  // Sentry (für Phase 1.1 - optional für jetzt)
+  // Sentry (optional - für Error Tracking)
   SENTRY_DSN: z.string().url().optional(),
   NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
 
-  // Analytics (für Phase 1.2 - optional für jetzt)
+  // Analytics (optional)
   NEXT_PUBLIC_PLAUSIBLE_DOMAIN: z.string().optional(),
   NEXT_PUBLIC_GA_ID: z.string().optional(),
 
@@ -61,6 +57,7 @@ export function validateRequiredEnv() {
   // Kritische Variablen für API-Routen
   const errors: string[] = [];
 
+  // n8n Webhook URLs
   if (!env.N8N_CHAT_WEBHOOK_URL) {
     errors.push("N8N_CHAT_WEBHOOK_URL ist erforderlich");
   }
@@ -69,16 +66,56 @@ export function validateRequiredEnv() {
     errors.push("N8N_UPLOAD_WEBHOOK_URL ist erforderlich");
   }
 
+  // Supabase Credentials
+  if (!env.NEXT_PUBLIC_SUPABASE_URL) {
+    errors.push("NEXT_PUBLIC_SUPABASE_URL ist erforderlich");
+  }
+
+  if (!env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    errors.push("NEXT_PUBLIC_SUPABASE_ANON_KEY ist erforderlich");
+  }
+
   if (errors.length > 0) {
     throw new Error(`Fehlende Environment-Variablen: ${errors.join(", ")}`);
   }
 
   return {
+    // n8n
     N8N_CHAT_WEBHOOK_URL: env.N8N_CHAT_WEBHOOK_URL!,
     N8N_UPLOAD_WEBHOOK_URL: env.N8N_UPLOAD_WEBHOOK_URL!,
-    N8N_TRANSCRIPTION_WEBHOOK_URL: env.N8N_TRANSCRIPTION_WEBHOOK_URL || env.N8N_CHAT_WEBHOOK_URL!, // Fallback auf CHAT_WEBHOOK_URL wenn nicht gesetzt (beide verwenden gleiche URL)
+    N8N_TRANSCRIPTION_WEBHOOK_URL: env.N8N_TRANSCRIPTION_WEBHOOK_URL || env.N8N_UPLOAD_WEBHOOK_URL!,
     N8N_API_URL: env.N8N_API_URL || "http://localhost:5678",
     N8N_API_KEY: env.N8N_API_KEY,
+    // Supabase
+    SUPABASE_URL: env.NEXT_PUBLIC_SUPABASE_URL!,
+    SUPABASE_ANON_KEY: env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    SUPABASE_SERVICE_ROLE_KEY: env.SUPABASE_SERVICE_ROLE_KEY,
+  };
+}
+
+/**
+ * Validiert nur Supabase ENV-Vars (für Supabase-Only Operationen)
+ */
+export function validateSupabaseEnv() {
+  const env = process.env;
+  const errors: string[] = [];
+
+  if (!env.NEXT_PUBLIC_SUPABASE_URL) {
+    errors.push("NEXT_PUBLIC_SUPABASE_URL ist erforderlich");
+  }
+
+  if (!env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    errors.push("NEXT_PUBLIC_SUPABASE_ANON_KEY ist erforderlich");
+  }
+
+  if (errors.length > 0) {
+    throw new Error(`Fehlende Supabase-Variablen: ${errors.join(", ")}`);
+  }
+
+  return {
+    url: env.NEXT_PUBLIC_SUPABASE_URL!,
+    anonKey: env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
   };
 }
 
