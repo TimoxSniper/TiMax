@@ -1,0 +1,119 @@
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import * as Sentry from "@sentry/nextjs";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { isAdmin } from "@/lib/auth/admin";
+import { logger } from "@/lib/logger";
+
+interface UserStats {
+  userId: string;
+  chatCount: number;
+  uploadCount: number;
+  lastActivity: string | null;
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: "Nicht authentifiziert" },
+        { status: 401 }
+      );
+    }
+
+    // Admin-Check
+    if (!(await isAdmin())) {
+      return NextResponse.json(
+        { success: false, error: "Keine Admin-Berechtigung" },
+        { status: 403 }
+      );
+    }
+
+    const supabase = createAdminClient();
+    const { searchParams } = new URL(request.url);
+    
+    // Pagination
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "50");
+    const offset = (page - 1) * limit;
+
+    // Alle User-IDs aus Chats und Uploads sammeln
+    const [chatsResult, uploadsResult] = await Promise.all([
+      supabase.from("chats").select("user_id, updated_at"),
+      supabase.from("uploads").select("user_id, updated_at"),
+    ]);
+
+    // Map für User-Statistiken
+    const userStatsMap = new Map<string, UserStats>();
+
+    // Chats verarbeiten
+    chatsResult.data?.forEach(chat => {
+      const existing = userStatsMap.get(chat.user_id);
+      if (existing) {
+        existing.chatCount++;
+        if (chat.updated_at && (!existing.lastActivity || chat.updated_at > existing.lastActivity)) {
+          existing.lastActivity = chat.updated_at;
+        }
+      } else {
+        userStatsMap.set(chat.user_id, {
+          userId: chat.user_id,
+          chatCount: 1,
+          uploadCount: 0,
+          lastActivity: chat.updated_at,
+        });
+      }
+    });
+
+    // Uploads verarbeiten
+    uploadsResult.data?.forEach(upload => {
+      const existing = userStatsMap.get(upload.user_id);
+      if (existing) {
+        existing.uploadCount++;
+        if (upload.updated_at && (!existing.lastActivity || upload.updated_at > existing.lastActivity)) {
+          existing.lastActivity = upload.updated_at;
+        }
+      } else {
+        userStatsMap.set(upload.user_id, {
+          userId: upload.user_id,
+          chatCount: 0,
+          uploadCount: 1,
+          lastActivity: upload.updated_at,
+        });
+      }
+    });
+
+    // In Array umwandeln und sortieren (nach letzter Aktivität)
+    const allUsers = Array.from(userStatsMap.values())
+      .sort((a, b) => {
+        if (!a.lastActivity) return 1;
+        if (!b.lastActivity) return -1;
+        return new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime();
+      });
+
+    const total = allUsers.length;
+    const users = allUsers.slice(offset, offset + limit);
+
+    return NextResponse.json({
+      success: true,
+      users,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    logger.error("[Admin Users API] Fehler:", error);
+    Sentry.captureException(error, {
+      tags: { api_route: "/api/admin/users" },
+    });
+
+    return NextResponse.json(
+      { success: false, error: "Fehler beim Laden der Benutzer" },
+      { status: 500 }
+    );
+  }
+}

@@ -270,3 +270,123 @@
     letter-spacing: 0.05em;
   }
 }
+
+/* =============================================================================
+   MOBILE DEVICE DETECTION (nicht basierend auf Bildschirmgröße!)
+   
+   Diese Styles werden nur auf ECHTEN mobilen Geräten angewendet,
+   basierend auf Pointer- und Hover-Fähigkeiten des Geräts.
+   
+   @media (pointer: coarse) - Touch-Eingabe (keine präzise Maus)
+   @media (hover: none) - Kein echtes Hover (kein Desktop mit Maus)
+   ============================================================================= */
+
+/* Mobile-only: Größere Touch-Targets für bessere Bedienbarkeit */
+@media (pointer: coarse) and (hover: none) {
+  /* Buttons und interaktive Elemente mindestens 44px (Apple HIG) */
+  button,
+  [role="button"],
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Aber nicht bei inline-Text-Links */
+  p a,
+  span a,
+  li a {
+    min-height: auto;
+    min-width: auto;
+  }
+
+  /* Inputs größer für Touch */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important; /* Verhindert iOS Zoom bei Focus */
+    min-height: 48px;
+  }
+
+  /* Bessere Abstände in Listen */
+  .mobile-touch-spacing > * {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
+
+/* Mobile-Device-Only Utility-Klassen (nur echte Mobilgeräte) */
+@media (pointer: coarse) and (hover: none) {
+  .mobile-device\:hidden {
+    display: none !important;
+  }
+  
+  .mobile-device\:block {
+    display: block !important;
+  }
+  
+  .mobile-device\:flex {
+    display: flex !important;
+  }
+  
+  .mobile-device\:p-4 {
+    padding: 1rem !important;
+  }
+  
+  .mobile-device\:text-lg {
+    font-size: 1.125rem !important;
+    line-height: 1.75rem !important;
+  }
+  
+  .mobile-device\:gap-4 {
+    gap: 1rem !important;
+  }
+  
+  .mobile-device\:w-full {
+    width: 100% !important;
+  }
+  
+  .mobile-device\:fixed {
+    position: fixed !important;
+  }
+  
+  .mobile-device\:bottom-0 {
+    bottom: 0 !important;
+  }
+  
+  .mobile-device\:inset-x-0 {
+    left: 0 !important;
+    right: 0 !important;
+  }
+  
+  .mobile-device\:pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 16px) !important;
+  }
+}
+
+/* Desktop-Only Utility-Klassen (Mauszeiger mit Hover) */
+@media (pointer: fine) and (hover: hover) {
+  .desktop-device\:hidden {
+    display: none !important;
+  }
+  
+  .desktop-device\:block {
+    display: block !important;
+  }
+  
+  .desktop-device\:flex {
+    display: flex !important;
+  }
+}
+
+/* Safe Area Insets für Mobile (Notch, Home-Indicator etc.) */
+@supports (padding: env(safe-area-inset-bottom)) {
+  @media (pointer: coarse) and (hover: none) {
+    .mobile-safe-bottom {
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    
+    .mobile-safe-top {
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+  }
+}

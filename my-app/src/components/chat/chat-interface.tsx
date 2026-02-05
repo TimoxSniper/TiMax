@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Loader2, AlertCircle, Sparkles } from "lucide-react";
 import { CHAT_UI_TEXTS } from "@/lib/constants";
 import { useChat, Message } from "@/hooks/useChat";
+import { useMobileDevice } from "@/hooks/useMobileDevice";
 
 import { ChatSidebar } from "./chat-sidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -34,6 +35,7 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
     initialSessionId,
   });
 
+  const isMobileDevice = useMobileDevice();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -58,37 +60,41 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
   }, [messages]);
 
   return (
-    <div ref={chatContainerRef} className="flex flex-col lg:flex-row h-[--height-chat-desktop] sm:h-[--height-chat-mobile] max-h-[800px] w-full gap-4 relative">
-      {/* Mobile Sidebar Trigger (Drawer) */}
-      <div className="lg:hidden absolute top-4 left-4 z-10">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="h-10 w-10">
-              <Menu className="h-5 w-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-72">
-            <ChatSidebar
-              currentChatId={chatId}
-              onSelectChat={(id) => {
-                setChatId(id);
-              }}
-              onCreateNewChat={startNewChat}
-              onRefresh={() => { }}
-            />
-          </SheetContent>
-        </Sheet>
-      </div>
+    <div ref={chatContainerRef} className={`flex ${isMobileDevice ? 'flex-col' : 'flex-row'} h-[--height-chat-desktop] max-h-[800px] w-full gap-4 relative`}>
+      {/* Mobile Sidebar Trigger (Drawer) - nur auf echten mobilen Geräten */}
+      {isMobileDevice && (
+        <div className="absolute top-4 left-4 z-10">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" className="h-11 w-11">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="p-0 w-72 mobile-safe-bottom">
+              <ChatSidebar
+                currentChatId={chatId}
+                onSelectChat={(id) => {
+                  setChatId(id);
+                }}
+                onCreateNewChat={startNewChat}
+                onRefresh={() => { }}
+              />
+            </SheetContent>
+          </Sheet>
+        </div>
+      )}
 
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block w-72 flex-shrink-0 h-full overflow-hidden rounded-xl border bg-card shadow-sm">
-        <ChatSidebar
-          currentChatId={chatId}
-          onSelectChat={setChatId}
-          onCreateNewChat={startNewChat}
-          onRefresh={() => { }}
-        />
-      </div>
+      {/* Desktop Sidebar - nur auf Desktop-Geräten (kein echtes Mobile) */}
+      {!isMobileDevice && (
+        <div className="w-72 flex-shrink-0 h-full overflow-hidden rounded-xl border bg-card shadow-sm">
+          <ChatSidebar
+            currentChatId={chatId}
+            onSelectChat={setChatId}
+            onCreateNewChat={startNewChat}
+            onRefresh={() => { }}
+          />
+        </div>
+      )}
 
       {/* Haupt-Chatbereich */}
       <Card className="flex-1 flex flex-col h-full overflow-hidden relative">

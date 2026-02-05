@@ -29,8 +29,10 @@ const isProtectedRoute = createRouteMatcher([
   "/chat(.*)",
   "/upload(.*)",
   "/uploads(.*)",
+  "/admin(.*)",
   "/api/upload(.*)",
   "/api/chat(.*)",
+  "/api/admin(.*)",
 ]);
 
 // Öffentliche Routen (für alle zugänglich)

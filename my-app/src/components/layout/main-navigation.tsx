@@ -9,6 +9,7 @@ import { Menu, X, Zap, MessageSquare, FileText, Home, LogIn, User, Sparkles, Hel
 import { cn } from "@/lib/utils";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMobileDevice } from "@/hooks/useMobileDevice";
 
 const protectedNavigation = [
   { name: "Home", href: "/", icon: Home },
@@ -29,6 +30,7 @@ export function MainNavigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
+  const isMobileDevice = useMobileDevice();
 
   // Schließe Mobile Menu bei Click außerhalb
   useEffect(() => {
@@ -43,6 +45,13 @@ export function MainNavigation() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [mobileMenuOpen]);
+
+  // Schließe Menü wenn Gerättyp sich ändert (z.B. von Mobile zu Desktop)
+  useEffect(() => {
+    if (!isMobileDevice) {
+      setMobileMenuOpen(false);
+    }
+  }, [isMobileDevice]);
 
   return (
     <header ref={navRef} className="sticky top-0 z-50 w-full border-b border-border bg-background transition-all duration-300">
@@ -60,8 +69,11 @@ export function MainNavigation() {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:gap-1">
+          {/* Desktop Navigation - nur wenn NICHT auf echtem Mobile */}
+          <div className={cn(
+            "items-center gap-1",
+            isMobileDevice ? "hidden" : "flex"
+          )}>
             {/* Landing Page Links nur für nicht angemeldete User */}
             <SignedOut>
               {landingPageNavigation.map((item) => {
@@ -112,10 +124,17 @@ export function MainNavigation() {
           <div className="flex items-center gap-2">
             <DarkModeToggle variant="inline" />
 
-            {/* Auth Buttons */}
+            {/* Auth Buttons - nur auf Desktop (echte Geräte) */}
             <SignedOut>
               <SignInButton mode="modal">
-                <Button variant="outline" size="sm" className="hidden md:flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className={cn(
+                    "gap-2",
+                    isMobileDevice ? "hidden" : "flex"
+                  )}
+                >
                   <LogIn className="h-4 w-4" />
                   Anmelden
                 </Button>
@@ -144,33 +163,34 @@ export function MainNavigation() {
               />
             </SignedIn>
 
-            {/* Mobile Menu Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label={mobileMenuOpen ? "Menü schließen" : "Menü öffnen"}
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen ? (
-                <X className="h-5 w-5" aria-hidden="true" />
-              ) : (
-                <Menu className="h-5 w-5" aria-hidden="true" />
-              )}
-            </Button>
+            {/* Mobile Menu Button - nur auf echten mobilen Geräten */}
+            {isMobileDevice && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label={mobileMenuOpen ? "Menü schließen" : "Menü öffnen"}
+                aria-expanded={mobileMenuOpen}
+              >
+                {mobileMenuOpen ? (
+                  <X className="h-5 w-5" aria-hidden="true" />
+                ) : (
+                  <Menu className="h-5 w-5" aria-hidden="true" />
+                )}
+              </Button>
+            )}
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - nur auf echten mobilen Geräten */}
         <AnimatePresence>
-          {mobileMenuOpen && (
+          {isMobileDevice && mobileMenuOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-              className="md:hidden border-t border-border/50 overflow-hidden"
+              className="border-t border-border/50 overflow-hidden"
             >
               <div className="flex flex-col gap-2 py-4">
                 {/* Landing Page Links nur für nicht angemeldete User */}
