@@ -18,23 +18,23 @@ export function HeroSection() {
         <AnimatedSection delay={200} direction="up">
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             {/* Primary CTA */}
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="default"
-              className="group rounded-xl px-8 py-6 text-base font-medium shadow-lg hover:scale-105 transition-all duration-300"
+              className="group rounded-xl px-8 py-6 text-base font-medium shadow-lg hover:shadow-xl hover:scale-[1.03] transition-all duration-300"
               asChild
             >
               <Link href="/text-generator">
                 Jetzt starten
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </Button>
-            
+
             {/* Secondary CTA - Outline */}
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="outline"
-              className="group border-2 rounded-xl px-8 py-6 text-base font-medium hover:scale-105 transition-all duration-300"
+              className="group border rounded-xl px-8 py-6 text-base font-medium hover:scale-[1.03] hover:border-[rgb(var(--accent-rgb)_/_0.3)] hover:shadow-md transition-all duration-300"
               asChild
             >
               <Link href="/chat">

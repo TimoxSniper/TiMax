@@ -14,7 +14,7 @@ export default function WiderrufPage() {
         <Button
           variant="ghost"
           asChild
-          className="mb-8 text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white"
+          className="mb-8 text-muted-foreground hover:text-black dark:hover:text-white"
         >
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -23,13 +23,13 @@ export default function WiderrufPage() {
         </Button>
 
         <article className="prose prose-lg dark:prose-invert max-w-none">
-          <h1 className="text-4xl font-bold mb-8 text-black dark:text-white">
+          <h1 className="text-4xl font-bold mb-8 text-foreground">
             Widerrufsbelehrung
           </h1>
 
           <section className="space-y-8 text-black/80 dark:text-white/80">
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 Widerrufsrecht
               </h2>
               <p className="mb-4">
@@ -64,7 +64,7 @@ export default function WiderrufPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 Folgen des Widerrufs
               </h2>
               <p className="mb-4">
@@ -73,7 +73,7 @@ export default function WiderrufPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 Ausschluss des Widerrufsrechts
               </h2>
               <p className="mb-4">
@@ -85,7 +85,7 @@ export default function WiderrufPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 Muster-Widerrufsformular
               </h2>
               <div className="bg-black/5 dark:bg-white/5 p-6 rounded-lg mb-4">

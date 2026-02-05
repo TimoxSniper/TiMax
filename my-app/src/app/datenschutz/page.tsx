@@ -14,7 +14,7 @@ export default function DatenschutzPage() {
         <Button
           variant="ghost"
           asChild
-          className="mb-8 text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white"
+          className="mb-8 text-muted-foreground hover:text-black dark:hover:text-white"
         >
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -23,13 +23,13 @@ export default function DatenschutzPage() {
         </Button>
 
         <article className="prose prose-lg dark:prose-invert max-w-none">
-          <h1 className="text-4xl font-bold mb-8 text-black dark:text-white">
+          <h1 className="text-4xl font-bold mb-8 text-foreground">
             Datenschutzerklärung
           </h1>
 
           <section className="space-y-8 text-black/80 dark:text-white/80">
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 1. Verantwortlicher
               </h2>
               <p className="mb-2">
@@ -54,7 +54,7 @@ export default function DatenschutzPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 2. Datenschutzbeauftragter
               </h2>
               <p className="mb-2">
@@ -62,7 +62,7 @@ export default function DatenschutzPage() {
               </p>
               <p>
                 <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
-                  [NAME DES DATENSCHUTZBEAUFTRAGTEN - falls vorhanden (bei >20 Mitarbeitern verpflichtend)]
+                  [NAME DES DATENSCHUTZBEAUFTRAGTEN - falls vorhanden (bei &gt;20 Mitarbeitern verpflichtend)]
                 </span>
                 <br />
                 E-Mail: <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">[datenschutz@firma.de]</span>
@@ -70,11 +70,11 @@ export default function DatenschutzPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 3. Erhebung und Speicherung personenbezogener Daten
               </h2>
               
-              <h3 className="text-xl font-semibold mb-2 mt-4 text-black dark:text-white">
+              <h3 className="text-xl font-semibold mb-2 mt-4 text-foreground">
                 3.1 Beim Besuch der Website
               </h3>
               <p className="mb-4">
@@ -100,7 +100,7 @@ export default function DatenschutzPage() {
                 Die Rechtsgrundlage für die Datenverarbeitung ist Art. 6 Abs. 1 S. 1 lit. f DSGVO. Unser berechtigtes Interesse folgt aus oben aufgelisteten Zwecken zur Datenerhebung.
               </p>
 
-              <h3 className="text-xl font-semibold mb-2 mt-6 text-black dark:text-white">
+              <h3 className="text-xl font-semibold mb-2 mt-6 text-foreground">
                 3.2 Bei Registrierung und Nutzung unseres Dienstes
               </h3>
               <p className="mb-4">
@@ -121,7 +121,7 @@ export default function DatenschutzPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 4. Weitergabe von Daten
               </h2>
               <p className="mb-4">
@@ -147,7 +147,7 @@ export default function DatenschutzPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 5. Speicherdauer
               </h2>
               <p className="mb-4">
@@ -166,7 +166,7 @@ export default function DatenschutzPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 6. Cookies und Tracking
               </h2>
               <p className="mb-4">
@@ -175,7 +175,7 @@ export default function DatenschutzPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 7. Ihre Rechte
               </h2>
               <p className="mb-4">
@@ -199,7 +199,7 @@ export default function DatenschutzPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 8. Automatisierte Entscheidungsfindung
               </h2>
               <p>
@@ -208,7 +208,7 @@ export default function DatenschutzPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 9. Datensicherheit
               </h2>
               <p>

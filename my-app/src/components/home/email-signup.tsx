@@ -53,10 +53,10 @@ export function EmailSignup() {
           <Card variant="default" className="p-10 sm:p-12">
             <div className="space-y-8 text-center">
               <div>
-                <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-black dark:text-white">
+                <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-foreground">
                   Bereit loszulegen?
                 </h2>
-                <p className="text-xl text-black/70 dark:text-white/70">
+                <p className="text-xl text-muted-foreground">
                   Melde dich an und sei einer der Ersten, die Zugang erhalten.
                 </p>
               </div>

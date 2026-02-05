@@ -43,7 +43,7 @@ export function MainNavigation() {
   }, [mobileMenuOpen]);
 
   return (
-    <header ref={navRef} className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header ref={navRef} className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/60 transition-all duration-300">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8" aria-label="Hauptnavigation">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -155,8 +155,8 @@ export function MainNavigation() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="md:hidden border-t overflow-hidden"
+              transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+              className="md:hidden border-t border-border/50 overflow-hidden"
             >
               <div className="flex flex-col gap-2 py-4">
                 {/* Landing Page Links für alle */}

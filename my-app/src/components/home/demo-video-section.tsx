@@ -11,10 +11,10 @@ export const DemoVideoSection = memo(function DemoVideoSection() {
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
           <div className="text-center mb-12">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-black dark:text-white">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-foreground">
               Sieh es in Aktion
             </h2>
-            <p className="text-xl text-black/70 dark:text-white/70 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Demo-Video - Coming Soon
             </p>
           </div>
@@ -25,7 +25,7 @@ export const DemoVideoSection = memo(function DemoVideoSection() {
             <div className="relative aspect-video bg-gradient-to-br from-black/5 via-black/10 to-black/5 dark:from-white/5 dark:via-white/10 dark:to-white/5 rounded-2xl flex items-center justify-center">
               <div className="text-center space-y-4">
                 <Play className="w-16 h-16 mx-auto text-black/40 dark:text-white/40" aria-hidden="true" />
-                <p className="text-black/70 dark:text-white/70 text-sm">
+                <p className="text-muted-foreground text-sm">
                   Demo-Video kommt bald
                 </p>
               </div>

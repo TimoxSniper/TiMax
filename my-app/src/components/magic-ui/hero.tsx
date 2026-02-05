@@ -19,25 +19,28 @@ export function Hero({ heading, subheading, className }: HeroProps) {
   return (
     <div className={cn("relative flex flex-col items-center justify-center space-y-6 text-center", className)}>
       <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl text-foreground">
-        <span 
+        <span
           className={cn(
-            "bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text",
-            "transition-all duration-1000 ease-out"
+            "bg-gradient-to-r from-foreground via-foreground/80 to-[rgb(var(--accent-rgb)_/_0.7)] bg-clip-text",
+            "transition-all duration-1000 ease-out",
+            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
           )}
           style={{
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
-            color: 'inherit', // Fallback falls Gradient nicht funktioniert
+            color: 'inherit',
+            textShadow: '0 0 80px rgb(var(--accent-rgb) / 0.1)',
           }}
         >
           {heading}
         </span>
       </h1>
-      <p 
+      <p
         className={cn(
           "max-w-2xl text-lg text-muted-foreground sm:text-xl md:text-2xl",
-          "transition-all duration-1000 ease-out"
+          "transition-all duration-1000 ease-out delay-150",
+          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
         )}
       >
         {subheading}

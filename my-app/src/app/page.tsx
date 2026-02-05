@@ -132,10 +132,10 @@ const FeaturesSection = memo(function FeaturesSection() {
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
           <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-black dark:text-white">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-foreground">
               Alles was du brauchst
             </h2>
-            <p className="text-xl text-black/70 dark:text-white/70 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Eine Plattform, die den gesamten Prozess nahtlos verbindet
             </p>
           </div>
@@ -151,10 +151,10 @@ const FeaturesSection = memo(function FeaturesSection() {
                     <div className="w-14 h-14 rounded-2xl bg-foreground/5 flex items-center justify-center mb-6 transition-colors group-hover:bg-foreground/10">
                       <Icon className="h-7 w-7 text-foreground" aria-hidden="true" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-3 text-black dark:text-white">
+                    <h3 className="text-xl font-semibold mb-3 text-foreground">
                       {feature.title}
                     </h3>
-                    <p className="text-black/70 dark:text-white/70 leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed">
                       {feature.description}
                     </p>
                   </div>
@@ -177,15 +177,15 @@ const ProblemSection = memo(function ProblemSection() {
           <Card variant="default" className="p-10 sm:p-12">
             <div className="space-y-8">
               <div>
-                <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-black dark:text-white">
+                <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-foreground">
                   Das Problem
                 </h2>
-                <p className="text-xl text-black/70 dark:text-white/70 leading-relaxed">
+                <p className="text-xl text-muted-foreground leading-relaxed">
                   Marketing-Agenturen und Content-Teams kämpfen damit, aus den Video- und Audio-Bibliotheken ihrer Kunden schnell neues, passendes Textmaterial zu erstellen.
                 </p>
               </div>
               <div className="space-y-4">
-                <p className="text-lg text-black/70 dark:text-white/70 leading-relaxed">
+                <p className="text-lg text-muted-foreground leading-relaxed">
                   Kundeninhalte sind unstrukturiert verteilt und kaum durchsuchbar. Aktuelle Tools fokussieren entweder nur auf Transkription oder reine Textgenerierung und verbinden Upload, Strukturierung und Dialog mit der KI kaum nahtlos. Dadurch verlieren Agenturen Zeit, Content-Output und skalierbare Margen.
                 </p>
                 <div className="flex flex-wrap gap-3 pt-4">
@@ -193,7 +193,7 @@ const ProblemSection = memo(function ProblemSection() {
                     <Badge
                       key={audience}
                       variant="secondary"
-                      className="text-sm px-4 py-2 bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 border-0"
+                      className="text-sm px-4 py-2 bg-black/5 dark:bg-white/5 text-muted-foreground border-0"
                     >
                       {audience}
                     </Badge>
@@ -224,15 +224,15 @@ const SolutionSection = memo(function SolutionSection() {
           <Card variant="default" className="p-10 sm:p-12">
             <div className="space-y-8">
               <div>
-                <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-black dark:text-white">
+                <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-foreground">
                   Die Lösung
                 </h2>
-                <p className="text-xl text-black/70 dark:text-white/70 leading-relaxed">
+                <p className="text-xl text-muted-foreground leading-relaxed">
                   Eine Plattform, die den gesamten Prozess nahtlos verbindet.
                 </p>
               </div>
               <div className="space-y-6">
-                <p className="text-lg text-black/70 dark:text-white/70 leading-relaxed">
+                <p className="text-lg text-muted-foreground leading-relaxed">
                   Nutze die Video- und Audio-Bibliotheken deiner Kunden, um schnell neues Textmaterial zu generieren. Unsere Plattform vereint Upload, intelligente Strukturierung und KI-Dialog in einem einzigen Workflow. So kannst du Content-Produktion skalieren, mehr Kunden bedienen und deine Margen steigern – ohne zwischen verschiedenen Tools wechseln zu müsen.
                 </p>
                 <ul className="space-y-4 text-foreground/70">
@@ -277,10 +277,10 @@ const BenefitsSection = memo(function BenefitsSection() {
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-black dark:text-white">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-foreground">
               Warum timax?
             </h2>
-            <p className="text-xl text-black/70 dark:text-white/70 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Die Vorteile auf einen Blick
             </p>
           </div>
@@ -293,10 +293,10 @@ const BenefitsSection = memo(function BenefitsSection() {
               <AnimatedSection key={benefit.title} delay={index * 100} direction="up">
                 <Card variant="subtle" className="p-8 h-full focus-within:ring-2 focus-within:ring-foreground/20">
                   <Icon className="h-10 w-10 text-foreground mb-4" aria-hidden="true" />
-                  <h3 className="text-xl font-semibold mb-3 text-black dark:text-white">
+                  <h3 className="text-xl font-semibold mb-3 text-foreground">
                     {benefit.title}
                   </h3>
-                  <p className="text-black/70 dark:text-white/70">
+                  <p className="text-muted-foreground">
                     {benefit.description}
                   </p>
                 </Card>
@@ -318,10 +318,10 @@ const DemoSection = memo(function DemoSection() {
           <Card variant="default" className="p-10 sm:p-12">
             <div className="text-center space-y-10">
               <div className="space-y-6">
-                <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-black dark:text-white">
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground">
                   Probiere es aus
                 </h2>
-                <p className="text-xl text-black/70 dark:text-white/70 max-w-2xl mx-auto">
+                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                   Erlebe den Text Generator in Aktion. Generiere verschiedene Content-Formate aus einem Beispiel-Transkript.
                 </p>
               </div>

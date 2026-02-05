@@ -14,7 +14,7 @@ export default function CookiesPage() {
         <Button
           variant="ghost"
           asChild
-          className="mb-8 text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white"
+          className="mb-8 text-muted-foreground hover:text-black dark:hover:text-white"
         >
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -23,13 +23,13 @@ export default function CookiesPage() {
         </Button>
 
         <article className="prose prose-lg dark:prose-invert max-w-none">
-          <h1 className="text-4xl font-bold mb-8 text-black dark:text-white">
+          <h1 className="text-4xl font-bold mb-8 text-foreground">
             Cookie-Richtlinie
           </h1>
 
           <section className="space-y-8 text-black/80 dark:text-white/80">
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 Was sind Cookies?
               </h2>
               <p className="mb-4">
@@ -38,7 +38,7 @@ export default function CookiesPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 Wie verwenden wir Cookies?
               </h2>
               <p className="mb-4">
@@ -52,13 +52,13 @@ export default function CookiesPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 Cookie-Liste
               </h2>
               
               <div className="space-y-6">
                 <div className="bg-black/5 dark:bg-white/5 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold mb-2 text-black dark:text-white">
+                  <h3 className="text-xl font-semibold mb-2 text-foreground">
                     Technisch notwendige Cookies
                   </h3>
                   <table className="w-full text-sm mt-4">
@@ -80,7 +80,7 @@ export default function CookiesPage() {
                 </div>
 
                 <div className="bg-black/5 dark:bg-white/5 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold mb-2 text-black dark:text-white">
+                  <h3 className="text-xl font-semibold mb-2 text-foreground">
                     Funktionale Cookies
                   </h3>
                   <table className="w-full text-sm mt-4">
@@ -107,7 +107,7 @@ export default function CookiesPage() {
                 </div>
 
                 <div className="bg-black/5 dark:bg-white/5 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold mb-2 text-black dark:text-white">
+                  <h3 className="text-xl font-semibold mb-2 text-foreground">
                     Analytics Cookies (optional)
                   </h3>
                   <p className="mb-4 text-sm">
@@ -134,7 +134,7 @@ export default function CookiesPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 Cookie-Einstellungen verwalten
               </h2>
               <p className="mb-4">
@@ -143,7 +143,7 @@ export default function CookiesPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 Drittanbieter-Cookies
               </h2>
               <p className="mb-4">

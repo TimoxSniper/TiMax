@@ -14,7 +14,7 @@ export default function AGBPage() {
         <Button
           variant="ghost"
           asChild
-          className="mb-8 text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white"
+          className="mb-8 text-muted-foreground hover:text-black dark:hover:text-white"
         >
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -23,13 +23,13 @@ export default function AGBPage() {
         </Button>
 
         <article className="prose prose-lg dark:prose-invert max-w-none">
-          <h1 className="text-4xl font-bold mb-8 text-black dark:text-white">
+          <h1 className="text-4xl font-bold mb-8 text-foreground">
             Allgemeine Geschäftsbedingungen (AGB)
           </h1>
 
           <section className="space-y-8 text-black/80 dark:text-white/80">
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 1. Geltungsbereich
               </h2>
               <p className="mb-4">
@@ -41,7 +41,7 @@ export default function AGBPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 2. Leistungsumfang
               </h2>
               <p className="mb-4">
@@ -60,7 +60,7 @@ export default function AGBPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 3. Vertragsschluss
               </h2>
               <p className="mb-4">
@@ -72,7 +72,7 @@ export default function AGBPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 4. Preise und Zahlungsbedingungen
               </h2>
               <p className="mb-4">
@@ -86,17 +86,17 @@ export default function AGBPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 5. Nutzungsrechte
               </h2>
-              <h3 className="text-xl font-semibold mb-2 mt-4 text-black dark:text-white">
+              <h3 className="text-xl font-semibold mb-2 mt-4 text-foreground">
                 5.1 Rechte an hochgeladenen Inhalten
               </h3>
               <p className="mb-4">
                 Der Nutzer behält alle Rechte an den von ihm hochgeladenen Videos und Audios. Mit dem Upload räumt der Nutzer timax das Recht ein, die Dateien zur Erbringung der Dienstleistung (Transkription, Textgenerierung) zu verwenden.
               </p>
 
-              <h3 className="text-xl font-semibold mb-2 mt-4 text-black dark:text-white">
+              <h3 className="text-xl font-semibold mb-2 mt-4 text-foreground">
                 5.2 Rechte an generierten Inhalten
               </h3>
               <p className="mb-4">
@@ -105,7 +105,7 @@ export default function AGBPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 6. Haftungsbeschränkung für KI-Inhalte
               </h2>
               <p className="mb-4">
@@ -127,7 +127,7 @@ export default function AGBPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 7. Upload-Beschränkungen
               </h2>
               <p className="mb-4">
@@ -147,7 +147,7 @@ export default function AGBPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 8. Verfügbarkeit und Störungen
               </h2>
               <p className="mb-4">
@@ -159,7 +159,7 @@ export default function AGBPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 9. Kündigung und Account-Löschung
               </h2>
               <p className="mb-4">
@@ -180,7 +180,7 @@ export default function AGBPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 10. Widerrufsrecht
               </h2>
               <p className="mb-4">
@@ -189,7 +189,7 @@ export default function AGBPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 11. Änderungen der AGB
               </h2>
               <p>
@@ -198,7 +198,7 @@ export default function AGBPage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 12. Schlussbestimmungen
               </h2>
               <p className="mb-4">

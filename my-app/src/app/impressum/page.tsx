@@ -14,7 +14,7 @@ export default function ImpressumPage() {
         <Button
           variant="ghost"
           asChild
-          className="mb-8 text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white"
+          className="mb-8 text-muted-foreground hover:text-black dark:hover:text-white"
         >
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -23,13 +23,13 @@ export default function ImpressumPage() {
         </Button>
 
         <article className="prose prose-lg dark:prose-invert max-w-none">
-          <h1 className="text-4xl font-bold mb-8 text-black dark:text-white">
+          <h1 className="text-4xl font-bold mb-8 text-foreground">
             Impressum
           </h1>
 
           <section className="space-y-6 text-black/80 dark:text-white/80">
             <div>
-              <h2 className="text-2xl font-semibold mb-4 text-black dark:text-white">
+              <h2 className="text-2xl font-semibold mb-4 text-foreground">
                 Angaben gemäß § 5 TMG
               </h2>
               <p className="mb-2">
@@ -51,7 +51,7 @@ export default function ImpressumPage() {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2 text-black dark:text-white">
+              <h3 className="text-xl font-semibold mb-2 text-foreground">
                 Kontakt
               </h3>
               <p className="mb-2">
@@ -63,7 +63,7 @@ export default function ImpressumPage() {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2 text-black dark:text-white">
+              <h3 className="text-xl font-semibold mb-2 text-foreground">
                 Vertretungsberechtigte Person(en)
               </h3>
               <p>
@@ -74,7 +74,7 @@ export default function ImpressumPage() {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2 text-black dark:text-white">
+              <h3 className="text-xl font-semibold mb-2 text-foreground">
                 Handelsregister
               </h3>
               <p className="mb-2">
@@ -86,7 +86,7 @@ export default function ImpressumPage() {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2 text-black dark:text-white">
+              <h3 className="text-xl font-semibold mb-2 text-foreground">
                 Umsatzsteuer-ID
               </h3>
               <p>
@@ -95,7 +95,7 @@ export default function ImpressumPage() {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2 text-black dark:text-white">
+              <h3 className="text-xl font-semibold mb-2 text-foreground">
                 Aufsichtsbehörde
               </h3>
               <p>

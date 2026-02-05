@@ -14,10 +14,10 @@ export const TestimonialsSection = memo(function TestimonialsSection() {
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
           <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-black dark:text-white">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-foreground">
               Was Nutzer sagen
             </h2>
-            <p className="text-xl text-black/70 dark:text-white/70 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Echte Erfahrungen von Beta-Nutzern - Coming Soon
             </p>
           </div>

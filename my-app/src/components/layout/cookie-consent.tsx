@@ -96,13 +96,13 @@ export function CookieConsent() {
             <>
               <div className="flex items-start gap-4 mb-6">
                 <div className="flex-shrink-0">
-                  <Cookie className="h-6 w-6 text-black dark:text-white" />
+                  <Cookie className="h-6 w-6 text-foreground" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold mb-2 text-black dark:text-white">
+                  <h3 className="text-lg font-semibold mb-2 text-foreground">
                     Cookie-Einstellungen
                   </h3>
-                  <p className="text-sm text-black/70 dark:text-white/70 mb-4">
+                  <p className="text-sm text-muted-foreground mb-4">
                     Wir verwenden Cookies, um Ihre Erfahrung zu verbessern. Technisch notwendige Cookies sind immer aktiv. Sie können Ihre Präferenzen jederzeit anpassen.
                   </p>
                   <p className="text-xs text-black/60 dark:text-white/60">
@@ -153,10 +153,10 @@ export function CookieConsent() {
             <>
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <h3 className="text-lg font-semibold mb-2 text-black dark:text-white">
+                  <h3 className="text-lg font-semibold mb-2 text-foreground">
                     Cookie-Einstellungen anpassen
                   </h3>
-                  <p className="text-sm text-black/70 dark:text-white/70">
+                  <p className="text-sm text-muted-foreground">
                     Wählen Sie, welche Cookies Sie zulassen möchten.
                   </p>
                 </div>
@@ -173,10 +173,10 @@ export function CookieConsent() {
               <div className="space-y-4 mb-6">
                 <div className="flex items-start justify-between p-4 rounded-lg bg-black/5 dark:bg-white/5">
                   <div className="flex-1">
-                    <h4 className="font-semibold mb-1 text-black dark:text-white">
+                    <h4 className="font-semibold mb-1 text-foreground">
                       Technisch notwendige Cookies
                     </h4>
-                    <p className="text-sm text-black/70 dark:text-white/70">
+                    <p className="text-sm text-muted-foreground">
                       Diese Cookies sind für die Grundfunktionen der Website erforderlich und können nicht deaktiviert werden.
                     </p>
                   </div>
@@ -197,10 +197,10 @@ export function CookieConsent() {
 
                 <div className="flex items-start justify-between p-4 rounded-lg bg-black/5 dark:bg-white/5">
                   <div className="flex-1">
-                    <h4 className="font-semibold mb-1 text-black dark:text-white">
+                    <h4 className="font-semibold mb-1 text-foreground">
                       Funktionale Cookies
                     </h4>
-                    <p className="text-sm text-black/70 dark:text-white/70">
+                    <p className="text-sm text-muted-foreground">
                       Diese Cookies speichern Ihre Präferenzen (z.B. Dark Mode) und verbessern die Funktionalität.
                     </p>
                   </div>
@@ -226,10 +226,10 @@ export function CookieConsent() {
 
                 <div className="flex items-start justify-between p-4 rounded-lg bg-black/5 dark:bg-white/5">
                   <div className="flex-1">
-                    <h4 className="font-semibold mb-1 text-black dark:text-white">
+                    <h4 className="font-semibold mb-1 text-foreground">
                       Analytics Cookies
                     </h4>
-                    <p className="text-sm text-black/70 dark:text-white/70">
+                    <p className="text-sm text-muted-foreground">
                       Diese Cookies helfen uns zu verstehen, wie Besucher unsere Website nutzen.
                     </p>
                   </div>

@@ -40,11 +40,11 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
           disabled={disabled}
           rows={1}
           className={cn(
-            "flex-1 min-h-[44px] max-h-32 px-3 py-2 rounded-md border border-input bg-background text-sm",
+            "flex-1 min-h-[44px] max-h-32 px-3 py-2 rounded-md border border-input bg-background text-sm transition-all duration-200",
             "resize-none overflow-y-auto",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--accent-rgb)_/_0.3)] focus-visible:border-[rgb(var(--accent-rgb)_/_0.5)]",
             "disabled:cursor-not-allowed disabled:opacity-50",
-            "placeholder:text-muted-foreground"
+            "placeholder:text-muted-foreground/70"
           )}
           style={{
             height: "auto",

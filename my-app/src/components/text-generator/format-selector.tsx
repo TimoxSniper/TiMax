@@ -23,7 +23,7 @@ export function FormatSelector({ selectedFormat, onSelectFormat, disabled = fals
     <Card id="format-selector" className="transition-all duration-200 hover:shadow-md">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center size-8 rounded-lg bg-primary/10 text-primary">
+          <div className="flex items-center justify-center size-8 rounded-lg bg-[rgb(var(--accent-rgb)_/_0.1)] text-accent">
             <Sparkles className="size-4" aria-hidden="true" />
           </div>
           <div className="flex-1">
@@ -48,7 +48,7 @@ export function FormatSelector({ selectedFormat, onSelectFormat, disabled = fals
                 variant={isSelected ? "default" : "outline"}
                 disabled={disabled}
                 className={`h-auto flex-col items-start gap-2 p-4 text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
-                  isSelected ? "ring-2 ring-primary/20 shadow-md" : ""
+                  isSelected ? "ring-2 ring-[rgb(var(--accent-rgb)_/_0.25)] shadow-md" : ""
                 } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
                 onClick={() => onSelectFormat(format.id)}
                 aria-pressed={isSelected}

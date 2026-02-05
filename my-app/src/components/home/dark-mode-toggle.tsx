@@ -75,7 +75,7 @@ export function DarkModeToggle({ variant = "fixed", className }: DarkModeToggleP
     <button
       onClick={toggleDarkMode}
       className={cn(
-        "fixed top-4 right-4 sm:top-6 sm:right-6 z-50 p-3 rounded-full bg-card border border-border hover:bg-secondary transition-all duration-200 shadow-lg focus:ring-2 focus:ring-foreground/20",
+        "fixed top-4 right-4 sm:top-6 sm:right-6 z-50 p-3 rounded-full bg-card/80 border border-border/50 backdrop-blur-sm hover:bg-secondary hover:shadow-md transition-all duration-300 shadow-lg focus:ring-2 focus:ring-[rgb(var(--accent-rgb)_/_0.2)]",
         className
       )}
       aria-label={isDark ? "In den hellen Modus wechseln" : "In den dunklen Modus wechseln"}

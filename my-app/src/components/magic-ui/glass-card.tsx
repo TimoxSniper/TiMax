@@ -12,12 +12,9 @@ interface CardProps {
 
 export function Card({ children, className, hover = true, variant = "default" }: CardProps) {
   const variantClasses = {
-    // Standard: Weiß mit leichtem Schatten (Light), dunkelgrau (Dark)
-    default: "bg-card text-card-foreground border border-border shadow-sm",
-    // Subtle: Sekundärfarbe, weniger prominent
-    subtle: "bg-secondary text-secondary-foreground border border-border",
-    // Outline: Nur Rahmen, kein Hintergrund
-    outline: "bg-transparent text-foreground border border-border",
+    default: "bg-card/80 text-card-foreground border border-border/60 shadow-sm backdrop-blur-sm",
+    subtle: "bg-secondary/60 text-secondary-foreground border border-border/40 backdrop-blur-sm",
+    outline: "bg-transparent text-foreground border border-border/50",
   };
 
   return (
@@ -25,9 +22,10 @@ export function Card({ children, className, hover = true, variant = "default" }:
       className={cn(
         "relative overflow-hidden rounded-xl",
         variantClasses[variant],
-        "transition-all duration-200 ease-out",
-        hover && "hover:shadow-md hover:border-border/80",
-        "focus-within:ring-2 focus-within:ring-primary/20",
+        "transition-all duration-300 ease-out",
+        hover && "hover:shadow-md hover:border-[rgb(var(--accent-rgb)_/_0.15)] hover:bg-card",
+        "dark:hover:bg-card/90",
+        "focus-within:ring-2 focus-within:ring-[rgb(var(--accent-rgb)_/_0.2)]",
         className
       )}
     >
@@ -36,5 +34,4 @@ export function Card({ children, className, hover = true, variant = "default" }:
   );
 }
 
-// Alias für backward compatibility
 export const GlassCard = Card;

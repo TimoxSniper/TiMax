@@ -40,16 +40,16 @@ export function MessageBubble({ message }: MessageBubbleProps) {
   return (
     <div className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}>
       {!isUser && (
-        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0" aria-label="KI-Assistent">
-          <Bot className="w-5 h-5 text-primary" aria-hidden="true" />
+        <div className="w-10 h-10 rounded-full bg-[rgb(var(--accent-rgb)_/_0.1)] flex items-center justify-center shrink-0 shadow-sm" aria-label="KI-Assistent">
+          <Bot className="w-5 h-5 text-accent" aria-hidden="true" />
         </div>
       )}
-      
+
       <Card
-        className={`max-w-[80%] ${
+        className={`max-w-[80%] shadow-sm ${
           isUser
             ? "bg-primary text-primary-foreground"
-            : "bg-muted"
+            : "bg-muted/50 dark:bg-muted/30"
         }`}
       >
         <div className="p-4">
@@ -57,7 +57,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             {message.content}
           </p>
           <div className="flex items-center justify-between mt-2 gap-2">
-            <span className="text-xs opacity-70">
+            <span className="text-xs opacity-60">
               {message.timestamp.toLocaleTimeString("de-DE", {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -68,7 +68,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
                 variant="ghost"
                 size="sm"
                 onClick={handleCopy}
-                className="h-8 w-8 min-w-[44px] opacity-70 hover:opacity-100"
+                className="h-8 w-8 min-w-[44px] opacity-50 hover:opacity-100 transition-opacity duration-200"
                 aria-label={copied ? "Kopiert" : "Nachricht kopieren"}
               >
                 {copied ? (
@@ -81,9 +81,9 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           </div>
         </div>
       </Card>
-      
+
       {isUser && (
-        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0" aria-label="Du">
+        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 shadow-sm" aria-label="Du">
           <User className="w-5 h-5 text-primary" aria-hidden="true" />
         </div>
       )}

@@ -72,28 +72,28 @@ export function StatsSection({ onVisible }: StatsSectionProps) {
         <AnimatedSection direction="up">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <GlassCard variant="subtle" className="p-6 text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-black dark:text-white mb-2">
+              <div className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
                 {countedStats.speed}x
               </div>
-              <div className="text-sm text-black/70 dark:text-white/70">Schneller</div>
+              <div className="text-sm text-muted-foreground">Schneller</div>
             </GlassCard>
             <GlassCard variant="subtle" className="p-6 text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-black dark:text-white mb-2">
+              <div className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
                 {countedStats.seamless}%
               </div>
-              <div className="text-sm text-black/70 dark:text-white/70">Nahtlos</div>
+              <div className="text-sm text-muted-foreground">Nahtlos</div>
             </GlassCard>
             <GlassCard variant="subtle" className="p-6 text-center">
-              <div className="text-3xl sm:text-4xl font-bold mb-2 text-black dark:text-white transition-all duration-1000 ease-out">
+              <div className="text-3xl sm:text-4xl font-bold mb-2 text-foreground transition-all duration-1000 ease-out">
                 {countedStats.scalable === Infinity ? "∞" : countedStats.scalable.toLocaleString('de-DE')}
               </div>
-              <div className="text-sm text-black/70 dark:text-white/70">Skalierbar</div>
+              <div className="text-sm text-muted-foreground">Skalierbar</div>
             </GlassCard>
             <GlassCard variant="subtle" className="p-6 text-center">
-              <div className="text-3xl sm:text-4xl font-bold text-black dark:text-white mb-2">
+              <div className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
                 {countedStats.workflow}
               </div>
-              <div className="text-sm text-black/70 dark:text-white/70">Workflow</div>
+              <div className="text-sm text-muted-foreground">Workflow</div>
             </GlassCard>
           </div>
         </AnimatedSection>
