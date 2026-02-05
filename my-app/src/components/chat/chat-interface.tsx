@@ -36,9 +36,11 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-Scroll zu letzter Nachricht
+  // Auto-Scroll zu letzter Nachricht (nur wenn Nachrichten vorhanden)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   return (
