@@ -124,7 +124,18 @@ export function MainNavigation() {
                 afterSignOutUrl="/"
                 appearance={{
                   elements: {
-                    avatarBox: "w-8 h-8",
+                    // Avatar Styling
+                    avatarBox: "w-9 h-9 border-2 border-border hover:border-accent transition-colors",
+                    avatarImage: "rounded-full",
+                    // Trigger Button
+                    userButtonTrigger: "focus:shadow-none focus:ring-2 focus:ring-accent/30 rounded-full",
+                    // Popover Card
+                    userButtonPopoverCard: "bg-card border border-border rounded-[6px] shadow-editorial-lg mt-2",
+                    userButtonPopoverActions: "border-t border-border",
+                    userButtonPopoverActionButton: "text-foreground hover:bg-secondary rounded-none",
+                    userButtonPopoverActionButtonText: "text-sm",
+                    userButtonPopoverActionButtonIcon: "text-muted-foreground",
+                    userButtonPopoverFooter: "hidden",
                   },
                 }}
               />
@@ -216,12 +227,21 @@ export function MainNavigation() {
                   </SignedOut>
 
                   <SignedIn>
-                    <div className="flex items-center justify-between px-3 py-2 bg-accent/50 rounded-lg">
+                    <div className="flex items-center justify-between px-3 py-3 bg-secondary/50 rounded-[6px] border border-border">
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-muted-foreground" />
                         <span className="text-sm font-medium text-foreground">Mein Konto</span>
                       </div>
-                      <UserButton afterSignOutUrl="/" />
+                      <UserButton 
+                        afterSignOutUrl="/"
+                        appearance={{
+                          elements: {
+                            avatarBox: "w-8 h-8 border-2 border-border",
+                            userButtonPopoverCard: "bg-card border border-border rounded-[6px] shadow-editorial-lg",
+                            userButtonPopoverFooter: "hidden",
+                          },
+                        }}
+                      />
                     </div>
                   </SignedIn>
                 </div>

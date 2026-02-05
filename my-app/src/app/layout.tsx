@@ -3,6 +3,7 @@ import { Crimson_Pro, DM_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { deDE } from "@clerk/localizations";
+import { clerkAppearance } from "@/lib/clerk-theme";
 import { ToastProvider } from "@/components/ui/toast";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { CookieConsent } from "@/components/layout/cookie-consent";
@@ -54,7 +55,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider localization={deDE}>
+    <ClerkProvider localization={deDE} appearance={clerkAppearance}>
       <html lang="de">
         <body
           className={`${crimsonPro.variable} ${dmSans.variable} ${jetbrainsMono.variable} antialiased font-sans`}

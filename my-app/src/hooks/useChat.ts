@@ -22,7 +22,10 @@ interface UseChatOptions {
 
 export function useChat({ initialSessionId }: UseChatOptions = {}) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [sessionId, setSessionId] = useState<string>(initialSessionId || "");
+  // sessionId direkt bei Initialisierung generieren, um Race Conditions zu vermeiden
+  const [sessionId, setSessionId] = useState<string>(
+    initialSessionId || `chat-${uuidv4()}`
+  );
   const [chatId, setChatId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,14 +33,8 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
   const requestIdRef = useRef<number>(0);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Session-ID und Transcript-Context laden
+  // Prüfe auf Transkript-Übergabe aus Dashboard (einmalig beim Mount)
   useEffect(() => {
-    if (!sessionId) {
-      const newSessionId = `chat-${uuidv4()}`;
-      setSessionId(newSessionId);
-    }
-
-    // Prüfe auf Transkript-Übergabe aus Dashboard
     const pendingTranscript = localStorage.getItem("pending_transcript");
     if (pendingTranscript && messages.length === 0) {
       const initialMessage: Message = {
@@ -49,7 +46,8 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
       setMessages([initialMessage]);
       localStorage.removeItem("pending_transcript");
     }
-  }, [sessionId, messages.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Nur beim ersten Mount ausführen
 
   // Lade Historie wenn chatId gesetzt wird
   useEffect(() => {
