@@ -25,9 +25,24 @@ export async function checkRateLimit(
     descriptor: string,
     config: RateLimitConfig
 ): Promise<RateLimitResult> {
-    // Use Upstash Redis if environment variables are configured
-    if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
-        return checkRateLimitUpstash(descriptor, config);
+    // Use Upstash Redis if environment variables are configured and valid
+    const upstashUrl = process.env.UPSTASH_REDIS_REST_URL;
+    const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+    const isUpstashConfigured =
+        upstashUrl &&
+        upstashToken &&
+        !upstashUrl.includes('example') &&
+        !upstashToken.includes('your_token');
+
+    if (isUpstashConfigured) {
+        try {
+            return await checkRateLimitUpstash(descriptor, config);
+        } catch (error) {
+            // If Upstash fails, fall back to in-memory
+            console.warn('Upstash rate limit check failed, falling back to in-memory:', error);
+            return checkRateLimitMemory(descriptor, config);
+        }
     }
 
     // Fallback to in-memory (development only)

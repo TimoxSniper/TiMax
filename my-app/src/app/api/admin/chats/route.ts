@@ -40,13 +40,17 @@ export async function GET(request: NextRequest) {
 
     let startDate: Date | null = null;
     if (timeFilter) {
-      const now = new Date();
       if (timeFilter === "today") {
+        const now = new Date();
         startDate = new Date(now.setHours(0, 0, 0, 0));
       } else if (timeFilter === "week") {
-        startDate = new Date(now.setDate(now.getDate() - 7));
+        const now = new Date();
+        now.setDate(now.getDate() - 7);
+        startDate = now;
       } else if (timeFilter === "month") {
-        startDate = new Date(now.setMonth(now.getMonth() - 1));
+        const now = new Date();
+        now.setMonth(now.getMonth() - 1);
+        startDate = now;
       }
     }
 
