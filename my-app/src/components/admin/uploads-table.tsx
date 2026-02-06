@@ -174,6 +174,7 @@ export function UploadsTable({
                           size="icon-xs"
                           onClick={() => setDeleteUpload(upload)}
                           title="Löschen"
+                          aria-label={`Upload ${upload.file_name} löschen`}
                           className="text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -225,6 +226,7 @@ export function UploadsTable({
                           size="icon-xs"
                           onClick={() => setDeleteUpload(upload)}
                           title="Löschen"
+                          aria-label={`Upload ${upload.file_name} löschen`}
                           className="text-destructive hover:text-destructive hover:bg-destructive/10"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -250,6 +252,7 @@ export function UploadsTable({
                   onClick={() => onPageChange?.(pagination.page - 1)}
                   disabled={pagination.page <= 1}
                   className="flex-1 md:flex-none"
+                  aria-label="Vorherige Seite"
                 >
                   <ChevronLeft className="h-4 w-4" />
                   <span className="md:inline">Zurück</span>
@@ -260,6 +263,7 @@ export function UploadsTable({
                   onClick={() => onPageChange?.(pagination.page + 1)}
                   disabled={pagination.page >= pagination.totalPages}
                   className="flex-1 md:flex-none"
+                  aria-label="Nächste Seite"
                 >
                   <span className="md:inline">Weiter</span>
                   <ChevronRight className="h-4 w-4" />

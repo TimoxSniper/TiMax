@@ -6,7 +6,15 @@ import { UploadsTable } from "@/components/admin/uploads-table";
 import { useToast } from "@/components/ui/toast";
 import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { X, Search, RefreshCw, Download } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { exportToCSV, exportToJSON } from "@/lib/admin/export";
 
 interface Upload {
   id: string;
@@ -31,11 +39,13 @@ export default function AdminUploadsPage() {
   const userIdFilter = searchParams.get("userId");
   
   const [uploads, setUploads] = useState<Upload[]>([]);
+  const [filteredUploads, setFilteredUploads] = useState<Upload[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const { showToast } = useToast();
 
   const fetchUploads = async (page: number, status: string) => {
@@ -53,6 +63,7 @@ export default function AdminUploadsPage() {
       if (res.ok) {
         const data = await res.json();
         setUploads(data.uploads || []);
+        setFilteredUploads(data.uploads || []);
         setPagination(data.pagination);
       } else {
         throw new Error("Fehler beim Laden");
@@ -71,6 +82,25 @@ export default function AdminUploadsPage() {
     setIsInitialLoad(true);
     fetchUploads(1, statusFilter);
   }, [userIdFilter, statusFilter]);
+
+  // Search filter
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredUploads(uploads);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = uploads.filter((upload) => {
+      const fileName = upload.file_name.toLowerCase();
+      const userId = upload.user_id.toLowerCase();
+      const fileType = (upload.file_type || "").toLowerCase();
+
+      return fileName.includes(query) || userId.includes(query) || fileType.includes(query);
+    });
+
+    setFilteredUploads(filtered);
+  }, [searchQuery, uploads]);
 
   useEffect(() => {
     if (currentPage > 1) {
@@ -102,6 +132,26 @@ export default function AdminUploadsPage() {
     window.location.reload();
   };
 
+  const handleExportCSV = () => {
+    exportToCSV(
+      filteredUploads,
+      `uploads-${new Date().toISOString().split("T")[0]}`,
+      [
+        { key: "id", label: "Upload ID" },
+        { key: "file_name", label: "Dateiname" },
+        { key: "user_id", label: "User ID" },
+        { key: "file_size", label: "Größe (Bytes)" },
+        { key: "file_type", label: "Typ" },
+        { key: "status", label: "Status" },
+        { key: "created_at", label: "Erstellt" },
+      ]
+    );
+  };
+
+  const handleExportJSON = () => {
+    exportToJSON(filteredUploads, `uploads-${new Date().toISOString().split("T")[0]}`);
+  };
+
   return (
     <div className="space-y-6 md:space-y-8">
       {/* Header */}
@@ -112,21 +162,62 @@ export default function AdminUploadsPage() {
         </p>
       </div>
 
-      {/* Filter Badge */}
-      {userIdFilter && (
-        <div className="flex items-center gap-2 p-2 md:p-3 bg-muted rounded-md">
-          <span className="text-xs md:text-sm">
-            User: <code className="font-mono text-xs bg-background px-1.5 py-0.5 rounded break-all">{userIdFilter}</code>
-          </span>
-          <Button variant="ghost" size="icon-xs" onClick={clearFilter}>
-            <X className="h-3 w-3 md:h-4 md:w-4" />
+      {/* Search and Actions */}
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Uploads suchen (Dateiname, Typ, User ID)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+              aria-label="Uploads suchen"
+            />
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => fetchUploads(currentPage, statusFilter)}
+            disabled={isLoading}
+            className="gap-2"
+            aria-label="Daten aktualisieren"
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+            <span className="hidden sm:inline">Aktualisieren</span>
           </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2" aria-label="Daten exportieren">
+                <Download className="h-4 w-4" />
+                <span className="hidden sm:inline">Export</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleExportCSV}>
+                Als CSV exportieren
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleExportJSON}>
+                Als JSON exportieren
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-      )}
+
+        {userIdFilter && (
+          <div className="flex items-center gap-2 p-2 md:p-3 bg-muted rounded-md w-fit">
+            <span className="text-xs md:text-sm">
+              User: <code className="font-mono text-xs bg-background px-1.5 py-0.5 rounded break-all">{userIdFilter}</code>
+            </span>
+            <Button variant="ghost" size="icon-xs" onClick={clearFilter} aria-label="Filter entfernen">
+              <X className="h-3 w-3 md:h-4 md:w-4" />
+            </Button>
+          </div>
+        )}
+      </div>
 
       {/* Uploads Table */}
       <UploadsTable
-        uploads={uploads}
+        uploads={filteredUploads}
         isLoading={isInitialLoad}
         pagination={pagination || undefined}
         onPageChange={handlePageChange}

@@ -6,13 +6,15 @@ import { ChatsTable } from "@/components/admin/chats-table";
 import { useToast } from "@/components/ui/toast";
 import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
-import { X, Calendar } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { X, Calendar, Search, RefreshCw, Download } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { exportToCSV, exportToJSON } from "@/lib/admin/export";
 
 interface Chat {
   id: string;
@@ -37,10 +39,12 @@ export default function AdminChatsPage() {
   const timeFilter = searchParams.get("timeFilter");
 
   const [chats, setChats] = useState<Chat[]>([]);
+  const [filteredChats, setFilteredChats] = useState<Chat[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const { showToast } = useToast();
 
   const fetchChats = async (page: number) => {
@@ -58,6 +62,7 @@ export default function AdminChatsPage() {
       if (res.ok) {
         const data = await res.json();
         setChats(data.chats || []);
+        setFilteredChats(data.chats || []);
         setPagination(data.pagination);
       } else {
         throw new Error("Fehler beim Laden");
@@ -76,6 +81,24 @@ export default function AdminChatsPage() {
     setIsInitialLoad(true);
     fetchChats(1);
   }, [userIdFilter, timeFilter]);
+
+  // Search filter
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredChats(chats);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = chats.filter((chat) => {
+      const title = chat.title.toLowerCase();
+      const userId = chat.user_id.toLowerCase();
+
+      return title.includes(query) || userId.includes(query);
+    });
+
+    setFilteredChats(filtered);
+  }, [searchQuery, chats]);
 
   useEffect(() => {
     if (currentPage > 1) {
@@ -122,6 +145,25 @@ export default function AdminChatsPage() {
     }
   };
 
+  const handleExportCSV = () => {
+    exportToCSV(
+      filteredChats,
+      `chats-${new Date().toISOString().split("T")[0]}`,
+      [
+        { key: "id", label: "Chat ID" },
+        { key: "title", label: "Titel" },
+        { key: "user_id", label: "User ID" },
+        { key: "messageCount", label: "Nachrichten" },
+        { key: "created_at", label: "Erstellt" },
+        { key: "updated_at", label: "Aktualisiert" },
+      ]
+    );
+  };
+
+  const handleExportJSON = () => {
+    exportToJSON(filteredChats, `chats-${new Date().toISOString().split("T")[0]}`);
+  };
+
   return (
     <div className="space-y-6 md:space-y-8">
       {/* Header */}
@@ -158,14 +200,53 @@ export default function AdminChatsPage() {
         </DropdownMenu>
       </div>
 
-      {/* Filter Badges */}
-      <div className="flex gap-2">
+      {/* Search and Filter Badges */}
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Chats suchen (Titel, User ID)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+              aria-label="Chats suchen"
+            />
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => fetchChats(currentPage)}
+            disabled={isLoading}
+            className="gap-2"
+            aria-label="Daten aktualisieren"
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+            <span className="hidden sm:inline">Aktualisieren</span>
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2" aria-label="Daten exportieren">
+                <Download className="h-4 w-4" />
+                <span className="hidden sm:inline">Export</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleExportCSV}>
+                Als CSV exportieren
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleExportJSON}>
+                Als JSON exportieren
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
         {userIdFilter && (
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-muted rounded-md text-sm">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-muted rounded-md text-sm w-fit">
             <span>
               User: <code className="font-mono text-xs bg-background px-1.5 py-0.5 rounded">{userIdFilter}</code>
             </span>
-            <Button variant="ghost" size="icon-xs" onClick={clearUserFilter}>
+            <Button variant="ghost" size="icon-xs" onClick={clearUserFilter} aria-label="Filter entfernen">
               <X className="h-3 w-3" />
             </Button>
           </div>
@@ -174,7 +255,7 @@ export default function AdminChatsPage() {
 
       {/* Chats Table */}
       <ChatsTable
-        chats={chats}
+        chats={filteredChats}
         isLoading={isInitialLoad}
         pagination={pagination || undefined}
         onPageChange={handlePageChange}

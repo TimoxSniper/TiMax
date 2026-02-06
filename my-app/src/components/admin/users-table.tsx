@@ -154,6 +154,7 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
                 onClick={() => onPageChange?.(pagination.page - 1)}
                 disabled={pagination.page <= 1}
                 className="flex-1 md:flex-none"
+                aria-label="Vorherige Seite"
               >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="md:inline">Zurück</span>
@@ -164,6 +165,7 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
                 onClick={() => onPageChange?.(pagination.page + 1)}
                 disabled={pagination.page >= pagination.totalPages}
                 className="flex-1 md:flex-none"
+                aria-label="Nächste Seite"
               >
                 <span className="md:inline">Weiter</span>
                 <ChevronRight className="h-4 w-4" />

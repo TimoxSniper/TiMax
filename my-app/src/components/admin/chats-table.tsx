@@ -123,6 +123,7 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
                           size="icon-xs"
                           asChild
                           title="Ansehen"
+                          aria-label={`Chat ${chat.title} ansehen`}
                         >
                           <Link href={`/admin/chats/${chat.id}`}>
                             <Eye className="h-4 w-4" />
@@ -133,6 +134,7 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
                           size="icon-xs"
                           onClick={() => setDeleteChat(chat)}
                           title="Löschen"
+                          aria-label={`Chat ${chat.title} löschen`}
                           className="text-destructive hover:text-destructive hover:bg-destructive/10"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -167,6 +169,7 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
                         size="icon-xs"
                         asChild
                         title="Ansehen"
+                        aria-label={`Chat ${chat.title} ansehen`}
                       >
                         <Link href={`/admin/chats/${chat.id}`}>
                           <Eye className="h-4 w-4" />
@@ -177,6 +180,7 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
                         size="icon-xs"
                         onClick={() => setDeleteChat(chat)}
                         title="Löschen"
+                        aria-label={`Chat ${chat.title} löschen`}
                         className="text-destructive hover:text-destructive hover:bg-destructive/10"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -201,6 +205,7 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
                   onClick={() => onPageChange?.(pagination.page - 1)}
                   disabled={pagination.page <= 1}
                   className="flex-1 md:flex-none"
+                  aria-label="Vorherige Seite"
                 >
                   <ChevronLeft className="h-4 w-4" />
                   <span className="md:inline">Zurück</span>
@@ -211,6 +216,7 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
                   onClick={() => onPageChange?.(pagination.page + 1)}
                   disabled={pagination.page >= pagination.totalPages}
                   className="flex-1 md:flex-none"
+                  aria-label="Nächste Seite"
                 >
                   <span className="md:inline">Weiter</span>
                   <ChevronRight className="h-4 w-4" />
