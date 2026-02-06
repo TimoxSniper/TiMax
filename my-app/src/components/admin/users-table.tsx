@@ -92,9 +92,10 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
             </div>
           ) : (
             users.map((user) => (
-              <div
+              <Link
                 key={user.userId}
-                className="grid grid-cols-[1fr_80px_80px_140px] gap-4 px-4 py-3 items-center hover:bg-muted/50 transition-colors"
+                href={`/admin/users/${user.userId}`}
+                className="grid grid-cols-[1fr_80px_80px_140px] gap-4 px-4 py-3 items-center hover:bg-muted/50 transition-colors cursor-pointer block"
               >
                 <UserDisplay
                   userId={user.userId}
@@ -106,26 +107,16 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
                 />
                 <div className="flex items-center justify-center gap-1.5">
                   <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                  <Link
-                    href={`/admin/chats?userId=${user.userId}`}
-                    className="text-accent hover:underline"
-                  >
-                    {user.chatCount}
-                  </Link>
+                  <span className="text-accent">{user.chatCount}</span>
                 </div>
                 <div className="flex items-center justify-center gap-1.5">
                   <FileAudio className="h-4 w-4 text-muted-foreground" />
-                  <Link
-                    href={`/admin/uploads?userId=${user.userId}`}
-                    className="text-accent hover:underline"
-                  >
-                    {user.uploadCount}
-                  </Link>
+                  <span className="text-accent">{user.uploadCount}</span>
                 </div>
                 <div className="text-right text-sm text-muted-foreground">
                   {formatDate(user.lastActivity)}
                 </div>
-              </div>
+              </Link>
             ))
           )}
         </div>
