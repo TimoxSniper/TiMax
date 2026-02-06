@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, ChevronRight, MessageSquare, FileAudio } from "lucide-react";
 import Link from "next/link";
 import { UserDisplay } from "./user-display";
+import { formatDate } from "@/lib/admin/utils";
 
 interface User {
   userId: string;
@@ -30,17 +31,6 @@ interface UsersTableProps {
 }
 
 export function UsersTable({ users, isLoading, pagination, onPageChange }: UsersTableProps) {
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "Nie";
-    return new Date(dateString).toLocaleDateString("de-DE", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   if (isLoading) {
     return (
       <Card className="hover:translate-y-0 hover:shadow-editorial-md">

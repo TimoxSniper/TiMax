@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { UserIdDisplay } from "./user-display";
+import { formatDate, formatFileSize, uploadStatusColors, uploadStatusLabels } from "@/lib/admin/utils";
 
 interface Upload {
   id: string;
@@ -41,22 +42,6 @@ interface UploadsTableProps {
   onStatusFilterChange?: (status: string) => void;
 }
 
-const statusColors: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
-  processing: "bg-blue-100 text-blue-800 border-blue-200",
-  completed: "bg-green-100 text-green-800 border-green-200",
-  failed: "bg-red-100 text-red-800 border-red-200",
-  cancelled: "bg-gray-100 text-gray-800 border-gray-200",
-};
-
-const statusLabels: Record<string, string> = {
-  pending: "Wartend",
-  processing: "Verarbeitung",
-  completed: "Abgeschlossen",
-  failed: "Fehlgeschlagen",
-  cancelled: "Abgebrochen",
-};
-
 export function UploadsTable({
   uploads,
   isLoading,
@@ -68,24 +53,6 @@ export function UploadsTable({
 }: UploadsTableProps) {
   const [deleteUpload, setDeleteUpload] = useState<Upload | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("de-DE", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const formatFileSize = (bytes: number | null) => {
-    if (!bytes) return "-";
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  };
-
 
   const getFileIcon = (fileType: string | null) => {
     if (!fileType) return File;
@@ -145,7 +112,7 @@ export function UploadsTable({
                 >
                   Alle
                 </Button>
-                {Object.entries(statusLabels).map(([key, label]) => (
+                {Object.entries(uploadStatusLabels).map(([key, label]) => (
                   <Button
                     key={key}
                     variant={statusFilter === key ? "default" : "outline"}
@@ -217,9 +184,9 @@ export function UploadsTable({
                           <span className="text-muted-foreground">{formatFileSize(upload.file_size)}</span>
                           <Badge
                             variant="outline"
-                            className={`${statusColors[upload.status] || statusColors.pending} text-xs`}
+                            className={`${uploadStatusColors[upload.status] || uploadStatusColors.pending} text-xs`}
                           >
-                            {statusLabels[upload.status] || upload.status}
+                            {uploadStatusLabels[upload.status] || upload.status}
                           </Badge>
                         </div>
                         <span className="text-muted-foreground">{formatDate(upload.created_at)}</span>
@@ -244,9 +211,9 @@ export function UploadsTable({
                       <div className="flex justify-center">
                         <Badge
                           variant="outline"
-                          className={statusColors[upload.status] || statusColors.pending}
+                          className={uploadStatusColors[upload.status] || uploadStatusColors.pending}
                         >
-                          {statusLabels[upload.status] || upload.status}
+                          {uploadStatusLabels[upload.status] || upload.status}
                         </Badge>
                       </div>
                       <div className="text-sm text-muted-foreground">

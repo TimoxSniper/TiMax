@@ -64,18 +64,26 @@ export async function GET(
       logger.error("[Admin User API] Fehler beim Laden der Uploads:", uploadsError);
     }
 
-    // Statistiken berechnen
-    const totalMessages = await Promise.all(
-      (chats || []).map(async (chat) => {
-        const { count } = await supabase
-          .from("messages")
-          .select("*", { count: "exact", head: true })
-          .eq("chat_id", chat.id);
-        return count || 0;
-      })
-    );
+    // Statistiken berechnen - Fix N+1 Query Problem
+    // Lade alle Message-Counts in einer Query statt für jeden Chat einzeln
+    const chatIds = (chats || []).map((chat) => chat.id);
+    let messageCounts: Record<string, number> = {};
+    let totalMessageCount = 0;
 
-    const messageCount = totalMessages.reduce((sum, count) => sum + count, 0);
+    if (chatIds.length > 0) {
+      const { data: messageCountData } = await supabase
+        .from("messages")
+        .select("chat_id")
+        .in("chat_id", chatIds);
+
+      if (messageCountData) {
+        // Count messages per chat
+        messageCountData.forEach((msg) => {
+          messageCounts[msg.chat_id] = (messageCounts[msg.chat_id] || 0) + 1;
+        });
+        totalMessageCount = messageCountData.length;
+      }
+    }
 
     // Letzte Aktivität
     const lastChatActivity = chats?.[0]?.updated_at || null;
@@ -91,12 +99,10 @@ export async function GET(
     }
 
     // Chats mit Message Counts
-    const chatsWithMessageCount = await Promise.all(
-      (chats || []).map(async (chat, index) => ({
-        ...chat,
-        messageCount: totalMessages[index],
-      }))
-    );
+    const chatsWithMessageCount = (chats || []).map((chat) => ({
+      ...chat,
+      messageCount: messageCounts[chat.id] || 0,
+    }));
 
     return NextResponse.json({
       success: true,
@@ -112,7 +118,7 @@ export async function GET(
       stats: {
         chatCount: chats?.length || 0,
         uploadCount: uploads?.length || 0,
-        messageCount,
+        messageCount: totalMessageCount,
       },
       chats: chatsWithMessageCount,
       uploads: uploads || [],

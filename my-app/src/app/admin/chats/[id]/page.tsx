@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
 import { logger } from "@/lib/logger";
-import { ArrowLeft, Trash2, User, Bot } from "lucide-react";
+import { ArrowLeft, User, Bot, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { formatDate } from "@/lib/admin/utils";
 
 interface Chat {
   id: string;
@@ -35,12 +36,9 @@ interface Message {
   created_at: string;
 }
 
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
-
-export default function AdminChatDetailPage({ params }: PageProps) {
-  const { id: chatId } = use(params);
+export default function AdminChatDetailPage() {
+  const params = useParams();
+  const chatId = params.id as string;
   const router = useRouter();
   const { showToast } = useToast();
   
@@ -73,16 +71,6 @@ export default function AdminChatDetailPage({ params }: PageProps) {
 
     fetchChat();
   }, [chatId, router, showToast]);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("de-DE", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   const handleDelete = async () => {
     setIsDeleting(true);

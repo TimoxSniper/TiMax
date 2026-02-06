@@ -16,10 +16,10 @@ import {
   Mail,
   User,
   Eye,
-  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { formatDate, formatFileSize, uploadStatusColors, uploadStatusLabels } from "@/lib/admin/utils";
 
 interface UserData {
   userId: string;
@@ -94,50 +94,6 @@ export default function AdminUserDetailPage() {
     }
   };
 
-  const formatDate = (dateString: string | number | null) => {
-    if (!dateString) return "Nie";
-    const date = typeof dateString === "number" ? new Date(dateString) : new Date(dateString);
-    return date.toLocaleDateString("de-DE", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const formatFileSize = (bytes: number | null) => {
-    if (!bytes) return "N/A";
-    const mb = bytes / (1024 * 1024);
-    return `${mb.toFixed(2)} MB`;
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "text-green-600 bg-green-50 border-green-200";
-      case "processing":
-        return "text-blue-600 bg-blue-50 border-blue-200";
-      case "failed":
-        return "text-red-600 bg-red-50 border-red-200";
-      default:
-        return "text-gray-600 bg-gray-50 border-gray-200";
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "Abgeschlossen";
-      case "processing":
-        return "Wird verarbeitet";
-      case "failed":
-        return "Fehlgeschlagen";
-      default:
-        return status;
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="space-y-8">
@@ -181,7 +137,7 @@ export default function AdminUserDetailPage() {
   return (
     <div className="space-y-6 md:space-y-8">
       {/* Back Button */}
-      <Button variant="ghost" onClick={() => router.push("/admin/users")} className="gap-2 text-sm md:text-base">
+      <Button variant="outline" onClick={() => router.push("/admin/users")} className="gap-2 text-sm md:text-base">
         <ArrowLeft className="h-4 w-4" />
         <span className="hidden sm:inline">Zurück zu Benutzer</span>
         <span className="sm:hidden">Zurück</span>
@@ -370,11 +326,9 @@ export default function AdminUserDetailPage() {
                         <div className="flex items-center gap-2">
                           <span className="text-muted-foreground">{formatFileSize(upload.file_size)}</span>
                           <span
-                            className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-md border ${getStatusColor(
-                              upload.status
-                            )}`}
+                            className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-md border ${uploadStatusColors[upload.status] || uploadStatusColors.pending}`}
                           >
-                            {getStatusLabel(upload.status)}
+                            {uploadStatusLabels[upload.status] || upload.status}
                           </span>
                         </div>
                         <span className="text-muted-foreground">{formatDate(upload.created_at)}</span>
@@ -391,11 +345,9 @@ export default function AdminUserDetailPage() {
                       </div>
                       <div>
                         <span
-                          className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-md border ${getStatusColor(
-                            upload.status
-                          )}`}
+                          className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-md border ${uploadStatusColors[upload.status] || uploadStatusColors.pending}`}
                         >
-                          {getStatusLabel(upload.status)}
+                          {uploadStatusLabels[upload.status] || upload.status}
                         </span>
                       </div>
                       <div className="text-sm text-muted-foreground">

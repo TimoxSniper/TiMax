@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { UserIdDisplay } from "./user-display";
+import { formatDate } from "@/lib/admin/utils";
 
 interface Chat {
   id: string;
@@ -40,16 +41,6 @@ interface ChatsTableProps {
 export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelete }: ChatsTableProps) {
   const [deleteChat, setDeleteChat] = useState<Chat | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("de-DE", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   const handleDelete = async () => {
     if (!deleteChat || !onDelete) return;
