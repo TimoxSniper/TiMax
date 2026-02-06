@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { UsersTable } from "@/components/admin/users-table";
 import { useToast } from "@/components/ui/toast";
+import { logger } from "@/lib/logger";
 
 interface User {
   userId: string;
@@ -37,7 +38,7 @@ export default function AdminUsersPage() {
         throw new Error("Fehler beim Laden");
       }
     } catch (error) {
-      console.error("Fehler beim Laden der Benutzer:", error);
+      logger.error("Fehler beim Laden der Benutzer:", error);
       showToast("Benutzer konnten nicht geladen werden", "error");
     } finally {
       setIsLoading(false);

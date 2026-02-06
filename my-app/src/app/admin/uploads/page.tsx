@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { UploadsTable } from "@/components/admin/uploads-table";
 import { useToast } from "@/components/ui/toast";
+import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
@@ -56,7 +57,7 @@ export default function AdminUploadsPage() {
         throw new Error("Fehler beim Laden");
       }
     } catch (error) {
-      console.error("Fehler beim Laden der Uploads:", error);
+      logger.error("Fehler beim Laden der Uploads:", error);
       showToast("Uploads konnten nicht geladen werden", "error");
     } finally {
       setIsLoading(false);

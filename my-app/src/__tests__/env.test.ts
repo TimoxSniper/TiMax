@@ -8,6 +8,9 @@ describe('Environment Validation', () => {
     // Reset env before each test
     vi.resetModules();
     process.env = { ...originalEnv };
+    // Required by validateRequiredEnv() (Supabase)
+    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
   });
 
   afterEach(() => {
@@ -64,13 +67,13 @@ describe('Environment Validation', () => {
       expect(result.N8N_API_URL).toBe('https://custom.n8n.com');
     });
 
-    it('should fallback N8N_TRANSCRIPTION_WEBHOOK_URL to CHAT_WEBHOOK_URL', () => {
+    it('should fallback N8N_TRANSCRIPTION_WEBHOOK_URL to UPLOAD_WEBHOOK_URL', () => {
       process.env.N8N_CHAT_WEBHOOK_URL = 'https://n8n.example.com/chat';
       process.env.N8N_UPLOAD_WEBHOOK_URL = 'https://n8n.example.com/upload';
       // N8N_TRANSCRIPTION_WEBHOOK_URL not set
 
       const result = validateRequiredEnv();
-      expect(result.N8N_TRANSCRIPTION_WEBHOOK_URL).toBe('https://n8n.example.com/chat');
+      expect(result.N8N_TRANSCRIPTION_WEBHOOK_URL).toBe('https://n8n.example.com/upload');
     });
   });
 

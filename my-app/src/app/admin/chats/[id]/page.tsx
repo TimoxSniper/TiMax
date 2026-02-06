@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
+import { logger } from "@/lib/logger";
 import { ArrowLeft, Trash2, User, Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -63,7 +64,7 @@ export default function AdminChatDetailPage({ params }: PageProps) {
           router.push("/admin/chats");
         }
       } catch (error) {
-        console.error("Fehler beim Laden des Chats:", error);
+        logger.error("Fehler beim Laden des Chats:", error);
         showToast("Chat konnte nicht geladen werden", "error");
       } finally {
         setIsLoading(false);

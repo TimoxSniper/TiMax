@@ -5,6 +5,7 @@ import { StatsCards } from "@/components/admin/stats-cards";
 import { ChatsTable } from "@/components/admin/chats-table";
 import { UploadsTable } from "@/components/admin/uploads-table";
 import { useToast } from "@/components/ui/toast";
+import { logger } from "@/lib/logger";
 
 interface Stats {
   totalUsers: number;
@@ -66,7 +67,7 @@ export default function AdminDashboardPage() {
         setRecentUploads(uploadsData.uploads || []);
       }
     } catch (error) {
-      console.error("Fehler beim Laden der Dashboard-Daten:", error);
+      logger.error("Fehler beim Laden der Dashboard-Daten:", error);
       showToast("Dashboard-Daten konnten nicht geladen werden", "error");
     } finally {
       setIsLoading(false);

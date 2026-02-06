@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ChatsTable } from "@/components/admin/chats-table";
 import { useToast } from "@/components/ui/toast";
+import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
@@ -50,7 +51,7 @@ export default function AdminChatsPage() {
         throw new Error("Fehler beim Laden");
       }
     } catch (error) {
-      console.error("Fehler beim Laden der Chats:", error);
+      logger.error("Fehler beim Laden der Chats:", error);
       showToast("Chats konnten nicht geladen werden", "error");
     } finally {
       setIsLoading(false);
