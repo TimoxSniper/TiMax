@@ -6,6 +6,7 @@ import { validateRequiredEnv } from "@/lib/env";
 import { chatSchema, sanitizeString, sanitizeAIOutput } from "@/lib/validation";
 import { withCsrfProtection } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
+import { extractOutputFromN8nResponse } from "@/lib/n8n";
 
 // Haupt-Handler für Chat
 async function chatHandler(request: NextRequest) {
@@ -117,34 +118,11 @@ async function chatHandler(request: NextRequest) {
       throw new Error("Ungültige JSON-Antwort von n8n Webhook");
     }
 
-    // Validierung: Prüfe ob data existiert und ein valides Format hat
-    if (!data || (typeof data !== "string" && typeof data !== "object")) {
-      throw new Error("Ungültiges Response-Format von n8n Webhook");
-    }
+    // Verwende zentralen n8n Parser
+    const output = extractOutputFromN8nResponse(data, "output");
 
-    // n8n gibt die Antwort in verschiedenen Formaten zurück
-    let output = "";
-
-    if (typeof data === "string") {
-      output = data.trim();
-    } else if (data && typeof data === "object") {
-      if (typeof data.output === "string") {
-        output = data.output.trim();
-      } else if (data.body && typeof data.body.output === "string") {
-        output = data.body.output.trim();
-      } else if (Array.isArray(data) && data.length > 0) {
-        const firstItem = data[0];
-        if (firstItem?.json?.output && typeof firstItem.json.output === "string") {
-          output = firstItem.json.output.trim();
-        } else if (firstItem?.output && typeof firstItem.output === "string") {
-          output = firstItem.output.trim();
-        }
-      } else if (data.json && typeof data.json.output === "string") {
-        output = data.json.output.trim();
-      }
-    }
-
-    if (!output || output.length === 0) {
+    if (!output) {
+      logger.error("[Chat API] Kein Output in n8n Response gefunden:", JSON.stringify(data));
       throw new Error("n8n Webhook hat leere Antwort zurückgegeben");
     }
 

@@ -230,7 +230,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "execute_workflow": {
         const { workflowId, inputData } = args as {
           workflowId: string;
-          inputData?: any;
+          inputData?: Record<string, unknown>;
         };
         const result = await n8nApiRequest(`/api/v1/workflows/${workflowId}/execute`, {
           method: "POST",
@@ -249,8 +249,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "create_workflow": {
         const { name, nodes, connections, active } = args as {
           name: string;
-          nodes: any[];
-          connections?: any;
+          nodes: Record<string, unknown>[];
+          connections?: Record<string, unknown>;
           active?: boolean;
         };
         const workflow = await n8nApiRequest("/api/v1/workflows", {
@@ -276,8 +276,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const { workflowId, ...updates } = args as {
           workflowId: string;
           name?: string;
-          nodes?: any[];
-          connections?: any;
+          nodes?: Record<string, unknown>[];
+          connections?: Record<string, unknown>;
           active?: boolean;
         };
         const workflow = await n8nApiRequest(`/api/v1/workflows/${workflowId}`, {
@@ -351,7 +351,7 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
     const workflowList = Array.isArray(workflows) ? workflows : workflows.data || [];
 
     return {
-      resources: workflowList.map((workflow: any) => ({
+      resources: workflowList.map((workflow: { id: string; name?: string; description?: string }) => ({
         uri: `workflow://${workflow.id}`,
         name: workflow.name || `Workflow ${workflow.id}`,
         description: workflow.description || "",

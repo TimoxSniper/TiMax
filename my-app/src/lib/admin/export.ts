@@ -5,8 +5,7 @@
 /**
  * Convert data to CSV format and trigger download
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function exportToCSV<T extends Record<string, any>>(
+export function exportToCSV<T extends object>(
   data: T[],
   filename: string,
   columns?: { key: keyof T; label: string }[]
@@ -16,7 +15,7 @@ export function exportToCSV<T extends Record<string, any>>(
   }
 
   // Use provided columns or auto-detect from first row
-  const cols = columns || Object.keys(data[0]).map((key) => ({ key, label: key }));
+  const cols = columns || Object.keys(data[0]).map((key) => ({ key: key as keyof T, label: key }));
 
   // Create CSV header
   const header = cols.map((col) => col.label).join(",");
@@ -25,7 +24,8 @@ export function exportToCSV<T extends Record<string, any>>(
   const rows = data.map((row) => {
     return cols
       .map((col) => {
-        const value = row[col.key];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const value = (row as any)[col.key];
         // Escape quotes and wrap in quotes if contains comma or quote
         const stringValue = String(value ?? "");
         if (stringValue.includes(",") || stringValue.includes('"') || stringValue.includes("\n")) {

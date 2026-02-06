@@ -155,7 +155,7 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
           message: content.trim(),
           sessionId,
           chat_id: chatId, // Sende bestehende chat_id mit
-          chatHistory: [...messages, userMessage].map((msg) => ({
+          chatHistory: [...messages, userMessage].slice(-10).map((msg) => ({
             role: msg.role,
             content: msg.content,
           })),
