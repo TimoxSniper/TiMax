@@ -122,6 +122,36 @@ export interface Database {
         };
         Relationships: [];
       };
+      waitlist: {
+        Row: {
+          id: string;
+          email: string;
+          status: string;
+          source: string | null;
+          metadata: Json | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          email: string;
+          status?: string;
+          source?: string | null;
+          metadata?: Json | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          status?: string;
+          source?: string | null;
+          metadata?: Json | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {};
     Functions: {};
@@ -157,6 +187,10 @@ export type MessageUpdate = Database["public"]["Tables"]["messages"]["Update"];
 export type Upload = Database["public"]["Tables"]["uploads"]["Row"];
 export type UploadInsert = Database["public"]["Tables"]["uploads"]["Insert"];
 export type UploadUpdate = Database["public"]["Tables"]["uploads"]["Update"];
+
+export type Waitlist = Database["public"]["Tables"]["waitlist"]["Row"];
+export type WaitlistInsert = Database["public"]["Tables"]["waitlist"]["Insert"];
+export type WaitlistUpdate = Database["public"]["Tables"]["waitlist"]["Update"];
 
 /**
  * Chat mit Messages (für Abfragen mit Relations)
