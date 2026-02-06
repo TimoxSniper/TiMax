@@ -43,14 +43,23 @@ export async function GET(request: NextRequest) {
     // Pagination with validation
     const { page, limit, offset } = parsePaginationParams(searchParams, 50);
 
+    const clerk = await clerkClient();
+
+    // Alle Clerk-Benutzer laden
+    const clerkUsersResponse = await clerk.users.getUserList({
+      limit: 500, // Clerk's default limit
+    });
+
+    const allClerkUsers = clerkUsersResponse.data;
+
     // Alle User-IDs aus Chats und Uploads sammeln
     const [chatsResult, uploadsResult] = await Promise.all([
       supabase.from("chats").select("user_id, updated_at"),
       supabase.from("uploads").select("user_id, updated_at"),
     ]);
 
-    // Map für User-Statistiken
-    const userStatsMap = new Map<string, UserStats>();
+    // Map für User-Statistiken erstellen
+    const userStatsMap = new Map<string, { chatCount: number; uploadCount: number; lastActivity: string | null }>();
 
     // Chats verarbeiten
     chatsResult.data?.forEach(chat => {
@@ -62,14 +71,9 @@ export async function GET(request: NextRequest) {
         }
       } else {
         userStatsMap.set(chat.user_id, {
-          userId: chat.user_id,
           chatCount: 1,
           uploadCount: 0,
           lastActivity: chat.updated_at,
-          firstName: null,
-          lastName: null,
-          email: null,
-          imageUrl: null,
         });
       }
     });
@@ -84,54 +88,42 @@ export async function GET(request: NextRequest) {
         }
       } else {
         userStatsMap.set(upload.user_id, {
-          userId: upload.user_id,
           chatCount: 0,
           uploadCount: 1,
           lastActivity: upload.updated_at,
-          firstName: null,
-          lastName: null,
-          email: null,
-          imageUrl: null,
         });
       }
     });
 
-    // In Array umwandeln und sortieren (nach letzter Aktivität)
-    const allUsers = Array.from(userStatsMap.values())
-      .sort((a, b) => {
-        if (!a.lastActivity) return 1;
-        if (!b.lastActivity) return -1;
-        return new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime();
-      });
+    // Alle Clerk-Benutzer mit ihren Statistiken kombinieren
+    const allUsers: UserStats[] = allClerkUsers.map(clerkUser => {
+      const stats = userStatsMap.get(clerkUser.id) || {
+        chatCount: 0,
+        uploadCount: 0,
+        lastActivity: null,
+      };
+
+      return {
+        userId: clerkUser.id,
+        chatCount: stats.chatCount,
+        uploadCount: stats.uploadCount,
+        lastActivity: stats.lastActivity,
+        firstName: clerkUser.firstName,
+        lastName: clerkUser.lastName,
+        email: clerkUser.emailAddresses[0]?.emailAddress || null,
+        imageUrl: clerkUser.imageUrl,
+      };
+    });
+
+    // Sortieren nach letzter Aktivität
+    allUsers.sort((a, b) => {
+      if (!a.lastActivity) return 1;
+      if (!b.lastActivity) return -1;
+      return new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime();
+    });
 
     const total = allUsers.length;
-    const paginatedUsers = allUsers.slice(offset, offset + limit);
-
-    // Clerk-Benutzerdaten für die paginierten User laden
-    const clerk = await clerkClient();
-    const usersWithClerkData = await Promise.all(
-      paginatedUsers.map(async (user) => {
-        try {
-          const clerkUser = await clerk.users.getUser(user.userId);
-          return {
-            ...user,
-            firstName: clerkUser.firstName,
-            lastName: clerkUser.lastName,
-            email: clerkUser.emailAddresses[0]?.emailAddress || null,
-            imageUrl: clerkUser.imageUrl,
-          };
-        } catch {
-          // User nicht in Clerk gefunden (z.B. gelöscht)
-          return {
-            ...user,
-            firstName: null,
-            lastName: null,
-            email: null,
-            imageUrl: null,
-          };
-        }
-      })
-    );
+    const usersWithClerkData = allUsers.slice(offset, offset + limit);
 
     return NextResponse.json({
       success: true,

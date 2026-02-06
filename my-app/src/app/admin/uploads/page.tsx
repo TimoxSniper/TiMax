@@ -33,6 +33,7 @@ export default function AdminUploadsPage() {
   const [uploads, setUploads] = useState<Upload[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("");
   const { showToast } = useToast();
@@ -47,7 +48,7 @@ export default function AdminUploadsPage() {
       if (status) {
         url += `&status=${status}`;
       }
-      
+
       const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
@@ -61,11 +62,13 @@ export default function AdminUploadsPage() {
       showToast("Uploads konnten nicht geladen werden", "error");
     } finally {
       setIsLoading(false);
+      setIsInitialLoad(false);
     }
   };
 
   useEffect(() => {
     setCurrentPage(1);
+    setIsInitialLoad(true);
     fetchUploads(1, statusFilter);
   }, [userIdFilter, statusFilter]);
 
@@ -124,7 +127,7 @@ export default function AdminUploadsPage() {
       {/* Uploads Table */}
       <UploadsTable
         uploads={uploads}
-        isLoading={isLoading}
+        isLoading={isInitialLoad}
         pagination={pagination || undefined}
         onPageChange={handlePageChange}
         onDelete={handleDelete}

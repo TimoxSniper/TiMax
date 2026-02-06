@@ -23,6 +23,7 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const { showToast } = useToast();
 
@@ -42,6 +43,7 @@ export default function AdminUsersPage() {
       showToast("Benutzer konnten nicht geladen werden", "error");
     } finally {
       setIsLoading(false);
+      setIsInitialLoad(false);
     }
   };
 
@@ -66,7 +68,7 @@ export default function AdminUsersPage() {
       {/* Users Table */}
       <UsersTable
         users={users}
-        isLoading={isLoading}
+        isLoading={isInitialLoad}
         pagination={pagination || undefined}
         onPageChange={handlePageChange}
       />

@@ -35,6 +35,21 @@ export async function GET(request: NextRequest) {
     // Optional: Filter nach User
     const filterUserId = searchParams.get("userId");
 
+    // Optional: Zeit-Filter
+    const timeFilter = searchParams.get("timeFilter"); // 'today', 'week', 'month'
+
+    let startDate: Date | null = null;
+    if (timeFilter) {
+      const now = new Date();
+      if (timeFilter === "today") {
+        startDate = new Date(now.setHours(0, 0, 0, 0));
+      } else if (timeFilter === "week") {
+        startDate = new Date(now.setDate(now.getDate() - 7));
+      } else if (timeFilter === "month") {
+        startDate = new Date(now.setMonth(now.getMonth() - 1));
+      }
+    }
+
     // Gesamtanzahl für Pagination
     let countQuery = supabase
       .from("chats")
@@ -42,6 +57,10 @@ export async function GET(request: NextRequest) {
 
     if (filterUserId) {
       countQuery = countQuery.eq("user_id", filterUserId);
+    }
+
+    if (startDate) {
+      countQuery = countQuery.gte("created_at", startDate.toISOString());
     }
 
     const { count: total } = await countQuery;
@@ -55,6 +74,10 @@ export async function GET(request: NextRequest) {
 
     if (filterUserId) {
       query = query.eq("user_id", filterUserId);
+    }
+
+    if (startDate) {
+      query = query.gte("created_at", startDate.toISOString());
     }
 
     const { data: chats, error } = await query;
