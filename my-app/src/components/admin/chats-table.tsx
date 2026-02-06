@@ -89,16 +89,16 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
     <>
       <Card className="hover:translate-y-0 hover:shadow-editorial-md">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Chats</CardTitle>
+          <CardTitle className="text-base md:text-lg">Chats</CardTitle>
           {pagination && (
-            <span className="text-sm text-muted-foreground">
-              {pagination.total} Chats gesamt
+            <span className="text-xs md:text-sm text-muted-foreground">
+              {pagination.total} gesamt
             </span>
           )}
         </CardHeader>
         <CardContent>
-          {/* Table Header */}
-          <div className="grid grid-cols-[1fr_120px_80px_140px_80px] gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b border-border">
+          {/* Table Header - Desktop only */}
+          <div className="hidden md:grid grid-cols-[1fr_120px_80px_140px_80px] gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b border-border">
             <div>Titel</div>
             <div>User ID</div>
             <div className="text-center">Nachrichten</div>
@@ -109,46 +109,88 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
           {/* Table Body */}
           <div className="divide-y divide-border">
             {chats.length === 0 ? (
-              <div className="py-8 text-center text-muted-foreground">
+              <div className="py-8 text-center text-muted-foreground text-sm">
                 Keine Chats gefunden
               </div>
             ) : (
               chats.map((chat) => (
-                <div
-                  key={chat.id}
-                  className="group grid grid-cols-[1fr_120px_80px_140px_80px] gap-4 px-4 py-3 items-center hover:bg-muted/50 transition-colors"
-                >
-                  <div className="font-medium truncate" title={chat.title}>
-                    {chat.title}
+                <div key={chat.id} className="group hover:bg-muted/50 transition-colors">
+                  {/* Mobile Card Layout */}
+                  <div className="md:hidden p-3 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium truncate text-sm" title={chat.title}>
+                          {chat.title}
+                        </div>
+                        <div className="mt-1">
+                          <UserIdDisplay userId={chat.user_id} />
+                        </div>
+                      </div>
+                      <div className="flex gap-1 shrink-0">
+                        <Button
+                          variant="ghost"
+                          size="icon-xs"
+                          asChild
+                          title="Ansehen"
+                        >
+                          <Link href={`/admin/chats/${chat.id}`}>
+                            <Eye className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon-xs"
+                          onClick={() => setDeleteChat(chat)}
+                          title="Löschen"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1.5">
+                        <MessageSquare className="h-3.5 w-3.5" />
+                        <span>{chat.messageCount} Nachrichten</span>
+                      </div>
+                      <span>{formatDate(chat.created_at)}</span>
+                    </div>
                   </div>
-                  <UserIdDisplay userId={chat.user_id} />
-                  <div className="flex items-center justify-center gap-1.5">
-                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                    <span>{chat.messageCount}</span>
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {formatDate(chat.created_at)}
-                  </div>
-                  <div className="flex items-center justify-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon-xs"
-                      asChild
-                      title="Ansehen"
-                    >
-                      <Link href={`/admin/chats/${chat.id}`}>
-                        <Eye className="h-4 w-4" />
-                      </Link>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon-xs"
-                      onClick={() => setDeleteChat(chat)}
-                      title="Löschen"
-                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+
+                  {/* Desktop Grid Layout */}
+                  <div className="hidden md:grid grid-cols-[1fr_120px_80px_140px_80px] gap-4 px-4 py-3 items-center">
+                    <div className="font-medium truncate" title={chat.title}>
+                      {chat.title}
+                    </div>
+                    <UserIdDisplay userId={chat.user_id} />
+                    <div className="flex items-center justify-center gap-1.5">
+                      <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                      <span>{chat.messageCount}</span>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {formatDate(chat.created_at)}
+                    </div>
+                    <div className="flex items-center justify-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon-xs"
+                        asChild
+                        title="Ansehen"
+                      >
+                        <Link href={`/admin/chats/${chat.id}`}>
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon-xs"
+                        onClick={() => setDeleteChat(chat)}
+                        title="Löschen"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))
@@ -157,27 +199,29 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
 
           {/* Pagination */}
           {pagination && pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
-              <span className="text-sm text-muted-foreground">
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between pt-4 border-t border-border mt-4">
+              <span className="text-xs md:text-sm text-muted-foreground text-center md:text-left">
                 Seite {pagination.page} von {pagination.totalPages}
               </span>
-              <div className="flex gap-2">
+              <div className="flex gap-2 justify-center md:justify-end">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => onPageChange?.(pagination.page - 1)}
                   disabled={pagination.page <= 1}
+                  className="flex-1 md:flex-none"
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  Zurück
+                  <span className="md:inline">Zurück</span>
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => onPageChange?.(pagination.page + 1)}
                   disabled={pagination.page >= pagination.totalPages}
+                  className="flex-1 md:flex-none"
                 >
-                  Weiter
+                  <span className="md:inline">Weiter</span>
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>

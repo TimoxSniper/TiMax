@@ -131,16 +131,17 @@ export function UploadsTable({
   return (
     <>
       <Card className="hover:translate-y-0 hover:shadow-editorial-md">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div className="flex items-center gap-4">
-            <CardTitle>Uploads</CardTitle>
+        <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
+            <CardTitle className="text-base md:text-lg">Uploads</CardTitle>
             {/* Status Filter */}
             {onStatusFilterChange && (
-              <div className="flex gap-1">
+              <div className="flex gap-1 overflow-x-auto pb-1 md:pb-0">
                 <Button
                   variant={!statusFilter ? "default" : "outline"}
                   size="xs"
                   onClick={() => onStatusFilterChange("")}
+                  className="shrink-0"
                 >
                   Alle
                 </Button>
@@ -150,6 +151,7 @@ export function UploadsTable({
                     variant={statusFilter === key ? "default" : "outline"}
                     size="xs"
                     onClick={() => onStatusFilterChange(key)}
+                    className="shrink-0"
                   >
                     {label}
                   </Button>
@@ -158,14 +160,14 @@ export function UploadsTable({
             )}
           </div>
           {pagination && (
-            <span className="text-sm text-muted-foreground">
-              {pagination.total} Uploads gesamt
+            <span className="text-xs md:text-sm text-muted-foreground">
+              {pagination.total} gesamt
             </span>
           )}
         </CardHeader>
         <CardContent>
-          {/* Table Header */}
-          <div className="grid grid-cols-[1fr_120px_80px_80px_100px_140px_60px] gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b border-border">
+          {/* Table Header - Desktop only */}
+          <div className="hidden md:grid grid-cols-[1fr_120px_80px_80px_100px_140px_60px] gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b border-border">
             <div>Dateiname</div>
             <div>User ID</div>
             <div className="text-right">Größe</div>
@@ -178,51 +180,89 @@ export function UploadsTable({
           {/* Table Body */}
           <div className="divide-y divide-border">
             {uploads.length === 0 ? (
-              <div className="py-8 text-center text-muted-foreground">
+              <div className="py-8 text-center text-muted-foreground text-sm">
                 Keine Uploads gefunden
               </div>
             ) : (
               uploads.map((upload) => {
                 const FileIcon = getFileIcon(upload.file_type);
                 return (
-                  <div
-                    key={upload.id}
-                    className="group grid grid-cols-[1fr_120px_80px_80px_100px_140px_60px] gap-4 px-4 py-3 items-center hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <FileIcon className="h-4 w-4 text-muted-foreground shrink-0" />
-                      <span className="truncate font-medium" title={upload.file_name}>
-                        {upload.file_name}
-                      </span>
+                  <div key={upload.id} className="group hover:bg-muted/50 transition-colors">
+                    {/* Mobile Card Layout */}
+                    <div className="md:hidden p-3 space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-start gap-2 min-w-0 flex-1">
+                          <FileIcon className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                          <div className="min-w-0 flex-1">
+                            <div className="font-medium text-sm truncate" title={upload.file_name}>
+                              {upload.file_name}
+                            </div>
+                            <div className="mt-1">
+                              <UserIdDisplay userId={upload.user_id} />
+                            </div>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon-xs"
+                          onClick={() => setDeleteUpload(upload)}
+                          title="Löschen"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground">{formatFileSize(upload.file_size)}</span>
+                          <Badge
+                            variant="outline"
+                            className={`${statusColors[upload.status] || statusColors.pending} text-xs`}
+                          >
+                            {statusLabels[upload.status] || upload.status}
+                          </Badge>
+                        </div>
+                        <span className="text-muted-foreground">{formatDate(upload.created_at)}</span>
+                      </div>
                     </div>
-                    <UserIdDisplay userId={upload.user_id} />
-                    <div className="text-right text-sm text-muted-foreground">
-                      {formatFileSize(upload.file_size)}
-                    </div>
-                    <div className="text-xs text-muted-foreground truncate" title={upload.file_type || "-"}>
-                      {upload.file_type?.split("/")[1] || "-"}
-                    </div>
-                    <div className="flex justify-center">
-                      <Badge
-                        variant="outline"
-                        className={statusColors[upload.status] || statusColors.pending}
-                      >
-                        {statusLabels[upload.status] || upload.status}
-                      </Badge>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {formatDate(upload.created_at)}
-                    </div>
-                    <div className="flex justify-center">
-                      <Button
-                        variant="ghost"
-                        size="icon-xs"
-                        onClick={() => setDeleteUpload(upload)}
-                        title="Löschen"
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+
+                    {/* Desktop Grid Layout */}
+                    <div className="hidden md:grid grid-cols-[1fr_120px_80px_80px_100px_140px_60px] gap-4 px-4 py-3 items-center">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FileIcon className="h-4 w-4 text-muted-foreground shrink-0" />
+                        <span className="truncate font-medium" title={upload.file_name}>
+                          {upload.file_name}
+                        </span>
+                      </div>
+                      <UserIdDisplay userId={upload.user_id} />
+                      <div className="text-right text-sm text-muted-foreground">
+                        {formatFileSize(upload.file_size)}
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate" title={upload.file_type || "-"}>
+                        {upload.file_type?.split("/")[1] || "-"}
+                      </div>
+                      <div className="flex justify-center">
+                        <Badge
+                          variant="outline"
+                          className={statusColors[upload.status] || statusColors.pending}
+                        >
+                          {statusLabels[upload.status] || upload.status}
+                        </Badge>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {formatDate(upload.created_at)}
+                      </div>
+                      <div className="flex justify-center">
+                        <Button
+                          variant="ghost"
+                          size="icon-xs"
+                          onClick={() => setDeleteUpload(upload)}
+                          title="Löschen"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -232,27 +272,29 @@ export function UploadsTable({
 
           {/* Pagination */}
           {pagination && pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
-              <span className="text-sm text-muted-foreground">
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between pt-4 border-t border-border mt-4">
+              <span className="text-xs md:text-sm text-muted-foreground text-center md:text-left">
                 Seite {pagination.page} von {pagination.totalPages}
               </span>
-              <div className="flex gap-2">
+              <div className="flex gap-2 justify-center md:justify-end">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => onPageChange?.(pagination.page - 1)}
                   disabled={pagination.page <= 1}
+                  className="flex-1 md:flex-none"
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  Zurück
+                  <span className="md:inline">Zurück</span>
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => onPageChange?.(pagination.page + 1)}
                   disabled={pagination.page >= pagination.totalPages}
+                  className="flex-1 md:flex-none"
                 >
-                  Weiter
+                  <span className="md:inline">Weiter</span>
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>

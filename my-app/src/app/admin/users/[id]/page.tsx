@@ -179,43 +179,46 @@ export default function AdminUserDetailPage() {
     : user.firstName || user.lastName || "Unbekannter Benutzer";
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       {/* Back Button */}
-      <Button variant="ghost" onClick={() => router.push("/admin/users")} className="gap-2">
+      <Button variant="ghost" onClick={() => router.push("/admin/users")} className="gap-2 text-sm md:text-base">
         <ArrowLeft className="h-4 w-4" />
-        Zurück zu Benutzer
+        <span className="hidden sm:inline">Zurück zu Benutzer</span>
+        <span className="sm:hidden">Zurück</span>
       </Button>
 
       {/* User Header */}
-      <div className="flex items-start gap-6">
+      <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-6">
         {user.imageUrl ? (
           <Image
             src={user.imageUrl}
             alt={displayName}
             width={80}
             height={80}
-            className="rounded-full"
+            className="rounded-full w-16 h-16 sm:w-20 sm:h-20"
           />
         ) : (
-          <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center">
-            <User className="h-10 w-10 text-muted-foreground" />
+          <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-muted flex items-center justify-center shrink-0">
+            <User className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground" />
           </div>
         )}
-        <div>
-          <h1 className="font-serif text-3xl font-bold">{displayName}</h1>
+        <div className="flex-1 min-w-0">
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold break-words">{displayName}</h1>
           {user.email && (
-            <div className="flex items-center gap-2 mt-2 text-muted-foreground">
-              <Mail className="h-4 w-4" />
-              <span>{user.email}</span>
+            <div className="flex items-center gap-2 mt-2 text-muted-foreground text-sm md:text-base">
+              <Mail className="h-3.5 w-3.5 md:h-4 md:w-4 shrink-0" />
+              <span className="truncate">{user.email}</span>
             </div>
           )}
-          <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4" />
-            <span>Registriert: {formatDate(user.createdAt)}</span>
-          </div>
-          <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
-            <Activity className="h-4 w-4" />
-            <span>Letzte Aktivität: {formatDate(user.lastActivity)}</span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 mt-2">
+            <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
+              <Calendar className="h-3.5 w-3.5 md:h-4 md:w-4 shrink-0" />
+              <span>Registriert: {formatDate(user.createdAt)}</span>
+            </div>
+            <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
+              <Activity className="h-3.5 w-3.5 md:h-4 md:w-4 shrink-0" />
+              <span>Letzte Aktivität: {formatDate(user.lastActivity)}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -264,17 +267,17 @@ export default function AdminUserDetailPage() {
       {/* Chats */}
       <Card className="hover:translate-y-0 hover:shadow-editorial-md">
         <CardHeader>
-          <CardTitle>Chats ({chats.length})</CardTitle>
+          <CardTitle className="text-base md:text-lg">Chats ({chats.length})</CardTitle>
         </CardHeader>
         <CardContent>
           {chats.length === 0 ? (
-            <div className="py-8 text-center text-muted-foreground">
+            <div className="py-8 text-center text-muted-foreground text-sm">
               Keine Chats vorhanden
             </div>
           ) : (
             <div className="space-y-2">
-              {/* Table Header */}
-              <div className="grid grid-cols-[1fr_100px_140px_80px] gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b border-border">
+              {/* Table Header - Desktop only */}
+              <div className="hidden md:grid grid-cols-[1fr_100px_140px_80px] gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b border-border">
                 <div>Titel</div>
                 <div className="text-center">Nachrichten</div>
                 <div>Erstellt</div>
@@ -284,26 +287,47 @@ export default function AdminUserDetailPage() {
               {/* Table Body */}
               <div className="divide-y divide-border">
                 {chats.map((chat) => (
-                  <div
-                    key={chat.id}
-                    className="grid grid-cols-[1fr_100px_140px_80px] gap-4 px-4 py-3 items-center hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="font-medium truncate" title={chat.title}>
-                      {chat.title}
+                  <div key={chat.id} className="hover:bg-muted/50 transition-colors">
+                    {/* Mobile Card Layout */}
+                    <div className="md:hidden p-3 space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="font-medium text-sm truncate flex-1" title={chat.title}>
+                          {chat.title}
+                        </div>
+                        <Button variant="ghost" size="icon-xs" asChild title="Ansehen">
+                          <Link href={`/admin/chats/${chat.id}`}>
+                            <Eye className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1.5">
+                          <MessageSquare className="h-3.5 w-3.5" />
+                          <span>{chat.messageCount} Nachrichten</span>
+                        </div>
+                        <span>{formatDate(chat.created_at)}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-center gap-1.5">
-                      <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                      <span>{chat.messageCount}</span>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {formatDate(chat.created_at)}
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <Button variant="ghost" size="icon-xs" asChild title="Ansehen">
-                        <Link href={`/admin/chats/${chat.id}`}>
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                      </Button>
+
+                    {/* Desktop Grid Layout */}
+                    <div className="hidden md:grid grid-cols-[1fr_100px_140px_80px] gap-4 px-4 py-3 items-center">
+                      <div className="font-medium truncate" title={chat.title}>
+                        {chat.title}
+                      </div>
+                      <div className="flex items-center justify-center gap-1.5">
+                        <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                        <span>{chat.messageCount}</span>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {formatDate(chat.created_at)}
+                      </div>
+                      <div className="flex items-center justify-center">
+                        <Button variant="ghost" size="icon-xs" asChild title="Ansehen">
+                          <Link href={`/admin/chats/${chat.id}`}>
+                            <Eye className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -316,17 +340,17 @@ export default function AdminUserDetailPage() {
       {/* Uploads */}
       <Card className="hover:translate-y-0 hover:shadow-editorial-md">
         <CardHeader>
-          <CardTitle>Uploads ({uploads.length})</CardTitle>
+          <CardTitle className="text-base md:text-lg">Uploads ({uploads.length})</CardTitle>
         </CardHeader>
         <CardContent>
           {uploads.length === 0 ? (
-            <div className="py-8 text-center text-muted-foreground">
+            <div className="py-8 text-center text-muted-foreground text-sm">
               Keine Uploads vorhanden
             </div>
           ) : (
             <div className="space-y-2">
-              {/* Table Header */}
-              <div className="grid grid-cols-[1fr_100px_120px_140px] gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b border-border">
+              {/* Table Header - Desktop only */}
+              <div className="hidden md:grid grid-cols-[1fr_100px_120px_140px] gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b border-border">
                 <div>Dateiname</div>
                 <div>Größe</div>
                 <div>Status</div>
@@ -336,27 +360,47 @@ export default function AdminUserDetailPage() {
               {/* Table Body */}
               <div className="divide-y divide-border">
                 {uploads.map((upload) => (
-                  <div
-                    key={upload.id}
-                    className="grid grid-cols-[1fr_100px_120px_140px] gap-4 px-4 py-3 items-center hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="font-medium truncate" title={upload.file_name}>
-                      {upload.file_name}
+                  <div key={upload.id} className="hover:bg-muted/50 transition-colors">
+                    {/* Mobile Card Layout */}
+                    <div className="md:hidden p-3 space-y-2">
+                      <div className="font-medium text-sm truncate" title={upload.file_name}>
+                        {upload.file_name}
+                      </div>
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground">{formatFileSize(upload.file_size)}</span>
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-md border ${getStatusColor(
+                              upload.status
+                            )}`}
+                          >
+                            {getStatusLabel(upload.status)}
+                          </span>
+                        </div>
+                        <span className="text-muted-foreground">{formatDate(upload.created_at)}</span>
+                      </div>
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      {formatFileSize(upload.file_size)}
-                    </div>
-                    <div>
-                      <span
-                        className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-md border ${getStatusColor(
-                          upload.status
-                        )}`}
-                      >
-                        {getStatusLabel(upload.status)}
-                      </span>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {formatDate(upload.created_at)}
+
+                    {/* Desktop Grid Layout */}
+                    <div className="hidden md:grid grid-cols-[1fr_100px_120px_140px] gap-4 px-4 py-3 items-center">
+                      <div className="font-medium truncate" title={upload.file_name}>
+                        {upload.file_name}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {formatFileSize(upload.file_size)}
+                      </div>
+                      <div>
+                        <span
+                          className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-md border ${getStatusColor(
+                            upload.status
+                          )}`}
+                        >
+                          {getStatusLabel(upload.status)}
+                        </span>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {formatDate(upload.created_at)}
+                      </div>
                     </div>
                   </div>
                 ))}

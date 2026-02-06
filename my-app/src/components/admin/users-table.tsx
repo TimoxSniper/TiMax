@@ -68,16 +68,16 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
   return (
     <Card className="hover:translate-y-0 hover:shadow-editorial-md">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Benutzer</CardTitle>
+        <CardTitle className="text-base md:text-lg">Benutzer</CardTitle>
         {pagination && (
-          <span className="text-sm text-muted-foreground">
-            {pagination.total} Benutzer gesamt
+          <span className="text-xs md:text-sm text-muted-foreground">
+            {pagination.total} gesamt
           </span>
         )}
       </CardHeader>
       <CardContent>
-        {/* Table Header */}
-        <div className="grid grid-cols-[1fr_80px_80px_140px] gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b border-border">
+        {/* Table Header - Desktop only */}
+        <div className="hidden md:grid grid-cols-[1fr_80px_80px_140px] gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b border-border">
           <div>Benutzer</div>
           <div className="text-center">Chats</div>
           <div className="text-center">Uploads</div>
@@ -85,9 +85,9 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
         </div>
 
         {/* Table Body */}
-        <div className="divide-y divide-border">
+        <div className="divide-y divide-border md:divide-y-0 md:divide-y md:divide-border">
           {users.length === 0 ? (
-            <div className="py-8 text-center text-muted-foreground">
+            <div className="py-8 text-center text-muted-foreground text-sm">
               Keine Benutzer gefunden
             </div>
           ) : (
@@ -95,26 +95,56 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
               <Link
                 key={user.userId}
                 href={`/admin/users/${user.userId}`}
-                className="grid grid-cols-[1fr_80px_80px_140px] gap-4 px-4 py-3 items-center hover:bg-muted/50 transition-colors cursor-pointer block"
+                className="block hover:bg-muted/50 transition-colors cursor-pointer"
               >
-                <UserDisplay
-                  userId={user.userId}
-                  firstName={user.firstName}
-                  lastName={user.lastName}
-                  email={user.email}
-                  imageUrl={user.imageUrl}
-                  showEmail
-                />
-                <div className="flex items-center justify-center gap-1.5">
-                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-accent">{user.chatCount}</span>
+                {/* Mobile Card Layout */}
+                <div className="md:hidden p-3 space-y-2">
+                  <UserDisplay
+                    userId={user.userId}
+                    firstName={user.firstName}
+                    lastName={user.lastName}
+                    email={user.email}
+                    imageUrl={user.imageUrl}
+                    showEmail
+                  />
+                  <div className="flex items-center justify-between text-sm pt-2">
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1.5">
+                        <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="text-accent font-medium">{user.chatCount}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <FileAudio className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="text-accent font-medium">{user.uploadCount}</span>
+                      </div>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {formatDate(user.lastActivity)}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center justify-center gap-1.5">
-                  <FileAudio className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-accent">{user.uploadCount}</span>
-                </div>
-                <div className="text-right text-sm text-muted-foreground">
-                  {formatDate(user.lastActivity)}
+
+                {/* Desktop Grid Layout */}
+                <div className="hidden md:grid grid-cols-[1fr_80px_80px_140px] gap-4 px-4 py-3 items-center">
+                  <UserDisplay
+                    userId={user.userId}
+                    firstName={user.firstName}
+                    lastName={user.lastName}
+                    email={user.email}
+                    imageUrl={user.imageUrl}
+                    showEmail
+                  />
+                  <div className="flex items-center justify-center gap-1.5">
+                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-accent">{user.chatCount}</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-1.5">
+                    <FileAudio className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-accent">{user.uploadCount}</span>
+                  </div>
+                  <div className="text-right text-sm text-muted-foreground">
+                    {formatDate(user.lastActivity)}
+                  </div>
                 </div>
               </Link>
             ))
@@ -123,27 +153,29 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
 
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
-          <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
-            <span className="text-sm text-muted-foreground">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between pt-4 border-t border-border mt-4">
+            <span className="text-xs md:text-sm text-muted-foreground text-center md:text-left">
               Seite {pagination.page} von {pagination.totalPages}
             </span>
-            <div className="flex gap-2">
+            <div className="flex gap-2 justify-center md:justify-end">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => onPageChange?.(pagination.page - 1)}
                 disabled={pagination.page <= 1}
+                className="flex-1 md:flex-none"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Zurück
+                <span className="md:inline">Zurück</span>
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => onPageChange?.(pagination.page + 1)}
                 disabled={pagination.page >= pagination.totalPages}
+                className="flex-1 md:flex-none"
               >
-                Weiter
+                <span className="md:inline">Weiter</span>
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>

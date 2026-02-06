@@ -123,12 +123,12 @@ export default function AdminChatsPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="font-serif text-3xl font-bold">Chats</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="font-serif text-2xl md:text-3xl font-bold">Chats</h1>
+          <p className="text-muted-foreground mt-1 text-sm md:text-base">
             Alle Chat-Verläufe der Benutzer
           </p>
         </div>
@@ -136,9 +136,9 @@ export default function AdminChatsPage() {
         {/* Zeit-Filter Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2 w-full md:w-auto">
               <Calendar className="h-4 w-4" />
-              {getTimeFilterLabel()}
+              <span className="md:inline">{getTimeFilterLabel()}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

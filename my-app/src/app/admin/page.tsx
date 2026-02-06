@@ -99,11 +99,11 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       {/* Header */}
       <div>
-        <h1 className="font-serif text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">
+        <h1 className="font-serif text-2xl md:text-3xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground mt-1 text-sm md:text-base">
           Übersicht über alle Aktivitäten auf TiMax
         </p>
       </div>
@@ -112,10 +112,10 @@ export default function AdminDashboardPage() {
       <StatsCards stats={stats} isLoading={isLoading} />
 
       {/* Recent Activity */}
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-6 md:gap-8 lg:grid-cols-2">
         {/* Recent Chats */}
         <div>
-          <h2 className="font-serif text-xl font-semibold mb-4">Letzte Chats</h2>
+          <h2 className="font-serif text-lg md:text-xl font-semibold mb-3 md:mb-4">Letzte Chats</h2>
           <ChatsTable
             chats={recentChats}
             isLoading={isLoading}
@@ -125,7 +125,7 @@ export default function AdminDashboardPage() {
 
         {/* Recent Uploads */}
         <div>
-          <h2 className="font-serif text-xl font-semibold mb-4">Letzte Uploads</h2>
+          <h2 className="font-serif text-lg md:text-xl font-semibold mb-3 md:mb-4">Letzte Uploads</h2>
           <UploadsTable
             uploads={recentUploads}
             isLoading={isLoading}

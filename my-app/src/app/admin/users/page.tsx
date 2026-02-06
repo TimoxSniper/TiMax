@@ -56,11 +56,11 @@ export default function AdminUsersPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       {/* Header */}
       <div>
-        <h1 className="font-serif text-3xl font-bold">Benutzer</h1>
-        <p className="text-muted-foreground mt-1">
+        <h1 className="font-serif text-2xl md:text-3xl font-bold">Benutzer</h1>
+        <p className="text-muted-foreground mt-1 text-sm md:text-base">
           Übersicht aller registrierten Benutzer und ihre Aktivitäten
         </p>
       </div>

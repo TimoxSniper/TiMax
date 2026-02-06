@@ -103,23 +103,23 @@ export default function AdminUploadsPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       {/* Header */}
       <div>
-        <h1 className="font-serif text-3xl font-bold">Uploads</h1>
-        <p className="text-muted-foreground mt-1">
+        <h1 className="font-serif text-2xl md:text-3xl font-bold">Uploads</h1>
+        <p className="text-muted-foreground mt-1 text-sm md:text-base">
           Alle hochgeladenen Audio- und Video-Dateien
         </p>
       </div>
 
       {/* Filter Badge */}
       {userIdFilter && (
-        <div className="flex items-center gap-2 p-3 bg-muted rounded-md">
-          <span className="text-sm">
-            Gefiltert nach User: <code className="font-mono text-xs bg-background px-1.5 py-0.5 rounded">{userIdFilter}</code>
+        <div className="flex items-center gap-2 p-2 md:p-3 bg-muted rounded-md">
+          <span className="text-xs md:text-sm">
+            User: <code className="font-mono text-xs bg-background px-1.5 py-0.5 rounded break-all">{userIdFilter}</code>
           </span>
           <Button variant="ghost" size="icon-xs" onClick={clearFilter}>
-            <X className="h-4 w-4" />
+            <X className="h-3 w-3 md:h-4 md:w-4" />
           </Button>
         </div>
       )}
