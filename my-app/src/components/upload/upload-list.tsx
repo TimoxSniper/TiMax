@@ -19,12 +19,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
     Dialog,
     DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter,
     DialogTrigger
 } from "@/components/ui/dialog";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { logger } from "@/lib/logger";
@@ -37,6 +34,12 @@ interface Upload {
     status: "pending" | "processing" | "completed" | "failed" | "cancelled";
     transcript?: string;
     error_message?: string;
+    metadata?: {
+        topics?: string[];
+        intention?: string;
+        tone?: string;
+        summary?: string;
+    };
     created_at: string;
 }
 
@@ -203,137 +206,179 @@ export function UploadList() {
                 />
             </div>
 
-            <div className="grid gap-0 divide-y divide-border">
+            <div className="grid gap-6">
                 {filteredUploads.map((upload) => (
-                    <div
-                        key={upload.id}
-                        className="group flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 transition-all duration-300 hover:bg-secondary/50 border-l-4 border-l-transparent hover:border-l-accent"
-                    >
-                        {/* Icon and Content Wrapper */}
-                        <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0 flex-1 w-full">
-                            {/* Square icon container - Editorial Modernism */}
-                            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-[4px] bg-secondary flex items-center justify-center flex-shrink-0">
-                                {upload.file_type.startsWith("video") ? (
-                                    <FileVideo className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
-                                ) : (
-                                    <FileAudio className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
-                                )}
-                            </div>
-
-                            <div className="flex-1 min-w-0">
-                                {/* File name - DM Sans Medium */}
-                                <h3 className="text-sm sm:text-base font-medium truncate pr-2 text-foreground">
-                                    {upload.file_name}
-                                </h3>
-                                {/* Metadata - uppercase, muted */}
-                                <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs uppercase tracking-wide text-muted-foreground mt-1">
-                                    <span>{formatFileSize(upload.file_size)}</span>
-                                    <span className="hidden sm:inline">|</span>
-                                    <span className="hidden sm:inline">{new Date(upload.created_at).toLocaleDateString("de-DE")}</span>
-                                    <Badge
-                                        variant={
-                                            upload.status === "completed" ? "default" :
-                                                upload.status === "processing" || upload.status === "pending" ? "secondary" : "destructive"
-                                        }
-                                        className="sm:hidden text-[10px] px-1.5 py-0"
-                                    >
-                                        {upload.status === "completed" ? "Fertig" :
-                                            upload.status === "processing" ? "In Arbeit" :
-                                                upload.status === "pending" ? "Ausstehend" : "Fehler"}
-                                    </Badge>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 w-full sm:w-auto justify-end sm:justify-start">
-                            <Badge
-                                variant={
-                                    upload.status === "completed" ? "default" :
-                                        upload.status === "processing" || upload.status === "pending" ? "secondary" : "destructive"
-                                }
-                                className="hidden sm:inline-flex"
+                    <div key={upload.id} className="relative">
+                        <Link href={`/uploads/${upload.id}`}>
+                            <div
+                                className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-4 p-6 transition-all duration-500 bg-card border border-border hover:border-accent/50 cursor-pointer overflow-hidden shadow-sm hover:shadow-md rounded-[4px]"
                             >
-                                {upload.status === "completed" ? "Fertig" :
-                                    upload.status === "processing" ? "In Arbeit" :
-                                        upload.status === "pending" ? "Ausstehend" : "Fehler"}
-                            </Badge>
+                                {/* Decorative Accent Line */}
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
 
-                            <div className="flex items-center gap-1 opacity-100 group-hover:opacity-100 transition-opacity">
-                                {/* Retry Button - Only for failed uploads */}
-                                {upload.status === "failed" && (
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => handleRetry(upload.id)}
-                                        disabled={retryingId === upload.id}
-                                        title="Erneut versuchen"
-                                        className="text-primary hover:text-primary"
-                                    >
-                                        <RefreshCw className={`w-4 h-4 ${retryingId === upload.id ? "animate-spin" : ""}`} />
-                                    </Button>
-                                )}
-                                {upload.transcript && (
-                                    <>
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button variant="ghost" size="icon" title="Vorschau">
-                                                    <Eye className="w-4 h-4" />
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent className="max-w-2xl max-h-[80vh] sm:max-h-[80vh] flex flex-col mx-4">
-                                                <DialogHeader>
-                                                    <DialogTitle className="flex items-center gap-2 text-base sm:text-lg pr-8">
-                                                        <span className="truncate">Transkript: {upload.file_name}</span>
-                                                    </DialogTitle>
-                                                    <DialogDescription className="text-xs sm:text-sm">
-                                                        Generiert am {new Date(upload.created_at).toLocaleString("de-DE")}
-                                                    </DialogDescription>
-                                                </DialogHeader>
-                                                <div className="flex-1 overflow-y-auto my-3 sm:my-4 p-3 sm:p-4 bg-muted rounded-xl text-xs sm:text-sm leading-relaxed">
-                                                    {upload.transcript}
-                                                </div>
-                                                <DialogFooter className="flex flex-col sm:flex-row sm:justify-between items-stretch sm:items-center gap-2">
-                                                    <Button
-                                                        variant="outline"
-                                                        onClick={() => handleCopyToClipboard(upload.transcript || "")}
-                                                        className="gap-2 w-full sm:w-auto"
-                                                    >
-                                                        {isCopying ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                                                        {isCopying ? "Kopiert" : "Kopieren"}
-                                                    </Button>
-                                                    <Button
-                                                        onClick={() => startChatFromTranscript(upload.transcript || "")}
-                                                        className="gap-2 w-full sm:w-auto"
-                                                    >
-                                                        <MessageSquare className="w-4 h-4" />
-                                                        Chat starten
-                                                    </Button>
-                                                </DialogFooter>
-                                            </DialogContent>
-                                        </Dialog>
+                                {/* Icon and Content Wrapper */}
+                                <div className="flex items-start gap-5 min-w-0 flex-1 w-full">
+                                    {/* Square icon container - Editorial Modernism */}
+                                    <div className="w-12 h-12 rounded-[2px] bg-secondary flex items-center justify-center flex-shrink-0 group-hover:bg-accent/10 transition-colors duration-500">
+                                        {upload.file_type.startsWith("video") ? (
+                                            <FileVideo className="w-5 h-5 text-accent" />
+                                        ) : (
+                                            <FileAudio className="w-5 h-5 text-accent" />
+                                        )}
+                                    </div>
 
+                                    <div className="flex-1 min-w-0 space-y-2">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <h3 className="text-lg font-serif font-bold truncate pr-2 text-foreground group-hover:text-accent transition-colors duration-500">
+                                                {upload.file_name}
+                                            </h3>
+                                            <Badge
+                                                variant={
+                                                    upload.status === "completed" ? "default" :
+                                                        upload.status === "processing" || upload.status === "pending" ? "secondary" : "destructive"
+                                                }
+                                                className="shrink-0 text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-[2px]"
+                                            >
+                                                {upload.status === "completed" ? "Fertig" :
+                                                    upload.status === "processing" ? "In Arbeit" :
+                                                        upload.status === "pending" ? "Wartend" : "Fehler"}
+                                            </Badge>
+                                        </div>
+
+                                        {/* Metadata - uppercase, muted */}
+                                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] uppercase tracking-widest text-muted-foreground">
+                                            <span className="flex items-center gap-1.5 font-medium">
+                                                {formatFileSize(upload.file_size)}
+                                            </span>
+                                            <span className="w-1 h-1 bg-muted-foreground/30 rounded-full" />
+                                            <span className="font-medium">
+                                                {new Date(upload.created_at).toLocaleDateString("de-DE", { day: '2-digit', month: 'short', year: 'numeric' })}
+                                            </span>
+                                            {upload.metadata?.intention && (
+                                                <>
+                                                    <span className="w-1 h-1 bg-muted-foreground/30 rounded-full" />
+                                                    <span className="text-accent">{upload.metadata.intention}</span>
+                                                </>
+                                            )}
+                                        </div>
+
+                                        {/* Topics Tags */}
+                                        {upload.metadata?.topics && upload.metadata.topics.length > 0 && (
+                                            <div className="flex flex-wrap gap-2 pt-1">
+                                                {upload.metadata.topics.slice(0, 3).map((topic, i) => (
+                                                    <span key={i} className="text-[10px] bg-secondary px-2 py-0.5 rounded-[2px] text-secondary-foreground font-medium">
+                                                        #{topic}
+                                                    </span>
+                                                ))}
+                                                {upload.metadata.topics.length > 3 && (
+                                                    <span className="text-[10px] text-muted-foreground">+{upload.metadata.topics.length - 3}</span>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-2 w-full sm:w-auto justify-end sm:justify-start pt-4 sm:pt-0 border-t sm:border-t-0 border-border/50 relative z-10">
+                                    <div className="flex items-center gap-1">
+                                        {upload.status === "failed" && (
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    handleRetry(upload.id);
+                                                }}
+                                                disabled={retryingId === upload.id}
+                                                className="text-primary hover:bg-primary/10"
+                                            >
+                                                <RefreshCw className={`w-4 h-4 ${retryingId === upload.id ? "animate-spin" : ""}`} />
+                                            </Button>
+                                        )}
+                                        
+                                        {upload.transcript && (
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="icon" 
+                                                        className="group-hover:text-accent transition-colors"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <Eye className="w-4 h-4" />
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0 overflow-hidden border-none rounded-none sm:rounded-[4px]">
+                                                    <div className="flex flex-col h-full bg-background">
+                                                        {/* Modal Header - Editorial Style */}
+                                                        <div className="p-8 sm:p-12 border-b border-border space-y-4 bg-secondary/20">
+                                                            <div className="flex items-center justify-between gap-4">
+                                                                <Badge variant="outline" className="text-[10px] uppercase tracking-[0.2em] rounded-none border-accent text-accent">
+                                                                    Vorschau
+                                                                </Badge>
+                                                                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                                                                    ID: {upload.id.split('-')[0]}
+                                                                </div>
+                                                            </div>
+                                                            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
+                                                                {upload.file_name}
+                                                            </h2>
+                                                        </div>
+
+                                                        {/* Content Area */}
+                                                        <div className="flex-1 overflow-y-auto p-8 sm:p-12 lg:p-16">
+                                                            <div className="prose prose-stone max-w-none prose-p:leading-relaxed prose-p:text-lg prose-p:mb-6 text-foreground/90 font-sans">
+                                                                {upload.transcript.split('\n').map((para, i) => (
+                                                                    <p key={i}>{para}</p>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Action Footer */}
+                                                        <div className="p-6 sm:p-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4 bg-card">
+                                                            <Button
+                                                                variant="outline"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleCopyToClipboard(upload.transcript || "");
+                                                                }}
+                                                                className="rounded-none border-foreground hover:bg-foreground hover:text-background transition-all"
+                                                            >
+                                                                {isCopying ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+                                                                TEXT KOPIEREN
+                                                            </Button>
+                                                            <Button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    startChatFromTranscript(upload.transcript || "");
+                                                                }}
+                                                                className="rounded-none px-8 py-6 bg-accent hover:bg-accent/90 text-white font-bold tracking-widest transition-all"
+                                                            >
+                                                                <MessageSquare className="w-4 h-4 mr-2" />
+                                                                KI-CHAT STARTEN
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </DialogContent>
+                                            </Dialog>
+                                        )}
+                                        
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            title="Im Chat nutzen"
-                                            onClick={() => startChatFromTranscript(upload.transcript || "")}
+                                            className="hover:text-destructive hover:bg-destructive/10"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                handleDelete(upload.id);
+                                            }}
                                         >
-                                            <MessageSquare className="w-4 h-4 text-primary" />
+                                            <Trash2 className="w-4 h-4" />
                                         </Button>
-                                    </>
-                                )}
-
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="hover:text-destructive"
-                                    onClick={() => handleDelete(upload.id)}
-                                    title="Löschen"
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                </Button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        </Link>
                     </div>
                 ))}
             </div>

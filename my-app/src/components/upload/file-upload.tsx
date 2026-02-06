@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Upload, X, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { TIMEOUTS, UPLOAD_CONFIG } from "@/lib/constants";
 import { logger } from "@/lib/logger";
+import { ProcessingStatus } from "./processing-status";
 
 const MAX_FILE_SIZE = UPLOAD_CONFIG.MAX_FILE_SIZE;
 const ALLOWED_TYPES: string[] = [...UPLOAD_CONFIG.ALLOWED_TYPES];
@@ -19,6 +20,7 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -138,21 +140,16 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
 
       const result = await uploadPromise;
       setProgress(100);
-      setSuccess(true);
+      setIsUploading(false); // Physical upload done
+      setIsProcessingAI(true); // Start fake AI processing steps
+      
+      // We don't call onUploadSuccess yet, we wait for the fake steps to "complete"
+      // Or we can call it but keep the UI in processing state
+      
       onUploadSuccess?.(result.fileName || file.name, result.transcript);
 
-      // Alten Timeout clearen falls vorhanden
-      if (resetTimeoutRef.current) {
-        clearTimeout(resetTimeoutRef.current);
-      }
-
-      // Reset nach konfigurierter Zeit
-      resetTimeoutRef.current = setTimeout(() => {
-        setFile(null);
-        setSuccess(false);
-        setProgress(0);
-        resetTimeoutRef.current = null;
-      }, TIMEOUTS.UPLOAD_RESET);
+      // We'll let the ProcessingStatus component handle its thing.
+      // We'll set success to true after a small delay to match the fake steps.
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unbekannter Upload-Fehler";
       setError(errorMessage);
@@ -275,6 +272,24 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
                   </p>
                 </div>
               )}
+
+              <ProcessingStatus 
+                isProcessing={isUploading || isProcessingAI} 
+                onComplete={() => {
+                  if (isProcessingAI) {
+                    setIsProcessingAI(false);
+                    setSuccess(true);
+                    
+                    // Reset after configured time
+                    if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
+                    resetTimeoutRef.current = setTimeout(() => {
+                      setFile(null);
+                      setSuccess(false);
+                      setProgress(0);
+                    }, TIMEOUTS.UPLOAD_RESET);
+                  }
+                }}
+              />
 
               {error && (
                 <div className="bg-destructive/10 text-destructive p-3 rounded-lg text-sm">
