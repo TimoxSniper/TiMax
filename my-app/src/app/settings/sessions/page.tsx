@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useUser, useSession, useSessionList } from "@clerk/nextjs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -66,11 +66,16 @@ export default function SessionsSettingsPage() {
   const handleRevokeSession = async (sessionId: string) => {
     setRevokingId(sessionId);
     try {
-      const sessionToRevoke = sessions.find((s) => s.id === sessionId);
-      if (sessionToRevoke) {
-        await sessionToRevoke.revoke();
-        toast.success("Sitzung wurde beendet");
+      const res = await fetch("/api/settings/sessions/revoke", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Revoke fehlgeschlagen");
       }
+      toast.success("Sitzung wurde beendet");
     } catch (error) {
       toast.error("Fehler beim Beenden der Sitzung");
     } finally {
@@ -82,7 +87,15 @@ export default function SessionsSettingsPage() {
     setIsRevokingAll(true);
     try {
       const otherSessions = sessions.filter((s) => s.id !== currentSession?.id);
-      await Promise.all(otherSessions.map((s) => s.revoke()));
+      await Promise.all(
+        otherSessions.map((s) =>
+          fetch("/api/settings/sessions/revoke", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sessionId: s.id }),
+          })
+        )
+      );
       toast.success(`${otherSessions.length} Sitzung(en) wurden beendet`);
       setShowRevokeAllDialog(false);
     } catch (error) {
@@ -94,6 +107,12 @@ export default function SessionsSettingsPage() {
 
   const activeSessions = sessions.filter((s) => s.status === "active");
   const otherActiveSessions = activeSessions.filter((s) => s.id !== currentSession?.id);
+
+  // Erweiterung für Anzeige (Clerk SessionResource hat diese Felder zur Laufzeit, Typen sind enger)
+  type SessionForDisplay = (typeof sessions)[number] & {
+    latestActivity?: { deviceType?: string; browserName?: string; city?: string };
+    lastActiveAt?: number;
+  };
 
   return (
     <div className="space-y-6">
@@ -205,9 +224,10 @@ export default function SessionsSettingsPage() {
           ) : (
             <div className="space-y-3">
               {otherActiveSessions.map((session) => {
-                const DeviceIcon = getDeviceIcon(session.latestActivity?.deviceType);
-                const lastActive = session.lastActiveAt
-                  ? formatLastActive(new Date(session.lastActiveAt))
+                const s = session as SessionForDisplay;
+                const DeviceIcon = getDeviceIcon(s.latestActivity?.deviceType);
+                const lastActive = s.lastActiveAt
+                  ? formatLastActive(new Date(s.lastActiveAt))
                   : "Unbekannt";
 
                 return (
@@ -220,15 +240,15 @@ export default function SessionsSettingsPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm truncate">
-                        {session.latestActivity?.deviceType || "Unbekanntes Gerät"}
+                        {s.latestActivity?.deviceType || "Unbekanntes Gerät"}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Zuletzt aktiv: {lastActive}
                       </p>
-                      {session.latestActivity?.browserName && (
+                      {s.latestActivity?.browserName && (
                         <p className="text-xs text-muted-foreground">
-                          {session.latestActivity.browserName}
-                          {session.latestActivity.city && ` • ${session.latestActivity.city}`}
+                          {s.latestActivity.browserName}
+                          {s.latestActivity.city && ` • ${s.latestActivity.city}`}
                         </p>
                       )}
                     </div>

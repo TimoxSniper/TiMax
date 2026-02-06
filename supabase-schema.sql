@@ -70,6 +70,22 @@ CREATE TABLE messages (
 COMMENT ON TABLE messages IS 'Chat-Nachrichten';
 COMMENT ON COLUMN messages.role IS 'user = Benutzer, assistant = AI, system = System-Prompt';
 
+-- WAITLIST Tabelle (für Beta-Anmeldungen)
+CREATE TABLE waitlist (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email TEXT NOT NULL UNIQUE,               -- E-Mail-Adresse
+    status TEXT DEFAULT 'pending'             -- pending, notified, registered
+        CHECK (status IN ('pending', 'notified', 'registered')),
+    source TEXT DEFAULT 'landing_page',       -- Wo wurde die Email gesammelt
+    metadata JSONB DEFAULT '{}'::jsonb,       -- Zusätzliche Infos
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+COMMENT ON TABLE waitlist IS 'Beta-Warteliste für Interessenten';
+COMMENT ON COLUMN waitlist.email IS 'E-Mail-Adresse des Interessenten';
+COMMENT ON COLUMN waitlist.status IS 'pending=warte auf Freischaltung, notified=benachrichtigt, registered=hat sich registriert';
+
 -- UPLOADS Tabelle
 CREATE TABLE uploads (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -105,6 +121,11 @@ CREATE INDEX idx_chats_created_at ON chats(created_at DESC);
 CREATE INDEX idx_messages_chat_id ON messages(chat_id);
 CREATE INDEX idx_messages_created_at ON messages(created_at);
 CREATE INDEX idx_messages_role ON messages(role);
+
+-- Waitlist Indexes
+CREATE INDEX idx_waitlist_email ON waitlist(email);
+CREATE INDEX idx_waitlist_status ON waitlist(status);
+CREATE INDEX idx_waitlist_created_at ON waitlist(created_at DESC);
 
 -- Uploads Indexes
 CREATE INDEX idx_uploads_user_id ON uploads(user_id);
@@ -185,6 +206,15 @@ CREATE POLICY "messages_select_policy" ON messages
 
 CREATE POLICY "messages_insert_policy" ON messages
     FOR INSERT WITH CHECK (true);
+
+-- RLS für WAITLIST aktivieren
+ALTER TABLE waitlist ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "waitlist_insert_policy" ON waitlist
+    FOR INSERT WITH CHECK (true);  -- Jeder kann sich eintragen
+
+CREATE POLICY "waitlist_select_policy" ON waitlist
+    FOR SELECT USING (true);  -- Admin kann alle sehen
 
 -- RLS für UPLOADS aktivieren
 ALTER TABLE uploads ENABLE ROW LEVEL SECURITY;

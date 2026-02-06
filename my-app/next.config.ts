@@ -2,6 +2,8 @@ import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Workspace-Root für Vercel/CI (vermeidet Warnung bei mehreren Lockfiles)
+  turbopack: { root: process.cwd() },
   async headers() {
     return [
       {
