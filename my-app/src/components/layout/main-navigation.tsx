@@ -17,7 +17,6 @@ const protectedNavigation = [
   { name: "Upload", href: "/upload", icon: Upload },
   { name: "Chat", href: "/chat", icon: MessageSquare },
   { name: "Meine Dateien", href: "/uploads", icon: FolderOpen },
-  { name: "Einstellungen", href: "/settings", icon: Settings },
 ];
 
 const landingPageNavigation: Array<{
@@ -173,6 +172,7 @@ export function MainNavigation() {
             <SignedIn>
               <UserButton
                 afterSignOutUrl="/"
+                userProfileUrl="/settings"
                 appearance={{
                   elements: {
                     // Avatar Styling
@@ -301,8 +301,9 @@ export function MainNavigation() {
                         <User className="h-4 w-4 text-muted-foreground" />
                         <span className="text-sm font-medium text-foreground">Mein Konto</span>
                       </div>
-                      <UserButton 
+                      <UserButton
                         afterSignOutUrl="/"
+                        userProfileUrl="/settings"
                         appearance={{
                           elements: {
                             avatarBox: "w-8 h-8 border-2 border-border",
