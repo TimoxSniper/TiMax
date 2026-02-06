@@ -31,17 +31,17 @@ export default function UploadPage() {
       {/* Main Content */}
       <main
         id="main-content"
-        className="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20"
+        className="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-20"
         role="main"
       >
         {/* Header */}
-        <header className="mb-12 sm:mb-16 text-center">
-          <h1 className="font-serif text-5xl lg:text-6xl font-bold text-foreground mb-4">
+        <header className="mb-8 sm:mb-12 lg:mb-16 text-center">
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground mb-3 sm:mb-4">
             Upload
           </h1>
-          <div className="w-24 h-1 bg-accent mx-auto mb-6" />
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Laden Sie Ihre Audio- oder Videodatei hoch. Die KI transkribiert automatisch 
+          <div className="w-16 sm:w-24 h-1 bg-accent mx-auto mb-4 sm:mb-6" />
+          <p className="text-sm sm:text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto px-2">
+            Laden Sie Ihre Audio- oder Videodatei hoch. Die KI transkribiert automatisch
             den Inhalt und bereitet ihn für die Weiterverarbeitung vor.
           </p>
         </header>

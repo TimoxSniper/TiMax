@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DarkModeToggle } from "@/components/home/dark-mode-toggle";
-import { Menu, X, Zap, MessageSquare, Home, LogIn, User, Sparkles, Upload, FolderOpen, CreditCard, Settings, Search } from "lucide-react";
+import { Menu, X, Zap, MessageSquare, Home, LogIn, User, Sparkles, Upload, FolderOpen, CreditCard, Search } from "lucide-react";
 import { SearchModal } from "@/components/search/search-modal";
 import { cn } from "@/lib/utils";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";

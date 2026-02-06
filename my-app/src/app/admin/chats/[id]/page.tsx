@@ -116,27 +116,36 @@ export default function AdminChatDetailPage() {
 
   return (
     <>
-      <div className="space-y-8">
+      <div className="space-y-6 md:space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="icon" onClick={() => router.push("/admin/chats")}>
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-3 md:gap-4 min-w-0 flex-1">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => router.push("/admin/chats")}
+              className="shrink-0 h-9 w-9 md:h-10 md:w-10"
+            >
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div>
-              <h1 className="font-serif text-3xl font-bold">{chat.title}</h1>
-              <p className="text-muted-foreground mt-1">
-                User: <code className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">{chat.user_id}</code>
-                {" · "}Erstellt: {formatDate(chat.created_at)}
+            <div className="min-w-0 flex-1">
+              <h1 className="font-serif text-xl sm:text-2xl md:text-3xl font-bold break-words">{chat.title}</h1>
+              <p className="text-muted-foreground mt-1 text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                <span className="flex items-center gap-1">
+                  User: <code className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded break-all">{chat.user_id}</code>
+                </span>
+                <span className="hidden sm:inline">·</span>
+                <span>Erstellt: {formatDate(chat.created_at)}</span>
               </p>
             </div>
           </div>
           <Button
             variant="destructive"
             onClick={() => setShowDeleteDialog(true)}
+            className="gap-2 w-full sm:w-auto shrink-0"
           >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Löschen
+            <Trash2 className="h-4 w-4" />
+            <span>Löschen</span>
           </Button>
         </div>
 

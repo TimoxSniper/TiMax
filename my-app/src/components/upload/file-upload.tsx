@@ -193,28 +193,29 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
 
   return (
     <Card>
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-6">
         <div
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`border-2 border-dashed rounded-[6px] p-8 text-center transition-all duration-300 ${isDragging
+          className={`border-2 border-dashed rounded-[6px] p-6 sm:p-8 text-center transition-all duration-300 ${isDragging
               ? "border-accent bg-accent/5"
               : "border-border hover:border-accent/50"
             }`}
         >
           {!file ? (
             <>
-              <Upload className="w-12 h-12 mx-auto mb-4 text-accent" />
-              <p className="text-sm font-medium mb-2">
+              <Upload className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-accent" />
+              <p className="text-sm sm:text-base font-medium mb-2">
                 Datei hier ablegen oder klicken zum Auswählen
               </p>
-              <p className="text-xs text-muted-foreground mb-4">
+              <p className="text-xs sm:text-sm text-muted-foreground mb-4 px-2">
                 Unterstützt: MP3, MP4, WAV, M4A, WebM (max. 100MB)
               </p>
               <Button
                 onClick={() => fileInputRef.current?.click()}
                 variant="outline"
+                className="w-full sm:w-auto"
               >
                 Datei auswählen
               </Button>
@@ -233,17 +234,17 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
             </>
           ) : (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
+              <div className="flex items-start sm:items-center justify-between gap-2">
+                <div className="flex items-start sm:items-center gap-2 sm:gap-3 min-w-0 flex-1">
                   {success ? (
-                    <CheckCircle className="w-6 h-6 text-green-500" />
+                    <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-500 shrink-0 mt-0.5 sm:mt-0" />
                   ) : error ? (
-                    <AlertCircle className="w-6 h-6 text-destructive" />
+                    <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-destructive shrink-0 mt-0.5 sm:mt-0" />
                   ) : (
-                    <Upload className="w-6 h-6 text-muted-foreground" />
+                    <Upload className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground shrink-0 mt-0.5 sm:mt-0" />
                   )}
-                  <div className="text-left">
-                    <p className="text-sm font-medium">{file.name}</p>
+                  <div className="text-left min-w-0 flex-1">
+                    <p className="text-sm font-medium truncate" title={file.name}>{file.name}</p>
                     <p className="text-xs text-muted-foreground">
                       {(file.size / 1024 / 1024).toFixed(2)} MB
                     </p>

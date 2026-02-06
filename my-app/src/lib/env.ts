@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { logger } from "./logger";
 
 /**
  * Schema für Environment-Variablen
@@ -39,8 +40,8 @@ function validateEnv() {
   const parsed = envSchema.safeParse(process.env);
 
   if (!parsed.success) {
-    console.error("❌ Fehlerhafte Environment-Variablen:");
-    console.error(parsed.error.flatten().fieldErrors);
+    logger.error("❌ Fehlerhafte Environment-Variablen:");
+    logger.error(parsed.error.flatten().fieldErrors);
     throw new Error("Ungültige Environment-Variablen");
   }
 

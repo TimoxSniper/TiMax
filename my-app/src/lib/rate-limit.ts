@@ -1,5 +1,6 @@
 import { checkRateLimitMemory } from './rate-limit-memory';
 import { checkRateLimitUpstash } from './rate-limit-upstash';
+import { logger } from './logger';
 
 export interface RateLimitResult {
     allowed: boolean;
@@ -40,7 +41,7 @@ export async function checkRateLimit(
             return await checkRateLimitUpstash(descriptor, config);
         } catch (error) {
             // If Upstash fails, fall back to in-memory
-            console.warn('Upstash rate limit check failed, falling back to in-memory:', error);
+            logger.warn('Upstash rate limit check failed, falling back to in-memory:', error);
             return checkRateLimitMemory(descriptor, config);
         }
     }

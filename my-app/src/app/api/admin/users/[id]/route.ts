@@ -67,7 +67,7 @@ export async function GET(
     // Statistiken berechnen - Fix N+1 Query Problem
     // Lade alle Message-Counts in einer Query statt für jeden Chat einzeln
     const chatIds = (chats || []).map((chat) => chat.id);
-    let messageCounts: Record<string, number> = {};
+    const messageCounts: Record<string, number> = {};
     let totalMessageCount = 0;
 
     if (chatIds.length > 0) {

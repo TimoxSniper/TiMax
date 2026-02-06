@@ -78,7 +78,7 @@ export default function ImpressumPage() {
                 E-Mail: <a href="mailto:info@timax.app" className="text-primary hover:underline">info@timax.app</a>
               </p>
               <p className="mb-2">
-                Telefon: <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">[+49 XXX XXXXXXX]</span>
+                Telefon: +49 176 5569211
               </p>
             </div>
 

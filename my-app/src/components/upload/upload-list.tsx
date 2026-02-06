@@ -207,31 +207,45 @@ export function UploadList() {
                 {filteredUploads.map((upload) => (
                     <div
                         key={upload.id}
-                        className="group flex items-center gap-4 p-4 transition-all duration-300 hover:bg-secondary/50 border-l-4 border-l-transparent hover:border-l-accent"
+                        className="group flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 transition-all duration-300 hover:bg-secondary/50 border-l-4 border-l-transparent hover:border-l-accent"
                     >
-                        {/* Square icon container - Editorial Modernism */}
-                        <div className="w-10 h-10 rounded-[4px] bg-secondary flex items-center justify-center flex-shrink-0">
-                            {upload.file_type.startsWith("video") ? (
-                                <FileVideo className="w-5 h-5 text-accent" />
-                            ) : (
-                                <FileAudio className="w-5 h-5 text-accent" />
-                            )}
-                        </div>
+                        {/* Icon and Content Wrapper */}
+                        <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0 flex-1 w-full">
+                            {/* Square icon container - Editorial Modernism */}
+                            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-[4px] bg-secondary flex items-center justify-center flex-shrink-0">
+                                {upload.file_type.startsWith("video") ? (
+                                    <FileVideo className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
+                                ) : (
+                                    <FileAudio className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
+                                )}
+                            </div>
 
-                        <div className="flex-1 min-w-0">
-                            {/* File name - DM Sans Medium */}
-                            <h3 className="text-base font-medium truncate pr-4 text-foreground">
-                                {upload.file_name}
-                            </h3>
-                            {/* Metadata - uppercase, muted */}
-                            <div className="flex items-center gap-3 text-xs uppercase tracking-wide text-muted-foreground mt-1">
-                                <span>{formatFileSize(upload.file_size)}</span>
-                                <span>|</span>
-                                <span>{new Date(upload.created_at).toLocaleDateString("de-DE")}</span>
+                            <div className="flex-1 min-w-0">
+                                {/* File name - DM Sans Medium */}
+                                <h3 className="text-sm sm:text-base font-medium truncate pr-2 text-foreground">
+                                    {upload.file_name}
+                                </h3>
+                                {/* Metadata - uppercase, muted */}
+                                <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs uppercase tracking-wide text-muted-foreground mt-1">
+                                    <span>{formatFileSize(upload.file_size)}</span>
+                                    <span className="hidden sm:inline">|</span>
+                                    <span className="hidden sm:inline">{new Date(upload.created_at).toLocaleDateString("de-DE")}</span>
+                                    <Badge
+                                        variant={
+                                            upload.status === "completed" ? "default" :
+                                                upload.status === "processing" || upload.status === "pending" ? "secondary" : "destructive"
+                                        }
+                                        className="sm:hidden text-[10px] px-1.5 py-0"
+                                    >
+                                        {upload.status === "completed" ? "Fertig" :
+                                            upload.status === "processing" ? "In Arbeit" :
+                                                upload.status === "pending" ? "Ausstehend" : "Fehler"}
+                                    </Badge>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 w-full sm:w-auto justify-end sm:justify-start">
                             <Badge
                                 variant={
                                     upload.status === "completed" ? "default" :
@@ -244,7 +258,7 @@ export function UploadList() {
                                         upload.status === "pending" ? "Ausstehend" : "Fehler"}
                             </Badge>
 
-                            <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center gap-1 opacity-100 group-hover:opacity-100 transition-opacity">
                                 {/* Retry Button - Only for failed uploads */}
                                 {upload.status === "failed" && (
                                     <Button
@@ -266,36 +280,34 @@ export function UploadList() {
                                                     <Eye className="w-4 h-4" />
                                                 </Button>
                                             </DialogTrigger>
-                                            <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
+                                            <DialogContent className="max-w-2xl max-h-[80vh] sm:max-h-[80vh] flex flex-col mx-4">
                                                 <DialogHeader>
-                                                    <DialogTitle className="flex items-center gap-2">
-                                                        <span>Transkript: {upload.file_name}</span>
+                                                    <DialogTitle className="flex items-center gap-2 text-base sm:text-lg pr-8">
+                                                        <span className="truncate">Transkript: {upload.file_name}</span>
                                                     </DialogTitle>
-                                                    <DialogDescription>
+                                                    <DialogDescription className="text-xs sm:text-sm">
                                                         Generiert am {new Date(upload.created_at).toLocaleString("de-DE")}
                                                     </DialogDescription>
                                                 </DialogHeader>
-                                                <div className="flex-1 overflow-y-auto my-4 p-4 bg-muted rounded-xl text-sm leading-relaxed">
+                                                <div className="flex-1 overflow-y-auto my-3 sm:my-4 p-3 sm:p-4 bg-muted rounded-xl text-xs sm:text-sm leading-relaxed">
                                                     {upload.transcript}
                                                 </div>
-                                                <DialogFooter className="flex sm:justify-between items-center gap-2">
+                                                <DialogFooter className="flex flex-col sm:flex-row sm:justify-between items-stretch sm:items-center gap-2">
                                                     <Button
                                                         variant="outline"
                                                         onClick={() => handleCopyToClipboard(upload.transcript || "")}
-                                                        className="gap-2"
+                                                        className="gap-2 w-full sm:w-auto"
                                                     >
                                                         {isCopying ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                                                         {isCopying ? "Kopiert" : "Kopieren"}
                                                     </Button>
-                                                    <div className="flex gap-2">
-                                                        <Button
-                                                            onClick={() => startChatFromTranscript(upload.transcript || "")}
-                                                            className="gap-2"
-                                                        >
-                                                            <MessageSquare className="w-4 h-4" />
-                                                            Chat starten
-                                                        </Button>
-                                                    </div>
+                                                    <Button
+                                                        onClick={() => startChatFromTranscript(upload.transcript || "")}
+                                                        className="gap-2 w-full sm:w-auto"
+                                                    >
+                                                        <MessageSquare className="w-4 h-4" />
+                                                        Chat starten
+                                                    </Button>
                                                 </DialogFooter>
                                             </DialogContent>
                                         </Dialog>

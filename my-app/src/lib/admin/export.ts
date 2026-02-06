@@ -5,13 +5,13 @@
 /**
  * Convert data to CSV format and trigger download
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function exportToCSV<T extends Record<string, any>>(
   data: T[],
   filename: string,
   columns?: { key: keyof T; label: string }[]
 ): void {
   if (data.length === 0) {
-    alert("Keine Daten zum Exportieren vorhanden");
     return;
   }
 
@@ -60,7 +60,6 @@ export function exportToCSV<T extends Record<string, any>>(
  */
 export function exportToJSON<T>(data: T[], filename: string): void {
   if (data.length === 0) {
-    alert("Keine Daten zum Exportieren vorhanden");
     return;
   }
 
