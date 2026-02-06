@@ -4,6 +4,46 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Workspace-Root für Vercel/CI (vermeidet Warnung bei mehreren Lockfiles)
   turbopack: { root: process.cwd() },
+  
+  // Performance Optimizations
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "@radix-ui/react-icons",
+      "framer-motion",
+    ],
+  },
+  
+  // Image Optimization
+  images: {
+    formats: ["image/avif", "image/webp"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "img.clerk.com",
+      },
+    ],
+    minimumCacheTTL: 60 * 60 * 24, // 24 hours
+  },
+  
+  // Compression
+  compress: true,
+  
+  // Bundle Analyzer (only in analyze mode)
+  ...(process.env.ANALYZE === "true" && {
+    webpack: (config) => {
+      const { BundleAnalyzerPlugin } = require("@next/bundle-analyzer");
+      config.plugins.push(
+        new BundleAnalyzerPlugin({
+          analyzerMode: "server",
+          analyzerPort: 8888,
+          openAnalyzer: true,
+        })
+      );
+      return config;
+    },
+  }),
+  
   async headers() {
     return [
       {
@@ -30,6 +70,58 @@ const nextConfig: NextConfig = {
             value: "camera=(), microphone=(), geolocations=()",
           },
         ],
+      },
+      // Cache static assets
+      {
+        source: "/_next/static/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      // Cache public assets
+      {
+        source: "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, must-revalidate",
+          },
+        ],
+      },
+    ];
+  },
+  
+  // Redirects
+  async redirects() {
+    return [
+      // www to non-www
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "www.timax.xyz",
+          },
+        ],
+        destination: "https://timax.xyz/:path*",
+        permanent: true,
+      },
+    ];
+  },
+  
+  // Rewrites
+  async rewrites() {
+    return [
+      {
+        source: "/sitemap.xml",
+        destination: "/api/sitemap",
+      },
+      {
+        source: "/robots.txt",
+        destination: "/api/robots",
       },
     ];
   },
