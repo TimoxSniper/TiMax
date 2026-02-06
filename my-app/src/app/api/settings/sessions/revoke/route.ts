@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 /**
  * POST /api/settings/sessions/revoke
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
     await clerk.sessions.revokeSession(sessionId);
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Session revoke error:", error);
+    logger.error("Session revoke error:", error);
     return NextResponse.json(
       { success: false, error: "Sitzung konnte nicht beendet werden" },
       { status: 500 }

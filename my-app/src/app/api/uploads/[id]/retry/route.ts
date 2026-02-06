@@ -79,9 +79,10 @@ export async function POST(
 
     logger.info(`[Upload Retry] Retry gestartet für: ${upload.file_name} (${uploadId})`);
 
-    // TODO: Optional - Trigger n8n reprocessing webhook
-    // This would require sending a webhook to n8n to reprocess the upload
-    // For now, we just reset the status and the user can re-upload if needed
+    // NOTE: Future Enhancement - n8n webhook integration
+    // For automatic reprocessing, a webhook could be sent to n8n here.
+    // Current behavior: Status is reset to 'pending', allowing manual reupload.
+    // Track enhancement request in GitHub Issues if needed.
 
     return NextResponse.json({
       success: true,
