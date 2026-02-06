@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Workspace-Root für Vercel/CI (vermeidet Warnung bei mehreren Lockfiles)
+  outputFileTracingRoot: process.cwd(),
   turbopack: { root: process.cwd() },
   
   // Performance Optimizations

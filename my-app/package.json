@@ -4,7 +4,7 @@
   "private": true,
   "description": "KI-gestützte Video- und Audio-Transkription mit automatischer Textgenerierung",
   "engines": {
-    "node": ">=20.0.0",
+    "node": "20.x",
     "npm": ">=10.0.0"
   },
   "scripts": {
@@ -22,7 +22,7 @@
     "test:coverage": "vitest run --coverage",
     "test:ci": "vitest run --coverage --reporter=verbose",
     "analyze": "cross-env ANALYZE=true next build",
-    "prepare": "husky install || true",
+    "prepare": "husky || true",
     "precommit": "lint-staged",
     "validate": "npm run typecheck && npm run lint && npm run test:ci"
   },
