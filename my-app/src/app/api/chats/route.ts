@@ -9,7 +9,7 @@ import { logger } from "@/lib/logger";
 async function getChatsHandler(request: NextRequest) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json(
         { success: false, error: "Nicht authentifiziert" },
@@ -17,21 +17,51 @@ async function getChatsHandler(request: NextRequest) {
       );
     }
 
+    const { searchParams } = new URL(request.url);
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20")));
+    const offset = (page - 1) * limit;
+
     const supabase = createAdminClient();
 
-    // Alle Chats des Users laden, sortiert nach updated_at
+    // Get total count
+    const { count: totalCount, error: countError } = await supabase
+      .from("chats")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId);
+
+    if (countError) {
+      logger.error("[Chats API] Fehler beim Zählen:", countError);
+      throw countError;
+    }
+
+    // Get paginated chats
     const { data: chats, error } = await supabase
       .from("chats")
       .select("*")
       .eq("user_id", userId)
-      .order("updated_at", { ascending: false });
+      .order("updated_at", { ascending: false })
+      .range(offset, offset + limit - 1);
 
     if (error) {
       logger.error("[Chats API] Fehler beim Laden:", error);
       throw error;
     }
 
-    return NextResponse.json({ success: true, chats });
+    const total = totalCount || 0;
+    const totalPages = Math.ceil(total / limit);
+
+    return NextResponse.json({
+      success: true,
+      chats,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasMore: page < totalPages,
+      },
+    });
   } catch (error) {
     Sentry.captureException(error, {
       tags: { api_route: "/api/chats" },

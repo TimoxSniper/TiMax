@@ -12,7 +12,8 @@ import {
     Copy,
     Check,
     MoreVertical,
-    ExternalLink
+    ExternalLink,
+    RefreshCw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -35,31 +36,53 @@ interface Upload {
     file_name: string;
     file_size: number;
     file_type: string;
-    status: "processing" | "completed" | "error";
+    status: "pending" | "processing" | "completed" | "failed" | "cancelled";
     transcript?: string;
+    error_message?: string;
     created_at: string;
 }
 
 export function UploadList() {
     const [uploads, setUploads] = useState<Upload[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedTranscript, setSelectedTranscript] = useState<Upload | null>(null);
     const [isCopying, setIsCopying] = useState(false);
+    const [retryingId, setRetryingId] = useState<string | null>(null);
     const router = useRouter();
 
-    const fetchUploads = async () => {
+    const fetchUploads = async (pageNum: number = 1, append: boolean = false) => {
         try {
-            const response = await fetch("/api/uploads");
+            if (append) {
+                setLoadingMore(true);
+            } else {
+                setLoading(true);
+            }
+
+            const response = await fetch(`/api/uploads?page=${pageNum}&limit=20`);
             const data = await response.json();
             if (data.success) {
-                setUploads(data.uploads);
+                if (append) {
+                    setUploads((prev) => [...prev, ...data.uploads]);
+                } else {
+                    setUploads(data.uploads);
+                }
+                setHasMore(data.pagination?.hasMore || false);
+                setPage(pageNum);
             }
         } catch (error) {
             logger.error("Failed to fetch uploads:", error);
         } finally {
             setLoading(false);
+            setLoadingMore(false);
         }
+    };
+
+    const loadMoreUploads = () => {
+        fetchUploads(page + 1, true);
     };
 
     useEffect(() => {
@@ -80,6 +103,35 @@ export function UploadList() {
         } catch (error) {
             logger.error("Failed to delete upload:", error);
             toast.error("Löschen fehlgeschlagen");
+        }
+    };
+
+    const handleRetry = async (id: string) => {
+        setRetryingId(id);
+        try {
+            const response = await fetch(`/api/uploads/${id}/retry`, {
+                method: "POST",
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                // Update the upload status in the list
+                setUploads((prev) =>
+                    prev.map((u) =>
+                        u.id === id
+                            ? { ...u, status: "pending" as const, error_message: undefined }
+                            : u
+                    )
+                );
+                toast.success("Upload wird erneut verarbeitet");
+            } else {
+                toast.error(data.error || "Retry fehlgeschlagen");
+            }
+        } catch (error) {
+            logger.error("Failed to retry upload:", error);
+            toast.error("Retry fehlgeschlagen");
+        } finally {
+            setRetryingId(null);
         }
     };
 
@@ -186,15 +238,29 @@ export function UploadList() {
                             <Badge
                                 variant={
                                     upload.status === "completed" ? "default" :
-                                        upload.status === "processing" ? "secondary" : "destructive"
+                                        upload.status === "processing" || upload.status === "pending" ? "secondary" : "destructive"
                                 }
                                 className="hidden sm:inline-flex"
                             >
                                 {upload.status === "completed" ? "Fertig" :
-                                    upload.status === "processing" ? "In Arbeit" : "Fehler"}
+                                    upload.status === "processing" ? "In Arbeit" :
+                                        upload.status === "pending" ? "Ausstehend" : "Fehler"}
                             </Badge>
 
                             <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                                {/* Retry Button - Only for failed uploads */}
+                                {upload.status === "failed" && (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => handleRetry(upload.id)}
+                                        disabled={retryingId === upload.id}
+                                        title="Erneut versuchen"
+                                        className="text-primary hover:text-primary"
+                                    >
+                                        <RefreshCw className={`w-4 h-4 ${retryingId === upload.id ? "animate-spin" : ""}`} />
+                                    </Button>
+                                )}
                                 {upload.transcript && (
                                     <>
                                         <Dialog>
@@ -262,6 +328,26 @@ export function UploadList() {
                     </div>
                 ))}
             </div>
+
+            {hasMore && (
+                <div className="flex justify-center py-6">
+                    <Button
+                        variant="outline"
+                        onClick={loadMoreUploads}
+                        disabled={loadingMore}
+                        className="gap-2"
+                    >
+                        {loadingMore ? (
+                            <>
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Wird geladen...
+                            </>
+                        ) : (
+                            "Mehr laden"
+                        )}
+                    </Button>
+                </div>
+            )}
         </div>
     );
 }

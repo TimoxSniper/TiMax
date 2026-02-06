@@ -24,22 +24,42 @@ interface ChatSidebarProps {
 export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, onRefresh }: ChatSidebarProps) {
   const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
 
-  const loadChats = async () => {
+  const loadChats = async (pageNum: number = 1, append: boolean = false) => {
     try {
-      const response = await fetch("/api/chats");
+      if (append) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
+
+      const response = await fetch(`/api/chats?page=${pageNum}&limit=20`);
       const data = await response.json();
       if (data.success) {
-        setChats(data.chats);
+        if (append) {
+          setChats((prev) => [...prev, ...data.chats]);
+        } else {
+          setChats(data.chats);
+        }
+        setHasMore(data.pagination?.hasMore || false);
+        setPage(pageNum);
       }
     } catch (error) {
       logger.error("Failed to load chats:", error);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
+  };
+
+  const loadMoreChats = () => {
+    loadChats(page + 1, true);
   };
 
   useEffect(() => {
@@ -225,6 +245,17 @@ export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, onRe
               </div>
             </div>
           ))
+        )}
+        {hasMore && (
+          <div className="px-3 py-2">
+            <button
+              onClick={loadMoreChats}
+              disabled={loadingMore}
+              className="w-full py-2 text-sm text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+            >
+              {loadingMore ? "Wird geladen..." : "Mehr laden"}
+            </button>
+          </div>
         )}
       </CardContent>
     </Card>

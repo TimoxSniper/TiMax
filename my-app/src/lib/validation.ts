@@ -2,6 +2,22 @@ import { z } from "zod";
 import { UPLOAD_CONFIG, isFileSizeAllowed, isMimeTypeAllowed, isExtensionAllowed } from "./upload-config";
 
 /**
+ * Schema für Waitlist/Email Signup Validation
+ */
+export const waitlistSchema = z.object({
+  email: z
+    .string()
+    .min(1, "E-Mail-Adresse ist erforderlich")
+    .email("Ungültige E-Mail-Adresse")
+    .max(255, "E-Mail-Adresse ist zu lang"),
+  source: z
+    .string()
+    .max(50)
+    .optional()
+    .default("homepage"),
+});
+
+/**
  * Schema für File Upload Validation
  * Nutzt zentrale Upload-Konfiguration
  */

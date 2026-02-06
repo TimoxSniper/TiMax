@@ -8,7 +8,7 @@ import { logger } from "@/lib/logger";
 export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json(
         { success: false, error: "Nicht authentifiziert" },
@@ -18,15 +18,39 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createClient();
     const { searchParams } = new URL(request.url);
-    
+
+    // Pagination parameters
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20")));
+    const offset = (page - 1) * limit;
+
     // Optional: Filter nach Status
     const status = searchParams.get("status");
 
+    // Build base query for count
+    let countQuery = supabase
+      .from("uploads")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId);
+
+    if (status) {
+      countQuery = countQuery.eq("status", status);
+    }
+
+    const { count: totalCount, error: countError } = await countQuery;
+
+    if (countError) {
+      logger.error("[Uploads API] Fehler beim Zählen:", countError);
+      throw countError;
+    }
+
+    // Build query for data
     let query = supabase
       .from("uploads")
       .select("*")
       .eq("user_id", userId)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
 
     if (status) {
       query = query.eq("status", status);
@@ -39,7 +63,20 @@ export async function GET(request: NextRequest) {
       throw error;
     }
 
-    return NextResponse.json({ success: true, uploads });
+    const total = totalCount || 0;
+    const totalPages = Math.ceil(total / limit);
+
+    return NextResponse.json({
+      success: true,
+      uploads,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasMore: page < totalPages,
+      },
+    });
   } catch (error) {
     Sentry.captureException(error, {
       tags: { api_route: "/api/uploads" },

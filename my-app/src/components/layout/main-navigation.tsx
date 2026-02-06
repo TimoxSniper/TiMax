@@ -5,7 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DarkModeToggle } from "@/components/home/dark-mode-toggle";
-import { Menu, X, Zap, MessageSquare, FileText, Home, LogIn, User, Sparkles, HelpCircle, Upload, FolderOpen, CreditCard } from "lucide-react";
+import { Menu, X, Zap, MessageSquare, FileText, Home, LogIn, User, Sparkles, HelpCircle, Upload, FolderOpen, CreditCard, Settings, Search } from "lucide-react";
+import { SearchModal } from "@/components/search/search-modal";
 import { cn } from "@/lib/utils";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
@@ -16,6 +17,7 @@ const protectedNavigation = [
   { name: "Upload", href: "/upload", icon: Upload },
   { name: "Chat", href: "/chat", icon: MessageSquare },
   { name: "Meine Dateien", href: "/uploads", icon: FolderOpen },
+  { name: "Einstellungen", href: "/settings", icon: Settings },
 ];
 
 const landingPageNavigation: Array<{
@@ -28,6 +30,7 @@ const landingPageNavigation: Array<{
 
 export function MainNavigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
   const isMobileDevice = useMobileDevice();
@@ -52,6 +55,19 @@ export function MainNavigation() {
       setMobileMenuOpen(false);
     }
   }, [isMobileDevice]);
+
+  // Cmd/Ctrl+K für Search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <header ref={navRef} className="sticky top-0 z-50 w-full border-b border-border bg-background transition-all duration-300">
@@ -122,6 +138,19 @@ export function MainNavigation() {
 
           {/* Right Side: Auth + Dark Mode + Mobile Menu */}
           <div className="flex items-center gap-2">
+            {/* Search Button - Only for signed in users */}
+            <SignedIn>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSearchOpen(true)}
+                className="hidden sm:flex"
+                title="Suchen (Cmd/Ctrl+K)"
+              >
+                <Search className="h-5 w-5" />
+              </Button>
+            </SignedIn>
+
             <DarkModeToggle variant="inline" />
 
             {/* Auth Buttons - nur auf Desktop (echte Geräte) */}
@@ -240,6 +269,21 @@ export function MainNavigation() {
                   })}
                 </SignedIn>
 
+                {/* Search Button - Mobile */}
+                <SignedIn>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2"
+                    onClick={() => {
+                      setSearchOpen(true);
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <Search className="h-4 w-4" />
+                    Suchen
+                  </Button>
+                </SignedIn>
+
                 {/* Mobile Auth */}
                 <div className="border-t pt-2 mt-2">
                   <SignedOut>
@@ -275,6 +319,9 @@ export function MainNavigation() {
           )}
         </AnimatePresence>
       </nav>
+
+      {/* Search Modal */}
+      <SearchModal open={searchOpen} onOpenChange={setSearchOpen} />
     </header>
   );
 }

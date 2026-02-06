@@ -8,9 +8,6 @@ import { useToast } from "@/components/ui/toast";
 import { Loader2, ArrowRight } from "lucide-react";
 import { logger } from "@/lib/logger";
 
-// Konstanten
-const EMAIL_SUBMIT_DELAY = 1000;
-
 export function EmailSignup() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,7 +15,7 @@ export function EmailSignup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email.trim()) {
       showToast("Bitte gib eine gültige E-Mail-Adresse ein.", "error");
       return;
@@ -27,11 +24,32 @@ export function EmailSignup() {
     setIsSubmitting(true);
 
     try {
-      // TODO (Phase 2): Backend-Integration implementieren
-      await new Promise((resolve) => setTimeout(resolve, EMAIL_SUBMIT_DELAY));
-      
-      showToast("Vielen Dank für dein Interesse! Die Anmeldung ist aktuell noch in Entwicklung.", "success");
-      setEmail("");
+      const response = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          source: "homepage",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast(data.message || "Erfolgreich angemeldet!", "success");
+        setEmail("");
+      } else if (response.status === 409) {
+        showToast("Du bist bereits angemeldet! Wir informieren dich, sobald TiMax verfügbar ist.", "success");
+        setEmail("");
+      } else if (response.status === 429) {
+        showToast("Zu viele Anfragen. Bitte versuche es später erneut.", "error");
+      } else if (response.status === 400) {
+        showToast(data.error || "Ungültige E-Mail-Adresse.", "error");
+      } else {
+        throw new Error(data.error || "Unbekannter Fehler");
+      }
     } catch (error) {
       showToast("Es ist ein Fehler aufgetreten. Bitte versuche es später erneut.", "error");
       if (process.env.NODE_ENV === "development") {
