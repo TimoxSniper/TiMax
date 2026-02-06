@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, KeyboardEvent, useEffect } from "react";
+import { useState, useRef, KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Send, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";

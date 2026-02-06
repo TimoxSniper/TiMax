@@ -108,7 +108,7 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
               } else {
                 reject(new Error(data.error || "Upload fehlgeschlagen"));
               }
-            } catch (parseError) {
+            } catch {
               reject(new Error("Ungültige Antwort vom Server"));
             }
           } else {

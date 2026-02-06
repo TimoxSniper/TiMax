@@ -76,7 +76,6 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDeleteChat = async (chatId: string) => {

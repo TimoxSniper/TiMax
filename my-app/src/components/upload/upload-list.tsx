@@ -8,11 +8,8 @@ import {
     Search,
     MessageSquare,
     Eye,
-    Download,
     Copy,
     Check,
-    MoreVertical,
-    ExternalLink,
     RefreshCw,
     Loader2
 } from "lucide-react";
@@ -50,7 +47,6 @@ export function UploadList() {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectedTranscript, setSelectedTranscript] = useState<Upload | null>(null);
     const [isCopying, setIsCopying] = useState(false);
     const [retryingId, setRetryingId] = useState<string | null>(null);
     const router = useRouter();

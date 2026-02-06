@@ -54,7 +54,6 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
       setMessages([initialMessage]);
       localStorage.removeItem("pending_transcript");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Nur beim ersten Mount ausführen
 
   // Lade Historie wenn chatId gesetzt wird

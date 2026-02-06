@@ -33,7 +33,7 @@ export function Footer() {
           </div>
 
           <nav className="flex flex-wrap justify-center gap-x-3 sm:gap-x-6 gap-y-2" aria-label="Footer Navigation">
-            {FOOTER_LINKS.map((link, index) => (
+            {FOOTER_LINKS.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}

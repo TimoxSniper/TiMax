@@ -3,7 +3,7 @@
 import { MainNavigation } from "@/components/layout/main-navigation";
 import { UploadList } from "@/components/upload/upload-list";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { FileText } from "lucide-react";
+
 
 export default function UploadsPage() {
     return (

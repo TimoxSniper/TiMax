@@ -113,7 +113,7 @@ async function chatHandler(request: NextRequest) {
     let data;
     try {
       data = await response.json();
-    } catch (jsonError) {
+    } catch {
       throw new Error("Ungültige JSON-Antwort von n8n Webhook");
     }
 

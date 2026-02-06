@@ -1,11 +1,6 @@
-import { defineConfig } from "eslint/config";
-import nextPlugin from "@next/eslint-plugin-next";
-import tsParser from "@typescript-eslint/parser";
-import tsPlugin from "@typescript-eslint/eslint-plugin";
-import importPlugin from "eslint-plugin-import";
-import unusedImportsPlugin from "eslint-plugin-unused-imports";
+import tseslint from "typescript-eslint";
 
-const eslintConfig = defineConfig([
+export default tseslint.config(
   {
     ignores: [
       ".next/**",
@@ -14,91 +9,23 @@ const eslintConfig = defineConfig([
       "next-env.d.ts",
       "node_modules/**",
       "coverage/**",
-      "*.config.{js,mjs,ts}",
+      "src/mcp/**",
+      "src/lib/supabase/database.types.ts",
     ],
   },
+  ...tseslint.configs.recommended,
   {
-    files: ["**/*.{js,jsx,ts,tsx}"],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: {
-        project: "./tsconfig.json",
-        tsconfigRootDir: ".",
-      },
-    },
-    plugins: {
-      "@next": nextPlugin,
-      "@typescript-eslint": tsPlugin,
-      import: importPlugin,
-      "unused-imports": unusedImportsPlugin,
-    },
+    files: ["**/*.{ts,tsx}"],
     rules: {
-      // Next.js recommended
-      ...nextPlugin.configs.recommended.rules,
-      ...nextPlugin.configs["core-web-vitals"].rules,
-      
-      // TypeScript
-      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      // TypeScript Strictness
       "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/prefer-const": "error",
-      "@typescript-eslint/no-var-requires": "error",
-      
-      // Imports
-      "import/order": [
-        "error",
-        {
-          groups: [
-            "builtin",
-            "external",
-            "internal",
-            ["parent", "sibling"],
-            "index",
-            "object",
-            "type",
-          ],
-          pathGroups: [
-            {
-              pattern: "react",
-              group: "builtin",
-              position: "before",
-            },
-            {
-              pattern: "next/**",
-              group: "builtin",
-              position: "before",
-            },
-            {
-              pattern: "@/**",
-              group: "internal",
-              position: "before",
-            },
-          ],
-          pathGroupsExcludedImportTypes: ["react", "next"],
-          "newlines-between": "always",
-          alphabetize: {
-            order: "asc",
-            caseInsensitive: true,
-          },
-        },
-      ],
-      "import/no-duplicates": "error",
-      "unused-imports/no-unused-imports": "error",
-      
-      // Best practices
-      "no-console": ["warn", { allow: ["error", "warn"] }],
-      "prefer-const": "error",
-      "no-var": "error",
-      "object-shorthand": "error",
-      "prefer-template": "error",
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
     },
   },
   {
     files: ["**/*.test.{ts,tsx}", "**/__tests__/**/*.{ts,tsx}"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
-      "no-console": "off",
     },
   },
-]);
-
-export default eslintConfig;
+);

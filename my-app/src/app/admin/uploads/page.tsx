@@ -67,14 +67,12 @@ export default function AdminUploadsPage() {
   useEffect(() => {
     setCurrentPage(1);
     fetchUploads(1, statusFilter);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userIdFilter, statusFilter]);
 
   useEffect(() => {
     if (currentPage > 1) {
       fetchUploads(currentPage, statusFilter);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   const handlePageChange = (page: number) => {

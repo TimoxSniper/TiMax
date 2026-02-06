@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   generateCsrfToken,
   setCsrfCookie,
@@ -24,7 +24,7 @@ vi.mock('next/server', () => ({
 }));
 
 import { cookies } from 'next/headers';
-import { NextResponse, NextRequest } from 'next/server';
+import { NextRequest } from 'next/server';
 
 describe('CSRF Protection', () => {
   const mockCookieStore = {

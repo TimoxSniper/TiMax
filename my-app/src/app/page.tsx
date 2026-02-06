@@ -4,7 +4,7 @@ import { memo, useMemo } from "react";
 import { HeroSection } from "@/components/home/hero-section";
 import { StatsSection } from "@/components/home/stats-section";
 import { EmailSignup } from "@/components/home/email-signup";
-import { GridBackground } from "@/components/home/grid-background";
+
 import { TestimonialsSection } from "@/components/home/testimonials-section";
 import { DemoVideoSection } from "@/components/home/demo-video-section";
 import { MainNavigation } from "@/components/layout/main-navigation";
@@ -90,32 +90,29 @@ const WorkflowSection = memo(function WorkflowSection() {
         </AnimatedSection>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 lg:gap-12">
-          {WORKFLOW_STEPS.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <AnimatedSection key={item.step} delay={index * 100} direction="up">
-                <Link href={item.href} className="block h-full group">
-                  <div className="text-center h-full flex flex-col">
-                    {/* Bronze step number - Editorial Modernism style */}
-                    <div className="font-serif text-4xl sm:text-5xl lg:text-7xl font-bold text-accent mb-2 sm:mb-4">
-                      0{item.step}
-                    </div>
-                    <h3 className="font-sans text-sm sm:text-base lg:text-lg font-medium uppercase tracking-wide mb-2 sm:mb-3 text-foreground group-hover:text-accent transition-colors">
-                      {item.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed flex-grow mb-2 sm:mb-4 hidden sm:block">
-                      {item.desc}
-                    </p>
-                    <div className="mt-auto">
-                      <span className="text-[10px] sm:text-xs font-medium text-muted-foreground group-hover:text-accent transition-colors uppercase tracking-wide">
-                        {item.action} →
-                      </span>
-                    </div>
+          {WORKFLOW_STEPS.map((item, index) => (
+            <AnimatedSection key={item.step} delay={index * 100} direction="up">
+              <Link href={item.href} className="block h-full group">
+                <div className="text-center h-full flex flex-col">
+                  {/* Bronze step number - Editorial Modernism style */}
+                  <div className="font-serif text-4xl sm:text-5xl lg:text-7xl font-bold text-accent mb-2 sm:mb-4">
+                    0{item.step}
                   </div>
-                </Link>
-              </AnimatedSection>
-            );
-          })}
+                  <h3 className="font-sans text-sm sm:text-base lg:text-lg font-medium uppercase tracking-wide mb-2 sm:mb-3 text-foreground group-hover:text-accent transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed flex-grow mb-2 sm:mb-4 hidden sm:block">
+                    {item.desc}
+                  </p>
+                  <div className="mt-auto">
+                    <span className="text-[10px] sm:text-xs font-medium text-muted-foreground group-hover:text-accent transition-colors uppercase tracking-wide">
+                      {item.action} →
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </AnimatedSection>
+          ))}
         </div>
       </div>
     </section>

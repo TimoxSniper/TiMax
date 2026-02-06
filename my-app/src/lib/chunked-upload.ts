@@ -70,7 +70,7 @@ export async function uploadChunk(
   chunk: Blob,
   metadata: ChunkMetadata,
   onProgress?: (progress: number) => void
-): Promise<Response> {
+): Promise<string> {
   const formData = new FormData();
   formData.append("chunk", chunk);
   formData.append("metadata", JSON.stringify(metadata));
@@ -87,7 +87,7 @@ export async function uploadChunk(
 
     xhr.addEventListener("load", () => {
       if (xhr.status >= 200 && xhr.status < 300) {
-        resolve(xhr.response as any);
+        resolve(xhr.response);
       } else {
         reject(new Error(`Chunk Upload fehlgeschlagen: ${xhr.statusText}`));
       }

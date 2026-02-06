@@ -29,20 +29,7 @@ const nextConfig: NextConfig = {
   // Compression
   compress: true,
   
-  // Bundle Analyzer (only in analyze mode)
-  ...(process.env.ANALYZE === "true" && {
-    webpack: (config) => {
-      const { BundleAnalyzerPlugin } = require("@next/bundle-analyzer");
-      config.plugins.push(
-        new BundleAnalyzerPlugin({
-          analyzerMode: "server",
-          analyzerPort: 8888,
-          openAnalyzer: true,
-        })
-      );
-      return config;
-    },
-  }),
+
   
   async headers() {
     return [

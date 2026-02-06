@@ -20,7 +20,7 @@ import {
 export default function SessionsSettingsPage() {
   const { user, isLoaded: isUserLoaded } = useUser();
   const { session: currentSession } = useSession();
-  const { sessions, isLoaded: isSessionsLoaded, setActive } = useSessionList();
+  const { sessions, isLoaded: isSessionsLoaded } = useSessionList();
   const [revokingId, setRevokingId] = useState<string | null>(null);
   const [showRevokeAllDialog, setShowRevokeAllDialog] = useState(false);
   const [isRevokingAll, setIsRevokingAll] = useState(false);
@@ -76,7 +76,7 @@ export default function SessionsSettingsPage() {
         throw new Error(data.error || "Revoke fehlgeschlagen");
       }
       toast.success("Sitzung wurde beendet");
-    } catch (error) {
+    } catch {
       toast.error("Fehler beim Beenden der Sitzung");
     } finally {
       setRevokingId(null);
@@ -98,7 +98,7 @@ export default function SessionsSettingsPage() {
       );
       toast.success(`${otherSessions.length} Sitzung(en) wurden beendet`);
       setShowRevokeAllDialog(false);
-    } catch (error) {
+    } catch {
       toast.error("Fehler beim Beenden der Sitzungen");
     } finally {
       setIsRevokingAll(false);

@@ -4,9 +4,7 @@ import {
   chatSchema,
   sanitizeString,
   validateFilename,
-  validateFileType,
 } from '@/lib/validation';
-import { UPLOAD_CONFIG } from '@/lib/upload-config';
 
 describe('Validation', () => {
   describe('sanitizeString', () => {

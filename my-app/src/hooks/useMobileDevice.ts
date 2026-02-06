@@ -25,9 +25,6 @@ export function useMobileDevice(): boolean {
       // Methode 2: Touch-Punkte prüfen
       const hasTouchPoints = navigator.maxTouchPoints > 0;
       
-      // Methode 3: Touch-Events verfügbar (als Fallback)
-      const hasTouchEvents = "ontouchstart" in window;
-      
       // Kombinierte Logik: Ein Gerät ist mobil wenn:
       // - Es einen groben Pointer hat (Touch statt Maus) UND
       // - Es kein echtes Hover hat ODER

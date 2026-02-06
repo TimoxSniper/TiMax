@@ -8,7 +8,6 @@ import {
   validateFilename,
   validateFileType,
 } from "@/lib/validation";
-import { UPLOAD_CONFIG } from "@/lib/upload-config";
 import { withCsrfProtection } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
@@ -202,7 +201,7 @@ async function uploadHandler(request: NextRequest) {
         try {
           data = JSON.parse(responseText);
           logger.log("[Upload API] Response als JSON geparst");
-        } catch (parseError) {
+        } catch {
           // Wenn JSON-Parsing fehlschlägt, ist es wahrscheinlich reiner Text (Transkript)
           logger.log("[Upload API] Response ist kein JSON, behandele als reines Transkript");
           transcript = responseText.trim();

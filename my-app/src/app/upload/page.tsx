@@ -57,7 +57,7 @@ export default function UploadPage() {
         {/* Upload-Bereich */}
         <div className="max-w-2xl mx-auto space-y-8">
           <FileUpload 
-            onUploadSuccess={(fileName, transcriptText) => {
+            onUploadSuccess={(fileName) => {
               setUploadedFileName(fileName);
               setIsUploaded(true);
               logger.info("Upload erfolgreich:", fileName);

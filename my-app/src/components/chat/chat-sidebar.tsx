@@ -18,10 +18,10 @@ interface ChatSidebarProps {
   currentChatId: string | null;
   onSelectChat: (chatId: string) => void;
   onCreateNewChat: () => void;
-  onRefresh: () => void;
+  _onRefresh: () => void;
 }
 
-export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, onRefresh }: ChatSidebarProps) {
+export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, _onRefresh }: ChatSidebarProps) {
   const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);

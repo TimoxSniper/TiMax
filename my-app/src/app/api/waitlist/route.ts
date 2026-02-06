@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Insert new waitlist entry
-    const { data: waitlistEntry, error } = await supabase
+    const { error } = await supabase
       .from("waitlist")
       .insert({
         email: email.toLowerCase(),

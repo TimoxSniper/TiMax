@@ -5,7 +5,12 @@
       "Bash(git add:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: Complete UX overhaul + Email backend + Redis setup\n\nPRIORITY 1: Email Signup Backend\n- Add waitlist API endpoint with rate limiting \\(3/hour\\)\n- Implement duplicate email detection\n- Add email validation schema\n- Integrate into email-signup component\n- IP-based rate limiting with metadata tracking\n\nPRIORITY 2.1: Account Settings Pages\n- Create settings layout with sidebar navigation\n- Implement profile page \\(name, email, avatar management\\)\n- Add security page \\(password, 2FA, account deletion\\)\n- Add sessions page \\(active devices, revoke sessions\\)\n- Full Clerk integration for auth management\n\nPRIORITY 2.2: Search Functionality\n- Create global search API with relevance scoring\n- Search across chats \\(title + message content\\) and uploads \\(filename + transcript\\)\n- Implement search modal with keyboard navigation\n- Add Cmd/Ctrl+K shortcut\n- Rate limiting: 30 searches/minute\n\nPRIORITY 2.3: Pagination\n- Add pagination to chats API \\(page, limit, hasMore\\)\n- Add pagination to uploads API\n- Implement \"Load More\" buttons in UI\n- Efficient database queries with .range\\(\\)\n\nPRIORITY 2.4: Better Error Handling\n- Create centralized error utility library\n- Map HTTP status codes to user-friendly German messages\n- Implement error categories: network, auth, validation, ratelimit, etc.\n- Add actionable error suggestions\n- Create ERROR_MESSAGES constants for common scenarios\n\nPRIORITY 2.5: Upload Retry Button\n- Create retry API endpoint for failed uploads\n- Add retry button to upload list \\(only for failed\\)\n- Reset upload status to pending with error clearing\n- Real-time status updates with toast feedback\n\nPRIORITY 3: Upstash Redis Setup\n- Create Redis health check endpoint\n- Test Redis operations \\(SET, GET, DELETE\\)\n- Return detailed status and performance metrics\n- Create comprehensive REDIS_SETUP.md documentation\n- Include troubleshooting guide and best practices\n\nKey Improvements:\n- Enhanced UX with settings management\n- Global search across content\n- Improved pagination for large lists\n- Better error handling in German\n- Retry functionality for failed uploads\n- Production-ready Redis monitoring\n- Comprehensive documentation\n\nFiles Created: 15\nFiles Modified: 7\nNew API Endpoints: 4\nNew Pages: 5\nNew Components: 2\n\nCo-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git push:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run lint)",
+      "Bash(pnpm install:*)",
+      "Bash(npx pnpm install)"
     ]
   }
 }

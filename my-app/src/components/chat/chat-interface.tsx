@@ -5,16 +5,16 @@ import { MessageList } from "./message-list";
 import { ChatInput } from "./chat-input";
 import { ChatHeader } from "./chat-header";
 import { Card } from "@/components/ui/card";
-import { Loader2, AlertCircle, Sparkles, MessageSquare, Plus, ArrowLeft } from "lucide-react";
+import { Loader2, AlertCircle, Sparkles, Plus } from "lucide-react";
 import { CHAT_UI_TEXTS } from "@/lib/constants";
 import { useChat, Message } from "@/hooks/useChat";
 import { useMobileDevice } from "@/hooks/useMobileDevice";
 
 import { ChatSidebar } from "./chat-sidebar";
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+
 
 export type { Message };
 
@@ -89,7 +89,7 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
                 currentChatId={chatId}
                 onSelectChat={handleSelectChat}
                 onCreateNewChat={handleCreateNewChat}
-                onRefresh={() => {}}
+                _onRefresh={() => {}}
               />
             </SheetContent>
           </Sheet>
@@ -185,13 +185,13 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
           currentChatId={chatId}
           onSelectChat={setChatId}
           onCreateNewChat={startNewChat}
-          onRefresh={() => {}}
+          _onRefresh={() => {}}
         />
       </div>
 
       {/* Haupt-Chatbereich */}
       <Card className="flex-1 flex flex-col h-full overflow-hidden">
-        <ChatHeader sessionId={sessionId} messageCount={messages.length} />
+        <ChatHeader _sessionId={sessionId} messageCount={messages.length} />
 
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.length === 0 ? (

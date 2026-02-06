@@ -32,7 +32,7 @@ export default function ProfileSettingsPage() {
         lastName: lastName.trim(),
       });
       toast.success("Profil erfolgreich aktualisiert");
-    } catch (error) {
+    } catch {
       toast.error("Fehler beim Speichern. Bitte versuche es erneut.");
     } finally {
       setIsSaving(false);

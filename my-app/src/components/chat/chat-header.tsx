@@ -4,11 +4,11 @@ import { CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
 
 interface ChatHeaderProps {
-  sessionId: string;
+  _sessionId: string;
   messageCount: number;
 }
 
-export function ChatHeader({ sessionId, messageCount }: ChatHeaderProps) {
+export function ChatHeader({ _sessionId, messageCount }: ChatHeaderProps) {
   return (
     <CardHeader className="border-b pl-16 lg:pl-6">
       <div className="flex items-center gap-3">

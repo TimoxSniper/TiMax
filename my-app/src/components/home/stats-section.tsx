@@ -76,7 +76,7 @@ export const StatsSection = memo(function StatsSection({ onVisible }: StatsSecti
         <AnimatedSection direction="up">
           {/* Horizontal stats layout with vertical dividers */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-0 md:divide-x divide-border">
-            {stats.map((stat, index) => (
+            {stats.map((stat) => (
               <div 
                 key={stat.label}
                 className="flex flex-col items-center text-center px-2 sm:px-8 lg:px-16 py-3 sm:py-6 md:py-0"

@@ -61,14 +61,12 @@ export default function AdminChatsPage() {
   useEffect(() => {
     setCurrentPage(1);
     fetchChats(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userIdFilter]);
 
   useEffect(() => {
     if (currentPage > 1) {
       fetchChats(currentPage);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   const handlePageChange = (page: number) => {

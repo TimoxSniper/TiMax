@@ -53,7 +53,7 @@ export default function SecuritySettingsPage() {
       await user.delete();
       toast.success("Dein Konto wurde gelöscht.");
       // Clerk will handle the redirect
-    } catch (error) {
+    } catch {
       toast.error("Fehler beim Löschen des Kontos. Bitte versuche es erneut.");
       setIsDeleting(false);
     }

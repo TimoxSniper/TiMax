@@ -210,8 +210,7 @@ export function generateCaption(transcript: string): string {
   }
 
   const sentences = splitIntoSentences(transcript);
-  const keywords = extractKeywords(transcript, 3);
-  
+
   // Ersten 1-2 Sätze als Hauptinhalt
   const mainText = sentences.slice(0, 2).join(" ");
   
