@@ -357,7 +357,33 @@ Dateien mit niedriger Coverage:
 
 **Geschätzter Aufwand:** 2-3 Stunden
 
-#### 2. JSDoc Documentation ausbauen
+#### 2. Tier-basiertes Chat History Limiting
+
+**Priorität: Hoch**
+
+**Problem:** Aktuell ist das Chat History Limit hart auf 10 Nachrichten codiert (`useChat.ts:158`).
+
+**Ursprüngliche Vision:** Unterschiedliche Limits basierend auf Subscription-Tier:
+- Free Tier: 5 Nachrichten
+- Pro Tier: 20 Nachrichten
+- Enterprise: 50+ Nachrichten
+
+**Umsetzung:**
+```typescript
+// src/hooks/useChat.ts
+const historyLimit = getHistoryLimitForUser(user.subscription_tier);
+chatHistory: [...messages, userMessage].slice(-historyLimit).map(...)
+```
+
+**Benötigt:**
+- Subscription-Tier Erkennung aus Supabase User
+- Konfigurierbare Limits (z.B. in `lib/constants.ts`)
+- Fallback auf Free-Tier wenn nicht eingeloggt
+- Monetarisierungs-Strategie & Upselling-Möglichkeit
+
+**Geschätzter Aufwand:** 3-4 Stunden
+
+#### 3. JSDoc Documentation ausbauen
 
 **Priorität: Niedrig**
 
@@ -376,7 +402,7 @@ export function containsDangerousContent(input: string): boolean {
 
 **Geschätzter Aufwand:** 4-5 Stunden
 
-#### 3. Next.js 16 Conventions
+#### 4. Next.js 16 Conventions
 
 **Priorität: Niedrig**
 
@@ -385,7 +411,7 @@ export function containsDangerousContent(input: string): boolean {
 
 **Geschätzter Aufwand:** 30 Minuten
 
-#### 4. Performance Budgets
+#### 5. Performance Budgets
 
 **Priorität: Optional**
 
@@ -401,7 +427,7 @@ export function containsDangerousContent(input: string): boolean {
 
 **Geschätzter Aufwand:** 1 Stunde
 
-#### 5. E2E Testing
+#### 6. E2E Testing
 
 **Priorität: Optional**
 
@@ -422,7 +448,8 @@ export function containsDangerousContent(input: string): boolean {
    - Commit: `refactor: centralize n8n response parsing logic`
 
 2. **Chat Performance**
-   - History Limiting auf 10 Nachrichten
+   - History Limiting auf 10 Nachrichten (temporär hardcodiert)
+   - **TODO:** Tier-basiertes Limiting implementieren (siehe Empfohlene Schritte #2)
    - Commit: `perf: limit chat history sent to API`
 
 3. **Type Safety**
