@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     const validation = waitlistSchema.safeParse(body);
 
     if (!validation.success) {
-      const errorMessage = validation.error.errors[0]?.message || "Ungültige Eingabe";
+      const errorMessage = validation.error.issues[0]?.message || "Ungültige Eingabe";
       return NextResponse.json(
         { success: false, error: errorMessage },
         { status: 400 }
