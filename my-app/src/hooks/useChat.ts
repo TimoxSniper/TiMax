@@ -16,6 +16,14 @@ export interface Message {
   timestamp: Date;
 }
 
+interface RawMessage {
+  id: string;
+  role: "user" | "assistant" | "system";
+  content: string;
+  created_at?: string;
+  timestamp?: string;
+}
+
 interface UseChatOptions {
   initialSessionId?: string;
 }
@@ -71,11 +79,11 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
         const data = await response.json();
 
         if (data.success && data.chat) {
-          const loadedMessages = (data.chat.messages || []).map((m: any) => ({
+          const loadedMessages = (data.chat.messages || []).map((m: RawMessage) => ({
             id: m.id,
             role: m.role as "user" | "assistant",
             content: m.content,
-            timestamp: new Date(m.created_at || m.timestamp),
+            timestamp: new Date(m.created_at || m.timestamp || Date.now()),
           }));
 
           // Wenn der Chat eine Session-ID hat, übernehmen wir diese

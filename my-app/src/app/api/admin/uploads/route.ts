@@ -4,6 +4,10 @@ import * as Sentry from "@sentry/nextjs";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdmin } from "@/lib/auth/admin";
 import { logger } from "@/lib/logger";
+import { parsePaginationParams, buildPaginationResponse } from "@/lib/pagination";
+import type { UploadStatus } from "@/lib/supabase/database.types";
+
+const VALID_UPLOAD_STATUSES: UploadStatus[] = ["pending", "processing", "completed", "failed", "cancelled"];
 
 // GET: Alle Uploads laden (für Admin)
 export async function GET(request: NextRequest) {
@@ -27,15 +31,16 @@ export async function GET(request: NextRequest) {
 
     const supabase = createAdminClient();
     const { searchParams } = new URL(request.url);
-    
-    // Pagination
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "20");
-    const offset = (page - 1) * limit;
+
+    // Pagination with validation
+    const { page, limit, offset } = parsePaginationParams(searchParams);
 
     // Optional: Filter
     const filterUserId = searchParams.get("userId");
-    const filterStatus = searchParams.get("status");
+    const filterStatusParam = searchParams.get("status");
+    const filterStatus = filterStatusParam && VALID_UPLOAD_STATUSES.includes(filterStatusParam as UploadStatus)
+      ? (filterStatusParam as UploadStatus)
+      : null;
 
     // Gesamtanzahl für Pagination
     let countQuery = supabase
@@ -75,12 +80,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       uploads: uploads || [],
-      pagination: {
-        page,
-        limit,
-        total: total || 0,
-        totalPages: Math.ceil((total || 0) / limit),
-      },
+      pagination: buildPaginationResponse(page, limit, total || 0),
     });
   } catch (error) {
     logger.error("[Admin Uploads API] Fehler:", error);

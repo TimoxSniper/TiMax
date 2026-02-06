@@ -16,6 +16,9 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
+export type UploadStatus = "pending" | "processing" | "completed" | "failed" | "cancelled";
+export type WaitlistStatus = "pending" | "notified" | "registered";
+
 export interface Database {
   public: {
     Tables: {
@@ -50,21 +53,21 @@ export interface Database {
         Row: {
           id: string;
           chat_id: string;
-          role: "user" | "assistant";
+          role: "user" | "assistant" | "system";
           content: string;
           created_at: string;
         };
         Insert: {
           id?: string;
           chat_id: string;
-          role: "user" | "assistant";
+          role: "user" | "assistant" | "system";
           content: string;
           created_at?: string;
         };
         Update: {
           id?: string;
           chat_id?: string;
-          role?: "user" | "assistant";
+          role?: "user" | "assistant" | "system";
           content?: string;
           created_at?: string;
         };
@@ -86,7 +89,7 @@ export interface Database {
           file_type: string | null;
           storage_path: string | null;
           transcript: string | null;
-          status: string;
+          status: UploadStatus;
           error_message: string | null;
           metadata: UploadMetadata | null;
           created_at: string;
@@ -100,7 +103,7 @@ export interface Database {
           file_type?: string | null;
           storage_path?: string | null;
           transcript?: string | null;
-          status?: string;
+          status?: UploadStatus;
           error_message?: string | null;
           metadata?: UploadMetadata | null;
           created_at?: string;
@@ -114,7 +117,7 @@ export interface Database {
           file_type?: string | null;
           storage_path?: string | null;
           transcript?: string | null;
-          status?: string;
+          status?: UploadStatus;
           error_message?: string | null;
           metadata?: UploadMetadata | null;
           created_at?: string;
@@ -126,7 +129,7 @@ export interface Database {
         Row: {
           id: string;
           email: string;
-          status: string;
+          status: WaitlistStatus;
           source: string | null;
           metadata: Json | null;
           created_at: string;
@@ -135,7 +138,7 @@ export interface Database {
         Insert: {
           id?: string;
           email: string;
-          status?: string;
+          status?: WaitlistStatus;
           source?: string | null;
           metadata?: Json | null;
           created_at?: string;
@@ -144,7 +147,7 @@ export interface Database {
         Update: {
           id?: string;
           email?: string;
-          status?: string;
+          status?: WaitlistStatus;
           source?: string | null;
           metadata?: Json | null;
           created_at?: string;

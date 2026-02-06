@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { validateCsrfToken } from "@/lib/csrf";
 
 // GET Handler (idempotent - CSRF optional)
 export async function GET(
@@ -67,6 +68,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const csrfError = await validateCsrfToken(request);
+    if (csrfError) return csrfError;
+
     const { userId } = await auth();
 
     if (!userId) {
@@ -110,6 +114,9 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const csrfError = await validateCsrfToken(request);
+    if (csrfError) return csrfError;
+
     const { userId } = await auth();
 
     if (!userId) {

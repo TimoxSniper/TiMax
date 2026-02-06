@@ -102,13 +102,13 @@ export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, onRe
     setEditTitle(chat.title || "Neuer Chat");
   };
 
-  const handleCancelEdit = (e: React.MouseEvent) => {
+  const handleCancelEdit = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation();
     setEditingId(null);
     setEditTitle("");
   };
 
-  const handleSaveEdit = async (e: React.MouseEvent, chatId: string) => {
+  const handleSaveEdit = async (e: React.MouseEvent | React.KeyboardEvent, chatId: string) => {
     e.stopPropagation();
     if (!editTitle.trim()) return;
 
@@ -193,8 +193,8 @@ export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, onRe
                         onChange={(e) => setEditTitle(e.target.value)}
                         className="flex-1 bg-background border rounded px-1.5 py-0.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                         onKeyDown={(e) => {
-                          if (e.key === "Enter") handleSaveEdit(e as any, chat.id);
-                          if (e.key === "Escape") handleCancelEdit(e as any);
+                          if (e.key === "Enter") handleSaveEdit(e as React.KeyboardEvent, chat.id);
+                          if (e.key === "Escape") handleCancelEdit(e as React.KeyboardEvent);
                         }}
                       />
                       <button

@@ -3,6 +3,9 @@ import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
+import type { UploadStatus } from "@/lib/supabase/database.types";
+
+const VALID_UPLOAD_STATUSES: UploadStatus[] = ["pending", "processing", "completed", "failed", "cancelled"];
 
 // GET: Alle Uploads des Users laden
 export async function GET(request: NextRequest) {
@@ -25,7 +28,10 @@ export async function GET(request: NextRequest) {
     const offset = (page - 1) * limit;
 
     // Optional: Filter nach Status
-    const status = searchParams.get("status");
+    const statusParam = searchParams.get("status");
+    const status = statusParam && VALID_UPLOAD_STATUSES.includes(statusParam as UploadStatus)
+      ? (statusParam as UploadStatus)
+      : null;
 
     // Build base query for count
     let countQuery = supabase

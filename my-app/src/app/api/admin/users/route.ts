@@ -4,6 +4,7 @@ import * as Sentry from "@sentry/nextjs";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdmin } from "@/lib/auth/admin";
 import { logger } from "@/lib/logger";
+import { parsePaginationParams, buildPaginationResponse } from "@/lib/pagination";
 
 interface UserStats {
   userId: string;
@@ -38,11 +39,9 @@ export async function GET(request: NextRequest) {
 
     const supabase = createAdminClient();
     const { searchParams } = new URL(request.url);
-    
-    // Pagination
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "50");
-    const offset = (page - 1) * limit;
+
+    // Pagination with validation
+    const { page, limit, offset } = parsePaginationParams(searchParams, 50);
 
     // Alle User-IDs aus Chats und Uploads sammeln
     const [chatsResult, uploadsResult] = await Promise.all([
@@ -137,12 +136,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       users: usersWithClerkData,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      pagination: buildPaginationResponse(page, limit, total),
     });
   } catch (error) {
     logger.error("[Admin Users API] Fehler:", error);

@@ -4,6 +4,7 @@ import * as Sentry from "@sentry/nextjs";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdmin } from "@/lib/auth/admin";
 import { logger } from "@/lib/logger";
+import { parsePaginationParams, buildPaginationResponse } from "@/lib/pagination";
 
 // GET: Alle Chats laden (für Admin)
 export async function GET(request: NextRequest) {
@@ -27,11 +28,9 @@ export async function GET(request: NextRequest) {
 
     const supabase = createAdminClient();
     const { searchParams } = new URL(request.url);
-    
-    // Pagination
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "20");
-    const offset = (page - 1) * limit;
+
+    // Pagination with validation
+    const { page, limit, offset } = parsePaginationParams(searchParams);
 
     // Optional: Filter nach User
     const filterUserId = searchParams.get("userId");
@@ -83,12 +82,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       chats: chatsWithMessageCount,
-      pagination: {
-        page,
-        limit,
-        total: total || 0,
-        totalPages: Math.ceil((total || 0) / limit),
-      },
+      pagination: buildPaginationResponse(page, limit, total || 0),
     });
   } catch (error) {
     logger.error("[Admin Chats API] Fehler:", error);

@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
+import { validateCsrfToken } from "@/lib/csrf";
 
 // DELETE: Upload-Eintrag löschen
 export async function DELETE(
@@ -10,6 +11,9 @@ export async function DELETE(
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const csrfError = await validateCsrfToken(request);
+        if (csrfError) return csrfError;
+
         const { userId } = await auth();
 
         if (!userId) {

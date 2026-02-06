@@ -83,7 +83,7 @@ const nextConfig: NextConfig = {
       },
       // Cache public assets
       {
-        source: "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
+        source: "/:path*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)",
         headers: [
           {
             key: "Cache-Control",
