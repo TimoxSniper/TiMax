@@ -14,103 +14,100 @@ This rule warns whenever a single file contains multiple named export declaratio
 
 ```js
 // A single named export declaration -> ok
-export const valid = true
+export const valid = true;
 ```
 
 ```js
-const first = true
-const second = true
+const first = true;
+const second = true;
 
 // A single named export declaration -> ok
-export {
-  first,
-  second,
-}
+export { first, second };
 ```
 
 ```js
 // Aggregating exports -> ok
-export { default as module1 } from 'module-1'
-export { default as module2 } from 'module-2'
+export { default as module1 } from "module-1";
+export { default as module2 } from "module-2";
 ```
 
 ```js
 // A single exports assignment -> ok
 module.exports = {
   first: true,
-  second: true
-}
+  second: true,
+};
 ```
 
 ```js
-const first = true
-const second = true
+const first = true;
+const second = true;
 
 // A single exports assignment -> ok
 module.exports = {
   first,
   second,
-}
+};
 ```
 
 ```js
 function test() {}
-test.property = true
-test.another = true
+test.property = true;
+test.another = true;
 
 // A single exports assignment -> ok
-module.exports = test
+module.exports = test;
 ```
 
 ```ts
 const first = true;
-type firstType = boolean
+type firstType = boolean;
 
 // A single named export declaration (type exports handled separately) -> ok
-export {first}
-export type {firstType}
+export { first };
+export type { firstType };
 ```
 
 ### Invalid
 
 ```js
 // Multiple named export statements -> not ok!
-export const first = true
-export const second = true
+export const first = true;
+export const second = true;
 ```
 
 ```js
 // Aggregating exports from the same module -> not ok!
-export { module1 } from 'module-1'
-export { module2 } from 'module-1'
+export { module1 } from "module-1";
+export { module2 } from "module-1";
 ```
 
 ```js
 // Multiple exports assignments -> not ok!
-exports.first = true
-exports.second = true
+exports.first = true;
+exports.second = true;
 ```
 
 ```js
 // Multiple exports assignments -> not ok!
-module.exports = {}
-module.exports.first = true
+module.exports = {};
+module.exports.first = true;
 ```
 
 ```js
 // Multiple exports assignments -> not ok!
-module.exports = () => {}
-module.exports.first = true
-module.exports.second = true
+module.exports = () => {};
+module.exports.first = true;
+module.exports.second = true;
 ```
 
 ```ts
-type firstType = boolean
-type secondType = any
+type firstType = boolean;
+type secondType = any;
 
 // Multiple named type export statements -> not ok!
-export type {firstType}
-export type {secondType}
+export type { firstType };
+export type { secondType };
 ```
 
 ## When Not To Use It

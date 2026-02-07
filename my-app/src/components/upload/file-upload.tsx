@@ -123,7 +123,11 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       });
 
       // Promise für async/await
-      const uploadPromise = new Promise<{ success: boolean; fileName?: string; transcript?: string }>((resolve, reject) => {
+      const uploadPromise = new Promise<{
+        success: boolean;
+        fileName?: string;
+        transcript?: string;
+      }>((resolve, reject) => {
         xhr.addEventListener("load", () => {
           if (xhr.status >= 200 && xhr.status < 300) {
             try {
@@ -142,7 +146,7 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
               resolve({
                 success: true,
                 fileName: file.name,
-                transcript
+                transcript,
               });
             } catch {
               reject(new Error("Ungültige Antwort vom Server"));
@@ -179,7 +183,6 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       setIsProcessingAI(true);
 
       onUploadSuccess?.(result.fileName || file.name, result.transcript);
-
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unbekannter Upload-Fehler";
       setError(errorMessage);
@@ -225,18 +228,17 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`border-2 border-dashed rounded-[6px] p-6 sm:p-8 text-center transition-all duration-300 ${isDragging
-              ? "border-accent bg-accent/5"
-              : "border-border hover:border-accent/50"
-            }`}
+          className={`rounded-[6px] border-2 border-dashed p-6 text-center transition-all duration-300 sm:p-8 ${
+            isDragging ? "border-accent bg-accent/5" : "border-border hover:border-accent/50"
+          }`}
         >
           {!file ? (
             <>
-              <Upload className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-accent" />
-              <p className="text-sm sm:text-base font-medium mb-2">
+              <Upload className="text-accent mx-auto mb-3 h-10 w-10 sm:mb-4 sm:h-12 sm:w-12" />
+              <p className="mb-2 text-sm font-medium sm:text-base">
                 Datei hier ablegen oder klicken zum Auswählen
               </p>
-              <p className="text-xs sm:text-sm text-muted-foreground mb-4 px-2">
+              <p className="text-muted-foreground mb-4 px-2 text-xs sm:text-sm">
                 Unterstützt: MP3, MP4, WAV, M4A, WebM (max. 100MB)
               </p>
               <Button
@@ -261,18 +263,20 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
             </>
           ) : (
             <div className="space-y-4">
-              <div className="flex items-start sm:items-center justify-between gap-2">
-                <div className="flex items-start sm:items-center gap-2 sm:gap-3 min-w-0 flex-1">
+              <div className="flex items-start justify-between gap-2 sm:items-center">
+                <div className="flex min-w-0 flex-1 items-start gap-2 sm:items-center sm:gap-3">
                   {success ? (
-                    <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-500 shrink-0 mt-0.5 sm:mt-0" />
+                    <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-green-500 sm:mt-0 sm:h-6 sm:w-6" />
                   ) : error ? (
-                    <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-destructive shrink-0 mt-0.5 sm:mt-0" />
+                    <AlertCircle className="text-destructive mt-0.5 h-5 w-5 shrink-0 sm:mt-0 sm:h-6 sm:w-6" />
                   ) : (
-                    <Upload className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground shrink-0 mt-0.5 sm:mt-0" />
+                    <Upload className="text-muted-foreground mt-0.5 h-5 w-5 shrink-0 sm:mt-0 sm:h-6 sm:w-6" />
                   )}
-                  <div className="text-left min-w-0 flex-1">
-                    <p className="text-sm font-medium truncate" title={file.name}>{file.name}</p>
-                    <p className="text-xs text-muted-foreground">
+                  <div className="min-w-0 flex-1 text-left">
+                    <p className="truncate text-sm font-medium" title={file.name}>
+                      {file.name}
+                    </p>
+                    <p className="text-muted-foreground text-xs">
                       {(file.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                   </div>
@@ -284,32 +288,32 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
                     onClick={handleRemove}
                     aria-label="Datei entfernen"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="h-4 w-4" />
                   </Button>
                 )}
               </div>
 
               {isUploading && (
                 <div className="space-y-2">
-                  <div className="w-full bg-muted rounded-full overflow-hidden">
+                  <div className="bg-muted w-full overflow-hidden rounded-full">
                     <div
-                      className="h-2 bg-primary transition-all duration-300 ease-out"
+                      className="bg-primary h-2 transition-all duration-300 ease-out"
                       style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
                     />
                   </div>
-                  <p className="text-xs text-muted-foreground text-center">
+                  <p className="text-muted-foreground text-center text-xs">
                     {progress}% hochgeladen...
                   </p>
                 </div>
               )}
 
-              <ProcessingStatus 
-                isProcessing={isUploading || isProcessingAI} 
+              <ProcessingStatus
+                isProcessing={isUploading || isProcessingAI}
                 onComplete={() => {
                   if (isProcessingAI) {
                     setIsProcessingAI(false);
                     setSuccess(true);
-                    
+
                     // Reset after configured time
                     if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
                     resetTimeoutRef.current = setTimeout(() => {
@@ -322,13 +326,13 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
               />
 
               {error && (
-                <div className="bg-destructive/10 text-destructive p-3 rounded-lg text-sm">
+                <div className="bg-destructive/10 text-destructive rounded-lg p-3 text-sm">
                   {error}
                 </div>
               )}
 
               {success && (
-                <div className="bg-green-500/10 text-green-600 dark:text-green-400 p-3 rounded-lg text-sm">
+                <div className="rounded-lg bg-green-500/10 p-3 text-sm text-green-600 dark:text-green-400">
                   ✅ Datei erfolgreich hochgeladen und wird verarbeitet!
                 </div>
               )}
@@ -341,7 +345,7 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
 
               {isUploading && (
                 <Button disabled className="w-full">
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Wird hochgeladen...
                 </Button>
               )}

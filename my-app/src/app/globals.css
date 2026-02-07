@@ -52,93 +52,93 @@
 :root {
   --radius: 0.5rem;
   /* Editorial Modernism: Warm Editorial Paper */
-  --background: #F8F7F4;
-  --foreground: #1A1A1A;
-  --card: #FFFFFF;
-  --card-foreground: #1A1A1A;
-  --popover: #FFFFFF;
-  --popover-foreground: #1A1A1A;
+  --background: #f8f7f4;
+  --foreground: #1a1a1a;
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
   /* Luxury Bronze Primary */
-  --primary: #9A6F4F;
-  --primary-foreground: #FFFFFF;
+  --primary: #9a6f4f;
+  --primary-foreground: #ffffff;
   /* Warm Gray Secondary */
-  --secondary: #E8E6E1;
-  --secondary-foreground: #1A1A1A;
-  --muted: #E8E6E1;
+  --secondary: #e8e6e1;
+  --secondary-foreground: #1a1a1a;
+  --muted: #e8e6e1;
   --muted-foreground: #666461;
   /* Bronze Accent - THE luxury element */
-  --accent: #9A6F4F;
-  --accent-foreground: #FFFFFF;
-  --destructive: #B23A2F;
+  --accent: #9a6f4f;
+  --accent-foreground: #ffffff;
+  --destructive: #b23a2f;
   /* Soft Warm Gray Borders */
-  --border: #D4D2CC;
-  --input: #D4D2CC;
-  --ring: #9A6F4F;
+  --border: #d4d2cc;
+  --input: #d4d2cc;
+  --ring: #9a6f4f;
   /* Charts */
-  --chart-1: #1A1A1A;
-  --chart-2: #9A6F4F;
-  --chart-3: #3D6E4E;
-  --chart-4: #D4A574;
-  --chart-5: #B23A2F;
+  --chart-1: #1a1a1a;
+  --chart-2: #9a6f4f;
+  --chart-3: #3d6e4e;
+  --chart-4: #d4a574;
+  --chart-5: #b23a2f;
   /* Sidebar */
-  --sidebar: #F8F7F4;
-  --sidebar-foreground: #1A1A1A;
-  --sidebar-primary: #9A6F4F;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #E8E6E1;
-  --sidebar-accent-foreground: #1A1A1A;
-  --sidebar-border: #D4D2CC;
-  --sidebar-ring: #9A6F4F;
+  --sidebar: #f8f7f4;
+  --sidebar-foreground: #1a1a1a;
+  --sidebar-primary: #9a6f4f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e8e6e1;
+  --sidebar-accent-foreground: #1a1a1a;
+  --sidebar-border: #d4d2cc;
+  --sidebar-ring: #9a6f4f;
   /* Editorial Modernism: Brutalist Sharp Shadows */
   --shadow-xs: 0 1px 0 0 rgba(26, 26, 26, 0.08);
   --shadow-sm: 0 2px 0 0 rgba(26, 26, 26, 0.12);
   --shadow-md: 0 4px 0 0 rgba(26, 26, 26, 0.14);
   --shadow-lg: 0 8px 0 0 rgba(26, 26, 26, 0.16);
   /* Bronze accent variations */
-  --accent-subtle: #F4EDE7;
-  --accent-muted: #C9A68A;
+  --accent-subtle: #f4ede7;
+  --accent-muted: #c9a68a;
   --accent-rgb: 154, 111, 79;
 }
 
 .dark {
   /* Editorial Modernism: Near Black */
-  --background: #0F0F0F;
-  --foreground: #EFEDE8;
-  --card: #1A1A1A;
-  --card-foreground: #EFEDE8;
-  --popover: #1A1A1A;
-  --popover-foreground: #EFEDE8;
+  --background: #0f0f0f;
+  --foreground: #efede8;
+  --card: #1a1a1a;
+  --card-foreground: #efede8;
+  --popover: #1a1a1a;
+  --popover-foreground: #efede8;
   /* Lighter Bronze for Dark Mode Contrast */
-  --primary: #D4A574;
-  --primary-foreground: #0F0F0F;
+  --primary: #d4a574;
+  --primary-foreground: #0f0f0f;
   /* Slightly Lighter Dark Secondary */
   --secondary: #242424;
-  --secondary-foreground: #EFEDE8;
+  --secondary-foreground: #efede8;
   --muted: #242424;
-  --muted-foreground: #A8A6A0;
+  --muted-foreground: #a8a6a0;
   /* Lighter Bronze for Dark Mode */
-  --accent: #D4A574;
-  --accent-foreground: #0F0F0F;
-  --destructive: #E85D4F;
+  --accent: #d4a574;
+  --accent-foreground: #0f0f0f;
+  --destructive: #e85d4f;
   /* Dark Borders */
-  --border: #2A2A2A;
-  --input: #2A2A2A;
-  --ring: #D4A574;
+  --border: #2a2a2a;
+  --input: #2a2a2a;
+  --ring: #d4a574;
   /* Charts */
-  --chart-1: #EFEDE8;
-  --chart-2: #D4A574;
-  --chart-3: #5FA068;
-  --chart-4: #E8B388;
-  --chart-5: #E85D4F;
+  --chart-1: #efede8;
+  --chart-2: #d4a574;
+  --chart-3: #5fa068;
+  --chart-4: #e8b388;
+  --chart-5: #e85d4f;
   /* Sidebar */
-  --sidebar: #1A1A1A;
-  --sidebar-foreground: #EFEDE8;
-  --sidebar-primary: #D4A574;
-  --sidebar-primary-foreground: #0F0F0F;
+  --sidebar: #1a1a1a;
+  --sidebar-foreground: #efede8;
+  --sidebar-primary: #d4a574;
+  --sidebar-primary-foreground: #0f0f0f;
   --sidebar-accent: #242424;
-  --sidebar-accent-foreground: #EFEDE8;
-  --sidebar-border: #2A2A2A;
-  --sidebar-ring: #D4A574;
+  --sidebar-accent-foreground: #efede8;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #d4a574;
   /* Dark mode accent variations */
   --accent-subtle: rgba(212, 165, 116, 0.1);
   --accent-muted: rgba(212, 165, 116, 0.3);
@@ -185,7 +185,7 @@
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    @apply outline-none ring-2 ring-ring ring-offset-2;
+    @apply ring-ring ring-2 ring-offset-2 outline-none;
   }
 
   /* Accessibility: Respect prefers-reduced-motion */
@@ -319,45 +319,45 @@
   .mobile-device\:hidden {
     display: none !important;
   }
-  
+
   .mobile-device\:block {
     display: block !important;
   }
-  
+
   .mobile-device\:flex {
     display: flex !important;
   }
-  
+
   .mobile-device\:p-4 {
     padding: 1rem !important;
   }
-  
+
   .mobile-device\:text-lg {
     font-size: 1.125rem !important;
     line-height: 1.75rem !important;
   }
-  
+
   .mobile-device\:gap-4 {
     gap: 1rem !important;
   }
-  
+
   .mobile-device\:w-full {
     width: 100% !important;
   }
-  
+
   .mobile-device\:fixed {
     position: fixed !important;
   }
-  
+
   .mobile-device\:bottom-0 {
     bottom: 0 !important;
   }
-  
+
   .mobile-device\:inset-x-0 {
     left: 0 !important;
     right: 0 !important;
   }
-  
+
   .mobile-device\:pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 16px) !important;
   }
@@ -368,11 +368,11 @@
   .desktop-device\:hidden {
     display: none !important;
   }
-  
+
   .desktop-device\:block {
     display: block !important;
   }
-  
+
   .desktop-device\:flex {
     display: flex !important;
   }
@@ -384,7 +384,7 @@
     .mobile-safe-bottom {
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
-    
+
     .mobile-safe-top {
       padding-top: env(safe-area-inset-top, 0px);
     }
@@ -396,15 +396,15 @@
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-  
+
   .safe-area-top {
     padding-top: env(safe-area-inset-top, 0px);
   }
-  
+
   .safe-area-left {
     padding-left: env(safe-area-inset-left, 0px);
   }
-  
+
   .safe-area-right {
     padding-right: env(safe-area-inset-right, 0px);
   }

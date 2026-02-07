@@ -29,17 +29,11 @@ export async function GET(request: NextRequest) {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     // Rate limiting
-    const rateLimit = await checkRateLimit(
-      `search:${userId}`,
-      RATE_LIMIT_CONFIG
-    );
+    const rateLimit = await checkRateLimit(`search:${userId}`, RATE_LIMIT_CONFIG);
 
     if (!rateLimit.allowed) {
       return NextResponse.json(
@@ -94,12 +88,14 @@ export async function GET(request: NextRequest) {
       // Search in message content
       const { data: messageMatches, error: messagesError } = await supabase
         .from("messages")
-        .select(`
+        .select(
+          `
           id,
           content,
           created_at,
           chat:chats!inner(id, title, user_id)
-        `)
+        `
+        )
         .eq("chat.user_id", userId)
         .ilike("content", searchPattern)
         .limit(limit);
@@ -107,7 +103,7 @@ export async function GET(request: NextRequest) {
       if (messagesError) {
         logger.error("[Search API] Fehler bei Nachrichten-Suche:", messagesError);
       } else if (messageMatches) {
-        const addedChatIds = new Set(results.filter(r => r.type === "chat").map(r => r.id));
+        const addedChatIds = new Set(results.filter((r) => r.type === "chat").map((r) => r.id));
 
         for (const msg of messageMatches) {
           const chat = msg.chat as unknown as { id: string; title: string };
@@ -165,7 +161,7 @@ export async function GET(request: NextRequest) {
       if (uploadsTranscriptError) {
         logger.error("[Search API] Fehler bei Transkript-Suche:", uploadsTranscriptError);
       } else if (uploadsByTranscript) {
-        const addedUploadIds = new Set(results.filter(r => r.type === "upload").map(r => r.id));
+        const addedUploadIds = new Set(results.filter((r) => r.type === "upload").map((r) => r.id));
 
         for (const upload of uploadsByTranscript) {
           if (!addedUploadIds.has(upload.id)) {
@@ -197,10 +193,7 @@ export async function GET(request: NextRequest) {
       tags: { api_route: "/api/search" },
     });
 
-    return NextResponse.json(
-      { success: false, error: "Fehler bei der Suche" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "Fehler bei der Suche" }, { status: 500 });
   }
 }
 

@@ -22,6 +22,5 @@ export const mockTranscriptSegments = [
   "Wir leben in einer Zeit, in der uns täglich hunderte von Nachrichten, E-Mails und Benachrichtigungen erreichen. Die ständige Erreichbarkeit kann sowohl Fluch als auch Segen sein.",
   "In den letzten Jahren habe ich verschiedene Methoden und Tools ausprobiert, um meine Produktivität zu steigern. Was ich dabei gelernt habe, ist, dass es keine universelle Lösung gibt.",
   "Eine Strategie, die für mich besonders gut funktioniert hat, ist die Pomodoro-Technik. Dabei arbeitet man in 25-Minuten-Intervallen, gefolgt von einer kurzen Pause.",
-  "Abschließend möchte ich euch ermutigen, verschiedene Ansätze auszuprobieren und herauszufinden, was für euch am besten funktioniert. Produktivität ist keine Einheitslösung, sondern ein individueller Prozess."
+  "Abschließend möchte ich euch ermutigen, verschiedene Ansätze auszuprobieren und herauszufinden, was für euch am besten funktioniert. Produktivität ist keine Einheitslösung, sondern ein individueller Prozess.",
 ];
-

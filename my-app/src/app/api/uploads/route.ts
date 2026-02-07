@@ -5,7 +5,13 @@ import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import type { UploadStatus } from "@/lib/supabase/database.types";
 
-const VALID_UPLOAD_STATUSES: UploadStatus[] = ["pending", "processing", "completed", "failed", "cancelled"];
+const VALID_UPLOAD_STATUSES: UploadStatus[] = [
+  "pending",
+  "processing",
+  "completed",
+  "failed",
+  "cancelled",
+];
 
 // GET: Alle Uploads des Users laden
 export async function GET(request: NextRequest) {
@@ -13,10 +19,7 @@ export async function GET(request: NextRequest) {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     const supabase = await createClient();
@@ -29,9 +32,10 @@ export async function GET(request: NextRequest) {
 
     // Optional: Filter nach Status
     const statusParam = searchParams.get("status");
-    const status = statusParam && VALID_UPLOAD_STATUSES.includes(statusParam as UploadStatus)
-      ? (statusParam as UploadStatus)
-      : null;
+    const status =
+      statusParam && VALID_UPLOAD_STATUSES.includes(statusParam as UploadStatus)
+        ? (statusParam as UploadStatus)
+        : null;
 
     // Build base query for count
     let countQuery = supabase
@@ -99,12 +103,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     const body = await request.json();

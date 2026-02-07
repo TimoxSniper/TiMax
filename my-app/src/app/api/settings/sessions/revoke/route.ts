@@ -10,19 +10,13 @@ export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     const body = await request.json();
     const sessionId = typeof body?.sessionId === "string" ? body.sessionId.trim() : null;
     if (!sessionId) {
-      return NextResponse.json(
-        { success: false, error: "sessionId fehlt" },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: "sessionId fehlt" }, { status: 400 });
     }
 
     const clerk = await clerkClient();

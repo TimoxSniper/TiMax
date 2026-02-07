@@ -62,10 +62,7 @@ export function getUserFriendlyError(error: unknown): UserFriendlyError {
 /**
  * HTTP Status Code basierte Fehler
  */
-function getErrorForStatusCode(
-  status: number,
-  error: unknown
-): UserFriendlyError {
+function getErrorForStatusCode(status: number, error: unknown): UserFriendlyError {
   const errorMessage =
     typeof error === "object" && error !== null && "error" in error
       ? String((error as { error: unknown }).error)
@@ -179,10 +176,7 @@ function parseErrorMessage(message: string): UserFriendlyError {
   }
 
   // Rate Limit
-  if (
-    lowerMessage.includes("rate limit") ||
-    lowerMessage.includes("too many")
-  ) {
+  if (lowerMessage.includes("rate limit") || lowerMessage.includes("too many")) {
     return {
       message: "Zu viele Anfragen",
       category: "ratelimit",
@@ -206,10 +200,7 @@ function parseErrorMessage(message: string): UserFriendlyError {
   }
 
   // Server Errors
-  if (
-    lowerMessage.includes("server error") ||
-    lowerMessage.includes("internal")
-  ) {
+  if (lowerMessage.includes("server error") || lowerMessage.includes("internal")) {
     return {
       message: "Server-Fehler",
       category: "server",
@@ -220,10 +211,7 @@ function parseErrorMessage(message: string): UserFriendlyError {
   }
 
   // Not Found
-  if (
-    lowerMessage.includes("not found") ||
-    lowerMessage.includes("404")
-  ) {
+  if (lowerMessage.includes("not found") || lowerMessage.includes("404")) {
     return {
       message: "Nicht gefunden",
       category: "notfound",

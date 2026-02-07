@@ -35,7 +35,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const showToast = React.useCallback((message: string, type: ToastType = "info") => {
     const id = Math.random().toString(36).substring(2, 9);
     const newToast: Toast = { id, message, type };
-    
+
     setToasts((prev) => [...prev, newToast]);
 
     // Auto-remove nach konfigurierter Zeit
@@ -43,7 +43,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       setToasts((prev) => prev.filter((t) => t.id !== id));
       timeoutRefs.current.delete(id);
     }, 5000);
-    
+
     timeoutRefs.current.set(id, timeoutId);
   }, []);
 
@@ -67,12 +67,18 @@ export function useToast() {
   return context;
 }
 
-function ToastContainer({ toasts, removeToast }: { toasts: Toast[]; removeToast: (id: string) => void }) {
+function ToastContainer({
+  toasts,
+  removeToast,
+}: {
+  toasts: Toast[];
+  removeToast: (id: string) => void;
+}) {
   if (toasts.length === 0) return null;
 
   return (
     <div
-      className="fixed bottom-0 right-0 z-[100] flex flex-col gap-2 p-4 sm:p-6 max-w-sm w-full pointer-events-none"
+      className="pointer-events-none fixed right-0 bottom-0 z-[100] flex w-full max-w-sm flex-col gap-2 p-4 sm:p-6"
       aria-live="polite"
       aria-atomic="true"
     >
@@ -101,16 +107,16 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
   return (
     <div
       className={cn(
-        "pointer-events-auto flex items-start gap-3 rounded-[6px] border p-4 shadow-editorial-md transition-all animate-in slide-in-from-right-full",
+        "shadow-editorial-md animate-in slide-in-from-right-full pointer-events-auto flex items-start gap-3 rounded-[6px] border p-4 transition-all",
         styles[toast.type]
       )}
       role="alert"
     >
-      <Icon className="h-5 w-5 shrink-0 mt-0.5" aria-hidden="true" />
-      <p className="flex-1 text-sm font-medium leading-relaxed">{toast.message}</p>
+      <Icon className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
+      <p className="flex-1 text-sm leading-relaxed font-medium">{toast.message}</p>
       <button
         onClick={() => onRemove(toast.id)}
-        className="shrink-0 rounded-md p-1 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+        className="shrink-0 rounded-md p-1 transition-colors hover:bg-black/5 dark:hover:bg-white/10"
         aria-label="Toast schließen"
       >
         <X className="h-4 w-4" aria-hidden="true" />
@@ -118,4 +124,3 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
     </div>
   );
 }
-

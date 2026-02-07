@@ -29,7 +29,7 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400"],
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://timax.xyz';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://timax.xyz";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -37,7 +37,8 @@ export const metadata: Metadata = {
     default: "timax - Transformiere Videos und Audios in kraftvolle Texte",
     template: "%s | timax",
   },
-  description: "Vereine Upload, intelligente Strukturierung und KI-Dialog in einem nahtlosen Workflow – ohne zwischen Tools wechseln zu müssen. Automatische Transkription mit Whisper API und KI-Textgenerierung.",
+  description:
+    "Vereine Upload, intelligente Strukturierung und KI-Dialog in einem nahtlosen Workflow – ohne zwischen Tools wechseln zu müssen. Automatische Transkription mit Whisper API und KI-Textgenerierung.",
   keywords: [
     // Primary Keywords (German)
     "Transkription",
@@ -86,26 +87,27 @@ export const metadata: Metadata = {
     telephone: false,
   },
   alternates: {
-    canonical: '/',
+    canonical: "/",
     languages: {
-      'de-DE': '/',
+      "de-DE": "/",
     },
   },
-  manifest: '/manifest.json',
+  manifest: "/manifest.json",
   openGraph: {
     title: "timax - Transformiere Videos und Audios in kraftvolle Texte",
-    description: "KI-gestützte Transkription und automatische Textgenerierung. Vereine Upload, intelligente Strukturierung und KI-Dialog in einem nahtlosen Workflow.",
+    description:
+      "KI-gestützte Transkription und automatische Textgenerierung. Vereine Upload, intelligente Strukturierung und KI-Dialog in einem nahtlosen Workflow.",
     type: "website",
     locale: "de_DE",
     siteName: "TiMax",
     url: siteUrl,
     images: [
       {
-        url: '/opengraph-image',
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: 'TiMax - KI-gestützte Video und Audio Transkription mit automatischer Textgenerierung',
-        type: 'image/png',
+        alt: "TiMax - KI-gestützte Video und Audio Transkription mit automatischer Textgenerierung",
+        type: "image/png",
       },
     ],
   },
@@ -115,7 +117,7 @@ export const metadata: Metadata = {
     creator: "@timax_app",
     title: "timax - Transformiere Videos und Audios in kraftvolle Texte",
     description: "KI-gestützte Transkription und automatische Textgenerierung für Marketing-Teams",
-    images: ['/opengraph-image'],
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,
@@ -125,23 +127,23 @@ export const metadata: Metadata = {
       index: true,
       follow: true,
       noimageindex: false,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   // Icons werden über manifest.json definiert - keine separaten Icon-Referenzen nötig
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'black-translucent',
-    title: 'TiMax',
+    statusBarStyle: "black-translucent",
+    title: "TiMax",
   },
-  applicationName: 'TiMax',
+  applicationName: "TiMax",
   other: {
-    'apple-mobile-web-app-capable': 'yes',
-    'mobile-web-app-capable': 'yes',
-    'msapplication-TileColor': '#C19A6B',
-    'theme-color': '#C19A6B',
+    "apple-mobile-web-app-capable": "yes",
+    "mobile-web-app-capable": "yes",
+    "msapplication-TileColor": "#C19A6B",
+    "theme-color": "#C19A6B",
   },
 };
 
@@ -160,7 +162,7 @@ export default function RootLayout({
           />
         </head>
         <body
-          className={`${crimsonPro.variable} ${dmSans.variable} ${jetbrainsMono.variable} antialiased font-sans`}
+          className={`${crimsonPro.variable} ${dmSans.variable} ${jetbrainsMono.variable} font-sans antialiased`}
         >
           <JsonLd data={getHomePageSchema()} />
           <ErrorBoundary>

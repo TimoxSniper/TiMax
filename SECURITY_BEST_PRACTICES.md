@@ -3,6 +3,7 @@
 ## Environment Variables Management
 
 ### ✅ Current Security Status
+
 - `.env.local` files are properly gitignored
 - No credentials committed to git history
 - Proper separation between example and actual credentials
@@ -10,12 +11,14 @@
 ### 🔐 Credential Management
 
 #### Never Commit These Files:
+
 - `.env.local`
 - `.env.production`
 - `.env.development.local`
 - Any file containing actual API keys or secrets
 
 #### Safe to Commit:
+
 - `.env.example`
 - `.env.local.example`
 - Configuration templates with placeholder values
@@ -27,32 +30,38 @@
 The following credentials are used in this project:
 
 ### 1. Clerk Authentication
+
 - **Publishable Key** (NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
 - **Secret Key** (CLERK_SECRET_KEY) - SENSITIVE
 - Get from: https://dashboard.clerk.com
 
 ### 2. Supabase Database
+
 - **Project URL** (NEXT_PUBLIC_SUPABASE_URL)
 - **Anon Key** (NEXT_PUBLIC_SUPABASE_ANON_KEY)
 - **Service Role Key** (SUPABASE_SERVICE_ROLE_KEY) - VERY SENSITIVE
 - Get from: https://app.supabase.com
 
 ### 3. Upstash Redis (Rate Limiting)
+
 - **REST URL** (UPSTASH_REDIS_REST_URL)
 - **REST Token** (UPSTASH_REDIS_REST_TOKEN) - SENSITIVE
 - Get from: https://console.upstash.com
 - **Status:** ⚠️ Currently using placeholders - NEEDS CONFIGURATION
 
 ### 4. n8n Webhooks
+
 - **Chat Webhook URL** (N8N_CHAT_WEBHOOK_URL) - SENSITIVE
 - **Upload Webhook URL** (N8N_UPLOAD_WEBHOOK_URL) - SENSITIVE
 - Configure in: Your n8n instance
 
 ### 5. GitHub (for auto-pull script)
+
 - **Personal Access Token** (GITHUB_TOKEN) - SENSITIVE
 - Generate at: https://github.com/settings/tokens
 
 ### 6. Cron Job Secret
+
 - **CRON_SECRET** - SENSITIVE
 - Generate random string (e.g., `openssl rand -hex 32`)
 
@@ -63,6 +72,7 @@ The following credentials are used in this project:
 If you suspect credentials have been exposed:
 
 ### 1. Clerk
+
 1. Go to https://dashboard.clerk.com
 2. Navigate to API Keys
 3. Click "Rotate Keys"
@@ -70,6 +80,7 @@ If you suspect credentials have been exposed:
 5. Redeploy application
 
 ### 2. Supabase
+
 1. Go to https://app.supabase.com
 2. Project Settings → API
 3. Generate new service role key
@@ -77,18 +88,21 @@ If you suspect credentials have been exposed:
 5. **Note:** Anon key is safe to expose (with proper RLS)
 
 ### 3. GitHub Token
+
 1. Go to https://github.com/settings/tokens
 2. Revoke old token
 3. Generate new token with same permissions
 4. Update `.env.local`
 
 ### 4. n8n Webhooks
+
 1. Go to your n8n workflows
 2. Delete and recreate webhook nodes
 3. Copy new URLs
 4. Update `.env.local`
 
 ### 5. Upstash Redis
+
 1. Go to https://console.upstash.com
 2. Delete and recreate database (or rotate credentials if supported)
 3. Update `.env.local`
@@ -129,6 +143,7 @@ pre-commit install
 ## GitHub Secret Scanning
 
 Enable secret scanning in repository settings:
+
 1. Go to repository Settings
 2. Security & analysis
 3. Enable "Secret scanning"

@@ -15,19 +15,19 @@ This version can be specified in the configuration with the [`import/node-versio
 
 Reasons to prefer using the protocol include:
 
- - the code is more explicitly and clearly referencing a Node.js built-in module
+- the code is more explicitly and clearly referencing a Node.js built-in module
 
 Reasons to prefer omitting the protocol include:
 
- - some tools don't support the `node:` protocol
- - the code is more portable, because import maps and automatic polyfilling can be used
+- some tools don't support the `node:` protocol
+- the code is more portable, because import maps and automatic polyfilling can be used
 
 ## Options
 
 The rule requires a single string option which may be one of:
 
- - `'always'` - enforces that builtins node imports are using the `node:` protocol.
- - `'never'` - enforces that builtins node imports are not using the `node:` protocol.
+- `'always'` - enforces that builtins node imports are using the `node:` protocol.
+- `'never'` - enforces that builtins node imports are not using the `node:` protocol.
 
 ## Examples
 
@@ -36,20 +36,20 @@ The rule requires a single string option which may be one of:
 ❌ Invalid
 
 ```js
-import fs from 'fs';
-export { promises } from 'fs';
+import fs from "fs";
+export { promises } from "fs";
 // require
-const fs = require('fs/promises');
+const fs = require("fs/promises");
 ```
 
 ✅ Valid
 
 ```js
-import fs from 'node:fs';
-export { promises } from 'node:fs';
-import * as test from 'node:test';
+import fs from "node:fs";
+export { promises } from "node:fs";
+import * as test from "node:test";
 // require
-const fs = require('node:fs/promises');
+const fs = require("node:fs/promises");
 ```
 
 ### `'never'`
@@ -57,23 +57,23 @@ const fs = require('node:fs/promises');
 ❌ Invalid
 
 ```js
-import fs from 'node:fs';
-export { promises } from 'node:fs';
+import fs from "node:fs";
+export { promises } from "node:fs";
 // require
-const fs = require('node:fs/promises');
+const fs = require("node:fs/promises");
 ```
 
 ✅ Valid
 
 ```js
-import fs from 'fs';
-export { promises } from 'fs';
+import fs from "fs";
+export { promises } from "fs";
 
 // require
-const fs = require('fs/promises');
+const fs = require("fs/promises");
 
 // This rule will not enforce not using `node:` protocol when the module is only available under the `node:` protocol.
-import * as test from 'node:test';
+import * as test from "node:test";
 ```
 
 ## When Not To Use It

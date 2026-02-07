@@ -76,11 +76,22 @@
       "parameters": {
         "mode": "retrieve-as-tool",
         "toolDescription": "Durchsuche die Wissensdatenbank des Users. Filtert automatisch nach user_id.",
-        "qdrantCollection": {"__rl": true, "mode": "id", "value": "timax_knowledge_base"},
+        "qdrantCollection": {
+          "__rl": true,
+          "mode": "id",
+          "value": "timax_knowledge_base"
+        },
         "topK": 8,
         "options": {
           "filter": {
-            "must": [{"key": "user_id", "match": {"value": "={{ $('Extract Chat Data').item.json.user_id }}"}}]
+            "must": [
+              {
+                "key": "user_id",
+                "match": {
+                  "value": "={{ $('Extract Chat Data').item.json.user_id }}"
+                }
+              }
+            ]
           }
         }
       },
@@ -131,16 +142,44 @@
     }
   ],
   "connections": {
-    "Chat Webhook": {"main": [[{"node": "Extract Chat Data", "type": "main", "index": 0}]]},
-    "Extract Chat Data": {"main": [[{"node": "REX Chat Agent", "type": "main", "index": 0}]]},
-    "REX Chat Agent": {"main": [[{"node": "Format Output", "type": "main", "index": 0}]]},
-    "Format Output": {"main": [[{"node": "Send Response", "type": "main", "index": 0}]]},
-    "Google Gemini Chat": {"ai_languageModel": [[{"node": "REX Chat Agent", "type": "ai_languageModel", "index": 0}]]},
-    "Generate Search Embeddings": {"ai_embedding": [[{"node": "Search Knowledge Base", "type": "ai_embedding", "index": 0}]]},
-    "Search Knowledge Base": {"ai_tool": [[{"node": "REX Chat Agent", "type": "ai_tool", "index": 0}]]},
-    "Chat Memory": {"ai_memory": [[{"node": "REX Chat Agent", "type": "ai_memory", "index": 0}]]}
+    "Chat Webhook": {
+      "main": [[{ "node": "Extract Chat Data", "type": "main", "index": 0 }]]
+    },
+    "Extract Chat Data": {
+      "main": [[{ "node": "REX Chat Agent", "type": "main", "index": 0 }]]
+    },
+    "REX Chat Agent": {
+      "main": [[{ "node": "Format Output", "type": "main", "index": 0 }]]
+    },
+    "Format Output": {
+      "main": [[{ "node": "Send Response", "type": "main", "index": 0 }]]
+    },
+    "Google Gemini Chat": {
+      "ai_languageModel": [
+        [{ "node": "REX Chat Agent", "type": "ai_languageModel", "index": 0 }]
+      ]
+    },
+    "Generate Search Embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Search Knowledge Base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Knowledge Base": {
+      "ai_tool": [[{ "node": "REX Chat Agent", "type": "ai_tool", "index": 0 }]]
+    },
+    "Chat Memory": {
+      "ai_memory": [
+        [{ "node": "REX Chat Agent", "type": "ai_memory", "index": 0 }]
+      ]
+    }
   },
-  "settings": {"executionOrder": "v1"},
+  "settings": { "executionOrder": "v1" },
   "staticData": null,
   "tags": [],
   "pinData": {}

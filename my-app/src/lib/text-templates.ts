@@ -60,12 +60,12 @@ function extractKeywords(text: string, maxKeywords: number = 5): string[] {
     .replace(/[^\w\s]/g, " ")
     .split(/\s+/)
     .filter((w) => w.length > 4);
-  
+
   const wordCount: Record<string, number> = {};
   words.forEach((word) => {
     wordCount[word] = (wordCount[word] || 0) + 1;
   });
-  
+
   return Object.entries(wordCount)
     .sort((a, b) => b[1] - a[1])
     .slice(0, maxKeywords)
@@ -86,11 +86,11 @@ function truncateText(text: string, maxLength: number): string {
 function splitIntoParagraphs(text: string, maxSentencesPerParagraph: number = 3): string[] {
   const sentences = splitIntoSentences(text);
   const paragraphs: string[] = [];
-  
+
   for (let i = 0; i < sentences.length; i += maxSentencesPerParagraph) {
     paragraphs.push(sentences.slice(i, i + maxSentencesPerParagraph).join(". ") + ".");
   }
-  
+
   return paragraphs;
 }
 
@@ -101,13 +101,13 @@ export function generateInstagramPost(transcript: string): string {
 
   const sentences = splitIntoSentences(transcript);
   const keywords = extractKeywords(transcript, 8);
-  
+
   // Ersten 2-3 Sätze als Hook verwenden
   const hook = sentences.slice(0, 3).join(" ");
-  
+
   // Hauptinhalt: Wichtige Punkte extrahieren
   const mainContent = sentences.slice(3, 8).join(" ");
-  
+
   // Hashtags generieren
   const hashtags = keywords
     .map((k) => `#${k.replace(/\s+/g, "")}`)
@@ -115,14 +115,14 @@ export function generateInstagramPost(transcript: string): string {
     .join(" ");
 
   let post = `🎯 ${hook}\n\n`;
-  
+
   if (mainContent) {
     post += `💡 ${mainContent}\n\n`;
   }
-  
+
   // Call-to-Action
   post += `✨ Der Schlüssel: Finde DEINEN eigenen Weg!\n\n`;
-  
+
   // Hashtags
   post += hashtags;
 
@@ -137,28 +137,28 @@ export function generateTwitterThread(transcript: string): string {
 
   const sentences = splitIntoSentences(transcript);
   const paragraphs = splitIntoParagraphs(transcript, 2);
-  
+
   // Thread aufbauen: Jeder Tweet max. 280 Zeichen
   const tweets: string[] = [];
   const maxTweetLength = 270; // Platz für "1/6 " etc.
-  
+
   // Erster Tweet: Hook
   if (sentences.length > 0) {
     const firstTweet = `🧵 ${sentences[0]}`;
     tweets.push(truncateText(firstTweet, maxTweetLength));
   }
-  
+
   // Weitere Tweets aus Absätzen
   paragraphs.slice(1, 6).forEach((para, index) => {
     const tweetNum = index + 2;
     const tweet = `${tweetNum}/${paragraphs.length + 1} ${para}`;
     tweets.push(truncateText(tweet, maxTweetLength));
   });
-  
+
   // Letzter Tweet: CTA
   const lastTweet = `${tweets.length + 1}/${tweets.length + 1} ✨ Mein Tipp: Probiere verschiedene Ansätze aus und finde heraus, was für dich funktioniert!`;
   tweets.push(truncateText(lastTweet, maxTweetLength));
-  
+
   // Tweet-Nummern aktualisieren
   return tweets
     .map((tweet, index) => {
@@ -176,12 +176,12 @@ export function generateBlogPost(transcript: string): string {
 
   const sentences = splitIntoSentences(transcript);
   const paragraphs = splitIntoParagraphs(transcript, 3);
-  
+
   // Titel aus erstem Satz extrahieren
   const title = sentences[0] || "Aus dem Transkript";
-  
+
   let blog = `## ${title}\n\n`;
-  
+
   // Abschnitte mit Überschriften
   paragraphs.forEach((para, index) => {
     if (index === 0) {
@@ -194,13 +194,13 @@ export function generateBlogPost(transcript: string): string {
       blog += `${para}\n\n`;
     }
   });
-  
+
   // Fazit
   if (sentences.length > 5) {
     const conclusion = sentences.slice(-2).join(" ");
     blog += `### Fazit\n\n${conclusion}`;
   }
-  
+
   return blog.trim();
 }
 
@@ -213,14 +213,14 @@ export function generateCaption(transcript: string): string {
 
   // Ersten 1-2 Sätze als Hauptinhalt
   const mainText = sentences.slice(0, 2).join(" ");
-  
+
   // Kürzen auf ca. 150 Zeichen für Caption
   let caption = `🎯 ${truncateText(mainText, 120)}\n\n`;
-  
+
   // Call-to-Action
   caption += `✨ Finde DEINEN Weg!\n\n`;
   caption += `👉 Was funktioniert bei dir am besten?`;
-  
+
   return truncateText(caption, 300);
 }
 
@@ -241,4 +241,3 @@ export function generateText(format: FormatType, transcript: string): string {
       return "";
   }
 }
-

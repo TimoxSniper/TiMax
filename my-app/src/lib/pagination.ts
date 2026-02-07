@@ -5,9 +5,9 @@
  */
 
 export interface PaginationParams {
-    page: number;
-    limit: number;
-    offset: number;
+  page: number;
+  limit: number;
+  offset: number;
 }
 
 /**
@@ -19,29 +19,29 @@ export interface PaginationParams {
  * @returns Validated pagination params
  */
 export function parsePaginationParams(
-    searchParams: URLSearchParams,
-    defaultLimit: number = 20,
-    maxLimit: number = 100
+  searchParams: URLSearchParams,
+  defaultLimit: number = 20,
+  maxLimit: number = 100
 ): PaginationParams {
-    // Parse page
-    let page = parseInt(searchParams.get("page") || "1", 10);
-    if (isNaN(page) || page < 1) {
-        page = 1;
-    }
+  // Parse page
+  let page = parseInt(searchParams.get("page") || "1", 10);
+  if (isNaN(page) || page < 1) {
+    page = 1;
+  }
 
-    // Parse limit with bounds
-    let limit = parseInt(searchParams.get("limit") || String(defaultLimit), 10);
-    if (isNaN(limit) || limit < 1) {
-        limit = defaultLimit;
-    }
-    if (limit > maxLimit) {
-        limit = maxLimit;
-    }
+  // Parse limit with bounds
+  let limit = parseInt(searchParams.get("limit") || String(defaultLimit), 10);
+  if (isNaN(limit) || limit < 1) {
+    limit = defaultLimit;
+  }
+  if (limit > maxLimit) {
+    limit = maxLimit;
+  }
 
-    // Calculate offset
-    const offset = (page - 1) * limit;
+  // Calculate offset
+  const offset = (page - 1) * limit;
 
-    return { page, limit, offset };
+  return { page, limit, offset };
 }
 
 /**
@@ -52,16 +52,12 @@ export function parsePaginationParams(
  * @param total - Total item count
  * @returns Pagination metadata for API response
  */
-export function buildPaginationResponse(
-    page: number,
-    limit: number,
-    total: number
-) {
-    return {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-        hasMore: page * limit < total,
-    };
+export function buildPaginationResponse(page: number, limit: number, total: number) {
+  return {
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+    hasMore: page * limit < total,
+  };
 }

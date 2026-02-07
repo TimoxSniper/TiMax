@@ -7,18 +7,22 @@ Diese Komponenten bilden das Text-Generator-Feature, das verschiedene Content-Fo
 ## Komponenten
 
 ### `transcript-viewer.tsx`
+
 Zeigt das Original-Transkript mit Formatierung und Wortzähler.
 
 **Accessibility Features:**
+
 - Scrollbarer Container mit Keyboard-Support (tabIndex={0})
 - ARIA-Label für Region
 - Icon mit aria-hidden
 - Responsive Text-Größen
 
 ### `format-selector.tsx`
+
 Ermöglicht die Auswahl zwischen verschiedenen Content-Formaten.
 
 **Accessibility Features:**
+
 - Role="group" für Format-Buttons
 - aria-pressed State für ausgewähltes Format
 - Umfassende aria-labels mit Format-Beschreibungen
@@ -26,9 +30,11 @@ Ermöglicht die Auswahl zwischen verschiedenen Content-Formaten.
 - Hover/Focus/Active States mit Animations
 
 ### `text-output.tsx`
+
 Zeigt den generierten Text und bietet Copy-to-Clipboard Funktionalität.
 
 **Accessibility Features:**
+
 - aria-live="polite" für Status-Updates
 - Scrollbarer Container mit Focus-Ring
 - aria-label für Copy-Button mit State-Feedback
@@ -36,9 +42,11 @@ Zeigt den generierten Text und bietet Copy-to-Clipboard Funktionalität.
 - Empty State mit visueller Anleitung
 
 ### `page.tsx`
+
 Hauptseite, die alle Komponenten zusammenführt.
 
 **Accessibility Features:**
+
 - Skip-to-Content Link (erscheint bei Tab-Navigation)
 - Semantisches HTML (header, main, section, footer)
 - role="main" und role="contentinfo"
@@ -62,6 +70,7 @@ Hauptseite, die alle Komponenten zusammenführt.
 ## Color Contrast
 
 Alle Text/Hintergrund-Kombinationen erfüllen WCAG 2.1 AA Standards:
+
 - Foreground/Background: ≥ 4.5:1
 - Muted Text: ≥ 3:1 (größere Schrift)
 - Primary Farben: Optimiert für Light & Dark Mode
@@ -82,4 +91,3 @@ Alle Text/Hintergrund-Kombinationen erfüllen WCAG 2.1 AA Standards:
 - [x] Dark Mode Verification
 - [x] Focus Indicators
 - [x] ARIA Attributes
-

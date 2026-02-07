@@ -6,12 +6,14 @@ Status: Akzeptiert
 ## Kontext
 
 Wir müssen komplexe Workflows automatisieren:
+
 - Datei-Upload verarbeiten
 - Transkription starten
 - KI-Textgenerierung
 - Benachrichtigungen senden
 
 Optionen:
+
 - n8n (Open Source)
 - Zapier
 - Make (Integromat)
@@ -44,12 +46,14 @@ Wir verwenden **n8n** (Self-Hosted).
 ## Konsequenzen
 
 ### Positiv
+
 - Keine laufenden Kosten (außer Hosting)
 - Datenschutz (DSGVO-konform)
 - Flexibel erweiterbar
 - Versionierbar
 
 ### Negativ
+
 - DevOps-Aufwand für Hosting
 - Monitoring nötig
 - Skalierungslimits

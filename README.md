@@ -200,6 +200,7 @@ Proprietary - Alle Rechte vorbehalten.
 ## Support
 
 Bei Fragen oder Problemen:
+
 - Dokumentation im `docs/` Verzeichnis
 - Issues auf GitHub
 - Email: support@timax.xyz

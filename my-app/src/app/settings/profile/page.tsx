@@ -43,7 +43,7 @@ export default function ProfileSettingsPage() {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
         </CardContent>
       </Card>
     );
@@ -70,9 +70,7 @@ export default function ProfileSettingsPage() {
             <User className="h-5 w-5" />
             Profilbild
           </CardTitle>
-          <CardDescription>
-            Dein Profilbild wird bei Clerk verwaltet
-          </CardDescription>
+          <CardDescription>Dein Profilbild wird bei Clerk verwaltet</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
@@ -80,17 +78,17 @@ export default function ProfileSettingsPage() {
               <img
                 src={user.imageUrl}
                 alt="Profilbild"
-                className="w-20 h-20 rounded-full border-2 border-border object-cover"
+                className="border-border h-20 w-20 rounded-full border-2 object-cover"
               />
             ) : (
-              <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center">
-                <User className="h-8 w-8 text-muted-foreground" />
+              <div className="bg-muted flex h-20 w-20 items-center justify-center rounded-full">
+                <User className="text-muted-foreground h-8 w-8" />
               </div>
             )}
             <div>
-              <p className="text-sm text-muted-foreground">
-                Um dein Profilbild zu ändern, klicke auf deinen Avatar in der Navigation
-                und wähle &quot;Konto verwalten&quot;.
+              <p className="text-muted-foreground text-sm">
+                Um dein Profilbild zu ändern, klicke auf deinen Avatar in der Navigation und wähle
+                &quot;Konto verwalten&quot;.
               </p>
             </div>
           </div>
@@ -101,9 +99,7 @@ export default function ProfileSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Persönliche Informationen</CardTitle>
-          <CardDescription>
-            Aktualisiere deinen Namen und andere Details
-          </CardDescription>
+          <CardDescription>Aktualisiere deinen Namen und andere Details</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -131,11 +127,7 @@ export default function ProfileSettingsPage() {
             </div>
           </div>
 
-          <Button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="gap-2"
-          >
+          <Button onClick={handleSave} disabled={isSaving} className="gap-2">
             {isSaving ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -158,19 +150,18 @@ export default function ProfileSettingsPage() {
             <Mail className="h-5 w-5" />
             E-Mail-Adresse
           </CardTitle>
-          <CardDescription>
-            Deine E-Mail wird von Clerk verwaltet
-          </CardDescription>
+          <CardDescription>Deine E-Mail wird von Clerk verwaltet</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
-            <Mail className="h-4 w-4 text-muted-foreground" />
+          <div className="bg-muted flex items-center gap-2 rounded-lg p-3">
+            <Mail className="text-muted-foreground h-4 w-4" />
             <span className="text-sm">
               {user.primaryEmailAddress?.emailAddress || "Keine E-Mail hinterlegt"}
             </span>
           </div>
-          <p className="text-xs text-muted-foreground mt-2">
-            Um deine E-Mail zu ändern, klicke auf deinen Avatar und wähle &quot;Konto verwalten&quot;.
+          <p className="text-muted-foreground mt-2 text-xs">
+            Um deine E-Mail zu ändern, klicke auf deinen Avatar und wähle &quot;Konto
+            verwalten&quot;.
           </p>
         </CardContent>
       </Card>

@@ -26,7 +26,10 @@
       "Bash(if [ -f .next/server/app/api/upload/route.js ])",
       "Bash(then head -100 .next/server/app/api/upload/route.js)",
       "Bash(else echo \"File not found\")",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(git diff:*)",
+      "WebSearch",
+      "WebFetch(domain:docs.n8n.io)"
     ]
   }
 }

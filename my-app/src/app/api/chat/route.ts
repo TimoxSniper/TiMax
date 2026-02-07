@@ -37,13 +37,8 @@ async function chatHandler(request: NextRequest) {
     // Validiere Input mit Zod Schema
     const validationResult = chatSchema.safeParse(body);
     if (!validationResult.success) {
-      const errorMessage =
-        validationResult.error.issues[0]?.message ||
-        "Ungültige Eingabedaten";
-      return NextResponse.json(
-        { success: false, error: errorMessage },
-        { status: 400 }
-      );
+      const errorMessage = validationResult.error.issues[0]?.message || "Ungültige Eingabedaten";
+      return NextResponse.json({ success: false, error: errorMessage }, { status: 400 });
     }
 
     const { message, sessionId, chatHistory = [], chat_id } = validationResult.data;
@@ -76,13 +71,11 @@ async function chatHandler(request: NextRequest) {
     }
 
     // 4. USER MESSAGE IN SUPABASE SPEICHERN
-    const { error: messageError } = await supabase
-      .from("messages")
-      .insert({
-        chat_id: currentChatId,
-        role: "user",
-        content: sanitizedMessage,
-      });
+    const { error: messageError } = await supabase.from("messages").insert({
+      chat_id: currentChatId,
+      role: "user",
+      content: sanitizedMessage,
+    });
 
     if (messageError) {
       logger.error("[Chat API] Fehler beim Speichern der Nachricht:", messageError);
@@ -147,9 +140,10 @@ async function chatHandler(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: process.env.NODE_ENV === "development" && error instanceof Error
-          ? error.message
-          : "Ein interner Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
+        error:
+          process.env.NODE_ENV === "development" && error instanceof Error
+            ? error.message
+            : "Ein interner Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
       },
       { status: 500 }
     );
@@ -165,10 +159,7 @@ async function getChatsHandler(request: NextRequest) {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     const supabase = createAdminClient();
@@ -179,7 +170,8 @@ async function getChatsHandler(request: NextRequest) {
       // Einzelnen Chat mit Nachrichten laden
       const { data: chat, error: chatError } = await supabase
         .from("chats")
-        .select(`
+        .select(
+          `
           *,
           messages (
             id,
@@ -187,7 +179,8 @@ async function getChatsHandler(request: NextRequest) {
             content,
             created_at
           )
-        `)
+        `
+        )
         .eq("id", chatId)
         .eq("user_id", userId)
         .order("created_at", { foreignTable: "messages", ascending: true })

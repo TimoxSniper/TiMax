@@ -6,6 +6,7 @@ Status: Akzeptiert
 ## Kontext
 
 Wir brauchten eine Authentifizierungslösung für:
+
 - User Login/Signup
 - Session Management
 - OAuth (Google, GitHub, etc.)
@@ -13,6 +14,7 @@ Wir brauchten eine Authentifizierungslösung für:
 - Multi-Factor Authentication
 
 Optionen:
+
 - Clerk
 - Supabase Auth
 - NextAuth.js
@@ -45,6 +47,7 @@ Wir verwenden **Clerk**.
 ## Konsequenzen
 
 ### Positiv
+
 - Sehr schnelle Implementierung
 - Professionelle UI out-of-the-box
 - Einfache Middleware Integration
@@ -52,6 +55,7 @@ Wir verwenden **Clerk**.
 - Deutsche Lokalisierung
 
 ### Negativ
+
 - Monatliche Kosten ab 10.000 MAU
 - Abhängigkeit von Clerk-Infrastruktur
 - Weniger Kontrolle als Eigenentwicklung

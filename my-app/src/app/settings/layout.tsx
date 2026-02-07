@@ -28,11 +28,7 @@ const settingsNavigation = [
   },
 ];
 
-export default function SettingsLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function SettingsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
@@ -43,15 +39,15 @@ export default function SettingsLayout({
       <SignedIn>
         <div className="container mx-auto max-w-6xl px-4 py-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground">Einstellungen</h1>
+            <h1 className="text-foreground text-3xl font-bold">Einstellungen</h1>
             <p className="text-muted-foreground mt-2">
               Verwalte dein Konto und deine Sicherheitseinstellungen
             </p>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex flex-col gap-8 lg:flex-row">
             {/* Sidebar Navigation */}
-            <nav className="lg:w-64 flex-shrink-0">
+            <nav className="flex-shrink-0 lg:w-64">
               <Card className="p-2">
                 <ul className="space-y-1">
                   {settingsNavigation.map((item) => {
@@ -63,21 +59,19 @@ export default function SettingsLayout({
                         <Link
                           href={item.href}
                           className={cn(
-                            "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors",
+                            "flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors",
                             isActive
                               ? "bg-primary text-primary-foreground"
                               : "hover:bg-muted text-foreground"
                           )}
                         >
                           <Icon className="h-5 w-5" />
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-sm">{item.name}</p>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium">{item.name}</p>
                             <p
                               className={cn(
-                                "text-xs truncate",
-                                isActive
-                                  ? "text-primary-foreground/70"
-                                  : "text-muted-foreground"
+                                "truncate text-xs",
+                                isActive ? "text-primary-foreground/70" : "text-muted-foreground"
                               )}
                             >
                               {item.description}
@@ -92,7 +86,7 @@ export default function SettingsLayout({
             </nav>
 
             {/* Main Content */}
-            <main className="flex-1 min-w-0">{children}</main>
+            <main className="min-w-0 flex-1">{children}</main>
           </div>
         </div>
       </SignedIn>

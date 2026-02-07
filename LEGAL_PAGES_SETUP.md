@@ -15,6 +15,7 @@
 ### 1. Impressum (Imprint) - `/impressum`
 
 **Company Information:**
+
 - [ ] Full company name (legal entity name)
 - [ ] Legal form (GmbH, UG, Einzelunternehmen, etc.)
 - [ ] Complete address (Street, Number, Postal Code, City, Country)
@@ -22,12 +23,14 @@
 - [ ] Phone number
 
 **Registration Information (if applicable):**
+
 - [ ] Name of managing director(s) / authorized representative(s)
 - [ ] Register court (Registergericht) - e.g., "Amtsgericht München"
 - [ ] Register number (Handelsregisternummer) - e.g., "HRB 123456"
 - [ ] VAT ID (Umsatzsteuer-Identifikationsnummer) - if applicable
 
 **Professional Supervision (if applicable):**
+
 - [ ] Supervisory authority
 - [ ] Professional association membership
 - [ ] Professional title and state that issued it
@@ -37,10 +40,12 @@
 ### 2. Datenschutzerklärung (Privacy Policy) - `/datenschutz`
 
 **Company/Responsible Party Information:**
+
 - [ ] Same as Impressum (company name, address)
 - [ ] Contact person for data protection
 
 **Data Protection Officer (DSB):**
+
 - [ ] Name (required if >20 employees process personal data)
 - [ ] Email address
 - [ ] Phone number (optional)
@@ -52,6 +57,7 @@
 ### 3. AGB (Terms & Conditions) - `/agb`
 
 **Pricing Information:**
+
 - [ ] Is the service free or paid?
 - [ ] If paid: Price structure
 - [ ] Payment methods
@@ -64,6 +70,7 @@
 ### 4. Widerrufsbelehrung (Right of Withdrawal) - `/widerruf`
 
 **Company Information:**
+
 - [ ] Same as Impressum
 
 **Current Status:** Template is complete, only needs company data
@@ -162,10 +169,12 @@ Before going live, ensure:
 ## Fines for Non-Compliance
 
 **Impressumspflicht (TMG § 5):**
+
 - Up to €50,000 fine for missing or incomplete imprint
 - Risk of warnings from competitors (Abmahnungen)
 
 **DSGVO (Privacy):**
+
 - Up to €20 million or 4% of global annual revenue
 - Mandatory reporting of data breaches within 72 hours
 
@@ -174,10 +183,12 @@ Before going live, ensure:
 ## Resources
 
 **Legal Templates:**
+
 - [Impressum Generator](https://www.e-recht24.de/impressum-generator.html)
 - [Datenschutz Generator](https://www.e-recht24.de/muster-datenschutzerklaerung.html)
 
 **Professional Help:**
+
 - Consider hiring a lawyer specialized in internet law (Fachanwalt für IT-Recht)
 - Data protection officer services: [TÜV](https://www.tuv.com/de/de/datenschutzbeauftragter.html)
 
@@ -188,9 +199,7 @@ Before going live, ensure:
 The legal pages currently contain clearly marked placeholders like:
 
 ```tsx
-<span className="text-red-600 font-bold">
-  [FIRMENNAME HIER EINTRAGEN]
-</span>
+<span className="text-red-600 font-bold">[FIRMENNAME HIER EINTRAGEN]</span>
 ```
 
 These are styled in **red and bold** to make them impossible to miss. DO NOT go live until all red placeholders are replaced with actual information.

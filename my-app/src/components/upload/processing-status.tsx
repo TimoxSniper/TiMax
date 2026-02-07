@@ -12,7 +12,7 @@ interface Step {
 
 const STEPS: Step[] = [
   { id: "upload", label: "Datei wird sicher hochgeladen", duration: 5000 },
-  { id: "stt", label: "KI transkribiert Audio (STT)", duration: 100000 }, // 100s - längster Teil
+  { id: "stt", label: "KI transkribiert Audio (STT)", duration: 220000 }, // 220s - längster Teil
   { id: "analysis", label: "Inhalt wird analysiert", duration: 30000 },
   { id: "save", label: "In Wissensdatenbank gespeichert", duration: 15000 },
 ];
@@ -55,10 +55,10 @@ export function ProcessingStatus({ isProcessing, onComplete }: ProcessingStatusP
 
   return (
     <div className="mt-8 space-y-6">
-      <h4 className="text-xs uppercase tracking-[0.2em] font-medium text-muted-foreground text-center">
+      <h4 className="text-muted-foreground text-center text-xs font-medium tracking-[0.2em] uppercase">
         Verarbeitungsstatus
       </h4>
-      <div className="max-w-xs mx-auto space-y-4">
+      <div className="mx-auto max-w-xs space-y-4">
         {STEPS.map((step, index) => {
           const isCompleted = completedSteps.includes(step.id);
           const isActive = currentStepIndex === index && !isCompleted;
@@ -72,11 +72,11 @@ export function ProcessingStatus({ isProcessing, onComplete }: ProcessingStatusP
             >
               <div className="flex-shrink-0">
                 {isCompleted ? (
-                  <CheckCircle2 className="w-5 h-5 text-green-500" />
+                  <CheckCircle2 className="h-5 w-5 text-green-500" />
                 ) : isActive ? (
-                  <Loader2 className="w-5 h-5 text-accent animate-spin" />
+                  <Loader2 className="text-accent h-5 w-5 animate-spin" />
                 ) : (
-                  <Circle className="w-5 h-5 text-muted-foreground/30" />
+                  <Circle className="text-muted-foreground/30 h-5 w-5" />
                 )}
               </div>
               <span
@@ -84,8 +84,8 @@ export function ProcessingStatus({ isProcessing, onComplete }: ProcessingStatusP
                   isCompleted
                     ? "text-foreground font-medium"
                     : isActive
-                    ? "text-accent font-medium"
-                    : "text-muted-foreground"
+                      ? "text-accent font-medium"
+                      : "text-muted-foreground"
                 }`}
               >
                 {step.label}

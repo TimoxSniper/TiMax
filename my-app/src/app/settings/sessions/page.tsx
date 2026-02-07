@@ -31,7 +31,7 @@ export default function SessionsSettingsPage() {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
         </CardContent>
       </Card>
     );
@@ -123,15 +123,13 @@ export default function SessionsSettingsPage() {
             <Laptop className="h-5 w-5" />
             Aktuelle Sitzung
           </CardTitle>
-          <CardDescription>
-            Das Gerät, mit dem du gerade angemeldet bist
-          </CardDescription>
+          <CardDescription>Das Gerät, mit dem du gerade angemeldet bist</CardDescription>
         </CardHeader>
         <CardContent>
           {currentSession && (
-            <div className="flex items-center gap-4 p-4 bg-primary/5 rounded-lg border border-primary/20">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <Monitor className="h-6 w-6 text-primary" />
+            <div className="bg-primary/5 border-primary/20 flex items-center gap-4 rounded-lg border p-4">
+              <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-full">
+                <Monitor className="text-primary h-6 w-6" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
@@ -140,7 +138,7 @@ export default function SessionsSettingsPage() {
                     Aktiv
                   </Badge>
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   Sitzung seit: {formatLastActive(new Date(currentSession.createdAt))}
                 </p>
               </div>
@@ -158,14 +156,16 @@ export default function SessionsSettingsPage() {
                 <Globe className="h-5 w-5" />
                 Andere aktive Sitzungen
               </CardTitle>
-              <CardDescription>
-                Geräte, auf denen du ebenfalls angemeldet bist
-              </CardDescription>
+              <CardDescription>Geräte, auf denen du ebenfalls angemeldet bist</CardDescription>
             </div>
             {otherActiveSessions.length > 0 && (
               <Dialog open={showRevokeAllDialog} onOpenChange={setShowRevokeAllDialog}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2 text-destructive hover:text-destructive">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-destructive hover:text-destructive gap-2"
+                  >
                     <LogOut className="h-4 w-4" />
                     Alle beenden
                   </Button>
@@ -173,19 +173,16 @@ export default function SessionsSettingsPage() {
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                      <AlertTriangle className="h-5 w-5 text-destructive" />
+                      <AlertTriangle className="text-destructive h-5 w-5" />
                       Alle anderen Sitzungen beenden?
                     </DialogTitle>
                     <DialogDescription>
-                      Du wirst auf {otherActiveSessions.length} anderen Gerät(en) abgemeldet.
-                      Diese Aktion kann nicht rückgängig gemacht werden.
+                      Du wirst auf {otherActiveSessions.length} anderen Gerät(en) abgemeldet. Diese
+                      Aktion kann nicht rückgängig gemacht werden.
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter>
-                    <Button
-                      variant="outline"
-                      onClick={() => setShowRevokeAllDialog(false)}
-                    >
+                    <Button variant="outline" onClick={() => setShowRevokeAllDialog(false)}>
                       Abbrechen
                     </Button>
                     <Button
@@ -214,12 +211,10 @@ export default function SessionsSettingsPage() {
         </CardHeader>
         <CardContent>
           {otherActiveSessions.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Laptop className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <div className="text-muted-foreground py-8 text-center">
+              <Laptop className="mx-auto mb-4 h-12 w-12 opacity-50" />
               <p>Keine anderen aktiven Sitzungen</p>
-              <p className="text-sm mt-1">
-                Du bist nur auf diesem Gerät angemeldet.
-              </p>
+              <p className="mt-1 text-sm">Du bist nur auf diesem Gerät angemeldet.</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -233,20 +228,18 @@ export default function SessionsSettingsPage() {
                 return (
                   <div
                     key={session.id}
-                    className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg border hover:border-border transition-colors"
+                    className="bg-muted/50 hover:border-border flex items-center gap-4 rounded-lg border p-4 transition-colors"
                   >
-                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-                      <DeviceIcon className="h-5 w-5 text-muted-foreground" />
+                    <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
+                      <DeviceIcon className="text-muted-foreground h-5 w-5" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">
                         {s.latestActivity?.deviceType || "Unbekanntes Gerät"}
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        Zuletzt aktiv: {lastActive}
-                      </p>
+                      <p className="text-muted-foreground text-xs">Zuletzt aktiv: {lastActive}</p>
                       {s.latestActivity?.browserName && (
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-muted-foreground text-xs">
                           {s.latestActivity.browserName}
                           {s.latestActivity.city && ` • ${s.latestActivity.city}`}
                         </p>
@@ -257,7 +250,7 @@ export default function SessionsSettingsPage() {
                       size="sm"
                       onClick={() => handleRevokeSession(session.id)}
                       disabled={revokingId === session.id}
-                      className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-2"
                     >
                       {revokingId === session.id ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -278,12 +271,12 @@ export default function SessionsSettingsPage() {
       <Card className="bg-muted/30">
         <CardContent className="py-4">
           <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <AlertTriangle className="h-4 w-4 text-primary" />
+            <div className="bg-primary/10 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
+              <AlertTriangle className="text-primary h-4 w-4" />
             </div>
             <div>
-              <p className="font-medium text-sm">Sicherheitstipp</p>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-sm font-medium">Sicherheitstipp</p>
+              <p className="text-muted-foreground mt-1 text-xs">
                 Wenn du ein Gerät nicht erkennst oder vermutest, dass jemand auf dein Konto
                 zugegriffen hat, beende die Sitzung sofort und ändere dein Passwort.
               </p>

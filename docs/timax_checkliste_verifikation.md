@@ -1,4 +1,5 @@
 # ✅ timax.vercel.app - Checkliste Verifikation
+
 **Datum:** 29. Januar 2026  
 **Status:** Projekt-Analyse basierend auf tatsächlichem Code
 
@@ -8,24 +9,25 @@
 
 ## 📊 Zusammenfassung
 
-| Kategorie | Checkliste Status | Tatsächlicher Status | Abweichung |
-|-----------|-------------------|---------------------|------------|
-| Rechtliche Dokumente | ❌ Fehlen komplett | ❌ **FEHLEN** | ✅ **KORREKT** |
-| Sicherheit | ⚠️ Teilweise | ⚠️ **TEILWEISE** | ✅ **KORREKT** |
-| Frontend/UX | ⚠️ Basic vorhanden | ✅ **BESSER ALS ERWARTET** | ⚠️ **ÜBERSCHÄTZT** |
-| Backend/API | ⚠️ Unklar | ✅ **N8N INTEGRATION VORHANDEN** | ⚠️ **ÜBERSCHÄTZT** |
-| Upload-Funktionalität | ❌ Unsicher | ⚠️ **BASIC VALIDIERUNG VORHANDEN** | ⚠️ **TEILWEISE ÜBERSCHÄTZT** |
-| KI-Integration | ❌ Nicht implementiert | ✅ **N8N WEBHOOKS VORHANDEN** | ⚠️ **ÜBERSCHÄTZT** |
-| Authentication | ❌ Fehlt | ❌ **FEHLT** | ✅ **KORREKT** |
-| Database | ⚠️ Unklar | ❌ **FEHLT KOMPLETT** | ✅ **KORREKT** |
-| Testing | ❌ Keine Tests | ❌ **FEHLT** | ✅ **KORREKT** |
-| Monitoring | ❌ Nicht vorhanden | ⚠️ **SENTRY VORHANDEN** | ⚠️ **TEILWEISE ÜBERSCHÄTZT** |
+| Kategorie             | Checkliste Status      | Tatsächlicher Status               | Abweichung                   |
+| --------------------- | ---------------------- | ---------------------------------- | ---------------------------- |
+| Rechtliche Dokumente  | ❌ Fehlen komplett     | ❌ **FEHLEN**                      | ✅ **KORREKT**               |
+| Sicherheit            | ⚠️ Teilweise           | ⚠️ **TEILWEISE**                   | ✅ **KORREKT**               |
+| Frontend/UX           | ⚠️ Basic vorhanden     | ✅ **BESSER ALS ERWARTET**         | ⚠️ **ÜBERSCHÄTZT**           |
+| Backend/API           | ⚠️ Unklar              | ✅ **N8N INTEGRATION VORHANDEN**   | ⚠️ **ÜBERSCHÄTZT**           |
+| Upload-Funktionalität | ❌ Unsicher            | ⚠️ **BASIC VALIDIERUNG VORHANDEN** | ⚠️ **TEILWEISE ÜBERSCHÄTZT** |
+| KI-Integration        | ❌ Nicht implementiert | ✅ **N8N WEBHOOKS VORHANDEN**      | ⚠️ **ÜBERSCHÄTZT**           |
+| Authentication        | ❌ Fehlt               | ❌ **FEHLT**                       | ✅ **KORREKT**               |
+| Database              | ⚠️ Unklar              | ❌ **FEHLT KOMPLETT**              | ✅ **KORREKT**               |
+| Testing               | ❌ Keine Tests         | ❌ **FEHLT**                       | ✅ **KORREKT**               |
+| Monitoring            | ❌ Nicht vorhanden     | ⚠️ **SENTRY VORHANDEN**            | ⚠️ **TEILWEISE ÜBERSCHÄTZT** |
 
 ---
 
 ## ✅ Was BEREITS VORHANDEN ist (Checkliste unterschätzt)
 
 ### 1. Error Tracking (Sentry)
+
 - **Checkliste:** ❌ Nicht implementiert
 - **Tatsächlich:** ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
   - `@sentry/nextjs` installiert
@@ -35,6 +37,7 @@
   - API Routes loggen Fehler an Sentry
 
 ### 2. Toast Notifications
+
 - **Checkliste:** ❌ Nicht sichtbar
 - **Tatsächlich:** ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
   - `components/ui/toast.tsx` mit vollständiger Implementierung
@@ -43,6 +46,7 @@
   - Success/Error/Info Varianten
 
 ### 3. Error Boundary
+
 - **Checkliste:** ❌ Custom Error Pages fehlen
 - **Tatsächlich:** ✅ **ERROR BOUNDARY VORHANDEN**
   - `components/error-boundary.tsx` implementiert
@@ -51,6 +55,7 @@
   - ⚠️ ABER: Keine `not-found.tsx` oder `error.tsx` Next.js Pages
 
 ### 4. n8n Integration
+
 - **Checkliste:** ⚠️ Unklar ob vollständig implementiert
 - **Tatsächlich:** ✅ **WEBHOOK-INTEGRATION VORHANDEN**
   - `/api/upload/route.ts` - Upload zu n8n Webhook
@@ -60,6 +65,7 @@
   - ⚠️ ABER: Keine Callback-Endpunkte für n8n → Next.js
 
 ### 5. File Upload Validierung
+
 - **Checkliste:** ❌ Unklar welche Limits existieren
 - **Tatsächlich:** ✅ **BASIC VALIDIERUNG VORHANDEN**
   - `components/upload/file-upload.tsx`:
@@ -72,6 +78,7 @@
   - ⚠️ ABER: Keine Virus-Scanning
 
 ### 6. Environment Variable Validation
+
 - **Checkliste:** ⚠️ Zu prüfen
 - **Tatsächlich:** ✅ **VOLLSTÄNDIG MIT ZOD**
   - `src/lib/env.ts` mit Zod Schema
@@ -79,12 +86,14 @@
   - Type-safe Environment Variables
 
 ### 7. Dark Mode
+
 - **Checkliste:** ❌ Nicht implementiert
 - **Tatsächlich:** ✅ **VORHANDEN**
   - `components/home/dark-mode-toggle.tsx` vorhanden
   - Dark Mode Support in UI Components
 
 ### 8. Upload Progress Tracking
+
 - **Checkliste:** ❌ Nicht implementiert
 - **Tatsächlich:** ✅ **VOLLSTÄNDIG IMPLEMENTIERT**
   - XMLHttpRequest für echten Progress
@@ -96,54 +105,64 @@
 ## ❌ Was WIRKLICH FEHLT (Checkliste korrekt)
 
 ### 1. Rechtliche Dokumente
+
 - ❌ `/impressum` - **FEHLT**
 - ❌ `/datenschutz` - **FEHLT**
 - ❌ `/agb` - **FEHLT**
 - ❌ Cookie Consent Banner - **FEHLT**
 
 ### 2. Authentication
+
 - ❌ NextAuth.js - **NICHT INSTALLIERT**
 - ❌ Login/Signup Seiten - **FEHLEN**
 - ❌ User Management - **FEHLT**
 - ❌ Session Management - **FEHLT**
 
 ### 3. Database
+
 - ❌ Prisma - **NICHT INSTALLIERT**
 - ❌ Database Schema - **FEHLT**
 - ❌ Migrations - **FEHLT**
 - ❌ Keine User/Upload/Transcript Speicherung
 
 ### 4. Security Headers
+
 - ❌ Keine Security Headers in `next.config.ts`
 - ❌ Keine CSP (Content Security Policy)
 - ❌ Keine HSTS, X-Frame-Options, etc.
 
 ### 5. Rate Limiting
+
 - ❌ Keine Rate Limiting Library installiert
 - ❌ Keine Rate Limiting in API Routes
 - ❌ Keine Upstash Redis Integration
 
 ### 6. CSRF Protection
+
 - ❌ Keine CSRF Library
 - ❌ Keine Middleware für CSRF
 
 ### 7. File Upload Security
+
 - ❌ Keine Server-side Validierung (nur Client-side)
 - ❌ Keine Magic Bytes Validierung
 - ❌ Kein Virus Scanning
 - ❌ Keine File Storage Strategie (Vercel Blob/S3)
 
 ### 8. n8n Callback Endpoints
+
 - ❌ Keine `/api/webhooks/n8n/transcription/route.ts`
 - ❌ Keine `/api/webhooks/n8n/generation/route.ts`
 - ❌ Keine Webhook Signature Verification
 
 ### 9. Custom Error Pages
+
 - ❌ Keine `app/not-found.tsx`
 - ❌ Keine `app/error.tsx`
 - ❌ Keine `app/global-error.tsx`
 
 ### 10. Fehlende Seiten
+
 - ❌ `/login`, `/signup` - **FEHLEN**
 - ❌ `/dashboard` - **FEHLT**
 - ❌ `/profile`, `/settings` - **FEHLEN**
@@ -151,12 +170,14 @@
 - ❌ `/pricing` - **FEHLT**
 
 ### 11. Testing
+
 - ❌ Keine Test-Frameworks installiert
 - ❌ Keine Unit Tests
 - ❌ Keine Integration Tests
 - ❌ Keine E2E Tests
 
 ### 12. Middleware
+
 - ❌ Keine `middleware.ts` Datei
 - ❌ Keine Request-Interception
 - ❌ Keine Security-Middleware
@@ -166,6 +187,7 @@
 ## ⚠️ Was TEILWEISE vorhanden ist (Checkliste teilweise korrekt)
 
 ### 1. n8n Integration
+
 - ✅ Webhook-Aufrufe von Next.js → n8n vorhanden
 - ❌ Callback-Endpunkte von n8n → Next.js fehlen
 - ❌ Webhook Authentication fehlt
@@ -173,6 +195,7 @@
 - ❌ Retry-Logik fehlt
 
 ### 2. File Upload
+
 - ✅ Client-side Validierung vorhanden
 - ✅ Upload Progress vorhanden
 - ❌ Server-side Validierung fehlt
@@ -180,12 +203,14 @@
 - ❌ File Storage fehlt (Dateien gehen direkt zu n8n)
 
 ### 3. Monitoring
+
 - ✅ Sentry für Error Tracking vorhanden
 - ❌ Analytics fehlt
 - ❌ Performance Monitoring fehlt
 - ❌ Uptime Monitoring fehlt
 
 ### 4. Security
+
 - ✅ Environment Variable Validation vorhanden
 - ✅ Sentry Error Tracking vorhanden
 - ❌ Security Headers fehlen
@@ -200,6 +225,7 @@
 ### ✅ Gut implementiert:
 
 1. **Error Handling:**
+
    ```typescript
    // app/api/upload/route.ts
    - Sentry.captureException() ✅
@@ -208,6 +234,7 @@
    ```
 
 2. **Environment Variables:**
+
    ```typescript
    // lib/env.ts
    - Zod Schema ✅
@@ -216,6 +243,7 @@
    ```
 
 3. **File Upload UI:**
+
    ```typescript
    // components/upload/file-upload.tsx
    - Drag & Drop ✅
@@ -235,6 +263,7 @@
 ### ❌ Kritische Lücken:
 
 1. **Upload API Route:**
+
    ```typescript
    // app/api/upload/route.ts
    - ❌ Keine Server-side File Validation
@@ -245,6 +274,7 @@
    ```
 
 2. **Chat API Route:**
+
    ```typescript
    // app/api/chat/route.ts
    - ❌ Keine Rate Limiting
@@ -319,9 +349,11 @@
 ## 🎯 Aktualisierte Zeitschätzung
 
 ### Minimaler Launch (MVP)
+
 **Geschätzte Zeit:** 60-80 Stunden (1.5-2 Wochen Fulltime)
 
 **Reduziert von 80-110 Stunden, weil:**
+
 - ✅ Sentry bereits vorhanden (-4h)
 - ✅ Toast Notifications vorhanden (-3h)
 - ✅ Error Boundary vorhanden (-2h)
@@ -330,13 +362,16 @@
 - ✅ Environment Validation vorhanden (-2h)
 
 **Aber zusätzlich benötigt:**
+
 - n8n Callback Endpoints (+8h)
 - Server-side Upload Validation (+4h)
 
 ### Empfohlener Launch
+
 **Geschätzte Zeit:** 120-160 Stunden (3-4 Wochen Fulltime)
 
 **Reduziert von 140-200 Stunden, weil:**
+
 - Viele UI-Komponenten bereits vorhanden
 - n8n Integration bereits funktioniert
 
@@ -355,6 +390,7 @@ Die ursprüngliche Checkliste war größtenteils **korrekt**, hat aber einige be
 7. ✅ Dark Mode ist vorhanden
 
 **Die Checkliste sollte aktualisiert werden mit:**
+
 - ✅ statt ❌ für bereits implementierte Features
 - Präzisere Beschreibung was genau fehlt (z.B. "n8n Callbacks fehlen" statt "n8n Integration unklar")
 
@@ -396,6 +432,7 @@ Die Checkliste ist **grundsätzlich korrekt**, aber sollte aktualisiert werden:
 4. 🎯 **Aktualisiere Zeitschätzungen** (reduziert um ~20-30 Stunden)
 
 **Nächste Schritte:**
+
 1. Rechtliche Dokumente SOFORT erstellen (1 Tag)
 2. Security Headers & Rate Limiting (2 Tage)
 3. n8n Callback Endpoints (1-2 Tage)

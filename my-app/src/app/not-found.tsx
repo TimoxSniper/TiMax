@@ -40,18 +40,18 @@ export default function NotFound() {
   }, [funnyMessages.length]);
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4 overflow-hidden relative">
+    <div className="bg-background relative flex min-h-screen items-center justify-center overflow-hidden px-4">
       {/* Animated background elements */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div
-          className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full border-4 border-accent animate-pulse"
+          className="border-accent absolute top-1/4 left-1/4 h-96 w-96 animate-pulse rounded-full border-4"
           style={{
             transform: `translate(${mousePos.x}px, ${mousePos.y}px)`,
             transition: "transform 0.3s ease-out",
           }}
         />
         <div
-          className="absolute bottom-1/4 right-1/4 w-64 h-64 border-4 border-accent rotate-45"
+          className="border-accent absolute right-1/4 bottom-1/4 h-64 w-64 rotate-45 border-4"
           style={{
             transform: `translate(${-mousePos.x}px, ${-mousePos.y}px) rotate(45deg)`,
             transition: "transform 0.3s ease-out",
@@ -59,7 +59,7 @@ export default function NotFound() {
         />
       </div>
 
-      <div className="max-w-2xl w-full text-center space-y-8 relative z-10">
+      <div className="relative z-10 w-full max-w-2xl space-y-8 text-center">
         {/* Animated Editorial Number */}
         <div
           className="space-y-4"
@@ -67,7 +67,7 @@ export default function NotFound() {
           onMouseLeave={() => setIsHovering(false)}
         >
           <h1
-            className="font-serif text-[180px] lg:text-[240px] font-bold text-accent leading-none tracking-tighter select-none cursor-pointer transition-all duration-500"
+            className="text-accent cursor-pointer font-serif text-[180px] leading-none font-bold tracking-tighter transition-all duration-500 select-none lg:text-[240px]"
             style={{
               transform: isHovering
                 ? `rotate(-5deg) scale(1.05) translate(${mousePos.x / 2}px, ${mousePos.y / 2}px)`
@@ -79,7 +79,7 @@ export default function NotFound() {
           </h1>
           {/* Animated underline */}
           <div
-            className="h-[3px] bg-accent mx-auto transition-all duration-700 ease-out"
+            className="bg-accent mx-auto h-[3px] transition-all duration-700 ease-out"
             style={{
               width: isHovering ? "200px" : "128px",
             }}
@@ -89,54 +89,43 @@ export default function NotFound() {
         {/* Animated Icon */}
         <div className="flex justify-center">
           <Search
-            className="w-16 h-16 text-accent animate-bounce"
+            className="text-accent h-16 w-16 animate-bounce"
             style={{ animationDuration: "3s" }}
           />
         </div>
 
         {/* Rotating Funny Messages */}
-        <div className="space-y-4 min-h-[160px]">
-          <h2 className="font-serif text-3xl lg:text-4xl font-semibold">
-            Seite nicht gefunden
-          </h2>
+        <div className="min-h-[160px] space-y-4">
+          <h2 className="font-serif text-3xl font-semibold lg:text-4xl">Seite nicht gefunden</h2>
           <p
             key={messageIndex}
-            className="font-sans text-lg text-muted-foreground max-w-lg mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700"
+            className="text-muted-foreground animate-in fade-in slide-in-from-bottom-4 mx-auto max-w-lg font-sans text-lg leading-relaxed duration-700"
           >
             {funnyMessages[messageIndex]}
           </p>
-          <p className="font-sans text-sm text-muted-foreground italic">
+          <p className="text-muted-foreground font-sans text-sm italic">
             Aber keine Sorge, wir helfen Ihnen zurueck auf den richtigen Weg.
           </p>
         </div>
 
         {/* Actions with hover effects */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
-          <Button
-            asChild
-            size="lg"
-            className="min-w-[200px] min-h-14 group"
-          >
+        <div className="flex flex-col items-center justify-center gap-4 pt-8 sm:flex-row">
+          <Button asChild size="lg" className="group min-h-14 min-w-[200px]">
             <Link href="/">
-              <Home className="w-5 h-5 mr-2 group-hover:animate-pulse" />
+              <Home className="mr-2 h-5 w-5 group-hover:animate-pulse" />
               Zur Startseite
             </Link>
           </Button>
-          <Button
-            asChild
-            variant="secondary"
-            size="lg"
-            className="min-w-[200px] min-h-14 group"
-          >
+          <Button asChild variant="secondary" size="lg" className="group min-h-14 min-w-[200px]">
             <Link href="javascript:history.back()">
-              <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+              <ArrowLeft className="mr-2 h-5 w-5 transition-transform group-hover:-translate-x-1" />
               Zurueck
             </Link>
           </Button>
         </div>
 
         {/* Subtle animated hint */}
-        <p className="text-xs text-muted-foreground animate-pulse font-mono">
+        <p className="text-muted-foreground animate-pulse font-mono text-xs">
           Tipp: Bewege deine Maus ueber die &quot;404&quot;
         </p>
       </div>

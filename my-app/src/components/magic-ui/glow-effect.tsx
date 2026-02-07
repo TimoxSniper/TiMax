@@ -14,4 +14,3 @@ export function GlowEffect() {
   // No-op component for backwards compatibility
   return null;
 }
-

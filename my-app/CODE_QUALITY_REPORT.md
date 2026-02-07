@@ -9,17 +9,17 @@
 
 ### Kategorie-Bewertung
 
-| Kategorie | Bewertung | Status | Details |
-|-----------|-----------|--------|---------|
-| 🔒 Security | 10/10 | ✅ PERFEKT | 0 vulnerabilities, keine Secrets, CSRF Protection |
-| 📘 TypeScript | 10/10 | ✅ PERFEKT | 0 errors, 0 any types, strict mode |
-| 🧹 ESLint | 10/10 | ✅ PERFEKT | 0 errors, 0 warnings, keine disabled rules |
-| ✅ Testing | 10/10 | ✅ PERFEKT | 224/224 tests passing (100%) |
-| 📦 Dependencies | 10/10 | ✅ PERFEKT | Alle aktuell, 0 vulnerabilities |
-| 💎 Code Quality | 10/10 | ✅ PERFEKT | Sauberer Code, robuste n8n Integration |
-| ⚡ Performance | 10/10 | ✅ PERFEKT | Build optimiert, Request Optimization |
-| 📚 Documentation | 8/10 | ⚠️ GUT | Basis vorhanden, JSDoc ausbaubar |
-| 🏗️ Architecture | 9/10 | ✅ EXZELLENT | Klare Struktur, separation of concerns |
+| Kategorie        | Bewertung | Status       | Details                                           |
+| ---------------- | --------- | ------------ | ------------------------------------------------- |
+| 🔒 Security      | 10/10     | ✅ PERFEKT   | 0 vulnerabilities, keine Secrets, CSRF Protection |
+| 📘 TypeScript    | 10/10     | ✅ PERFEKT   | 0 errors, 0 any types, strict mode                |
+| 🧹 ESLint        | 10/10     | ✅ PERFEKT   | 0 errors, 0 warnings, keine disabled rules        |
+| ✅ Testing       | 10/10     | ✅ PERFEKT   | 224/224 tests passing (100%)                      |
+| 📦 Dependencies  | 10/10     | ✅ PERFEKT   | Alle aktuell, 0 vulnerabilities                   |
+| 💎 Code Quality  | 10/10     | ✅ PERFEKT   | Sauberer Code, robuste n8n Integration            |
+| ⚡ Performance   | 10/10     | ✅ PERFEKT   | Build optimiert, Request Optimization             |
+| 📚 Documentation | 8/10      | ⚠️ GUT       | Basis vorhanden, JSDoc ausbaubar                  |
+| 🏗️ Architecture  | 9/10      | ✅ EXZELLENT | Klare Struktur, separation of concerns            |
 
 ---
 
@@ -28,12 +28,14 @@
 ### P0 - Kritische Fixes
 
 #### 1. Dependencies Update
+
 - **Problem:** framer-motion veraltet (12.29.2)
 - **Fix:** Update auf 12.33.0 (latest stable)
 - **Impact:** Security patches, Performance improvements
 - **Commit:** Updated framer-motion dependency
 
 #### 2. Test Coverage Tooling
+
 - **Problem:** `@vitest/coverage-v8` fehlte
 - **Fix:** Installiert und konfiguriert
 - **Impact:** Coverage Reports jetzt verfügbar
@@ -42,22 +44,26 @@
 ### P1 - Wichtige Fixes
 
 #### 3. Logger Konsistenz
+
 - **Problem:** `console.error` in API route statt logger
 - **Location:** `src/app/api/settings/sessions/revoke/route.ts`
 - **Fix:** Ersetzt durch zentralen `logger.error`
 - **Impact:** Konsistentes Logging, besseres Monitoring
 
 #### 4. Robust n8n Parsing
+
 - **Problem:** Fragiles und redundantes Parsing von n8n Antworten in Chat/Upload API
 - **Fix:** Zentrale Utility-Funktion `extractOutputFromN8nResponse` in `src/lib/n8n.ts`
 - **Impact:** Höhere Wartbarkeit, Fehlertoleranz gegenüber Formatänderungen
 
 #### 5. Chat History Limiting
+
 - **Problem:** Gesamte Chat-Historie wurde an API gesendet (Performance/Payload Risiko)
 - **Fix:** Historie in `useChat.ts` auf die letzten 10 Nachrichten begrenzt
 - **Impact:** Bessere Performance, stabilere API-Requests
 
 #### 6. Type Safety
+
 - **Problem:** Verbliebene `any` types in `n8n-server.ts` und `export.ts`
 - **Fix:** Ersetzt durch `unknown` oder spezifische Interfaces
 - **Impact:** Volle Typ-Sicherheit im gesamten Projekt, 0 `any` types
@@ -74,6 +80,7 @@ npm audit --audit-level=moderate
 ```
 
 **Geprüfte Bereiche:**
+
 - ✅ Keine npm Vulnerabilities
 - ✅ Keine hardcoded Secrets (API_KEY, TOKEN, PASSWORD)
 - ✅ CSRF Protection implementiert und getestet
@@ -84,6 +91,7 @@ npm audit --audit-level=moderate
 - ✅ Clerk Auth Integration
 
 **Sicherheits-Features:**
+
 - CSRF Token Validation (20 Tests)
 - Rate Limiting (13 Tests)
 - Input Sanitization (56 Extended Validation Tests)
@@ -99,6 +107,7 @@ npm run typecheck
 ```
 
 **Strikte Konfiguration:**
+
 - ✅ `tsc --noEmit` ohne Errors
 - ✅ 0 `any` types im gesamten Projekt
 - ✅ Alle Function Return Types definiert
@@ -106,6 +115,7 @@ npm run typecheck
 - ✅ Zod Schemas für Runtime Validation
 
 **Type Safety Beispiele:**
+
 - JSON-LD Schema: `BaseSchema` Interface
 - Upload Config: Vollständig typisiert
 - API Routes: NextRequest/NextResponse types
@@ -121,6 +131,7 @@ npm run lint
 ```
 
 **Konfiguration:**
+
 - ✅ 0 Errors
 - ✅ 0 Warnings
 - ✅ Keine `eslint-disable` Kommentare
@@ -128,6 +139,7 @@ npm run lint
 - ✅ Import/Export Sorting
 
 **ESLint Plugins aktiv:**
+
 - @typescript-eslint
 - eslint-plugin-import
 - eslint-plugin-unused-imports
@@ -144,28 +156,30 @@ npm test -- --run
 
 **Test Coverage Breakdown:**
 
-| Test Suite | Tests | Status | Coverage |
-|------------|-------|--------|----------|
-| errors.test.ts | 32 | ✅ | 94.73% |
-| rate-limit-memory.test.ts | 13 | ✅ | 80.95% |
-| utils.test.ts | 8 | ✅ | 100% |
-| logger.test.ts | 17 | ✅ | 100% |
-| upload-config.test.ts | 40 | ✅ | 100% |
-| constants.test.ts | 11 | ✅ | 100% |
-| csrf.test.ts | 20 | ✅ | 100% |
-| env.test.ts | 8 | ✅ | 37.5%* |
-| validation.test.ts | 19 | ✅ | 56.81%* |
-| validation-extended.test.ts | 56 | ✅ | - |
+| Test Suite                  | Tests | Status | Coverage |
+| --------------------------- | ----- | ------ | -------- |
+| errors.test.ts              | 32    | ✅     | 94.73%   |
+| rate-limit-memory.test.ts   | 13    | ✅     | 80.95%   |
+| utils.test.ts               | 8     | ✅     | 100%     |
+| logger.test.ts              | 17    | ✅     | 100%     |
+| upload-config.test.ts       | 40    | ✅     | 100%     |
+| constants.test.ts           | 11    | ✅     | 100%     |
+| csrf.test.ts                | 20    | ✅     | 100%     |
+| env.test.ts                 | 8     | ✅     | 37.5%\*  |
+| validation.test.ts          | 19    | ✅     | 56.81%\* |
+| validation-extended.test.ts | 56    | ✅     | -        |
 
 **Overall Coverage: 79.27%**
+
 - Statements: 79.27%
 - Branches: 75.97%
 - Functions: 78.26%
 - Lines: 78.7%
 
-*env.ts und validation.ts haben niedrigere Coverage, da sie viele Edge Cases für Produktions-Szenarien enthalten
+\*env.ts und validation.ts haben niedrigere Coverage, da sie viele Edge Cases für Produktions-Szenarien enthalten
 
 **Test Frameworks:**
+
 - Vitest (v4.0.18)
 - @testing-library/react
 - @vitest/coverage-v8
@@ -180,6 +194,7 @@ npm outdated
 ```
 
 **Alle Dependencies aktuell:**
+
 - ✅ framer-motion: 12.33.0 (updated)
 - ✅ Next.js: 16.1.5
 - ✅ React: 19.2.4
@@ -188,6 +203,7 @@ npm outdated
 - ✅ Alle anderen: Latest stable
 
 **Dependency Health:**
+
 - 0 outdated major versions
 - 0 deprecated packages
 - 0 security vulnerabilities
@@ -198,6 +214,7 @@ npm outdated
 ### Code Quality (10/10) ✅
 
 **Best Practices:**
+
 - ✅ Keine Magic Numbers (Konstanten verwendet)
 - ✅ DRY Prinzip eingehalten (n8n Parser zentralisiert)
 - ✅ Funktionen < 50 Zeilen (mit wenigen begründeten Ausnahmen)
@@ -206,6 +223,7 @@ npm outdated
 - ✅ Error Handling konsistent
 
 **Code Smells Analyse:**
+
 - ✅ 0 `as any` type assertions
 - ✅ 0 `eslint-disable` comments
 - ✅ 0 TODO/FIXME
@@ -213,6 +231,7 @@ npm outdated
 - ✅ Konsistente n8n Integration
 
 **Patterns:**
+
 - Custom Error Classes (32 Tests)
 - Rate Limiting Strategy Pattern
 - Admin Client Pattern (Supabase)
@@ -224,6 +243,7 @@ npm outdated
 ### Performance (10/10) ⚡
 
 **Build Performance:**
+
 ```bash
 npm run build
 # Result: ✓ Compiled successfully in 10.0s
@@ -231,6 +251,7 @@ npm run build
 ```
 
 **Optimierungen aktiv:**
+
 - ✅ Next.js Turbopack
 - ✅ Static Generation für 15 Seiten
 - ✅ Dynamic Rendering für 21 API/Auth Routes
@@ -240,12 +261,14 @@ npm run build
 - ✅ Request Optimization: Chat Historie limitiert auf 10 Nachrichten
 
 **Performance Features:**
+
 - Lazy Loading: Dynamic imports
 - Code Splitting: Automatisch via Next.js
 - Asset Optimization: WebP/AVIF Support
 - Middleware: Edge Runtime
 
 **Warnings (non-critical):**
+
 - ⚠️ Middleware → Proxy convention (Next.js 16)
 - ⚠️ Edge runtime deaktiviert static generation
 
@@ -254,6 +277,7 @@ npm run build
 ### Documentation (8/10) 📚
 
 **Vorhandene Dokumentation:**
+
 - ✅ README.md aktuell
 - ✅ CHANGELOG.md vorhanden
 - ✅ CONTRIBUTING.md ausführlich
@@ -263,12 +287,14 @@ npm run build
 - ⚠️ JSDoc könnte erweitert werden
 
 **Dokumentierte Bereiche:**
+
 - API Routes: Alle dokumentiert
 - Komponenten: Basis-Dokumentation
 - Utils: Inline Kommentare
 - Test Cases: Beschreibende Namen
 
 **Verbesserungspotential:**
+
 - JSDoc für alle Public Functions
 - Component Props Documentation
 - Architecture Decision Records (ADRs)
@@ -279,6 +305,7 @@ npm run build
 ### Architecture (9/10) 🏗️
 
 **Struktur:**
+
 ```
 src/
 ├── app/              # Next.js App Router
@@ -299,6 +326,7 @@ src/
 ```
 
 **Best Practices:**
+
 - ✅ Separation of Concerns
 - ✅ Single Responsibility Principle
 - ✅ Dependency Injection (Supabase Admin Client)
@@ -307,6 +335,7 @@ src/
 - ✅ Server/Client Component Separation
 
 **Patterns:**
+
 - Repository Pattern (Supabase)
 - Factory Pattern (Admin Client)
 - Strategy Pattern (Rate Limiting)
@@ -352,6 +381,7 @@ npm run validate                  # ✅ All passed
 **Priorität: Mittel**
 
 Dateien mit niedriger Coverage:
+
 - `env.ts`: 37.5% → 60%+ (Edge Cases testen)
 - `validation.ts`: 56.81% → 75%+ (Mehr Edge Cases)
 
@@ -364,11 +394,13 @@ Dateien mit niedriger Coverage:
 **Problem:** Aktuell ist das Chat History Limit hart auf 10 Nachrichten codiert (`useChat.ts:158`).
 
 **Ursprüngliche Vision:** Unterschiedliche Limits basierend auf Subscription-Tier:
+
 - Free Tier: 5 Nachrichten
 - Pro Tier: 20 Nachrichten
 - Enterprise: 50+ Nachrichten
 
 **Umsetzung:**
+
 ```typescript
 // src/hooks/useChat.ts
 const historyLimit = getHistoryLimitForUser(user.subscription_tier);
@@ -376,6 +408,7 @@ chatHistory: [...messages, userMessage].slice(-historyLimit).map(...)
 ```
 
 **Benötigt:**
+
 - Subscription-Tier Erkennung aus Supabase User
 - Konfigurierbare Limits (z.B. in `lib/constants.ts`)
 - Fallback auf Free-Tier wenn nicht eingeloggt
@@ -471,6 +504,7 @@ export function containsDangerousContent(input: string): boolean {
 **TiMax erreicht 9.7/10 Code Quality!**
 
 ### Stärken:
+
 - ✅ **Perfect Security** (10/10): Keine Vulnerabilities, CSRF, Rate Limiting
 - ✅ **Perfect TypeScript** (10/10): 0 any types, strict mode
 - ✅ **Perfect Testing** (10/10): 224 Tests, alle passing
@@ -480,6 +514,7 @@ export function containsDangerousContent(input: string): boolean {
 - ✅ **Excellent Performance** (10/10): Optimierter Build & Requests
 
 ### Verbesserungspotential:
+
 - ⚠️ Test Coverage auf 85%+ erhöhen
 - ⚠️ JSDoc für public APIs
 

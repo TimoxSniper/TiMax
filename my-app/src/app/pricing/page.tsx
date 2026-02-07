@@ -7,9 +7,9 @@ import { Card } from "@/components/magic-ui/glass-card";
 import { AnimatedSection } from "@/components/magic-ui/animated-section";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Check, 
-  Zap, 
+import {
+  Check,
+  Zap,
   ArrowRight,
   Sparkles,
   Upload,
@@ -19,7 +19,7 @@ import {
   Headphones,
   Star,
   Building2,
-  User
+  User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -83,19 +83,23 @@ const PRICING_TIERS = [
 const FAQ_ITEMS = [
   {
     question: "Warum muss ich bezahlen, um einen Account zu erstellen?",
-    answer: "timax ist für Creator und Experten, die ihre Zeit effizient nutzen wollen. Wir bieten keine eingeschränkte Gratis-Version, sondern von Anfang an ein vollwertiges Erlebnis. So können wir dir den besten Service und Support bieten."
+    answer:
+      "timax ist für Creator und Experten, die ihre Zeit effizient nutzen wollen. Wir bieten keine eingeschränkte Gratis-Version, sondern von Anfang an ein vollwertiges Erlebnis. So können wir dir den besten Service und Support bieten.",
   },
   {
     question: "Was passiert, wenn ich mein Limit erreiche?",
-    answer: "Du erhältst eine Benachrichtigung, wenn du 80% deines Limits erreicht hast. Du kannst jederzeit auf eine höhere Stufe upgraden. Ungenutzte Kapazität wird nicht übertragen."
+    answer:
+      "Du erhältst eine Benachrichtigung, wenn du 80% deines Limits erreicht hast. Du kannst jederzeit auf eine höhere Stufe upgraden. Ungenutzte Kapazität wird nicht übertragen.",
   },
   {
     question: "Kann ich jederzeit wechseln oder kündigen?",
-    answer: "Ja! Du kannst jederzeit upgraden (sofort wirksam) oder downgraden (zum nächsten Abrechnungszeitraum). Kündigung ist jederzeit möglich."
+    answer:
+      "Ja! Du kannst jederzeit upgraden (sofort wirksam) oder downgraden (zum nächsten Abrechnungszeitraum). Kündigung ist jederzeit möglich.",
   },
   {
     question: "Gibt es eine Geld-zurück-Garantie?",
-    answer: "Ja! Wenn du in den ersten 14 Tagen nicht zufrieden bist, erstatten wir dir den vollen Betrag – ohne Fragen."
+    answer:
+      "Ja! Wenn du in den ersten 14 Tagen nicht zufrieden bist, erstatten wir dir den vollen Betrag – ohne Fragen.",
   },
 ] as const;
 
@@ -103,23 +107,23 @@ export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(true);
 
   return (
-    <div className="flex min-h-screen flex-col bg-background relative">
+    <div className="bg-background relative flex min-h-screen flex-col">
       <MainNavigation />
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className={`relative ${SECTION_PADDING} pt-16 sm:pt-24 pb-8 sm:pb-12 z-10`}>
+        <section className={`relative ${SECTION_PADDING} z-10 pt-16 pb-8 sm:pt-24 sm:pb-12`}>
           <div className="container mx-auto max-w-6xl">
             <AnimatedSection direction="up">
-              <div className="text-center mb-12 sm:mb-16">
-                <Badge variant="secondary" className="mb-6 text-sm px-4 py-2">
-                  <Zap className="w-4 h-4 mr-2 text-accent" />
+              <div className="mb-12 text-center sm:mb-16">
+                <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm">
+                  <Zap className="text-accent mr-2 h-4 w-4" />
                   Transparente Preise
                 </Badge>
-                <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-foreground">
+                <h1 className="text-foreground mb-6 font-serif text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
                   Wähle deinen Plan
                 </h1>
-                <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+                <p className="text-muted-foreground mx-auto max-w-2xl text-lg sm:text-xl">
                   Keine versteckten Kosten. Upgrade oder downgrade jederzeit.
                 </p>
               </div>
@@ -127,14 +131,14 @@ export default function PricingPage() {
 
             {/* Billing Toggle */}
             <AnimatedSection direction="up" delay={100}>
-              <div className="flex justify-center mb-12">
-                <div className="inline-flex items-center gap-3 p-1.5 bg-secondary rounded-[6px] border border-border">
+              <div className="mb-12 flex justify-center">
+                <div className="bg-secondary border-border inline-flex items-center gap-3 rounded-[6px] border p-1.5">
                   <button
                     onClick={() => setIsYearly(false)}
                     className={cn(
-                      "px-5 py-2.5 rounded-[4px] text-sm font-medium transition-all duration-300 uppercase tracking-wide",
-                      !isYearly 
-                        ? "bg-accent text-accent-foreground shadow-editorial-sm" 
+                      "rounded-[4px] px-5 py-2.5 text-sm font-medium tracking-wide uppercase transition-all duration-300",
+                      !isYearly
+                        ? "bg-accent text-accent-foreground shadow-editorial-sm"
                         : "text-muted-foreground hover:text-foreground"
                     )}
                   >
@@ -143,14 +147,14 @@ export default function PricingPage() {
                   <button
                     onClick={() => setIsYearly(true)}
                     className={cn(
-                      "px-5 py-2.5 rounded-[4px] text-sm font-medium transition-all duration-300 uppercase tracking-wide flex items-center gap-2",
-                      isYearly 
-                        ? "bg-accent text-accent-foreground shadow-editorial-sm" 
+                      "flex items-center gap-2 rounded-[4px] px-5 py-2.5 text-sm font-medium tracking-wide uppercase transition-all duration-300",
+                      isYearly
+                        ? "bg-accent text-accent-foreground shadow-editorial-sm"
                         : "text-muted-foreground hover:text-foreground"
                     )}
                   >
                     Jährlich
-                    <Badge variant="secondary" className="text-xs px-2 py-0.5 bg-background/50">
+                    <Badge variant="secondary" className="bg-background/50 px-2 py-0.5 text-xs">
                       2 Monate gratis
                     </Badge>
                   </button>
@@ -161,61 +165,62 @@ export default function PricingPage() {
         </section>
 
         {/* Pricing Cards */}
-        <section className={`relative ${SECTION_PADDING} pb-16 sm:pb-24 z-10`}>
+        <section className={`relative ${SECTION_PADDING} z-10 pb-16 sm:pb-24`}>
           <div className="container mx-auto max-w-6xl">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 pt-4">
+            <div className="grid grid-cols-1 gap-6 pt-4 md:grid-cols-3 lg:gap-8">
               {PRICING_TIERS.map((tier, index) => {
                 const Icon = tier.icon;
                 const price = isYearly ? tier.yearlyPrice : tier.monthlyPrice;
-                const monthlyEquivalent = isYearly ? Math.round(tier.yearlyPrice / 12) : tier.monthlyPrice;
+                const monthlyEquivalent = isYearly
+                  ? Math.round(tier.yearlyPrice / 12)
+                  : tier.monthlyPrice;
                 const billingPeriod = isYearly ? "Jahr" : "Monat";
 
                 return (
                   <AnimatedSection key={tier.name} direction="up" delay={index * 100}>
-                    <Card 
+                    <Card
                       variant="accent"
                       hover={false}
                       overflow={tier.popular ? "visible" : "hidden"}
                       className={cn(
-                        "p-6 sm:p-8 h-full flex flex-col relative",
-                        tier.popular && "ring-2 ring-accent"
+                        "relative flex h-full flex-col p-6 sm:p-8",
+                        tier.popular && "ring-accent ring-2"
                       )}
                     >
                       {/* Popular Badge */}
                       {tier.popular && (
-                        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
-                          <Badge className="bg-accent text-accent-foreground px-4 py-1.5 text-xs uppercase tracking-wide shadow-lg whitespace-nowrap">
+                        <div className="absolute -top-3.5 left-1/2 z-10 -translate-x-1/2">
+                          <Badge className="bg-accent text-accent-foreground px-4 py-1.5 text-xs tracking-wide whitespace-nowrap uppercase shadow-lg">
                             Beliebt
                           </Badge>
                         </div>
                       )}
 
                       {/* Header */}
-                      <div className="text-center mb-6">
-                        <div className="w-12 h-12 rounded-[6px] bg-secondary flex items-center justify-center mx-auto mb-4">
-                          <Icon className="h-6 w-6 text-accent" />
+                      <div className="mb-6 text-center">
+                        <div className="bg-secondary mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-[6px]">
+                          <Icon className="text-accent h-6 w-6" />
                         </div>
-                        <h3 className="font-serif text-2xl font-bold text-foreground mb-2">
+                        <h3 className="text-foreground mb-2 font-serif text-2xl font-bold">
                           {tier.name}
                         </h3>
-                        <p className="text-sm text-muted-foreground">
-                          {tier.description}
-                        </p>
+                        <p className="text-muted-foreground text-sm">{tier.description}</p>
                       </div>
 
                       {/* Price */}
-                      <div className="text-center mb-6">
+                      <div className="mb-6 text-center">
                         <div className="flex items-baseline justify-center gap-1">
-                          <span className="font-serif text-5xl font-bold text-foreground">
+                          <span className="text-foreground font-serif text-5xl font-bold">
                             {price}€
                           </span>
-                          <span className="text-muted-foreground">
-                            /{billingPeriod}
-                          </span>
+                          <span className="text-muted-foreground">/{billingPeriod}</span>
                         </div>
                         {isYearly && (
-                          <p className="text-sm text-muted-foreground mt-1">
-                            entspricht <span className="text-accent font-medium">{monthlyEquivalent}€/Monat</span>
+                          <p className="text-muted-foreground mt-1 text-sm">
+                            entspricht{" "}
+                            <span className="text-accent font-medium">
+                              {monthlyEquivalent}€/Monat
+                            </span>
                           </p>
                         )}
                       </div>
@@ -224,32 +229,40 @@ export default function PricingPage() {
                       <Button
                         size="lg"
                         variant={tier.popular ? "default" : "outline"}
-                        className="w-full mb-6 group"
+                        className="group mb-6 w-full"
                       >
                         {tier.cta}
                         <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                       </Button>
 
                       {/* Divider */}
-                      <div className="w-full h-px bg-border mb-6" />
+                      <div className="bg-border mb-6 h-px w-full" />
 
                       {/* Features */}
-                      <ul className="space-y-3 flex-grow">
+                      <ul className="flex-grow space-y-3">
                         {tier.features.map((feature) => (
                           <li key={feature.text} className="flex items-start gap-3">
-                            <div className={cn(
-                              "w-5 h-5 rounded-[4px] flex items-center justify-center flex-shrink-0 mt-0.5",
-                              feature.highlight ? "bg-accent/20" : "bg-secondary"
-                            )}>
-                              <Check className={cn(
-                                "w-3.5 h-3.5",
-                                feature.highlight ? "text-accent" : "text-muted-foreground"
-                              )} />
+                            <div
+                              className={cn(
+                                "mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-[4px]",
+                                feature.highlight ? "bg-accent/20" : "bg-secondary"
+                              )}
+                            >
+                              <Check
+                                className={cn(
+                                  "h-3.5 w-3.5",
+                                  feature.highlight ? "text-accent" : "text-muted-foreground"
+                                )}
+                              />
                             </div>
-                            <span className={cn(
-                              "text-sm",
-                              feature.highlight ? "text-foreground font-medium" : "text-muted-foreground"
-                            )}>
+                            <span
+                              className={cn(
+                                "text-sm",
+                                feature.highlight
+                                  ? "text-foreground font-medium"
+                                  : "text-muted-foreground"
+                              )}
+                            >
                               {feature.text}
                             </span>
                           </li>
@@ -263,11 +276,11 @@ export default function PricingPage() {
 
             {/* Trust Indicators */}
             <AnimatedSection direction="up" delay={400}>
-              <div className="mt-12 text-center space-y-3">
-                <p className="text-sm text-muted-foreground">
+              <div className="mt-12 space-y-3 text-center">
+                <p className="text-muted-foreground text-sm">
                   14 Tage Geld-zurück-Garantie • Jederzeit kündbar
                 </p>
-                <p className="text-xs text-muted-foreground/70">
+                <p className="text-muted-foreground/70 text-xs">
                   Sichere Zahlung via Kreditkarte, PayPal oder SEPA-Lastschrift
                 </p>
               </div>
@@ -276,14 +289,16 @@ export default function PricingPage() {
         </section>
 
         {/* Comparison Table - Mobile friendly */}
-        <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10 border-t border-border`}>
+        <section
+          className={`relative ${SECTION_PADDING} ${SECTION_SPACING} border-border z-10 border-t`}
+        >
           <div className="container mx-auto max-w-4xl">
             <AnimatedSection direction="up">
-              <div className="text-center mb-12 sm:mb-16">
-                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-foreground">
+              <div className="mb-12 text-center sm:mb-16">
+                <h2 className="text-foreground mb-4 font-serif text-3xl font-bold sm:text-4xl md:text-5xl">
                   Alle Features im Vergleich
                 </h2>
-                <div className="w-16 sm:w-24 h-1 bg-accent mx-auto" />
+                <div className="bg-accent mx-auto h-1 w-16 sm:w-24" />
               </div>
             </AnimatedSection>
 
@@ -292,61 +307,61 @@ export default function PricingPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-border">
-                        <th className="text-left p-4 font-medium text-muted-foreground">Feature</th>
-                        <th className="text-center p-4 font-medium text-foreground">Starter</th>
-                        <th className="text-center p-4 font-medium text-accent">Pro</th>
-                        <th className="text-center p-4 font-medium text-foreground">Business</th>
+                      <tr className="border-border border-b">
+                        <th className="text-muted-foreground p-4 text-left font-medium">Feature</th>
+                        <th className="text-foreground p-4 text-center font-medium">Starter</th>
+                        <th className="text-accent p-4 text-center font-medium">Pro</th>
+                        <th className="text-foreground p-4 text-center font-medium">Business</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-border">
+                    <tbody className="divide-border divide-y">
                       <tr>
-                        <td className="p-4 text-muted-foreground flex items-center gap-2">
-                          <Upload className="w-4 h-4" /> Uploads/Monat
+                        <td className="text-muted-foreground flex items-center gap-2 p-4">
+                          <Upload className="h-4 w-4" /> Uploads/Monat
                         </td>
-                        <td className="p-4 text-center text-foreground">10</td>
-                        <td className="p-4 text-center text-accent font-medium">50</td>
-                        <td className="p-4 text-center text-foreground">∞</td>
+                        <td className="text-foreground p-4 text-center">10</td>
+                        <td className="text-accent p-4 text-center font-medium">50</td>
+                        <td className="text-foreground p-4 text-center">∞</td>
                       </tr>
                       <tr>
-                        <td className="p-4 text-muted-foreground flex items-center gap-2">
-                          <Clock className="w-4 h-4" /> Transkription
+                        <td className="text-muted-foreground flex items-center gap-2 p-4">
+                          <Clock className="h-4 w-4" /> Transkription
                         </td>
-                        <td className="p-4 text-center text-foreground">2h</td>
-                        <td className="p-4 text-center text-accent font-medium">10h</td>
-                        <td className="p-4 text-center text-foreground">30h</td>
+                        <td className="text-foreground p-4 text-center">2h</td>
+                        <td className="text-accent p-4 text-center font-medium">10h</td>
+                        <td className="text-foreground p-4 text-center">30h</td>
                       </tr>
                       <tr>
-                        <td className="p-4 text-muted-foreground flex items-center gap-2">
-                          <MessageSquare className="w-4 h-4" /> KI-Chat
+                        <td className="text-muted-foreground flex items-center gap-2 p-4">
+                          <MessageSquare className="h-4 w-4" /> KI-Chat
                         </td>
-                        <td className="p-4 text-center text-foreground">100</td>
-                        <td className="p-4 text-center text-accent font-medium">500</td>
-                        <td className="p-4 text-center text-foreground">∞</td>
+                        <td className="text-foreground p-4 text-center">100</td>
+                        <td className="text-accent p-4 text-center font-medium">500</td>
+                        <td className="text-foreground p-4 text-center">∞</td>
                       </tr>
                       <tr>
-                        <td className="p-4 text-muted-foreground flex items-center gap-2">
-                          <Sparkles className="w-4 h-4" /> Textformate
+                        <td className="text-muted-foreground flex items-center gap-2 p-4">
+                          <Sparkles className="h-4 w-4" /> Textformate
                         </td>
-                        <td className="p-4 text-center text-foreground">Alle</td>
-                        <td className="p-4 text-center text-accent font-medium">Alle</td>
-                        <td className="p-4 text-center text-foreground">Alle</td>
+                        <td className="text-foreground p-4 text-center">Alle</td>
+                        <td className="text-accent p-4 text-center font-medium">Alle</td>
+                        <td className="text-foreground p-4 text-center">Alle</td>
                       </tr>
                       <tr>
-                        <td className="p-4 text-muted-foreground flex items-center gap-2">
-                          <Shield className="w-4 h-4" /> Datenspeicherung
+                        <td className="text-muted-foreground flex items-center gap-2 p-4">
+                          <Shield className="h-4 w-4" /> Datenspeicherung
                         </td>
-                        <td className="p-4 text-center text-foreground">90 Tage</td>
-                        <td className="p-4 text-center text-accent font-medium">1 Jahr</td>
-                        <td className="p-4 text-center text-foreground">∞</td>
+                        <td className="text-foreground p-4 text-center">90 Tage</td>
+                        <td className="text-accent p-4 text-center font-medium">1 Jahr</td>
+                        <td className="text-foreground p-4 text-center">∞</td>
                       </tr>
                       <tr>
-                        <td className="p-4 text-muted-foreground flex items-center gap-2">
-                          <Headphones className="w-4 h-4" /> Support
+                        <td className="text-muted-foreground flex items-center gap-2 p-4">
+                          <Headphones className="h-4 w-4" /> Support
                         </td>
-                        <td className="p-4 text-center text-foreground">E-Mail</td>
-                        <td className="p-4 text-center text-accent font-medium">Priorität</td>
-                        <td className="p-4 text-center text-foreground">Persönlich</td>
+                        <td className="text-foreground p-4 text-center">E-Mail</td>
+                        <td className="text-accent p-4 text-center font-medium">Priorität</td>
+                        <td className="text-foreground p-4 text-center">Persönlich</td>
                       </tr>
                     </tbody>
                   </table>
@@ -357,14 +372,16 @@ export default function PricingPage() {
         </section>
 
         {/* FAQ Section */}
-        <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10 border-t border-border`}>
+        <section
+          className={`relative ${SECTION_PADDING} ${SECTION_SPACING} border-border z-10 border-t`}
+        >
           <div className="container mx-auto max-w-3xl">
             <AnimatedSection direction="up">
-              <div className="text-center mb-12 sm:mb-16">
-                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-foreground">
+              <div className="mb-12 text-center sm:mb-16">
+                <h2 className="text-foreground mb-4 font-serif text-3xl font-bold sm:text-4xl md:text-5xl">
                   Häufige Fragen
                 </h2>
-                <div className="w-16 sm:w-24 h-1 bg-accent mx-auto" />
+                <div className="bg-accent mx-auto h-1 w-16 sm:w-24" />
               </div>
             </AnimatedSection>
 
@@ -372,12 +389,10 @@ export default function PricingPage() {
               {FAQ_ITEMS.map((item, index) => (
                 <AnimatedSection key={item.question} direction="up" delay={index * 100}>
                   <Card variant="subtle" className="p-6 sm:p-8">
-                    <h3 className="font-serif text-lg sm:text-xl font-semibold mb-3 text-foreground">
+                    <h3 className="text-foreground mb-3 font-serif text-lg font-semibold sm:text-xl">
                       {item.question}
                     </h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {item.answer}
-                    </p>
+                    <p className="text-muted-foreground leading-relaxed">{item.answer}</p>
                   </Card>
                 </AnimatedSection>
               ))}
@@ -386,20 +401,17 @@ export default function PricingPage() {
         </section>
 
         {/* Final CTA */}
-        <section className={`relative ${SECTION_PADDING} py-16 sm:py-20 z-10`}>
+        <section className={`relative ${SECTION_PADDING} z-10 py-16 sm:py-20`}>
           <div className="container mx-auto max-w-2xl">
             <AnimatedSection direction="up">
-              <Card variant="default" className="p-8 sm:p-12 text-center">
-                <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
+              <Card variant="default" className="p-8 text-center sm:p-12">
+                <h2 className="text-foreground mb-4 font-serif text-2xl font-bold sm:text-3xl md:text-4xl">
                   Noch unsicher?
                 </h2>
-                <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+                <p className="text-muted-foreground mx-auto mb-8 max-w-md">
                   Starte mit dem Starter-Plan und upgrade jederzeit, wenn du mehr brauchst.
                 </p>
-                <Button
-                  size="lg"
-                  className="min-h-14 px-10 text-base group"
-                >
+                <Button size="lg" className="group min-h-14 px-10 text-base">
                   Mit Starter beginnen
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>

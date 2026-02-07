@@ -7,44 +7,31 @@ export const UPLOAD_CONFIG = {
   // Dateigröße-Limits
   maxFileSize: 100 * 1024 * 1024, // 100 MB (konsistent mit Client-side)
   maxFileSizeBytes: 100 * 1024 * 1024,
-  
+
   // Erlaubte Video-Formate
   allowedVideoFormats: [
-    'video/mp4',
-    'video/webm',
-    'video/quicktime', // .mov
+    "video/mp4",
+    "video/webm",
+    "video/quicktime", // .mov
   ],
-  
+
   // Erlaubte Audio-Formate
-  allowedAudioFormats: [
-    'audio/mpeg',
-    'audio/mp3',
-    'audio/wav',
-    'audio/m4a',
-    'audio/webm',
-  ],
-  
+  allowedAudioFormats: ["audio/mpeg", "audio/mp3", "audio/wav", "audio/m4a", "audio/webm"],
+
   // Erlaubte Dateiendungen
-  allowedExtensions: [
-    '.mp4',
-    '.webm',
-    '.mov',
-    '.mp3',
-    '.wav',
-    '.m4a',
-  ],
-  
+  allowedExtensions: [".mp4", ".webm", ".mov", ".mp3", ".wav", ".m4a"],
+
   // Duration-Limits (in Sekunden)
   maxUploadDuration: 180 * 60, // 3 Stunden (10800 Sekunden)
   maxUploadDurationSeconds: 180 * 60,
-  
+
   // Rate Limiting
   maxUploadsPerHour: 5,
   maxUploadsPerDay: 20,
-  
+
   // Storage-Limits (pro User, wenn Database vorhanden)
   maxStoragePerUser: 10 * 1024 * 1024 * 1024, // 10 GB
-  
+
   // Chunked Upload (für große Dateien)
   chunkSize: 5 * 1024 * 1024, // 5 MB pro Chunk
   maxChunks: 20, // Max 20 Chunks = 100 MB
@@ -57,15 +44,15 @@ export const UPLOAD_CONFIG = {
 export const RETENTION_POLICY = {
   // Uploads ohne Transkript: 7 Tage
   uploadsWithoutTranscript: 7 * 24 * 60 * 60 * 1000, // 7 Tage in Millisekunden
-  
+
   // Fertige Transkripte: 90 Tage ohne Aktivität
   transcriptsInactive: 90 * 24 * 60 * 60 * 1000, // 90 Tage in Millisekunden
-  
+
   // Gelöschte Accounts: SOFORT alle Daten löschen
   deletedAccounts: 0, // Sofort
-  
+
   // User kann jederzeit manuell löschen
-  manualDeletion: 'always',
+  manualDeletion: "always",
 } as const;
 
 /**
@@ -90,9 +77,7 @@ export function isMimeTypeAllowed(mimeType: string): boolean {
  * Helper-Funktion: Prüft ob Dateiendung erlaubt ist
  */
 export function isExtensionAllowed(filename: string): boolean {
-  const extension = filename
-    .toLowerCase()
-    .substring(filename.lastIndexOf('.'));
+  const extension = filename.toLowerCase().substring(filename.lastIndexOf("."));
   return (UPLOAD_CONFIG.allowedExtensions as readonly string[]).includes(extension);
 }
 
@@ -122,7 +107,7 @@ export function formatDuration(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const secs = seconds % 60;
-  
+
   if (hours > 0) {
     return `${hours}h ${minutes}m ${secs}s`;
   }
@@ -131,4 +116,3 @@ export function formatDuration(seconds: number): string {
   }
   return `${secs}s`;
 }
-

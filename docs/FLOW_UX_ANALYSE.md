@@ -11,6 +11,7 @@ Dein aktueller Flow hat **kritische Brüche** die User verwirren und Conversions
 ### 1. **Homepage: Unklare User Journey**
 
 #### Problem:
+
 ```
 Hero Section → 2 CTAs (Text Generator vs Chat)
   ↓
@@ -22,6 +23,7 @@ ABER: User kann direkt zu Text Generator springen ohne Upload!
 ```
 
 **Was fehlt:**
+
 - Keine klare Hierarchie der CTAs
 - Workflow Steps sind nicht klickbar/verlinkt
 - Keine visuelle Verbindung zwischen Steps
@@ -30,6 +32,7 @@ ABER: User kann direkt zu Text Generator springen ohne Upload!
 **Impact:** 70% der User wissen nicht wo sie starten sollen
 
 **Fix:**
+
 ```tsx
 // 1. Primary CTA klar definieren
 // 2. Workflow Steps klickbar machen
@@ -42,6 +45,7 @@ ABER: User kann direkt zu Text Generator springen ohne Upload!
 ### 2. **Text Generator: Falsche Flow-Reihenfolge**
 
 #### Problem:
+
 ```
 Text Generator Page lädt
   ↓
@@ -55,6 +59,7 @@ Output (rechts)
 ```
 
 **Was falsch ist:**
+
 - Format-Auswahl kommt VOR Upload/Transkript
 - User kann Format wählen ohne Transkript zu haben
 - Mock-Transkript wird verwendet - User weiß nicht ob das "echt" ist
@@ -64,6 +69,7 @@ Output (rechts)
 **Impact:** User ist verwirrt über den Ablauf
 
 **Fix:**
+
 ```tsx
 // Korrekte Reihenfolge:
 // 1. Upload (wenn kein Transkript vorhanden)
@@ -78,6 +84,7 @@ Output (rechts)
 ### 3. **Upload → Text Generator: Fehlende Verbindung**
 
 #### Problem:
+
 ```
 User lädt Datei hoch
   ↓
@@ -91,6 +98,7 @@ Mock-Transkript wird angezeigt (nicht das hochgeladene!)
 ```
 
 **Was fehlt:**
+
 - Kein automatischer Redirect nach Upload
 - Keine Verbindung zwischen Upload und Transkript
 - Upload-Status wird nicht gespeichert
@@ -99,6 +107,7 @@ Mock-Transkript wird angezeigt (nicht das hochgeladene!)
 **Impact:** User denkt Upload hat nicht funktioniert
 
 **Fix:**
+
 ```tsx
 // Nach erfolgreichem Upload:
 // 1. Toast: "Datei wird verarbeitet..."
@@ -112,6 +121,7 @@ Mock-Transkript wird angezeigt (nicht das hochgeladene!)
 ### 4. **Chat: Isoliert vom Rest**
 
 #### Problem:
+
 ```
 Chat Page
   ↓
@@ -125,6 +135,7 @@ Keine Erklärung was der Chat macht
 ```
 
 **Was fehlt:**
+
 - Keine Erklärung: "Was kann ich hier machen?"
 - Keine Verbindung zu hochgeladenen Dateien
 - Keine Möglichkeit Transkripte zu laden
@@ -133,6 +144,7 @@ Keine Erklärung was der Chat macht
 **Impact:** User weiß nicht wofür der Chat ist
 
 **Fix:**
+
 ```tsx
 // Chat Header erweitern:
 // 1. Erklärung: "Chatte mit deinen Transkripten"
@@ -146,6 +158,7 @@ Keine Erklärung was der Chat macht
 ### 5. **Navigation: Keine Breadcrumbs/Hierarchie**
 
 #### Problem:
+
 ```
 Homepage
   ↓
@@ -157,6 +170,7 @@ User weiß nicht wo er ist
 ```
 
 **Was fehlt:**
+
 - Keine Breadcrumbs
 - Keine "Zurück"-Logik
 - Keine visuelle Hierarchie
@@ -165,6 +179,7 @@ User weiß nicht wo er ist
 **Impact:** User verliert sich im Flow
 
 **Fix:**
+
 ```tsx
 // Breadcrumbs implementieren:
 // Home > Text Generator > Format: Instagram
@@ -178,11 +193,13 @@ User weiß nicht wo er ist
 ### 6. **Homepage: Zu viele Sections**
 
 #### Problem:
+
 ```
 Hero → Stats → Workflow → Features → Problem → Solution → Demo Video → Testimonials → Benefits → Demo → Email Signup → Footer
 ```
 
 **Was falsch ist:**
+
 - 10+ Sections auf einer Seite
 - User muss zu viel scrollen
 - Keine klare Struktur
@@ -191,6 +208,7 @@ Hero → Stats → Workflow → Features → Problem → Solution → Demo Video
 **Impact:** User scrollt durch ohne zu handeln
 
 **Fix:**
+
 ```tsx
 // Reduziere auf 6 Sections:
 // 1. Hero (mit klarem CTA)
@@ -206,6 +224,7 @@ Hero → Stats → Workflow → Features → Problem → Solution → Demo Video
 ### 7. **Text Generator: Fehlende Progress-Indikatoren**
 
 #### Problem:
+
 ```
 User wählt Format
   ↓
@@ -215,6 +234,7 @@ Text erscheint
 ```
 
 **Was fehlt:**
+
 - Keine Progress-Bar
 - Keine Schätzungen ("Noch 30 Sekunden...")
 - Keine Zwischen-Updates
@@ -223,6 +243,7 @@ Text erscheint
 **Impact:** User weiß nicht wie lange es dauert
 
 **Fix:**
+
 ```tsx
 // Progress-Indikatoren:
 // - Progress-Bar mit %
@@ -236,6 +257,7 @@ Text erscheint
 ### 8. **Workflow Steps: Nicht interaktiv**
 
 #### Problem:
+
 ```
 Workflow Steps zeigen:
 1. Upload
@@ -247,6 +269,7 @@ Aber: Steps sind nicht klickbar!
 ```
 
 **Was fehlt:**
+
 - Steps sind nur visuell, nicht funktional
 - Keine Links zu den entsprechenden Seiten
 - Keine Progress-Anzeige ("Du bist bei Schritt 2")
@@ -255,6 +278,7 @@ Aber: Steps sind nicht klickbar!
 **Impact:** User versteht den Flow nicht
 
 **Fix:**
+
 ```tsx
 // Interaktive Steps:
 // - Klickbare Steps mit Links
@@ -268,6 +292,7 @@ Aber: Steps sind nicht klickbar!
 ### 9. **Format-Auswahl: Unklar was passiert**
 
 #### Problem:
+
 ```
 User sieht Format-Buttons
   ↓
@@ -279,6 +304,7 @@ Text erscheint
 ```
 
 **Was fehlt:**
+
 - Keine Preview was generiert wird
 - Keine Erklärung der Formate
 - Keine Beispiele
@@ -287,6 +313,7 @@ Text erscheint
 **Impact:** User weiß nicht was er bekommt
 
 **Fix:**
+
 ```tsx
 // Format-Auswahl verbessern:
 // - Format-Icons größer
@@ -300,6 +327,7 @@ Text erscheint
 ### 10. **Output: Fehlende Next Steps**
 
 #### Problem:
+
 ```
 Text wird generiert
   ↓
@@ -309,6 +337,7 @@ Copy Button
 ```
 
 **Was fehlt:**
+
 - Keine "Weiter" Optionen
 - Keine "Anderes Format generieren" Button
 - Keine "Export als PDF" Option
@@ -317,6 +346,7 @@ Copy Button
 **Impact:** User weiß nicht was als nächstes kommt
 
 **Fix:**
+
 ```tsx
 // Output-Actions:
 // - Copy (bereits da)
@@ -333,6 +363,7 @@ Copy Button
 ### 11. **Empty States: Zu generisch**
 
 #### Problem:
+
 ```
 Text Generator: "Wähle ein Format aus"
 Chat: "Willkommen bei REX!"
@@ -340,6 +371,7 @@ Upload: "Datei hier ablegen"
 ```
 
 **Was fehlt:**
+
 - Keine konkreten Handlungsanweisungen
 - Keine Beispiele
 - Keine "Quick Start" Optionen
@@ -348,6 +380,7 @@ Upload: "Datei hier ablegen"
 **Impact:** User weiß nicht was zu tun ist
 
 **Fix:**
+
 ```tsx
 // Bessere Empty States:
 // - Konkrete Anweisungen
@@ -361,6 +394,7 @@ Upload: "Datei hier ablegen"
 ### 12. **Error States: Zu generisch**
 
 #### Problem:
+
 ```
 "Fehler bei der Generierung"
 "Upload fehlgeschlagen"
@@ -368,6 +402,7 @@ Upload: "Datei hier ablegen"
 ```
 
 **Was fehlt:**
+
 - Keine spezifischen Fehlermeldungen
 - Keine Retry-Buttons
 - Keine Hilfe-Links
@@ -376,6 +411,7 @@ Upload: "Datei hier ablegen"
 **Impact:** User weiß nicht was schiefgelaufen ist
 
 **Fix:**
+
 ```tsx
 // Bessere Error States:
 // - Spezifische Fehlermeldungen
@@ -389,6 +425,7 @@ Upload: "Datei hier ablegen"
 ### 13. **Loading States: Zu generisch**
 
 #### Problem:
+
 ```
 "Text wird generiert..."
 "Wird hochgeladen..."
@@ -396,6 +433,7 @@ Upload: "Datei hier ablegen"
 ```
 
 **Was fehlt:**
+
 - Keine Progress-Indikatoren
 - Keine ETA
 - Keine Zwischen-Updates
@@ -404,6 +442,7 @@ Upload: "Datei hier ablegen"
 **Impact:** User weiß nicht wie lange es dauert
 
 **Fix:**
+
 ```tsx
 // Bessere Loading States:
 // - Progress-Bar
@@ -417,12 +456,14 @@ Upload: "Datei hier ablegen"
 ### 14. **Success States: Zu subtil**
 
 #### Problem:
+
 ```
 Upload: "✅ Erfolgreich hochgeladen"
 Copy: "Kopiert!" (für 2 Sekunden)
 ```
 
 **Was fehlt:**
+
 - Keine klaren Success-Messages
 - Keine Next Steps
 - Keine Celebration
@@ -431,6 +472,7 @@ Copy: "Kopiert!" (für 2 Sekunden)
 **Impact:** User weiß nicht ob es geklappt hat
 
 **Fix:**
+
 ```tsx
 // Bessere Success States:
 // - Klare Success-Messages
@@ -446,11 +488,13 @@ Copy: "Kopiert!" (für 2 Sekunden)
 ### 15. **Fehlende visuelle Verbindungen**
 
 #### Problem:
+
 - Workflow Steps haben Pfeile, aber keine funktionale Verbindung
 - Keine visuelle Verbindung zwischen Upload und Text Generator
 - Keine visuelle Verbindung zwischen Chat und Text Generator
 
 **Fix:**
+
 ```tsx
 // Visuelle Verbindungen:
 // - Animierte Pfeile zwischen Steps
@@ -464,11 +508,13 @@ Copy: "Kopiert!" (für 2 Sekunden)
 ### 16. **Fehlende Micro-Interactions**
 
 #### Problem:
+
 - Buttons haben keine Feedback-Animationen
 - Keine Hover-States bei wichtigen Elementen
 - Keine Transitions zwischen States
 
 **Fix:**
+
 ```tsx
 // Micro-Interactions:
 // - Button-Hover-Animationen
@@ -482,12 +528,14 @@ Copy: "Kopiert!" (für 2 Sekunden)
 ### 17. **Fehlende Onboarding**
 
 #### Problem:
+
 - Keine Tour für neue User
 - Keine Tooltips
 - Keine Erklärungen
 - Keine "Was ist das?" Hover-Infos
 
 **Fix:**
+
 ```tsx
 // Onboarding:
 // - Welcome-Tour (optional)
@@ -503,11 +551,13 @@ Copy: "Kopiert!" (für 2 Sekunden)
 ### 18. **Fehlende State-Persistenz**
 
 #### Problem:
+
 - Upload-Status geht verloren bei Refresh
 - Chat-Historie geht verloren bei Refresh
 - Format-Auswahl geht verloren bei Navigation
 
 **Fix:**
+
 ```tsx
 // State-Persistenz:
 // - LocalStorage für Upload-Status
@@ -521,11 +571,13 @@ Copy: "Kopiert!" (für 2 Sekunden)
 ### 19. **Fehlende Deep-Links**
 
 #### Problem:
+
 - Keine URLs für spezifische States
 - Keine Share-Links
 - Keine Bookmark-fähige URLs
 
 **Fix:**
+
 ```tsx
 // Deep-Links:
 // - /text-generator?format=instagram
@@ -538,11 +590,13 @@ Copy: "Kopiert!" (für 2 Sekunden)
 ### 20. **Fehlende Analytics-Tracking**
 
 #### Problem:
+
 - Keine Tracking von User-Aktionen
 - Keine Flow-Analyse möglich
 - Keine Conversion-Tracking
 
 **Fix:**
+
 ```tsx
 // Analytics:
 // - Track CTA-Clicks
@@ -556,6 +610,7 @@ Copy: "Kopiert!" (für 2 Sekunden)
 ## 📋 PRIORITÄTEN-ROADMAP
 
 ### Week 1: Kritische Flow-Fixes
+
 - [ ] **Homepage Flow klären** - Primary CTA definieren
 - [ ] **Text Generator Reihenfolge** - Upload → Transkript → Format
 - [ ] **Upload → Text Generator Verbindung** - Auto-Redirect
@@ -563,6 +618,7 @@ Copy: "Kopiert!" (für 2 Sekunden)
 - [ ] **Breadcrumbs** - Navigation-Hierarchie
 
 ### Week 2: Wichtige Flow-Verbesserungen
+
 - [ ] **Homepage Sections reduzieren** - Von 10+ auf 6
 - [ ] **Progress-Indikatoren** - In allen Loading-States
 - [ ] **Workflow Steps interaktiv** - Klickbare Steps
@@ -570,6 +626,7 @@ Copy: "Kopiert!" (für 2 Sekunden)
 - [ ] **Output Next Steps** - Weitere Aktionen
 
 ### Week 3: Flow-Polish
+
 - [ ] **Empty States verbessern** - Konkrete Anweisungen
 - [ ] **Error States verbessern** - Spezifische Messages
 - [ ] **Success States verbessern** - Celebration & Next Steps
@@ -577,6 +634,7 @@ Copy: "Kopiert!" (für 2 Sekunden)
 - [ ] **Micro-Interactions** - Feedback-Animationen
 
 ### Week 4: Advanced Features
+
 - [ ] **State-Persistenz** - LocalStorage & URL-Params
 - [ ] **Deep-Links** - Shareable URLs
 - [ ] **Onboarding** - Tour & Tooltips
@@ -589,13 +647,15 @@ Copy: "Kopiert!" (für 2 Sekunden)
 ### Flow 1: Homepage → Text Generator
 
 **Aktuell:**
+
 ```
 Hero → 2 CTAs → User klickt "Text Generator" → Text Generator Page
 ```
 
 **Verbessert:**
+
 ```
-Hero → 1 Primary CTA "Jetzt starten" → 
+Hero → 1 Primary CTA "Jetzt starten" →
   → Upload Page (wenn kein Upload) ODER
   → Text Generator (wenn Upload vorhanden)
 ```
@@ -603,13 +663,15 @@ Hero → 1 Primary CTA "Jetzt starten" →
 ### Flow 2: Upload → Text Generator
 
 **Aktuell:**
+
 ```
 Upload → Success → Nichts passiert
 ```
 
 **Verbessert:**
+
 ```
-Upload → "Datei wird verarbeitet..." → 
+Upload → "Datei wird verarbeitet..." →
   → Auto-Redirect zu Text Generator →
   → Loading: "Transkription läuft..." →
   → Transkript anzeigen →
@@ -619,11 +681,13 @@ Upload → "Datei wird verarbeitet..." →
 ### Flow 3: Text Generator → Chat
 
 **Aktuell:**
+
 ```
 Text Generator → Button "Zum Chat" → Chat (ohne Kontext)
 ```
 
 **Verbessert:**
+
 ```
 Text Generator → Button "Mit KI chatten" →
   → Chat öffnet mit Transkript-Kontext →
@@ -633,13 +697,15 @@ Text Generator → Button "Mit KI chatten" →
 ### Flow 4: Format-Auswahl → Output
 
 **Aktuell:**
+
 ```
 Format klicken → Loading → Output
 ```
 
 **Verbessert:**
+
 ```
-Format klicken → 
+Format klicken →
   → Preview zeigen →
   → "Generieren" Button →
   → Progress-Bar mit ETA →
@@ -651,6 +717,7 @@ Format klicken →
 ## 📊 ERWARTETE VERBESSERUNGEN
 
 Nach diesen Flow-Fixes:
+
 - ✅ **+40% Conversion Rate** - Klarer Flow
 - ✅ **-60% Bounce Rate** - User wissen was zu tun ist
 - ✅ **+50% Engagement** - Interaktive Steps
@@ -669,4 +736,3 @@ Nach diesen Flow-Fixes:
 ---
 
 **Fazit:** Dein Flow hat Potenzial, aber die Brüche verwirren User. Fix die kritischen Flow-Probleme zuerst, dann die wichtigen, dann Polish. Viel Erfolg! 🚀
-

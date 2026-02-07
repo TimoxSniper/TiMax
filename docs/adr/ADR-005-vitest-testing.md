@@ -6,11 +6,13 @@ Status: Akzeptiert
 ## Kontext
 
 Wir brauchten ein Testing-Framework für:
+
 - Unit Tests
 - Integration Tests
 - Component Tests
 
 Optionen:
+
 - Jest (Industriestandard)
 - Vitest (Modern, schnell)
 - Playwright (E2E)
@@ -41,23 +43,25 @@ Wir verwenden **Vitest** für Unit/Integration Tests und planen Playwright für 
 
 ## Vergleich
 
-| Feature | Vitest | Jest |
-|---------|--------|------|
-| Geschwindigkeit | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
-| ESM Support | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
-| Ecosystem | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| TypeScript | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| Maturity | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Feature         | Vitest     | Jest       |
+| --------------- | ---------- | ---------- |
+| Geschwindigkeit | ⭐⭐⭐⭐⭐ | ⭐⭐⭐     |
+| ESM Support     | ⭐⭐⭐⭐⭐ | ⭐⭐⭐     |
+| Ecosystem       | ⭐⭐⭐⭐   | ⭐⭐⭐⭐⭐ |
+| TypeScript      | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐   |
+| Maturity        | ⭐⭐⭐⭐   | ⭐⭐⭐⭐⭐ |
 
 ## Konsequenzen
 
 ### Positiv
+
 - Sehr schnelle Feedback-Loops
 - Moderne Tooling
 - Gute Developer Experience
 - UI Mode für Debugging
 
 ### Negativ
+
 - Team muss Vitest lernen (ähnlich zu Jest)
 - Weniger Stack Overflow Antworten
 
@@ -65,16 +69,16 @@ Wir verwenden **Vitest** für Unit/Integration Tests und planen Playwright für 
 
 ```typescript
 // vitest.config.ts
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
   test: {
-    environment: 'jsdom',
+    environment: "jsdom",
     globals: true,
     coverage: {
-      reporter: ['text', 'json', 'html'],
+      reporter: ["text", "json", "html"],
     },
   },
 });
@@ -82,12 +86,12 @@ export default defineConfig({
 
 ```typescript
 // Beispiel Test
-import { describe, it, expect } from 'vitest';
-import { validateEmail } from './validation';
+import { describe, it, expect } from "vitest";
+import { validateEmail } from "./validation";
 
-describe('Validation', () => {
-  it('should validate correct email', () => {
-    expect(validateEmail('test@example.com')).toBe(true);
+describe("Validation", () => {
+  it("should validate correct email", () => {
+    expect(validateEmail("test@example.com")).toBe(true);
   });
 });
 ```

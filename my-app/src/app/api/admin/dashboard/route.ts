@@ -10,10 +10,7 @@ export async function GET() {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     // Admin-Check (Einmalig für alle Daten)
@@ -27,23 +24,18 @@ export async function GET() {
     const supabase = createAdminClient();
 
     // Alle Daten parallel abrufen
-    const [
-      statsData,
-      recentChatsData,
-      recentUploadsData
-    ] = await Promise.all([
+    const [statsData, recentChatsData, recentUploadsData] = await Promise.all([
       fetchStats(supabase),
       fetchRecentChats(supabase),
-      fetchRecentUploads(supabase)
+      fetchRecentUploads(supabase),
     ]);
 
     return NextResponse.json({
       success: true,
       stats: statsData,
       recentChats: recentChatsData,
-      recentUploads: recentUploadsData
+      recentUploads: recentUploadsData,
     });
-
   } catch (error) {
     logger.error("[Admin Dashboard API] Gesamtfehler:", error);
     Sentry.captureException(error, {
@@ -59,34 +51,41 @@ export async function GET() {
 
 async function fetchStats(supabase: any) {
   // Optimierte Stats-Abfrage
-      const [
-        chatsCount,
-        messagesCount,
-        uploadsCount,
-        statusCounts,
-        totalUsersCount
-      ] = await Promise.all([
-        supabase.from("chats").select("*", { count: "exact", head: true }),
-        supabase.from("messages").select("*", { count: "exact", head: true }),
-        supabase.from("uploads").select("*", { count: "exact", head: true }),
-        // Status counts in einem Rutsch (geht leider nicht direkt mit count: head, 
-        // daher verwenden wir hier die 5 parallelen Queries oder eine gruppierte)
-        // Da Supabase keine direkte Group-By Count API hat, bleiben wir bei parallel, 
-        // aber innerhalb des Promise.all von fetchStats
-        Promise.all([
-          supabase.from("uploads").select("*", { count: "exact", head: true }).eq("status", "completed"),
-          supabase.from("uploads").select("*", { count: "exact", head: true }).eq("status", "pending"),
-          supabase.from("uploads").select("*", { count: "exact", head: true }).eq("status", "processing"),
-          supabase.from("uploads").select("*", { count: "exact", head: true }).eq("status", "failed"),
-          supabase.from("uploads").select("*", { count: "exact", head: true }).eq("status", "cancelled"),
-        ]),
-        (await clerkClient()).users.getCount(),
-      ]);
-  
-      const [completed, pending, processing, failed, cancelled] = statusCounts;
-  
-      return {
-        totalUsers: totalUsersCount,
+  const [chatsCount, messagesCount, uploadsCount, statusCounts, totalUsersCount] =
+    await Promise.all([
+      supabase.from("chats").select("*", { count: "exact", head: true }),
+      supabase.from("messages").select("*", { count: "exact", head: true }),
+      supabase.from("uploads").select("*", { count: "exact", head: true }),
+      // Status counts in einem Rutsch (geht leider nicht direkt mit count: head,
+      // daher verwenden wir hier die 5 parallelen Queries oder eine gruppierte)
+      // Da Supabase keine direkte Group-By Count API hat, bleiben wir bei parallel,
+      // aber innerhalb des Promise.all von fetchStats
+      Promise.all([
+        supabase
+          .from("uploads")
+          .select("*", { count: "exact", head: true })
+          .eq("status", "completed"),
+        supabase
+          .from("uploads")
+          .select("*", { count: "exact", head: true })
+          .eq("status", "pending"),
+        supabase
+          .from("uploads")
+          .select("*", { count: "exact", head: true })
+          .eq("status", "processing"),
+        supabase.from("uploads").select("*", { count: "exact", head: true }).eq("status", "failed"),
+        supabase
+          .from("uploads")
+          .select("*", { count: "exact", head: true })
+          .eq("status", "cancelled"),
+      ]),
+      (await clerkClient()).users.getCount(),
+    ]);
+
+  const [completed, pending, processing, failed, cancelled] = statusCounts;
+
+  return {
+    totalUsers: totalUsersCount,
     totalChats: chatsCount.count || 0,
     totalMessages: messagesCount.count || 0,
     totalUploads: uploadsCount.count || 0,
@@ -97,7 +96,7 @@ async function fetchStats(supabase: any) {
       failed: failed.count || 0,
       cancelled: cancelled.count || 0,
     },
-    uploadsByType: {}
+    uploadsByType: {},
   };
 }
 
@@ -123,7 +122,7 @@ async function fetchRecentChats(supabase: any) {
 
   return chats.map((c: any) => ({
     ...c,
-    messageCount: countMap.get(c.id) || 0
+    messageCount: countMap.get(c.id) || 0,
   }));
 }
 

@@ -1,6 +1,6 @@
 /**
  * Supabase Client Exports
- * 
+ *
  * Zentrale Export-Datei für alle Supabase-Clients und Typen
  */
 

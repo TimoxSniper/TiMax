@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { UPLOAD_CONFIG, isFileSizeAllowed, isMimeTypeAllowed, isExtensionAllowed } from "./upload-config";
+import {
+  UPLOAD_CONFIG,
+  isFileSizeAllowed,
+  isMimeTypeAllowed,
+  isExtensionAllowed,
+} from "./upload-config";
 
 /**
  * Schema für Waitlist/Email Signup Validation
@@ -10,11 +15,7 @@ export const waitlistSchema = z.object({
     .min(1, "E-Mail-Adresse ist erforderlich")
     .email("Ungültige E-Mail-Adresse")
     .max(255, "E-Mail-Adresse ist zu lang"),
-  source: z
-    .string()
-    .max(50)
-    .optional()
-    .default("homepage"),
+  source: z.string().max(50).optional().default("homepage"),
 });
 
 /**
@@ -24,25 +25,15 @@ export const waitlistSchema = z.object({
 export const uploadSchema = z.object({
   file: z
     .instanceof(File)
-    .refine(
-      (file) => isFileSizeAllowed(file.size),
-      {
-        message: `Datei ist zu groß. Maximum: ${UPLOAD_CONFIG.maxFileSize / 1024 / 1024}MB`,
-      }
-    )
-    .refine(
-      (file) => isMimeTypeAllowed(file.type),
-      {
-        message:
-          "Ungültiger Dateityp. Erlaubt: MP4, WebM, MP3, WAV, M4A",
-      }
-    )
-    .refine(
-      (file) => isExtensionAllowed(file.name),
-      {
-        message: "Ungültige Dateiendung",
-      }
-    )
+    .refine((file) => isFileSizeAllowed(file.size), {
+      message: `Datei ist zu groß. Maximum: ${UPLOAD_CONFIG.maxFileSize / 1024 / 1024}MB`,
+    })
+    .refine((file) => isMimeTypeAllowed(file.type), {
+      message: "Ungültiger Dateityp. Erlaubt: MP4, WebM, MP3, WAV, M4A",
+    })
+    .refine((file) => isExtensionAllowed(file.name), {
+      message: "Ungültige Dateiendung",
+    })
     .refine(
       (file) => {
         // Validiere Dateiname (keine gefährlichen Zeichen)
@@ -67,19 +58,14 @@ export const chatSchema = z.object({
     .refine(
       (msg) => {
         // Prüfe auf potenziell gefährliche Inhalte
-        const dangerousPatterns = [
-          /<script/i,
-          /javascript:/i,
-          /on\w+\s*=/i,
-          /data:text\/html/i,
-        ];
+        const dangerousPatterns = [/<script/i, /javascript:/i, /on\w+\s*=/i, /data:text\/html/i];
         return !dangerousPatterns.some((pattern) => pattern.test(msg));
       },
       {
         message: "Nachricht enthält unerlaubte Inhalte",
       }
     ),
-  chat_id: z.string().nullish(),  // nullish = undefined ODER null erlaubt
+  chat_id: z.string().nullish(), // nullish = undefined ODER null erlaubt
   sessionId: z
     .string()
     .min(1, "sessionId ist erforderlich")
@@ -89,19 +75,22 @@ export const chatSchema = z.object({
     .array(
       z.object({
         role: z.enum(["user", "assistant", "system"]),
-        content: z.string().max(10000).refine(
-          (content) => {
-            // SICHERHEIT: Auch Chat-History auf gefährliche Inhalte prüfen
-            const dangerousPatterns = [
-              /<script/i,
-              /javascript:/i,
-              /on\w+\s*=/i,
-              /data:text\/html/i,
-            ];
-            return !dangerousPatterns.some((pattern) => pattern.test(content));
-          },
-          { message: "Chat-Historie enthält unerlaubte Inhalte" }
-        ),
+        content: z
+          .string()
+          .max(10000)
+          .refine(
+            (content) => {
+              // SICHERHEIT: Auch Chat-History auf gefährliche Inhalte prüfen
+              const dangerousPatterns = [
+                /<script/i,
+                /javascript:/i,
+                /on\w+\s*=/i,
+                /data:text\/html/i,
+              ];
+              return !dangerousPatterns.some((pattern) => pattern.test(content));
+            },
+            { message: "Chat-Historie enthält unerlaubte Inhalte" }
+          ),
       })
     )
     .max(100, "Chat-Historie ist zu lang")
@@ -136,51 +125,53 @@ export function sanitizeString(input: string): string {
  * Wird verwendet bevor AI Output an Frontend gesendet oder angezeigt wird
  */
 export function sanitizeAIOutput(input: string): string {
-  if (!input || typeof input !== 'string') {
-    return '';
+  if (!input || typeof input !== "string") {
+    return "";
   }
 
-  return input
-    // HTML Tags entfernen (außer erlaubte)
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
-    .replace(/<iframe\b[^>]*>/gi, '')
-    .replace(/<object\b[^>]*>/gi, '')
-    .replace(/<embed\b[^>]*>/gi, '')
-    .replace(/<form\b[^>]*>/gi, '')
-    .replace(/<input\b[^>]*>/gi, '')
-    .replace(/<button\b[^>]*>/gi, '')
-    // JavaScript-Protokoll entfernen
-    .replace(/javascript:/gi, '')
-    .replace(/vbscript:/gi, '')
-    .replace(/data:text\/html/gi, '')
-    // Event-Handler entfernen
-    .replace(/on\w+\s*=/gi, '')
-    // Base64-encoded scripts erkennen und entfernen
-    .replace(/data:.*?base64[^"'\s]*/gi, '')
-    // Potenziell gefährliche URLs
-    .replace(/href\s*=\s*["']?javascript:/gi, 'href="#"')
-    // SVG mit Script entfernen
-    .replace(/<svg[^>]*>[\s\S]*?<\/svg>/gi, (match) => {
-      if (/<script|on\w+=/i.test(match)) {
-        return '[SVG entfernt]';
-      }
-      return match;
-    })
-    // Null-Bytes entfernen (können Filter umgehen)
-    .replace(/\0/g, '')
-    // Unicode-Tricks entfernen (Zero-Width Characters)
-    .replace(/[\u200B-\u200D\uFEFF\u00AD]/g, '')
-    // Right-to-Left Override entfernen
-    .replace(/[\u202A-\u202E\u2066-\u2069]/g, '')
-    .trim();
+  return (
+    input
+      // HTML Tags entfernen (außer erlaubte)
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+      .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
+      .replace(/<iframe\b[^>]*>/gi, "")
+      .replace(/<object\b[^>]*>/gi, "")
+      .replace(/<embed\b[^>]*>/gi, "")
+      .replace(/<form\b[^>]*>/gi, "")
+      .replace(/<input\b[^>]*>/gi, "")
+      .replace(/<button\b[^>]*>/gi, "")
+      // JavaScript-Protokoll entfernen
+      .replace(/javascript:/gi, "")
+      .replace(/vbscript:/gi, "")
+      .replace(/data:text\/html/gi, "")
+      // Event-Handler entfernen
+      .replace(/on\w+\s*=/gi, "")
+      // Base64-encoded scripts erkennen und entfernen
+      .replace(/data:.*?base64[^"'\s]*/gi, "")
+      // Potenziell gefährliche URLs
+      .replace(/href\s*=\s*["']?javascript:/gi, 'href="#"')
+      // SVG mit Script entfernen
+      .replace(/<svg[^>]*>[\s\S]*?<\/svg>/gi, (match) => {
+        if (/<script|on\w+=/i.test(match)) {
+          return "[SVG entfernt]";
+        }
+        return match;
+      })
+      // Null-Bytes entfernen (können Filter umgehen)
+      .replace(/\0/g, "")
+      // Unicode-Tricks entfernen (Zero-Width Characters)
+      .replace(/[\u200B-\u200D\uFEFF\u00AD]/g, "")
+      // Right-to-Left Override entfernen
+      .replace(/[\u202A-\u202E\u2066-\u2069]/g, "")
+      .trim()
+  );
 }
 
 /**
  * Prüft ob ein String potenziell gefährliche Inhalte enthält
  */
 export function containsDangerousContent(input: string): boolean {
-  if (!input || typeof input !== 'string') {
+  if (!input || typeof input !== "string") {
     return false;
   }
 
@@ -236,12 +227,7 @@ export async function validateFileType(file: File): Promise<boolean> {
     const bytes = new Uint8Array(buffer.slice(0, 12));
 
     // MP4 Magic Bytes: 00 00 00 ?? 66 74 79 70
-    if (
-      bytes[4] === 0x66 &&
-      bytes[5] === 0x74 &&
-      bytes[6] === 0x79 &&
-      bytes[7] === 0x70
-    ) {
+    if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
       return file.type.startsWith("video/");
     }
 
@@ -254,12 +240,7 @@ export async function validateFileType(file: File): Promise<boolean> {
     }
 
     // WAV Magic Bytes: 52 49 46 46
-    if (
-      bytes[0] === 0x52 &&
-      bytes[1] === 0x49 &&
-      bytes[2] === 0x46 &&
-      bytes[3] === 0x46
-    ) {
+    if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) {
       return file.type.startsWith("audio/");
     }
 
@@ -270,4 +251,3 @@ export async function validateFileType(file: File): Promise<boolean> {
     return true;
   }
 }
-

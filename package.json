@@ -2,5 +2,9 @@
   "dependencies": {
     "@clerk/localizations": "^3.35.3",
     "framer-motion": "^12.33.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2"
   }
 }

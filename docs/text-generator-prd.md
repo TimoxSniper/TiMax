@@ -3,11 +3,13 @@
 **Status: Ready for Implementation**
 
 ## Objective
+
 Content-Creator sparen Zeit, indem sie aus einem Beispiel-Transkript verschiedene Textformate (Social-Media-Posts, Blog-Absätze, Captions) per Template-Generierung erstellen und sofort kopieren können, ohne manuell umformulieren zu müssen.
 
 ## Scope
 
 ### In-Scope
+
 - UI für Transkript-Anzeige mit Beispiel-Daten
 - Format-Auswahl (mindestens 3-4 Optionen: Instagram Post, Twitter Thread, Blog-Absatz, Caption)
 - Template-basierte Textgenerierung (clientseitig, ohne API)
@@ -16,6 +18,7 @@ Content-Creator sparen Zeit, indem sie aus einem Beispiel-Transkript verschieden
 - Responsive Design mit shadcn/ui Komponenten
 
 ### Out-of-Scope
+
 - Echte KI-Generierung (nur Templates)
 - Eigene Transkripte hochladen
 - Persistenz/Speicherung generierter Texte
@@ -36,12 +39,14 @@ Content-Creator sparen Zeit, indem sie aus einem Beispiel-Transkript verschieden
 ## Acceptance Criteria
 
 ### AC1: Transkript-Anzeige
+
 - **Given** der Nutzer öffnet die Text-Generator-Seite
 - **When** die Seite geladen ist
 - **Then** wird ein Beispiel-Transkript angezeigt (mindestens 200 Wörter)
 - **And** das Transkript ist lesbar strukturiert (Absätze, Zeilenumbrüche)
 
 ### AC2: Format-Auswahl
+
 - **Given** ein Transkript ist sichtbar
 - **When** der Nutzer ein Format auswählt (z. B. "Instagram Post")
 - **Then** wird der generierte Text sofort angezeigt (< 100ms)
@@ -51,18 +56,21 @@ Content-Creator sparen Zeit, indem sie aus einem Beispiel-Transkript verschieden
 - **And** Caption ist fokussiert und enthält einen Call-to-Action
 
 ### AC3: Format-Wechsel
+
 - **Given** ein Format wurde ausgewählt und Text generiert
 - **When** der Nutzer ein anderes Format wählt
 - **Then** wird der neue Text sofort angezeigt
 - **And** der vorherige Text wird ersetzt
 
 ### AC4: Copy-to-Clipboard
+
 - **Given** ein Text wurde generiert
 - **When** der Nutzer auf "Kopieren" klickt
 - **Then** wird der Text in die Zwischenablage kopiert
 - **And** eine Erfolgsmeldung wird angezeigt
 
 ### AC5: Responsive Design
+
 - **Given** die Seite wird auf Mobile/Tablet/Desktop geöffnet
 - **Then** alle Elemente sind lesbar und bedienbar
 - **And** die Layout-Struktur passt sich an die Bildschirmgröße an
@@ -269,4 +277,3 @@ Die UI für den Text Generator wurde vollständig implementiert mit shadcn/ui Ko
     - TypeScript ohne Fehler
     - Build erfolgreich (`npm run build`)
     - Manueller End-to-End-Test: Kompletter Workflow
-

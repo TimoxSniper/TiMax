@@ -22,7 +22,7 @@ By providing an object you can configure each extension separately.
 }]
 ```
 
- For example `{ "js": "always", "json": "never" }` would always enforce the use of the `.js` extension but never allow the use of the `.json` extension.
+For example `{ "js": "always", "json": "never" }` would always enforce the use of the `.js` extension but never allow the use of the `.json` extension.
 
 By providing both a string and an object, the string will set the default setting for all extensions, and the object can be used to set granular overrides for specific extensions.
 
@@ -98,9 +98,9 @@ For example:
 
 |     property     | required |          type           | description                                                     |
 | :--------------: | :------: | :---------------------: | --------------------------------------------------------------- |
-|     `pattern`    |    ☑️     |        `string`         | [Minimatch pattern][16] for specifier matching                  |
+|    `pattern`     |    ☑️    |        `string`         | [Minimatch pattern][16] for specifier matching                  |
 | `patternOptions` |          |        `object`         | [Minimatch options][17]; default: `{nocomment: true}`           |
-|      `action`    |    ☑️     | `"enforce" \| "ignore"` | What action to take on imports whose specifiers match `pattern` |
+|     `action`     |    ☑️    | `"enforce" \| "ignore"` | What action to take on imports whose specifiers match `pattern` |
 
 ### Exception
 
@@ -117,7 +117,7 @@ For example, given the following folder structure:
 and this import statement:
 
 ```js
-import bar from './foo/bar.json';
+import bar from "./foo/bar.json";
 ```
 
 then the extension can’t be omitted because it would then resolve to `./foo/bar.js`.
@@ -127,27 +127,27 @@ then the extension can’t be omitted because it would then resolve to `./foo/ba
 The following patterns are considered problems when configuration set to "never":
 
 ```js
-import foo from './foo.js';
+import foo from "./foo.js";
 
-import bar from './bar.json';
+import bar from "./bar.json";
 
-import Component from './Component.jsx';
+import Component from "./Component.jsx";
 
-import express from 'express/index.js';
+import express from "express/index.js";
 ```
 
 The following patterns are not considered problems when configuration set to "never":
 
 ```js
-import foo from './foo';
+import foo from "./foo";
 
-import bar from './bar';
+import bar from "./bar";
 
-import Component from './Component';
+import Component from "./Component";
 
-import express from 'express/index';
+import express from "express/index";
 
-import * as path from 'path';
+import * as path from "path";
 ```
 
 The following patterns are considered problems when the configuration is set to "never" and the option "checkTypeImports" is set to `true`:
@@ -161,64 +161,63 @@ export type { Foo } from './foo.ts';
 The following patterns are considered problems when configuration set to "always":
 
 ```js
-import foo from './foo';
+import foo from "./foo";
 
-import bar from './bar';
+import bar from "./bar";
 
-import Component from './Component';
+import Component from "./Component";
 
-import foo from '@/foo';
+import foo from "@/foo";
 ```
 
 The following patterns are not considered problems when configuration set to "always":
 
 ```js
-import foo from './foo.js';
+import foo from "./foo.js";
 
-import bar from './bar.json';
+import bar from "./bar.json";
 
-import Component from './Component.jsx';
+import Component from "./Component.jsx";
 
-import * as path from 'path';
+import * as path from "path";
 
-import foo from '@/foo.js';
+import foo from "@/foo.js";
 ```
 
 The following patterns are considered problems when configuration set to "ignorePackages":
 
 ```js
-import foo from './foo';
+import foo from "./foo";
 
-import bar from './bar';
+import bar from "./bar";
 
-import Component from './Component';
-
+import Component from "./Component";
 ```
 
 The following patterns are not considered problems when configuration set to "ignorePackages":
 
 ```js
-import foo from './foo.js';
+import foo from "./foo.js";
 
-import bar from './bar.json';
+import bar from "./bar.json";
 
-import Component from './Component.jsx';
+import Component from "./Component.jsx";
 
-import express from 'express';
+import express from "express";
 
-import foo from '@/foo'
+import foo from "@/foo";
 ```
 
 The following patterns are not considered problems when configuration set to `['error', 'always', {ignorePackages: true} ]`:
 
 ```js
-import Component from './Component.jsx';
+import Component from "./Component.jsx";
 
-import baz from 'foo/baz.js';
+import baz from "foo/baz.js";
 
-import express from 'express';
+import express from "express";
 
-import foo from '@/foo';
+import foo from "@/foo";
 ```
 
 The following patterns are considered problems when the configuration is set to "always" and the option "checkTypeImports" is set to `true`:

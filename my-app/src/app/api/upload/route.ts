@@ -3,17 +3,10 @@ import { auth } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { createClient } from "@/lib/supabase/server";
 import { validateRequiredEnv } from "@/lib/env";
-import {
-  uploadSchema,
-  validateFilename,
-  validateFileType,
-} from "@/lib/validation";
+import { uploadSchema, validateFilename, validateFileType } from "@/lib/validation";
 import { withCsrfProtection } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
-import { 
-  extractOutputFromN8nResponse, 
-  extractMetadataFromN8nResponse 
-} from "@/lib/n8n";
+import { extractOutputFromN8nResponse, extractMetadataFromN8nResponse } from "@/lib/n8n";
 
 // Vercel-Konfiguration für größere Dateien
 export const runtime = "nodejs";
@@ -52,7 +45,7 @@ async function uploadHandler(request: NextRequest) {
     logger.log("[Upload API] Datei erhalten:", {
       name: file?.name,
       size: file?.size,
-      type: file?.type
+      type: file?.type,
     });
 
     if (!file) {
@@ -68,7 +61,8 @@ async function uploadHandler(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Ungültiger Dateiname. Nur Buchstaben, Zahlen, Punkte, Unterstriche und Bindestriche erlaubt",
+          error:
+            "Ungültiger Dateiname. Nur Buchstaben, Zahlen, Punkte, Unterstriche und Bindestriche erlaubt",
         },
         { status: 400 }
       );
@@ -77,13 +71,8 @@ async function uploadHandler(request: NextRequest) {
     // Validiere File mit Zod Schema
     const validationResult = uploadSchema.safeParse({ file });
     if (!validationResult.success) {
-      const errorMessage =
-        validationResult.error.issues[0]?.message ||
-        "Ungültige Datei";
-      return NextResponse.json(
-        { success: false, error: errorMessage },
-        { status: 400 }
-      );
+      const errorMessage = validationResult.error.issues[0]?.message || "Ungültige Datei";
+      return NextResponse.json({ success: false, error: errorMessage }, { status: 400 });
     }
 
     // Zusätzliche Magic Bytes Validierung
@@ -92,7 +81,8 @@ async function uploadHandler(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Dateityp konnte nicht verifiziert werden. Bitte verwenden Sie eine gültige Audio- oder Videodatei.",
+          error:
+            "Dateityp konnte nicht verifiziert werden. Bitte verwenden Sie eine gültige Audio- oder Videodatei.",
         },
         { status: 400 }
       );
@@ -131,26 +121,26 @@ async function uploadHandler(request: NextRequest) {
     // WICHTIG: X-Upload-ID wird gesendet, damit n8n den bestehenden Eintrag aktualisieren kann
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 Sekunden Timeout
-    
+
     const response = await fetch(env.N8N_UPLOAD_WEBHOOK_URL, {
       method: "POST",
       headers: {
         "X-Request-Type": "upload",
-        "X-User-ID": userId,           // User ID für Multi-User Isolation
-        "X-Upload-ID": uploadId,       // Upload ID für Supabase Update
-        "X-File-Name": file.name,      // Original-Dateiname
+        "X-User-ID": userId, // User ID für Multi-User Isolation
+        "X-Upload-ID": uploadId, // Upload ID für Supabase Update
+        "X-File-Name": file.name, // Original-Dateiname
       },
       body: n8nFormData,
       signal: controller.signal,
     });
-    
+
     clearTimeout(timeoutId);
 
     logger.log("[Upload API] n8n Response erhalten:", {
       status: response.status,
       statusText: response.statusText,
       contentType: response.headers.get("content-type"),
-      ok: response.ok
+      ok: response.ok,
     });
 
     if (!response.ok) {
@@ -168,11 +158,18 @@ async function uploadHandler(request: NextRequest) {
     logger.log("[Upload API] Response Content-Type:", contentType);
     logger.log("[Upload API] Response Status:", response.status);
 
-    if (contentType.includes("application/json") || contentType.includes("text/plain") || contentType.includes("text/")) {
+    if (
+      contentType.includes("application/json") ||
+      contentType.includes("text/plain") ||
+      contentType.includes("text/")
+    ) {
       // JSON-Response oder Text-Response (Webhook)
       try {
         const responseText = await response.text();
-        logger.log("[Upload API] Raw Response Text (erste 500 Zeichen):", responseText.substring(0, 500));
+        logger.log(
+          "[Upload API] Raw Response Text (erste 500 Zeichen):",
+          responseText.substring(0, 500)
+        );
 
         let data: unknown;
 
@@ -185,12 +182,15 @@ async function uploadHandler(request: NextRequest) {
           logger.log("[Upload API] Response ist kein JSON, behandele als reines Transkript");
           transcript = responseText.trim();
           if (transcript.length > 0) {
-            logger.log("[Upload API] ✅ Transkript als reiner Text erkannt, Länge:", transcript.length);
+            logger.log(
+              "[Upload API] ✅ Transkript als reiner Text erkannt, Länge:",
+              transcript.length
+            );
             return NextResponse.json({
               success: true,
               status: "✅ Erfolgreich transkribiert",
               fileName: file.name,
-              transcript: transcript
+              transcript: transcript,
             });
           }
           data = null;
@@ -199,7 +199,7 @@ async function uploadHandler(request: NextRequest) {
         if (data) {
           // Extrahiere Transkript
           transcript = extractOutputFromN8nResponse(data, "transcript");
-          
+
           // Extrahiere Metadaten
           const metadata = extractMetadataFromN8nResponse(data);
           if (metadata.status) status = metadata.status;
@@ -236,7 +236,7 @@ async function uploadHandler(request: NextRequest) {
       success: true,
       status,
       fileName,
-      uploadId,  // WICHTIG: Frontend kann damit den Status abfragen
+      uploadId, // WICHTIG: Frontend kann damit den Status abfragen
       ...(transcript && { transcript }),
     };
 
@@ -247,7 +247,7 @@ async function uploadHandler(request: NextRequest) {
       uploadId,
       hasTranscript: !!transcript,
       transcriptLength: transcript?.length || 0,
-      transcriptPreview: transcript ? transcript.substring(0, 100) : undefined
+      transcriptPreview: transcript ? transcript.substring(0, 100) : undefined,
     });
 
     return NextResponse.json(responseData);
@@ -275,7 +275,7 @@ async function uploadHandler(request: NextRequest) {
       if (userId) {
         const supabase = await createClient();
         const errorMessage = error instanceof Error ? error.message : "Unbekannter Fehler";
-        
+
         // Suche nach dem neuesten Upload dieses Users mit Status "processing"
         const { data: latestUpload } = await supabase
           .from("uploads")
@@ -289,12 +289,12 @@ async function uploadHandler(request: NextRequest) {
         if (latestUpload?.id) {
           await supabase
             .from("uploads")
-            .update({ 
-              status: "failed", 
-              error_message: errorMessage 
+            .update({
+              status: "failed",
+              error_message: errorMessage,
             })
             .eq("id", latestUpload.id);
-          
+
           logger.log("[Upload API] Upload als fehlgeschlagen markiert:", latestUpload.id);
         }
       }

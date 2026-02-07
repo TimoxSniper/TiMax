@@ -90,4 +90,3 @@ Nach der Konfiguration kannst du den AI-Assistenten natürlichsprachlich anweise
 - "Zeige mir alle verfügbaren n8n Workflows"
 - "Führe den Workflow mit der ID 123 aus"
 - "Erstelle einen neuen Workflow für Transkription"
-

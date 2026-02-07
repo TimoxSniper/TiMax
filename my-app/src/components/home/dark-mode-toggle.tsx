@@ -18,38 +18,38 @@ export function DarkModeToggle({ variant = "fixed", className }: DarkModeToggleP
     const applyTheme = (isDarkMode: boolean) => {
       const html = document.documentElement;
       if (isDarkMode) {
-        html.classList.add('dark');
+        html.classList.add("dark");
       } else {
-        html.classList.remove('dark');
+        html.classList.remove("dark");
       }
       setIsDark(isDarkMode);
     };
 
     // Lade gespeicherte Präferenz oder nutze System-Präferenz
-    const savedTheme = localStorage.getItem('theme');
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    const initialIsDark = savedTheme === 'dark' || (!savedTheme && mediaQuery.matches);
+    const savedTheme = localStorage.getItem("theme");
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const initialIsDark = savedTheme === "dark" || (!savedTheme && mediaQuery.matches);
     applyTheme(initialIsDark);
 
     // Listener für System-Änderungen
     const handleChange = (e: MediaQueryListEvent) => {
-      if (!localStorage.getItem('theme')) {
+      if (!localStorage.getItem("theme")) {
         applyTheme(e.matches);
       }
     };
 
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
   const toggleDarkMode = () => {
     const html = document.documentElement;
-    html.classList.toggle('dark');
+    html.classList.toggle("dark");
     const newIsDark = !isDark;
     setIsDark(newIsDark);
     // Speichere Präferenz
-    localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
+    localStorage.setItem("theme", newIsDark ? "dark" : "light");
   };
 
   if (variant === "inline") {
@@ -75,17 +75,16 @@ export function DarkModeToggle({ variant = "fixed", className }: DarkModeToggleP
     <button
       onClick={toggleDarkMode}
       className={cn(
-        "fixed top-4 right-4 sm:top-6 sm:right-6 z-50 p-3 rounded-[6px] bg-card border border-border shadow-editorial-sm hover:shadow-editorial-md transition-all duration-300 focus:ring-2 focus:ring-accent focus:ring-offset-2",
+        "bg-card border-border shadow-editorial-sm hover:shadow-editorial-md focus:ring-accent fixed top-4 right-4 z-50 rounded-[6px] border p-3 transition-all duration-300 focus:ring-2 focus:ring-offset-2 sm:top-6 sm:right-6",
         className
       )}
       aria-label={isDark ? "In den hellen Modus wechseln" : "In den dunklen Modus wechseln"}
     >
       {isDark ? (
-        <Sun className="w-5 h-5 text-accent" aria-hidden="true" />
+        <Sun className="text-accent h-5 w-5" aria-hidden="true" />
       ) : (
-        <Moon className="w-5 h-5 text-foreground" aria-hidden="true" />
+        <Moon className="text-foreground h-5 w-5" aria-hidden="true" />
       )}
     </button>
   );
 }
-

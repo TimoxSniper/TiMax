@@ -29,7 +29,8 @@ export const CHAT_CONFIG = {
 // Chat UI Texte
 export const CHAT_UI_TEXTS = {
   WELCOME_TITLE: "Hey! Ich bin TiMax.",
-  WELCOME_SUBTITLE: "Ich verwandle deine Videos und Audios in Posts, Artikel und mehr. Lade etwas hoch und sag mir, was du daraus machen willst.",
+  WELCOME_SUBTITLE:
+    "Ich verwandle deine Videos und Audios in Posts, Artikel und mehr. Lade etwas hoch und sag mir, was du daraus machen willst.",
   EXAMPLE_REQUESTS_TITLE: "Das kann ich für dich tun:",
   EXAMPLE_REQUESTS: [
     '• "Mach einen LinkedIn-Post aus meinem letzten Video"',

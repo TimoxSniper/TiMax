@@ -12,7 +12,7 @@ export default function ChatPage() {
   // Auf echten Mobilgeräten: Vollbild-Chat ohne Header/Footer
   if (isMobileDevice) {
     return (
-      <div className="h-[100dvh] bg-background flex flex-col overflow-hidden">
+      <div className="bg-background flex h-[100dvh] flex-col overflow-hidden">
         <ChatInterface />
       </div>
     );
@@ -20,26 +20,21 @@ export default function ChatPage() {
 
   // Desktop: Normale Ansicht mit Header und Footer
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="bg-background flex min-h-screen flex-col">
       <MainNavigation />
-      <main className="container mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 flex-1">
+      <main className="container mx-auto max-w-5xl flex-1 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <div className="space-y-8">
           {/* Editorial Modernism Header */}
           <header>
-            <h1 className="font-serif text-5xl lg:text-6xl font-bold text-foreground mb-4">
-              Chat
-            </h1>
-            <div className="w-24 h-1 bg-accent mb-6" />
-            <p className="text-lg text-muted-foreground max-w-2xl">
+            <h1 className="text-foreground mb-4 font-serif text-5xl font-bold lg:text-6xl">Chat</h1>
+            <div className="bg-accent mb-6 h-1 w-24" />
+            <p className="text-muted-foreground max-w-2xl text-lg">
               Haben Sie ein Gespräch mit unserer KI. Stellen Sie Fragen, erhalten Sie Antworten.
             </p>
           </header>
 
           {/* Breadcrumbs */}
-          <Breadcrumbs
-            items={[{ label: "Chat" }]}
-            className="mb-2"
-          />
+          <Breadcrumbs items={[{ label: "Chat" }]} className="mb-2" />
 
           {/* Chat Interface */}
           <ChatInterface />

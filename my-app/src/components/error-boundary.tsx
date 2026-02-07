@@ -59,27 +59,31 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 }
 
-function DefaultErrorFallback({ error, resetError }: { error: Error | null; resetError: () => void }) {
+function DefaultErrorFallback({
+  error,
+  resetError,
+}: {
+  error: Error | null;
+  resetError: () => void;
+}) {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="max-w-md w-full rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-center">
+      <div className="border-destructive/20 bg-destructive/5 w-full max-w-md rounded-lg border p-6 text-center">
         <div className="mb-4 flex justify-center">
-          <div className="rounded-full bg-destructive/10 p-3">
-            <AlertCircle className="h-6 w-6 text-destructive" aria-hidden="true" />
+          <div className="bg-destructive/10 rounded-full p-3">
+            <AlertCircle className="text-destructive h-6 w-6" aria-hidden="true" />
           </div>
         </div>
-        <h2 className="mb-2 text-lg font-semibold text-foreground">
-          Etwas ist schiefgelaufen
-        </h2>
-        <p className="mb-4 text-sm text-muted-foreground">
+        <h2 className="text-foreground mb-2 text-lg font-semibold">Etwas ist schiefgelaufen</h2>
+        <p className="text-muted-foreground mb-4 text-sm">
           Es ist ein unerwarteter Fehler aufgetreten. Bitte versuche, die Seite neu zu laden.
         </p>
         {process.env.NODE_ENV === "development" && error && (
           <details className="mb-4 text-left">
-            <summary className="cursor-pointer text-xs text-muted-foreground">
+            <summary className="text-muted-foreground cursor-pointer text-xs">
               Fehlerdetails (nur in Entwicklung)
             </summary>
-            <pre className="mt-2 overflow-auto rounded bg-muted p-2 text-xs">
+            <pre className="bg-muted mt-2 overflow-auto rounded p-2 text-xs">
               {error.message}
               {error.stack && `\n\n${error.stack}`}
             </pre>
@@ -93,4 +97,3 @@ function DefaultErrorFallback({ error, resetError }: { error: Error | null; rese
     </div>
   );
 }
-

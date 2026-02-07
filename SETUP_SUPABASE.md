@@ -75,11 +75,11 @@ Dieses Dokument erklärt, wie du TiMax mit allen Services einrichtest.
 
 Gehe zu **Project Settings → API**:
 
-| Key | Environment Variable | Verwendung |
-|-----|---------------------|------------|
-| Project URL | `NEXT_PUBLIC_SUPABASE_URL` | Beide (Frontend + Backend) |
-| anon public | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Next.js API Routes |
-| service_role | `SUPABASE_SERVICE_ROLE_KEY` | n8n Workflows |
+| Key          | Environment Variable            | Verwendung                 |
+| ------------ | ------------------------------- | -------------------------- |
+| Project URL  | `NEXT_PUBLIC_SUPABASE_URL`      | Beide (Frontend + Backend) |
+| anon public  | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Next.js API Routes         |
+| service_role | `SUPABASE_SERVICE_ROLE_KEY`     | n8n Workflows              |
 
 ### 1.4 Storage Bucket erstellen
 
@@ -161,22 +161,22 @@ Nach dem Import musst du bei JEDEM Node die Credentials zuweisen:
 
 #### Chat Workflow Nodes:
 
-| Node | Credential-Typ |
-|------|----------------|
-| Google Gemini Chat | Google PaLM API |
-| Search Knowledge Base | Qdrant API |
-| Embeddings | Google PaLM API |
-| Save to Supabase | Supabase API |
+| Node                  | Credential-Typ  |
+| --------------------- | --------------- |
+| Google Gemini Chat    | Google PaLM API |
+| Search Knowledge Base | Qdrant API      |
+| Embeddings            | Google PaLM API |
+| Save to Supabase      | Supabase API    |
 
 #### Upload Workflow Nodes:
 
-| Node | Credential-Typ |
-|------|----------------|
-| ElevenLabs STT | Eleven Labs API |
+| Node                     | Credential-Typ  |
+| ------------------------ | --------------- |
+| ElevenLabs STT           | Eleven Labs API |
 | Google Gemini (Metadata) | Google PaLM API |
-| Update Supabase | Supabase API |
-| Embeddings | Google PaLM API |
-| Insert Qdrant | Qdrant API |
+| Update Supabase          | Supabase API    |
+| Embeddings               | Google PaLM API |
+| Insert Qdrant            | Qdrant API      |
 
 ### 2.5 Workflows aktivieren
 
@@ -228,6 +228,7 @@ Wenn du willst, dass bei neuen Clerk-Usern automatisch ein Supabase-Eintrag erst
 ### 4.1 Supabase testen
 
 Gehe zu **Table Editor** und prüfe:
+
 - [ ] Tabelle `chats` existiert
 - [ ] Tabelle `messages` existiert
 - [ ] Tabelle `uploads` existiert
@@ -235,6 +236,7 @@ Gehe zu **Table Editor** und prüfe:
 ### 4.2 n8n Workflows testen
 
 **Chat Workflow:**
+
 ```bash
 curl -X POST "https://your-n8n/webhook/timax-chat" \
   -H "Content-Type: application/json" \
@@ -248,6 +250,7 @@ curl -X POST "https://your-n8n/webhook/timax-chat" \
 ```
 
 **Upload Workflow:**
+
 ```bash
 curl -X POST "https://your-n8n/webhook/timax-upload" \
   -H "X-User-ID: test_user_123" \

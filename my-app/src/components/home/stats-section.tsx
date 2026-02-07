@@ -13,7 +13,12 @@ interface StatsSectionProps {
 
 export const StatsSection = memo(function StatsSection({ onVisible }: StatsSectionProps) {
   const [statsVisible, setStatsVisible] = useState(false);
-  const [countedStats, setCountedStats] = useState({ speed: 0, seamless: 0, scalable: 0, workflow: 0 });
+  const [countedStats, setCountedStats] = useState({
+    speed: 0,
+    seamless: 0,
+    scalable: 0,
+    workflow: 0,
+  });
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -41,7 +46,7 @@ export const StatsSection = memo(function StatsSection({ onVisible }: StatsSecti
 
     const interval = ANIMATION_DURATION / ANIMATION_STEPS;
     let currentStep = 0;
-    
+
     const timer = setInterval(() => {
       currentStep++;
       const progress = Math.min(currentStep / ANIMATION_STEPS, 1);
@@ -49,9 +54,7 @@ export const StatsSection = memo(function StatsSection({ onVisible }: StatsSecti
       setCountedStats({
         speed: Math.floor(10 * progress),
         seamless: Math.floor(100 * progress),
-        scalable: progress < 0.95 
-          ? Math.floor(50000 * (progress / 0.95))
-          : Infinity,
+        scalable: progress < 0.95 ? Math.floor(50000 * (progress / 0.95)) : Infinity,
         workflow: 1,
       });
 
@@ -66,27 +69,34 @@ export const StatsSection = memo(function StatsSection({ onVisible }: StatsSecti
   const stats = [
     { value: `${countedStats.speed}x`, label: "Schneller" },
     { value: `${countedStats.seamless}%`, label: "Nahtlos" },
-    { value: countedStats.scalable === Infinity ? "∞" : countedStats.scalable.toLocaleString('de-DE'), label: "Skalierbar" },
+    {
+      value:
+        countedStats.scalable === Infinity ? "∞" : countedStats.scalable.toLocaleString("de-DE"),
+      label: "Skalierbar",
+    },
     { value: `${countedStats.workflow}`, label: "Workflow" },
   ];
 
   return (
-    <section id="stats-section" className="relative px-4 py-12 sm:py-20 lg:py-28 z-10 border-t border-b border-border">
+    <section
+      id="stats-section"
+      className="border-border relative z-10 border-t border-b px-4 py-12 sm:py-20 lg:py-28"
+    >
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
           {/* Horizontal stats layout with vertical dividers */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-0 md:divide-x divide-border">
+          <div className="divide-border grid grid-cols-2 gap-4 sm:gap-0 md:grid-cols-4 md:divide-x">
             {stats.map((stat) => (
-              <div 
+              <div
                 key={stat.label}
-                className="flex flex-col items-center text-center px-2 sm:px-8 lg:px-16 py-3 sm:py-6 md:py-0"
+                className="flex flex-col items-center px-2 py-3 text-center sm:px-8 sm:py-6 md:py-0 lg:px-16"
               >
                 {/* Large bronze number - Editorial Modernism style */}
-                <div className="font-serif text-3xl sm:text-5xl lg:text-7xl font-bold text-accent leading-none mb-1 sm:mb-3">
+                <div className="text-accent mb-1 font-serif text-3xl leading-none font-bold sm:mb-3 sm:text-5xl lg:text-7xl">
                   {stat.value}
                 </div>
                 {/* Small uppercase label */}
-                <div className="text-[10px] sm:text-xs lg:text-sm font-medium uppercase tracking-wider sm:tracking-widest text-muted-foreground">
+                <div className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase sm:text-xs sm:tracking-widest lg:text-sm">
                   {stat.label}
                 </div>
               </div>

@@ -20,7 +20,9 @@ function getN8nConfig(): N8nConfig {
   const apiKey = process.env.N8N_API_KEY || "";
 
   if (!apiKey) {
-    console.warn("WARNUNG: N8N_API_KEY nicht gesetzt. Einige Funktionen funktionieren möglicherweise nicht.");
+    console.warn(
+      "WARNUNG: N8N_API_KEY nicht gesetzt. Einige Funktionen funktionieren möglicherweise nicht."
+    );
   }
 
   return { apiUrl, apiKey };
@@ -351,12 +353,14 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
     const workflowList = Array.isArray(workflows) ? workflows : workflows.data || [];
 
     return {
-      resources: workflowList.map((workflow: { id: string; name?: string; description?: string }) => ({
-        uri: `workflow://${workflow.id}`,
-        name: workflow.name || `Workflow ${workflow.id}`,
-        description: workflow.description || "",
-        mimeType: "application/json",
-      })),
+      resources: workflowList.map(
+        (workflow: { id: string; name?: string; description?: string }) => ({
+          uri: `workflow://${workflow.id}`,
+          name: workflow.name || `Workflow ${workflow.id}`,
+          description: workflow.description || "",
+          mimeType: "application/json",
+        })
+      ),
     };
   } catch (error) {
     return {
@@ -399,4 +403,3 @@ main().catch((error) => {
   console.error("Fehler beim Starten des MCP Servers:", error);
   process.exit(1);
 });
-

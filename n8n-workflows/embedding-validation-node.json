@@ -1,0 +1,46 @@
+{
+  "name": "Embedding Validation Debug Node",
+  "description": "Füge diesen Code Node NACH dem Embeddings Node und VOR dem Pinecone Node ein, um Embedding-Dimensionen zu validieren",
+  "node": {
+    "parameters": {
+      "jsCode": "// ============================================\n// EMBEDDING VALIDATION DEBUG NODE\n// ============================================\n// Zweck: Validiere Embedding-Dimensionen bevor sie zu Pinecone gesendet werden\n// Füge diesen Node zwischen \"Embeddings\" und \"Insert Pinecone\" ein\n\nconst EXPECTED_DIMENSION = 768; // Für text-embedding-004\n// const EXPECTED_DIMENSION = 3072; // Für gemini-embedding-001\n\nconst items = $input.all();\n\nconsole.log('\\n=== EMBEDDING VALIDATION START ===');\nconsole.log(`Anzahl Items: ${items.length}`);\nconsole.log(`Erwartete Dimension: ${EXPECTED_DIMENSION}`);\n\nconst validatedItems = [];\nconst errors = [];\n\nfor (let i = 0; i < items.length; i++) {\n  const item = items[i];\n  const itemLog = `Item ${i + 1}/${items.length}`;\n  \n  console.log(`\\n--- ${itemLog} ---`);\n  \n  try {\n    // Extrahiere Embedding aus verschiedenen möglichen Strukturen\n    let embedding = null;\n    \n    // Versuche verschiedene Pfade\n    if (item.json?.embedding) {\n      embedding = item.json.embedding;\n      console.log('✓ Embedding gefunden in: item.json.embedding');\n    } else if (Array.isArray(item.json)) {\n      embedding = item.json;\n      console.log('✓ Embedding gefunden in: item.json (Array)');\n    } else if (item.json?.data?.embedding) {\n      embedding = item.json.data.embedding;\n      console.log('✓ Embedding gefunden in: item.json.data.embedding');\n    } else if (item.json?.values) {\n      embedding = item.json.values;\n      console.log('✓ Embedding gefunden in: item.json.values');\n    } else {\n      console.log('❌ Embedding Struktur:');\n      console.log(JSON.stringify(item.json, null, 2).substring(0, 500));\n      throw new Error(`Embedding nicht gefunden in Item ${i + 1}`);\n    }\n    \n    // Validiere dass Embedding ein Array ist\n    if (!Array.isArray(embedding)) {\n      throw new Error(`Embedding ist kein Array (Type: ${typeof embedding})`);\n    }\n    \n    // Validiere Dimension\n    const dimension = embedding.length;\n    console.log(`Dimension: ${dimension}`);\n    \n    if (dimension === 0) {\n      throw new Error('❌ KRITISCHER FEHLER: Embedding hat Dimension 0!');\n    }\n    \n    if (dimension !== EXPECTED_DIMENSION) {\n      const warning = `⚠️ WARNUNG: Dimension ${dimension} weicht ab von erwartet ${EXPECTED_DIMENSION}`;\n      console.log(warning);\n      errors.push(`${itemLog}: ${warning}`);\n    }\n    \n    // Validiere dass Werte numerisch sind\n    const nonNumeric = embedding.filter(v => typeof v !== 'number');\n    if (nonNumeric.length > 0) {\n      throw new Error(`Embedding enthält ${nonNumeric.length} nicht-numerische Werte`);\n    }\n    \n    // Validiere Wertebereich (typisch -1 bis 1 für normalisierte Embeddings)\n    const outOfRange = embedding.filter(v => Math.abs(v) > 10);\n    if (outOfRange.length > 0) {\n      console.log(`⚠️ ${outOfRange.length} Werte außerhalb typischem Bereich [-10, 10]`);\n    }\n    \n    // Sample der ersten Werte\n    console.log('Erste 5 Werte:', embedding.slice(0, 5).map(v => v.toFixed(4)));\n    console.log('Letzte 5 Werte:', embedding.slice(-5).map(v => v.toFixed(4)));\n    \n    // Berechne Statistiken\n    const sum = embedding.reduce((a, b) => a + b, 0);\n    const mean = sum / dimension;\n    const magnitude = Math.sqrt(embedding.reduce((a, b) => a + b * b, 0));\n    \n    console.log(`Mittelwert: ${mean.toFixed(6)}`);\n    console.log(`Magnitude: ${magnitude.toFixed(6)}`);\n    \n    // Validiere dass Embedding nicht nur Nullen ist\n    const allZeros = embedding.every(v => v === 0);\n    if (allZeros) {\n      throw new Error('❌ Embedding besteht nur aus Nullen!');\n    }\n    \n    console.log('✅ Validation erfolgreich');\n    validatedItems.push(item);\n    \n  } catch (error) {\n    const errorMsg = `${itemLog}: ${error.message}`;\n    console.error('❌ Fehler:', errorMsg);\n    errors.push(errorMsg);\n  }\n}\n\nconsole.log('\\n=== VALIDATION SUMMARY ===');\nconsole.log(`Erfolgreich validiert: ${validatedItems.length}/${items.length}`);\nconsole.log(`Fehler: ${errors.length}`);\n\nif (errors.length > 0) {\n  console.error('\\n=== FEHLER-DETAILS ===');\n  errors.forEach(err => console.error(err));\n  \n  // Workflow stoppen bei kritischen Fehlern\n  throw new Error(\n    `Embedding Validation fehlgeschlagen!\\n` +\n    `Erfolgreich: ${validatedItems.length}/${items.length}\\n` +\n    `Fehler: ${errors.join('; ')}`\n  );\n}\n\nconsole.log('✅ ALLE EMBEDDINGS VALIDIERT');\nconsole.log('=== EMBEDDING VALIDATION END ===\\n');\n\n// Gebe validierte Items weiter\nreturn validatedItems;"
+    },
+    "id": "validate-embeddings",
+    "name": "Validate Embeddings",
+    "type": "n8n-nodes-base.code",
+    "typeVersion": 2,
+    "position": [2900, 300],
+    "notes": "⚠️ DEBUG: Validiere Embedding-Dimensionen. Entferne diesen Node in Production wenn alles funktioniert.",
+    "onError": "continueErrorOutput"
+  },
+  "installation": {
+    "workflow": "upload-workflow-CHUNKING-FIXED.json",
+    "insert_after_node": "Embeddings",
+    "insert_before_node": "Insert Pinecone",
+    "update_connections": {
+      "remove": {
+        "from": "Embeddings",
+        "to": "Insert Pinecone"
+      },
+      "add": [
+        {
+          "from": "Embeddings",
+          "to": "Validate Embeddings",
+          "type": "ai_embedding"
+        },
+        {
+          "from": "Validate Embeddings",
+          "to": "Insert Pinecone",
+          "type": "ai_embedding"
+        }
+      ]
+    }
+  },
+  "usage": "1. Öffne n8n Workflow: upload-workflow-CHUNKING-FIXED\n2. Füge einen neuen 'Code' Node ein\n3. Kopiere den Code aus 'node.parameters.jsCode' oben\n4. Platziere ihn zwischen 'Embeddings' und 'Insert Pinecone'\n5. Verbinde: Embeddings (ai_embedding) → Validate Embeddings (ai_embedding) → Insert Pinecone\n6. Führe einen Test-Upload aus\n7. Prüfe die Console-Logs in n8n",
+  "expected_output": {
+    "success": "✅ ALLE EMBEDDINGS VALIDIERT\nErfolgreich validiert: 10/10\nFehler: 0\nDimension: 768\nErste 5 Werte: [0.1234, -0.5678, ...]",
+    "error_dimension_0": "❌ KRITISCHER FEHLER: Embedding hat Dimension 0!\n→ Ursache: Gemini API gibt leere Embeddings zurück\n→ Lösung: API Key prüfen, Rate Limits prüfen",
+    "error_wrong_dimension": "⚠️ WARNUNG: Dimension 1536 weicht ab von erwartet 768\n→ Ursache: Falsches Embedding-Modell verwendet\n→ Lösung: Pinecone Index Dimension muss mit Embedding-Dimension übereinstimmen",
+    "error_all_zeros": "❌ Embedding besteht nur aus Nullen!\n→ Ursache: Embedding-Generation fehlgeschlagen\n→ Lösung: Input-Text prüfen, API-Antwort debuggen"
+  }
+}

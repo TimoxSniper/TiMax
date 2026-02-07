@@ -7,7 +7,13 @@ import { logger } from "@/lib/logger";
 import { parsePaginationParams, buildPaginationResponse } from "@/lib/pagination";
 import type { UploadStatus } from "@/lib/supabase/database.types";
 
-const VALID_UPLOAD_STATUSES: UploadStatus[] = ["pending", "processing", "completed", "failed", "cancelled"];
+const VALID_UPLOAD_STATUSES: UploadStatus[] = [
+  "pending",
+  "processing",
+  "completed",
+  "failed",
+  "cancelled",
+];
 
 // GET: Alle Uploads laden (für Admin)
 export async function GET(request: NextRequest) {
@@ -15,10 +21,7 @@ export async function GET(request: NextRequest) {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     // Admin-Check
@@ -38,14 +41,13 @@ export async function GET(request: NextRequest) {
     // Optional: Filter
     const filterUserId = searchParams.get("userId");
     const filterStatusParam = searchParams.get("status");
-    const filterStatus = filterStatusParam && VALID_UPLOAD_STATUSES.includes(filterStatusParam as UploadStatus)
-      ? (filterStatusParam as UploadStatus)
-      : null;
+    const filterStatus =
+      filterStatusParam && VALID_UPLOAD_STATUSES.includes(filterStatusParam as UploadStatus)
+        ? (filterStatusParam as UploadStatus)
+        : null;
 
     // Gesamtanzahl für Pagination
-    let countQuery = supabase
-      .from("uploads")
-      .select("*", { count: "exact", head: true });
+    let countQuery = supabase.from("uploads").select("*", { count: "exact", head: true });
 
     if (filterUserId) {
       countQuery = countQuery.eq("user_id", filterUserId);

@@ -1,4 +1,4 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://timax.xyz';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://timax.xyz";
 
 // ============================================
 // ORGANIZATION & BASIC SCHEMAS
@@ -17,7 +17,8 @@ export function getOrganizationSchema() {
       width: 512,
       height: 512,
     },
-    description: "TiMax ist eine KI-gestützte Plattform zur Transkription von Videos und Audios sowie zur automatischen Textgenerierung für Content Creator, Coaches und Experten.",
+    description:
+      "TiMax ist eine KI-gestützte Plattform zur Transkription von Videos und Audios sowie zur automatischen Textgenerierung für Content Creator, Coaches und Experten.",
     sameAs: [],
     contactPoint: {
       "@type": "ContactPoint" as const,
@@ -37,7 +38,8 @@ export function getSoftwareApplicationSchema() {
     operatingSystem: "Web Browser",
     applicationCategory: "BusinessApplication",
     applicationSubCategory: "Content Creation",
-    description: "KI-gestützte Plattform zur Transkription von Videos und Audios sowie zur authentischen Textgenerierung für Content Creator und Experten.",
+    description:
+      "KI-gestützte Plattform zur Transkription von Videos und Audios sowie zur authentischen Textgenerierung für Content Creator und Experten.",
     offers: {
       "@type": "Offer" as const,
       price: "0",
@@ -72,7 +74,8 @@ export function getWebSiteSchema() {
     "@id": `${siteUrl}/#website`,
     name: "TiMax",
     url: siteUrl,
-    description: "Transformiere Videos und Audios in kraftvolle Texte mit KI-gestützter Transkription und intelligenter Textgenerierung.",
+    description:
+      "Transformiere Videos und Audios in kraftvolle Texte mit KI-gestützter Transkription und intelligenter Textgenerierung.",
     inLanguage: "de-DE",
     publisher: {
       "@id": `${siteUrl}/#organization`,
@@ -121,7 +124,7 @@ export function getWebPageSchema(page: { name: string; description: string; path
       "@id": `${siteUrl}/#organization`,
     },
     datePublished: "2024-01-01",
-    dateModified: new Date().toISOString().split('T')[0],
+    dateModified: new Date().toISOString().split("T")[0],
   };
 }
 
@@ -133,35 +136,43 @@ export function getFAQSchema() {
   const faqs = [
     {
       question: "Was ist TiMax?",
-      answer: "TiMax ist eine KI-gestützte Plattform, die Videos und Audios automatisch in Text transkribiert und daraus authentischen Content wie LinkedIn-Posts, Blog-Artikel oder Newsletter generiert – in deinen Worten."
+      answer:
+        "TiMax ist eine KI-gestützte Plattform, die Videos und Audios automatisch in Text transkribiert und daraus authentischen Content wie LinkedIn-Posts, Blog-Artikel oder Newsletter generiert – in deinen Worten.",
     },
     {
       question: "Welche Dateiformate werden unterstützt?",
-      answer: "TiMax unterstützt die gängigsten Audio- und Videoformate: MP3, MP4, WAV, M4A und WebM. Die maximale Dateigröße beträgt 100MB pro Upload."
+      answer:
+        "TiMax unterstützt die gängigsten Audio- und Videoformate: MP3, MP4, WAV, M4A und WebM. Die maximale Dateigröße beträgt 100MB pro Upload.",
     },
     {
       question: "Wie funktioniert die Transkription?",
-      answer: "TiMax verwendet die OpenAI Whisper API für hochpräzise automatische Spracherkennung. Einfach Datei hochladen und innerhalb weniger Minuten erhalten Sie ein vollständiges Transkript."
+      answer:
+        "TiMax verwendet die OpenAI Whisper API für hochpräzise automatische Spracherkennung. Einfach Datei hochladen und innerhalb weniger Minuten erhalten Sie ein vollständiges Transkript.",
     },
     {
       question: "Welche Texte kann ich generieren?",
-      answer: "Mit TiMax können Sie aus Ihren Transkripten verschiedene Textformate erstellen: Social Media Posts (LinkedIn, Instagram, Twitter/X), Blog-Artikel, Newsletter, Pressemitteilungen, Zusammenfassungen und mehr."
+      answer:
+        "Mit TiMax können Sie aus Ihren Transkripten verschiedene Textformate erstellen: Social Media Posts (LinkedIn, Instagram, Twitter/X), Blog-Artikel, Newsletter, Pressemitteilungen, Zusammenfassungen und mehr.",
     },
     {
       question: "Ist TiMax DSGVO-konform?",
-      answer: "Ja, TiMax ist vollständig DSGVO-konform. Alle Daten werden sicher verarbeitet, und Sie haben volle Kontrolle über Ihre Inhalte. Dateien werden nach 90 Tagen Inaktivität automatisch gelöscht."
+      answer:
+        "Ja, TiMax ist vollständig DSGVO-konform. Alle Daten werden sicher verarbeitet, und Sie haben volle Kontrolle über Ihre Inhalte. Dateien werden nach 90 Tagen Inaktivität automatisch gelöscht.",
     },
     {
       question: "In welcher Sprache funktioniert TiMax?",
-      answer: "TiMax ist primär auf Deutsch ausgerichtet. Die Transkription unterstützt über 50 Sprachen, die Benutzeroberfläche und der KI-Dialog sind auf Deutsch optimiert."
+      answer:
+        "TiMax ist primär auf Deutsch ausgerichtet. Die Transkription unterstützt über 50 Sprachen, die Benutzeroberfläche und der KI-Dialog sind auf Deutsch optimiert.",
     },
     {
       question: "Wie lange dauert eine Transkription?",
-      answer: "Die Transkription dauert typischerweise 1-5 Minuten, abhängig von der Länge Ihrer Audio- oder Videodatei. Sie werden benachrichtigt, sobald das Transkript fertig ist."
+      answer:
+        "Die Transkription dauert typischerweise 1-5 Minuten, abhängig von der Länge Ihrer Audio- oder Videodatei. Sie werden benachrichtigt, sobald das Transkript fertig ist.",
     },
     {
       question: "Kann ich die generierten Texte kommerziell nutzen?",
-      answer: "Ja, alle durch TiMax generierten Texte gehören Ihnen und können frei für kommerzielle Zwecke verwendet, verändert und veröffentlicht werden."
+      answer:
+        "Ja, alle durch TiMax generierten Texte gehören Ihnen und können frei für kommerzielle Zwecke verwendet, verändert und veröffentlicht werden.",
     },
   ];
 
@@ -169,7 +180,7 @@ export function getFAQSchema() {
     "@context": "https://schema.org" as const,
     "@type": "FAQPage" as const,
     "@id": `${siteUrl}/#faq`,
-    mainEntity: faqs.map(faq => ({
+    mainEntity: faqs.map((faq) => ({
       "@type": "Question" as const,
       name: faq.question,
       acceptedAnswer: {
@@ -190,7 +201,8 @@ export function getHowToSchema() {
     "@type": "HowTo" as const,
     "@id": `${siteUrl}/#howto`,
     name: "Wie du mit TiMax Videos in authentischen Content verwandelst",
-    description: "Schritt-für-Schritt Anleitung zur Verwendung von TiMax für die automatische Transkription und authentische Textgenerierung aus deinen eigenen Inhalten.",
+    description:
+      "Schritt-für-Schritt Anleitung zur Verwendung von TiMax für die automatische Transkription und authentische Textgenerierung aus deinen eigenen Inhalten.",
     image: `${siteUrl}/opengraph-image`,
     totalTime: "PT10M",
     estimatedCost: {
@@ -258,7 +270,8 @@ export function getServiceSchema() {
     "@type": "Service" as const,
     "@id": `${siteUrl}/#service`,
     name: "TiMax Transkription & Textgenerierung",
-    description: "KI-gestützte Transkription von Videos und Audios mit authentischer Textgenerierung für Content Creator, Coaches und Experten.",
+    description:
+      "KI-gestützte Transkription von Videos und Audios mit authentischer Textgenerierung für Content Creator, Coaches und Experten.",
     provider: {
       "@id": `${siteUrl}/#organization`,
     },
@@ -339,7 +352,7 @@ export function getArticleSchema(article: {
       "@id": `${siteUrl}/#organization`,
     },
     datePublished: article.datePublished || "2024-01-01",
-    dateModified: article.dateModified || new Date().toISOString().split('T')[0],
+    dateModified: article.dateModified || new Date().toISOString().split("T")[0],
     mainEntityOfPage: {
       "@type": "WebPage" as const,
       "@id": `${siteUrl}${article.path}`,
@@ -384,7 +397,9 @@ export function getHomePageSchema() {
 // LEGAL PAGE SCHEMAS
 // ============================================
 
-export function getLegalPageSchema(type: 'impressum' | 'datenschutz' | 'agb' | 'cookies' | 'widerruf') {
+export function getLegalPageSchema(
+  type: "impressum" | "datenschutz" | "agb" | "cookies" | "widerruf"
+) {
   const pages = {
     impressum: {
       name: "Impressum",
@@ -401,7 +416,8 @@ export function getLegalPageSchema(type: 'impressum' | 'datenschutz' | 'agb' | '
     agb: {
       name: "Allgemeine Geschäftsbedingungen",
       headline: "Allgemeine Geschäftsbedingungen",
-      description: "AGB von TiMax für die Nutzung der Transkriptions- und Textgenerierungsplattform",
+      description:
+        "AGB von TiMax für die Nutzung der Transkriptions- und Textgenerierungsplattform",
       path: "/agb",
     },
     cookies: {

@@ -8,6 +8,7 @@
 ## 🎯 Ziel
 
 Mehrere User sollen die Anwendung nutzen können mit:
+
 - ✅ Individuellen Accounts (Login/Registrierung)
 - ✅ Persistenter Chat-Historie pro User
 - ✅ User-spezifischen Uploads und Transkripten
@@ -19,6 +20,7 @@ Mehrere User sollen die Anwendung nutzen können mit:
 ## 📊 Aktueller Stand
 
 ### ❌ Was fehlt:
+
 - **Authentifizierung:** Keine Login/Registrierung
 - **Datenbank:** Keine persistente Speicherung
 - **User-Management:** Keine User-Daten
@@ -26,6 +28,7 @@ Mehrere User sollen die Anwendung nutzen können mit:
 - **Daten-Isolation:** Alle Sessions sind anonym
 
 ### ✅ Was funktioniert:
+
 - Chat-Interface mit Session-IDs
 - Upload-Funktionalität
 - n8n-Integration
@@ -38,6 +41,7 @@ Mehrere User sollen die Anwendung nutzen können mit:
 ### Option 1: NextAuth.js + Supabase (EMPFOHLEN) ⭐
 
 **Vorteile:**
+
 - ✅ Schnellste Implementierung (2-3 Tage)
 - ✅ Supabase bietet: Auth + Datenbank + Storage in einem
 - ✅ NextAuth.js ist Next.js-Standard für Auth
@@ -46,6 +50,7 @@ Mehrere User sollen die Anwendung nutzen können mit:
 - ✅ Real-time Features möglich
 
 **Nachteile:**
+
 - Vendor-Lock-in zu Supabase
 - Abhängigkeit von externem Service
 
@@ -57,12 +62,14 @@ Mehrere User sollen die Anwendung nutzen können mit:
 ### Option 2: NextAuth.js + Prisma + PostgreSQL
 
 **Vorteile:**
+
 - ✅ Vollständige Kontrolle über Datenbank
 - ✅ Kein Vendor-Lock-in
 - ✅ Professionelle Lösung für Production
 - ✅ Flexibel erweiterbar
 
 **Nachteile:**
+
 - ⚠️ Mehr Setup-Aufwand (Datenbank-Server, Migrations)
 - ⚠️ Mehr Wartung nötig
 - ⚠️ Längerer Implementierungszeitraum
@@ -75,12 +82,14 @@ Mehrere User sollen die Anwendung nutzen können mit:
 ### Option 3: Clerk (Managed Auth Service)
 
 **Vorteile:**
+
 - ✅ Sehr schnelle Integration (1-2 Tage)
 - ✅ UI-Komponenten bereits vorhanden
 - ✅ Sehr gute UX
 - ✅ Multi-Factor-Auth out-of-the-box
 
 **Nachteile:**
+
 - ⚠️ Kostenpflichtig ab bestimmter User-Anzahl
 - ⚠️ Vendor-Lock-in
 - ⚠️ Datenbank muss separat eingerichtet werden
@@ -93,6 +102,7 @@ Mehrere User sollen die Anwendung nutzen können mit:
 ## 🎯 Empfehlung: Option 1 (NextAuth.js + Supabase)
 
 ### Warum Supabase?
+
 1. **All-in-One:** Auth + Datenbank + Storage
 2. **Schnell:** Setup in Minuten, nicht Stunden
 3. **Kostenlos:** Generous free tier
@@ -106,16 +116,19 @@ Mehrere User sollen die Anwendung nutzen können mit:
 ### Phase 1: Setup & Datenbank-Schema (Tag 1)
 
 #### 1.1 Supabase-Projekt erstellen
+
 - [ ] Supabase Account erstellen
 - [ ] Neues Projekt anlegen
 - [ ] API-Keys kopieren
 
 #### 1.2 Dependencies installieren
+
 ```bash
 npm install @supabase/supabase-js @supabase/auth-helpers-nextjs next-auth
 ```
 
 #### 1.3 Datenbank-Schema erstellen
+
 ```sql
 -- Users Table (wird von Supabase Auth automatisch erstellt)
 -- Wir nutzen auth.users
@@ -158,6 +171,7 @@ CREATE INDEX idx_uploads_user_id ON uploads(user_id);
 ```
 
 #### 1.4 Row Level Security (RLS) Policies
+
 ```sql
 -- Chats: User kann nur eigene Chats sehen
 ALTER TABLE chats ENABLE ROW LEVEL SECURITY;
@@ -171,16 +185,16 @@ ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view own messages" ON messages
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM chats 
-      WHERE chats.id = messages.chat_id 
+      SELECT 1 FROM chats
+      WHERE chats.id = messages.chat_id
       AND chats.user_id = auth.uid()
     )
   );
 CREATE POLICY "Users can insert own messages" ON messages
   FOR INSERT WITH CHECK (
     EXISTS (
-      SELECT 1 FROM chats 
-      WHERE chats.id = messages.chat_id 
+      SELECT 1 FROM chats
+      WHERE chats.id = messages.chat_id
       AND chats.user_id = auth.uid()
     )
   );
@@ -198,6 +212,7 @@ CREATE POLICY "Users can insert own uploads" ON uploads
 ### Phase 2: NextAuth.js Integration (Tag 1-2)
 
 #### 2.1 NextAuth.js konfigurieren
+
 **Datei:** `my-app/src/app/api/auth/[...nextauth]/route.ts`
 
 ```typescript
@@ -234,6 +249,7 @@ export { handler as GET, handler as POST };
 ```
 
 #### 2.2 Session Provider hinzufügen
+
 **Datei:** `my-app/src/app/layout.tsx`
 
 ```typescript
@@ -251,6 +267,7 @@ export default function RootLayout({ children }) {
 ```
 
 #### 2.3 Auth-Helper Hook erstellen
+
 **Datei:** `my-app/src/lib/auth.ts`
 
 ```typescript
@@ -271,6 +288,7 @@ export function useAuth() {
 ### Phase 3: API-Routen anpassen (Tag 2)
 
 #### 3.1 Chat API Route erweitern
+
 **Datei:** `my-app/src/app/api/chat/route.ts`
 
 - [ ] User-ID aus Session extrahieren
@@ -279,6 +297,7 @@ export function useAuth() {
 - [ ] Chat-Historie aus Datenbank laden
 
 #### 3.2 Upload API Route erweitern
+
 **Datei:** `my-app/src/app/api/upload/route.ts`
 
 - [ ] User-ID aus Session extrahieren
@@ -286,6 +305,7 @@ export function useAuth() {
 - [ ] User-spezifische Uploads zurückgeben
 
 #### 3.3 Neue API-Routen erstellen
+
 - [ ] `GET /api/chats` - Liste aller Chats des Users
 - [ ] `GET /api/chats/[id]` - Einzelner Chat mit Messages
 - [ ] `POST /api/chats` - Neuen Chat erstellen
@@ -297,21 +317,25 @@ export function useAuth() {
 ### Phase 4: Frontend-Komponenten anpassen (Tag 2-3)
 
 #### 4.1 Login/Registrierung Komponenten
+
 - [ ] Login-Seite (`/login`)
 - [ ] Registrierungs-Seite (`/register`)
 - [ ] Auth-Buttons in Navigation
 
 #### 4.2 Chat-Interface anpassen
+
 - [ ] User-ID aus Session holen
 - [ ] Chat-Historie aus Datenbank laden
 - [ ] Messages in Datenbank speichern
 - [ ] Chat-Liste anzeigen (Sidebar)
 
 #### 4.3 Upload-Komponente anpassen
+
 - [ ] User-ID zu Upload-Metadaten hinzufügen
 - [ ] User-spezifische Uploads anzeigen
 
 #### 4.4 Navigation erweitern
+
 - [ ] User-Menü (Avatar, Logout)
 - [ ] Protected Routes (nur für eingeloggte User)
 
@@ -320,12 +344,14 @@ export function useAuth() {
 ### Phase 5: Testing & Deployment (Tag 3)
 
 #### 5.1 Testing
+
 - [ ] Login/Registrierung testen
 - [ ] Chat-Persistenz testen
 - [ ] Upload-Isolation testen
 - [ ] Multi-User-Szenarien testen
 
 #### 5.2 Environment Variables
+
 ```env
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=your-project-url
@@ -346,6 +372,7 @@ EMAIL_FROM=noreply@timax.com
 ```
 
 #### 5.3 Deployment
+
 - [ ] Supabase-Projekt auf Production umstellen
 - [ ] Environment Variables auf Vercel setzen
 - [ ] Deployment testen
@@ -354,14 +381,14 @@ EMAIL_FROM=noreply@timax.com
 
 ## 📊 Zeitaufwand-Zusammenfassung
 
-| Phase | Aufgabe | Zeitaufwand |
-|-------|---------|-------------|
-| Phase 1 | Supabase Setup + Schema | 4-6 Stunden |
-| Phase 2 | NextAuth.js Integration | 4-6 Stunden |
-| Phase 3 | API-Routen anpassen | 6-8 Stunden |
-| Phase 4 | Frontend-Komponenten | 8-10 Stunden |
-| Phase 5 | Testing & Deployment | 4-6 Stunden |
-| **GESAMT** | | **26-36 Stunden (3-4 Tage)** |
+| Phase      | Aufgabe                 | Zeitaufwand                  |
+| ---------- | ----------------------- | ---------------------------- |
+| Phase 1    | Supabase Setup + Schema | 4-6 Stunden                  |
+| Phase 2    | NextAuth.js Integration | 4-6 Stunden                  |
+| Phase 3    | API-Routen anpassen     | 6-8 Stunden                  |
+| Phase 4    | Frontend-Komponenten    | 8-10 Stunden                 |
+| Phase 5    | Testing & Deployment    | 4-6 Stunden                  |
+| **GESAMT** |                         | **26-36 Stunden (3-4 Tage)** |
 
 ---
 
@@ -370,16 +397,19 @@ EMAIL_FROM=noreply@timax.com
 ### MVP-Launch mit Multi-User: **2-3 Wochen**
 
 **Woche 1:**
+
 - ✅ Supabase Setup + NextAuth.js Integration
 - ✅ Datenbank-Schema + RLS Policies
 - ✅ API-Routen anpassen
 
 **Woche 2:**
+
 - ✅ Frontend-Komponenten (Login, Chat, Upload)
 - ✅ Testing & Bug-Fixes
 - ✅ Error-Tracking + Analytics
 
 **Woche 3:**
+
 - ✅ Finale Tests
 - ✅ Production-Deployment
 - ✅ Monitoring einrichten
@@ -400,6 +430,7 @@ Wenn Multi-User-Support **nicht** sofort nötig ist:
 ## ✅ Checkliste für Multi-User-Launch
 
 ### Kritisch (muss vor Launch):
+
 - [ ] Supabase-Projekt eingerichtet
 - [ ] Datenbank-Schema erstellt
 - [ ] NextAuth.js konfiguriert
@@ -411,6 +442,7 @@ Wenn Multi-User-Support **nicht** sofort nötig ist:
 - [ ] Analytics (Plausible/GA)
 
 ### Wichtig (für stabilen Betrieb):
+
 - [ ] Email-Verification
 - [ ] Password-Reset
 - [ ] Session-Management
@@ -418,6 +450,7 @@ Wenn Multi-User-Support **nicht** sofort nötig ist:
 - [ ] Tests geschrieben
 
 ### Nice-to-have:
+
 - [ ] OAuth-Provider (Google, GitHub)
 - [ ] Profile-Seite
 - [ ] User-Einstellungen
@@ -428,17 +461,21 @@ Wenn Multi-User-Support **nicht** sofort nötig ist:
 ## 🚨 Wichtige Überlegungen
 
 ### Daten-Migration
+
 Wenn bereits Daten existieren:
+
 - Anonyme Sessions müssen User zugeordnet werden
 - Uploads müssen User zugeordnet werden
 - Migration-Script nötig
 
 ### Kosten
+
 - **Supabase Free Tier:** 500MB Datenbank, 1GB Storage, 50.000 monatliche aktive User
 - **Vercel:** Free Tier für Hosting
 - **Kostenlos für Start**, später skalierbar
 
 ### Sicherheit
+
 - ✅ Row Level Security (RLS) aktiviert
 - ✅ Passwords werden gehashed (Supabase)
 - ✅ JWT-Tokens für Sessions
@@ -451,9 +488,9 @@ Wenn bereits Daten existieren:
 **Mit Multi-User-Support: Launch in 2-3 Wochen möglich**
 
 Die Implementierung ist gut planbar und mit NextAuth.js + Supabase relativ schnell umsetzbar. Die größten Herausforderungen sind:
+
 1. Datenbank-Schema-Design
 2. Frontend-Komponenten für Auth
 3. API-Routen-Anpassungen
 
 Aber alles ist machbar und gut dokumentiert.
-

@@ -4,21 +4,19 @@ import { SignIn } from "@clerk/nextjs";
 
 export default function SignInPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="bg-background flex min-h-screen items-center justify-center p-4">
+      <div className="animate-in fade-in slide-in-from-bottom-4 w-full max-w-md duration-500">
         {/* Editorial Modernism Header */}
-        <div className="text-center mb-8">
-          <h1 className="font-serif text-4xl sm:text-5xl font-bold text-foreground mb-3">
+        <div className="mb-8 text-center">
+          <h1 className="text-foreground mb-3 font-serif text-4xl font-bold sm:text-5xl">
             Willkommen
           </h1>
-          <div className="w-16 h-1 bg-accent mx-auto mb-3" />
-          <p className="text-muted-foreground text-sm">
-            Melde dich an, um TiMax zu nutzen
-          </p>
+          <div className="bg-accent mx-auto mb-3 h-1 w-16" />
+          <p className="text-muted-foreground text-sm">Melde dich an, um TiMax zu nutzen</p>
         </div>
-        
+
         {/* SignIn Component - nutzt globales Theme */}
-        <SignIn 
+        <SignIn
           routing="hash"
           fallbackRedirectUrl="/chat"
           appearance={{

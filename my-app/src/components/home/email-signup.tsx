@@ -41,7 +41,10 @@ export function EmailSignup() {
         showToast(data.message || "Erfolgreich angemeldet!", "success");
         setEmail("");
       } else if (response.status === 409) {
-        showToast("Du bist bereits angemeldet! Wir informieren dich, sobald TiMax verfügbar ist.", "success");
+        showToast(
+          "Du bist bereits angemeldet! Wir informieren dich, sobald TiMax verfügbar ist.",
+          "success"
+        );
         setEmail("");
       } else if (response.status === 429) {
         showToast("Zu viele Anfragen. Bitte versuche es später erneut.", "error");
@@ -61,27 +64,27 @@ export function EmailSignup() {
   };
 
   return (
-    <section className="relative px-4 py-12 sm:py-20 lg:py-28 z-10 border-t border-border" id="cta">
+    <section className="border-border relative z-10 border-t px-4 py-12 sm:py-20 lg:py-28" id="cta">
       <div className="container mx-auto max-w-2xl">
         <AnimatedSection direction="up">
           <Card variant="default" className="p-6 sm:p-10 lg:p-16">
-            <div className="space-y-6 sm:space-y-8 text-center">
+            <div className="space-y-6 text-center sm:space-y-8">
               <div>
-                <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 text-foreground">
+                <h2 className="text-foreground mb-3 font-serif text-3xl font-bold sm:mb-4 sm:text-5xl lg:text-6xl">
                   Bereit loszulegen?
                 </h2>
-                <div className="w-16 sm:w-24 h-1 bg-accent mx-auto mb-4 sm:mb-6" />
-                <p className="text-base sm:text-lg text-muted-foreground px-2">
+                <div className="bg-accent mx-auto mb-4 h-1 w-16 sm:mb-6 sm:w-24" />
+                <p className="text-muted-foreground px-2 text-base sm:text-lg">
                   Melde dich an und sei einer der Ersten, die Zugang erhalten.
                 </p>
               </div>
-              
+
               {/* Editorial Modernism Form */}
-              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6 max-w-md mx-auto">
+              <form onSubmit={handleSubmit} className="mx-auto max-w-md space-y-4 sm:space-y-6">
                 <div className="space-y-2">
-                  <label 
-                    htmlFor="email" 
-                    className="block text-xs font-medium uppercase tracking-wider sm:tracking-widest text-muted-foreground text-left"
+                  <label
+                    htmlFor="email"
+                    className="text-muted-foreground block text-left text-xs font-medium tracking-wider uppercase sm:tracking-widest"
                   >
                     E-Mail-Adresse
                   </label>
@@ -93,27 +96,27 @@ export function EmailSignup() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full h-11 sm:h-12 bg-transparent border-0 border-b-2 border-border px-0 text-base transition-all duration-300 outline-none placeholder:text-muted-foreground/50 focus:border-accent"
+                    className="border-border placeholder:text-muted-foreground/50 focus:border-accent h-11 w-full border-0 border-b-2 bg-transparent px-0 text-base transition-all duration-300 outline-none sm:h-12"
                     aria-label="E-Mail-Adresse für Anmeldung"
                   />
                 </div>
-                
+
                 {/* Bronze submit button - Editorial Modernism */}
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={isSubmitting}
-                  className="w-full min-h-12 sm:min-h-14 group"
+                  className="group min-h-12 w-full sm:min-h-14"
                   size="lg"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin sm:h-5 sm:w-5" />
                       Wird gesendet...
                     </>
                   ) : (
                     <>
                       Jetzt anmelden
-                      <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
+                      <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 sm:h-5 sm:w-5" />
                     </>
                   )}
                 </Button>

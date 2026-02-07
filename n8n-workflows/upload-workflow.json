@@ -129,13 +129,22 @@
         "options": {
           "metadata": {
             "metadataValues": [
-              {"name": "user_id", "value": "={{ $json.user_id }}"},
-              {"name": "fileName", "value": "={{ $json.fileName }}"},
-              {"name": "uploadedAt", "value": "={{ $json.uploadedAt }}"},
-              {"name": "topics", "value": "={{ JSON.stringify($json.topics || []) }}"},
-              {"name": "intention", "value": "={{ $json.intention || 'general' }}"},
-              {"name": "tone", "value": "={{ $json.tone || 'neutral' }}"},
-              {"name": "content_quality", "value": "={{ $json.content_quality || 5 }}"}
+              { "name": "user_id", "value": "={{ $json.user_id }}" },
+              { "name": "fileName", "value": "={{ $json.fileName }}" },
+              { "name": "uploadedAt", "value": "={{ $json.uploadedAt }}" },
+              {
+                "name": "topics",
+                "value": "={{ JSON.stringify($json.topics || []) }}"
+              },
+              {
+                "name": "intention",
+                "value": "={{ $json.intention || 'general' }}"
+              },
+              { "name": "tone", "value": "={{ $json.tone || 'neutral' }}" },
+              {
+                "name": "content_quality",
+                "value": "={{ $json.content_quality || 5 }}"
+              }
             ]
           }
         }
@@ -149,10 +158,16 @@
     {
       "parameters": {
         "mode": "insert",
-        "qdrantCollection": {"__rl": true, "mode": "id", "value": "timax_knowledge_base"},
+        "qdrantCollection": {
+          "__rl": true,
+          "mode": "id",
+          "value": "timax_knowledge_base"
+        },
         "options": {
           "filter": {
-            "must": [{"key": "user_id", "match": {"value": "={{ $json.user_id }}"}}]
+            "must": [
+              { "key": "user_id", "match": { "value": "={{ $json.user_id }}" } }
+            ]
           }
         }
       },
@@ -197,18 +212,56 @@
     }
   ],
   "connections": {
-    "Upload Webhook": {"main": [[{"node": "Extract User ID", "type": "main", "index": 0}]]},
-    "Extract User ID": {"main": [[{"node": "ElevenLabs Speech To Text", "type": "main", "index": 0}]]},
-    "ElevenLabs Speech To Text": {"main": [[{"node": "Format Content Metadata", "type": "main", "index": 0}]]},
-    "Format Content Metadata": {"main": [[{"node": "Extract Content Metatags", "type": "main", "index": 0}]]},
-    "Extract Content Metatags": {"main": [[{"node": "Combine AI Metadata", "type": "main", "index": 0}]]},
-    "Combine AI Metadata": {"main": [[{"node": "Insert into Qdrant", "type": "main", "index": 0}]]},
-    "Prepare Document": {"ai_document": [[{"node": "Insert into Qdrant", "type": "ai_document", "index": 0}]]},
-    "Generate Embeddings": {"ai_embedding": [[{"node": "Insert into Qdrant", "type": "ai_embedding", "index": 0}]]},
-    "Insert into Qdrant": {"main": [[{"node": "Success Response", "type": "main", "index": 0}]]},
-    "Google Gemini": {"ai_languageModel": [[{"node": "Extract Content Metatags", "type": "ai_languageModel", "index": 0}]]}
+    "Upload Webhook": {
+      "main": [[{ "node": "Extract User ID", "type": "main", "index": 0 }]]
+    },
+    "Extract User ID": {
+      "main": [
+        [{ "node": "ElevenLabs Speech To Text", "type": "main", "index": 0 }]
+      ]
+    },
+    "ElevenLabs Speech To Text": {
+      "main": [
+        [{ "node": "Format Content Metadata", "type": "main", "index": 0 }]
+      ]
+    },
+    "Format Content Metadata": {
+      "main": [
+        [{ "node": "Extract Content Metatags", "type": "main", "index": 0 }]
+      ]
+    },
+    "Extract Content Metatags": {
+      "main": [[{ "node": "Combine AI Metadata", "type": "main", "index": 0 }]]
+    },
+    "Combine AI Metadata": {
+      "main": [[{ "node": "Insert into Qdrant", "type": "main", "index": 0 }]]
+    },
+    "Prepare Document": {
+      "ai_document": [
+        [{ "node": "Insert into Qdrant", "type": "ai_document", "index": 0 }]
+      ]
+    },
+    "Generate Embeddings": {
+      "ai_embedding": [
+        [{ "node": "Insert into Qdrant", "type": "ai_embedding", "index": 0 }]
+      ]
+    },
+    "Insert into Qdrant": {
+      "main": [[{ "node": "Success Response", "type": "main", "index": 0 }]]
+    },
+    "Google Gemini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extract Content Metatags",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": {"executionOrder": "v1"},
+  "settings": { "executionOrder": "v1" },
   "staticData": null,
   "tags": [],
   "pinData": {}

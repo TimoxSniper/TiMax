@@ -9,19 +9,19 @@ import { checkRateLimit } from "./lib/rate-limit";
 const RATE_LIMITS = {
   "/api/upload": {
     maxRequests: Number(process.env.RATE_LIMIT_UPLOAD_MAX) || 5,
-    windowMs: 60 * 60 * 1000 // 5 Uploads pro Stunde
+    windowMs: 60 * 60 * 1000, // 5 Uploads pro Stunde
   },
   "/api/chat": {
     maxRequests: Number(process.env.RATE_LIMIT_CHAT_MAX) || 30,
-    windowMs: 60 * 1000 // 30 Nachrichten pro Minute
+    windowMs: 60 * 1000, // 30 Nachrichten pro Minute
   },
   "/api/generate": {
     maxRequests: Number(process.env.RATE_LIMIT_GENERATE_MAX) || 10,
-    windowMs: 60 * 60 * 1000 // 10 Generierungen pro Stunde
+    windowMs: 60 * 60 * 1000, // 10 Generierungen pro Stunde
   },
   default: {
     maxRequests: Number(process.env.RATE_LIMIT_DEFAULT_MAX) || 100,
-    windowMs: 60 * 1000 // 100 Anfragen pro Minute
+    windowMs: 60 * 1000, // 100 Anfragen pro Minute
   },
 };
 
@@ -69,7 +69,7 @@ export default clerkMiddleware(async (auth, req) => {
 
     // SICHERHEIT: Hole User ID für user-spezifisches Rate Limiting
     let rateLimitKey = `ip:${ip}:${pathname}`;
-    
+
     // Versuche User ID zu bekommen (falls eingeloggt)
     try {
       const { userId } = await auth();
@@ -117,10 +117,7 @@ export default clerkMiddleware(async (auth, req) => {
     );
 
     if (rateLimit.remaining !== undefined) {
-      response.headers.set(
-        "X-RateLimit-Remaining",
-        rateLimit.remaining.toString()
-      );
+      response.headers.set("X-RateLimit-Remaining", rateLimit.remaining.toString());
     }
     if (rateLimit.resetTime) {
       response.headers.set("X-RateLimit-Reset", rateLimit.resetTime.toString());

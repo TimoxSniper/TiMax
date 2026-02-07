@@ -40,41 +40,42 @@ export function MessageBubble({ message, isMobile = false }: MessageBubbleProps)
   // ========== MOBILE LAYOUT ==========
   if (isMobile) {
     return (
-      <div className={cn(
-        "flex gap-2",
-        isUser ? "justify-end" : "justify-start"
-      )}>
+      <div className={cn("flex gap-2", isUser ? "justify-end" : "justify-start")}>
         {/* Avatar nur für Assistant */}
         {!isUser && (
-          <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center shrink-0 mt-1">
-            <Bot className="w-4 h-4 text-accent" />
+          <div className="bg-accent/10 mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+            <Bot className="text-accent h-4 w-4" />
           </div>
         )}
 
-        <div className={cn(
-          "flex flex-col",
-          isUser ? "items-end" : "items-start",
-          isUser ? "max-w-[85%]" : "max-w-[85%]"
-        )}>
+        <div
+          className={cn(
+            "flex flex-col",
+            isUser ? "items-end" : "items-start",
+            isUser ? "max-w-[85%]" : "max-w-[85%]"
+          )}
+        >
           <div
             className={cn(
-              "px-4 py-3 rounded-2xl",
-              isUser 
-                ? "bg-primary text-primary-foreground rounded-br-md" 
-                : "bg-card border border-border rounded-bl-md"
+              "rounded-2xl px-4 py-3",
+              isUser
+                ? "bg-primary text-primary-foreground rounded-br-md"
+                : "bg-card border-border rounded-bl-md border"
             )}
           >
-            <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words">
+            <p className="text-[15px] leading-relaxed break-words whitespace-pre-wrap">
               {message.content}
             </p>
           </div>
-          
+
           {/* Timestamp und Copy Button */}
-          <div className={cn(
-            "flex items-center gap-2 mt-1 px-1",
-            isUser ? "flex-row-reverse" : "flex-row"
-          )}>
-            <span className="text-[11px] text-muted-foreground">
+          <div
+            className={cn(
+              "mt-1 flex items-center gap-2 px-1",
+              isUser ? "flex-row-reverse" : "flex-row"
+            )}
+          >
+            <span className="text-muted-foreground text-[11px]">
               {message.timestamp.toLocaleTimeString("de-DE", {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -83,13 +84,13 @@ export function MessageBubble({ message, isMobile = false }: MessageBubbleProps)
             {!isUser && (
               <button
                 onClick={handleCopy}
-                className="p-1.5 rounded-full hover:bg-muted active:bg-muted/80 transition-colors"
+                className="hover:bg-muted active:bg-muted/80 rounded-full p-1.5 transition-colors"
                 aria-label={copied ? "Kopiert" : "Nachricht kopieren"}
               >
                 {copied ? (
-                  <Check className="w-3.5 h-3.5 text-green-500" />
+                  <Check className="h-3.5 w-3.5 text-green-500" />
                 ) : (
-                  <Copy className="w-3.5 h-3.5 text-muted-foreground" />
+                  <Copy className="text-muted-foreground h-3.5 w-3.5" />
                 )}
               </button>
             )}
@@ -98,8 +99,8 @@ export function MessageBubble({ message, isMobile = false }: MessageBubbleProps)
 
         {/* Avatar nur für User */}
         {isUser && (
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-1">
-            <User className="w-4 h-4 text-primary" />
+          <div className="bg-primary/10 mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+            <User className="text-primary h-4 w-4" />
           </div>
         )}
       </div>
@@ -108,29 +109,22 @@ export function MessageBubble({ message, isMobile = false }: MessageBubbleProps)
 
   // ========== DESKTOP LAYOUT ==========
   return (
-    <div className={cn(
-      "flex gap-3",
-      isUser ? "justify-end" : "justify-start"
-    )}>
+    <div className={cn("flex gap-3", isUser ? "justify-end" : "justify-start")}>
       {!isUser && (
-        <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0 shadow-sm">
-          <Bot className="w-5 h-5 text-accent" />
+        <div className="bg-accent/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-sm">
+          <Bot className="text-accent h-5 w-5" />
         </div>
       )}
 
       <Card
         className={cn(
           "max-w-[80%] shadow-sm",
-          isUser
-            ? "bg-primary text-primary-foreground"
-            : "bg-muted/50 dark:bg-muted/30"
+          isUser ? "bg-primary text-primary-foreground" : "bg-muted/50 dark:bg-muted/30"
         )}
       >
         <div className="p-4">
-          <p className="whitespace-pre-wrap text-sm leading-relaxed">
-            {message.content}
-          </p>
-          <div className="flex items-center justify-between mt-2 gap-2">
+          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          <div className="mt-2 flex items-center justify-between gap-2">
             <span className="text-xs opacity-60">
               {message.timestamp.toLocaleTimeString("de-DE", {
                 hour: "2-digit",
@@ -142,14 +136,10 @@ export function MessageBubble({ message, isMobile = false }: MessageBubbleProps)
                 variant="ghost"
                 size="sm"
                 onClick={handleCopy}
-                className="h-8 w-8 min-w-[44px] opacity-50 hover:opacity-100 transition-opacity duration-200"
+                className="h-8 w-8 min-w-[44px] opacity-50 transition-opacity duration-200 hover:opacity-100"
                 aria-label={copied ? "Kopiert" : "Nachricht kopieren"}
               >
-                {copied ? (
-                  <Check className="w-4 h-4" />
-                ) : (
-                  <Copy className="w-4 h-4" />
-                )}
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               </Button>
             )}
           </div>
@@ -157,8 +147,8 @@ export function MessageBubble({ message, isMobile = false }: MessageBubbleProps)
       </Card>
 
       {isUser && (
-        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 shadow-sm">
-          <User className="w-5 h-5 text-primary" />
+        <div className="bg-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-sm">
+          <User className="text-primary h-5 w-5" />
         </div>
       )}
     </div>

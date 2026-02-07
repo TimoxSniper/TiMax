@@ -41,7 +41,7 @@ export default function AdminChatDetailPage() {
   const chatId = params.id as string;
   const router = useRouter();
   const { showToast } = useToast();
-  
+
   const [chat, setChat] = useState<Chat | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -79,7 +79,7 @@ export default function AdminChatDetailPage() {
       const { csrfToken } = await csrfResponse.json();
       const res = await fetch(`/api/admin/chats/${chatId}`, {
         method: "DELETE",
-        headers: { "x-csrf-token": csrfToken }
+        headers: { "x-csrf-token": csrfToken },
       });
       if (res.ok) {
         showToast("Chat wurde gelöscht", "success");
@@ -124,20 +124,25 @@ export default function AdminChatDetailPage() {
       <div className="space-y-6 md:space-y-8">
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-start gap-3 md:gap-4 min-w-0 flex-1">
+          <div className="flex min-w-0 flex-1 items-start gap-3 md:gap-4">
             <Button
               variant="outline"
               size="icon"
               onClick={() => router.push("/admin/chats")}
-              className="shrink-0 h-9 w-9 md:h-10 md:w-10"
+              className="h-9 w-9 shrink-0 md:h-10 md:w-10"
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div className="min-w-0 flex-1">
-              <h1 className="font-serif text-xl sm:text-2xl md:text-3xl font-bold break-words">{chat.title}</h1>
-              <p className="text-muted-foreground mt-1 text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <h1 className="font-serif text-xl font-bold break-words sm:text-2xl md:text-3xl">
+                {chat.title}
+              </h1>
+              <p className="text-muted-foreground mt-1 flex flex-col gap-1 text-xs sm:flex-row sm:items-center sm:gap-2 sm:text-sm">
                 <span className="flex items-center gap-1">
-                  User: <code className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded break-all">{chat.user_id}</code>
+                  User:{" "}
+                  <code className="bg-muted rounded px-1.5 py-0.5 font-mono text-xs break-all">
+                    {chat.user_id}
+                  </code>
                 </span>
                 <span className="hidden sm:inline">·</span>
                 <span>Erstellt: {formatDate(chat.created_at)}</span>
@@ -147,7 +152,7 @@ export default function AdminChatDetailPage() {
           <Button
             variant="destructive"
             onClick={() => setShowDeleteDialog(true)}
-            className="gap-2 w-full sm:w-auto shrink-0"
+            className="w-full shrink-0 gap-2 sm:w-auto"
           >
             <Trash2 className="h-4 w-4" />
             <span>Löschen</span>
@@ -155,14 +160,14 @@ export default function AdminChatDetailPage() {
         </div>
 
         {/* Messages */}
-        <Card className="hover:translate-y-0 hover:shadow-editorial-md">
+        <Card className="hover:shadow-editorial-md hover:translate-y-0">
           <CardHeader>
             <CardTitle>{messages.length} Nachrichten</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {messages.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">
+                <p className="text-muted-foreground py-8 text-center">
                   Keine Nachrichten in diesem Chat
                 </p>
               ) : (
@@ -170,43 +175,43 @@ export default function AdminChatDetailPage() {
                   <div
                     key={message.id}
                     className={cn(
-                      "flex gap-3 p-4 rounded-lg",
+                      "flex gap-3 rounded-lg p-4",
                       message.role === "user"
                         ? "bg-accent/10"
                         : message.role === "assistant"
-                        ? "bg-muted"
-                        : "bg-yellow-50 border border-yellow-200"
+                          ? "bg-muted"
+                          : "border border-yellow-200 bg-yellow-50"
                     )}
                   >
                     <div className="shrink-0">
                       {message.role === "user" ? (
-                        <div className="w-8 h-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center">
+                        <div className="bg-accent text-accent-foreground flex h-8 w-8 items-center justify-center rounded-full">
                           <User className="h-4 w-4" />
                         </div>
                       ) : message.role === "assistant" ? (
-                        <div className="w-8 h-8 rounded-full bg-foreground text-background flex items-center justify-center">
+                        <div className="bg-foreground text-background flex h-8 w-8 items-center justify-center rounded-full">
                           <Bot className="h-4 w-4" />
                         </div>
                       ) : (
-                        <div className="w-8 h-8 rounded-full bg-yellow-500 text-white flex items-center justify-center text-xs font-bold">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow-500 text-xs font-bold text-white">
                           SYS
                         </div>
                       )}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-medium text-sm">
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-1 flex items-center gap-2">
+                        <span className="text-sm font-medium">
                           {message.role === "user"
                             ? "Benutzer"
                             : message.role === "assistant"
-                            ? "Assistent"
-                            : "System"}
+                              ? "Assistent"
+                              : "System"}
                         </span>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-muted-foreground text-xs">
                           {formatDate(message.created_at)}
                         </span>
                       </div>
-                      <div className="text-sm whitespace-pre-wrap break-words">
+                      <div className="text-sm break-words whitespace-pre-wrap">
                         {message.content}
                       </div>
                     </div>
@@ -224,12 +229,16 @@ export default function AdminChatDetailPage() {
           <DialogHeader>
             <DialogTitle>Chat löschen</DialogTitle>
             <DialogDescription>
-              Bist du sicher, dass du diesen Chat und alle {messages.length} Nachrichten löschen möchtest?
-              Diese Aktion kann nicht rückgängig gemacht werden.
+              Bist du sicher, dass du diesen Chat und alle {messages.length} Nachrichten löschen
+              möchtest? Diese Aktion kann nicht rückgängig gemacht werden.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDeleteDialog(false)} disabled={isDeleting}>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={isDeleting}
+            >
               Abbrechen
             </Button>
             <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>

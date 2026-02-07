@@ -10,6 +10,7 @@
 This document contains the original analysis. **Most issues have now been resolved.**
 
 **See `PROBLEMS_FIXED_SUMMARY.md` for:**
+
 - Complete list of fixes applied
 - Current production readiness status
 - Deployment checklist
@@ -26,28 +27,32 @@ This document contains the original analysis. **Most issues have now been resolv
 This analysis reveals a project in active development with good architectural foundations but **several critical security issues** and numerous configuration/completeness problems that need immediate attention before production use.
 
 ### Issue Breakdown
-| Category | Count | Severity |
-|----------|-------|----------|
-| Critical Security Issues | 2 | CRITICAL |
-| High Security Issues | 4 | HIGH |
-| Code Quality Issues | 8 | MEDIUM |
-| Missing Features (TODOs) | 11 | MEDIUM |
-| Configuration Issues | 5 | MEDIUM |
-| Documentation Issues | 3 | MEDIUM |
-| Low Priority Issues | 10+ | LOW |
+
+| Category                 | Count | Severity |
+| ------------------------ | ----- | -------- |
+| Critical Security Issues | 2     | CRITICAL |
+| High Security Issues     | 4     | HIGH     |
+| Code Quality Issues      | 8     | MEDIUM   |
+| Missing Features (TODOs) | 11    | MEDIUM   |
+| Configuration Issues     | 5     | MEDIUM   |
+| Documentation Issues     | 3     | MEDIUM   |
+| Low Priority Issues      | 10+   | LOW      |
 
 ---
 
 ## 1. CRITICAL SECURITY ISSUES
 
 ### 1.1 Secrets Exposed in Git Repository
+
 **Severity: CRITICAL**
 
 **Location:**
+
 - `D:\TiMax\.env.local` (Lines 1-28)
 - `D:\TiMax\my-app\.env.local` (Lines 1-28)
 
 **Exposed Credentials:**
+
 - GitHub Personal Access Token: `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s`
 - Clerk Secret Key: `sk_test_cGoPE2i4YwSMquCG1uFu6u8UdvmJBvM5074yoEAc5E`
 - Supabase Service Role Key (JWT with expiration in 2085)
@@ -57,6 +62,7 @@ This analysis reveals a project in active development with good architectural fo
 **Impact:** Attacker can access database, GitHub repository, and n8n workflows
 
 **Action Required:**
+
 1. Immediately rotate ALL exposed secrets
 2. Remove `.env.local` from git history using `git filter-branch` or `git-filter-repo`
 3. Ensure `.gitignore` is properly configured (it is, but file was already committed)
@@ -64,11 +70,13 @@ This analysis reveals a project in active development with good architectural fo
 ---
 
 ### 1.2 Git History Contains Secrets
+
 **Severity: CRITICAL**
 
 **Issue:** `.gitignore` file shows `.env.local` is meant to be ignored (line 54), but the actual file is already tracked in git history
 
 **Action Required:**
+
 ```bash
 # Use git-filter-repo to completely remove secrets from history
 git filter-repo --path .env.local --invert-paths
@@ -81,11 +89,13 @@ git push origin --force --all
 ## 2. HIGH SECURITY ISSUES
 
 ### 2.1 CSRF Token Implementation Issues
+
 **Severity: HIGH**
 
 **Location:** `D:\TiMax\my-app\src\lib\csrf.ts`
 
 **Issues:**
+
 - CSRF tokens generated via GET request `/api/csrf` - should be POST
 - Token stored in httpOnly cookie (good) but also sent in JSON response
 - No CSRF validation on GET `/api/chat` (lines 241-242)
@@ -93,9 +103,11 @@ git push origin --force --all
 ---
 
 ### 2.2 Missing CSRF Protection on Key Routes
+
 **Severity: MEDIUM-HIGH**
 
 **Affected Files:**
+
 1. `D:\TiMax\my-app\src\app\api\uploads\route.ts` (Lines 7, 55)
    - GET and POST handlers NOT wrapped with `withCsrfProtection`
    - POST creates upload entries without CSRF token validation
@@ -106,11 +118,13 @@ git push origin --force --all
 ---
 
 ### 2.3 Rate Limiting Implementation Issues
+
 **Severity: HIGH**
 
 **Location:** `D:\TiMax\my-app\src\middleware.ts` (Lines 8-25)
 
 **Issues:**
+
 - Rate limiting is **DISABLED** if Upstash Redis is not configured (Fail-Open pattern)
 - Currently Redis is NOT configured (placeholders in `.env.local`)
 - Warning message only logged in console, not blocking requests
@@ -123,17 +137,20 @@ git push origin --force --all
 ---
 
 ### 2.4 RLS Policy Implementation Issues
+
 **Severity: MEDIUM-HIGH**
 
 **Location:** `D:\TiMax\supabase-schema.sql` (Lines 50-100)
 
 **Issues:**
+
 - RLS policies depend on `current_setting('request.headers.x-user-id', true)`
 - **This header must be set by the application** - currently NOT being set in code
 - No validation in API routes that this header is being passed to Supabase
 - RLS policies are likely non-functional, potential data exposure
 
 **Action Required:**
+
 1. Add x-user-id header in middleware or API handlers
 2. Validate Clerk user ID is being passed to Supabase client
 3. Test RLS policies are actually working
@@ -141,11 +158,13 @@ git push origin --force --all
 ---
 
 ### 2.5 Insufficient Input Validation in Upload Handler
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\app\api\upload\route.ts` (Lines 113-123)
 
 **Issues:**
+
 - Magic bytes validation only checks first 12 bytes
 - Validation is heuristic-based
 - If validation fails, still allows upload (line 166 in validation.ts catches error but continues)
@@ -155,11 +174,13 @@ git push origin --force --all
 ## 3. ENVIRONMENT CONFIGURATION ISSUES
 
 ### 3.1 Missing Environment Variables
+
 **Severity: MEDIUM-HIGH**
 
 **Location:** `D:\TiMax\my-app\.env.local` (Lines 25-28)
 
 **Missing Credentials:**
+
 ```env
 UPSTASH_REDIS_REST_URL=https://example.upstash.io  # PLACEHOLDER
 UPSTASH_REDIS_REST_TOKEN=your_token_here           # PLACEHOLDER
@@ -170,11 +191,13 @@ UPSTASH_REDIS_REST_TOKEN=your_token_here           # PLACEHOLDER
 ---
 
 ### 3.2 Incomplete Environment Configuration Documentation
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\.env.example` (Lines 22-35)
 
 **Issues:**
+
 - Sentry configuration shows SENTRY_ORG and SENTRY_PROJECT as optional
 - But `next.config.ts` (lines 39-62) checks for both - inconsistent
 - Rate limit env vars are commented out but some have defaults in middleware
@@ -182,11 +205,13 @@ UPSTASH_REDIS_REST_TOKEN=your_token_here           # PLACEHOLDER
 ---
 
 ### 3.3 Missing Optional Environment Validation
+
 **Severity: LOW**
 
 **Location:** `D:\TiMax\my-app\src\lib\env.ts` (Lines 7-36)
 
 **Issues:**
+
 - Clerk configuration is required for auth but not validated as required
 - Supabase configuration is optional but actually required for database operations
 
@@ -195,14 +220,17 @@ UPSTASH_REDIS_REST_TOKEN=your_token_here           # PLACEHOLDER
 ## 4. CODE QUALITY ISSUES
 
 ### 4.1 Excessive Console Logging in Production Code
+
 **Severity: MEDIUM**
 
 **Affected Files:**
+
 - `D:\TiMax\my-app\src\app\api\upload\route.ts`: **44 console.log statements**
 - `D:\TiMax\my-app\src\app\api\chat\route.ts`: 6 console.log statements
 - `D:\TiMax\my-app\src\app\api\uploads\route.ts`: 2 console.log statements
 
 **Issues:**
+
 - Logs visible in production, potentially exposing sensitive information
 - Custom logger exists (`D:\TiMax\my-app\src\lib\logger.ts`) but not being used
 - Should replace all console.log with proper logging library
@@ -210,11 +238,13 @@ UPSTASH_REDIS_REST_TOKEN=your_token_here           # PLACEHOLDER
 ---
 
 ### 4.2 Unsafe Type Assertions
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\app\api\upload\route.ts`
 
 **Issues:**
+
 - Line 274-277: `const record = obj as Record<string, unknown>` - unsafe cast
 - Line 290-292: `const word = w as Record<string, unknown>` - unsafe cast
 - Assumes structure without proper validation
@@ -222,6 +252,7 @@ UPSTASH_REDIS_REST_TOKEN=your_token_here           # PLACEHOLDER
 ---
 
 ### 4.3 Missing Error Handling
+
 **Severity: MEDIUM**
 
 **Examples:**
@@ -236,9 +267,11 @@ UPSTASH_REDIS_REST_TOKEN=your_token_here           # PLACEHOLDER
 ---
 
 ### 4.4 Unvalidated JSON Parsing
+
 **Severity: MEDIUM-HIGH**
 
 **Affected Files:**
+
 - `D:\TiMax\my-app\src\app\api\chat\route.ts` (Lines 30, 87, 111)
 - `D:\TiMax\my-app\src\app\api\upload\route.ts` (Lines 73, 196-212)
 
@@ -247,11 +280,13 @@ UPSTASH_REDIS_REST_TOKEN=your_token_here           # PLACEHOLDER
 ---
 
 ### 4.5 Race Conditions in Chat Hook
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\hooks\useChat.ts` (Lines 114-217)
 
 **Issues:**
+
 - Request ID logic (line 121, 159) may have race conditions with multiple pending requests
 - `abortControllerRef` is not properly cleared in all error paths
 - `setMessages` state updates may occur after component unmounts
@@ -259,24 +294,28 @@ UPSTASH_REDIS_REST_TOKEN=your_token_here           # PLACEHOLDER
 ---
 
 ### 4.6 Type Safety Issues
+
 **Severity: MEDIUM**
 
 **Count:** 14 instances of `any` type in codebase
 
 **Examples:**
+
 - `D:\TiMax\my-app\src\hooks\useChat.ts` (Line 75): `const m: any`
 - Complex inline types instead of proper type definitions
 
 ---
 
 ### 4.7 Dangerous String Interpolation
+
 **Severity: LOW-MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\hooks\useChat.ts` (Line 45)
 
 **Issue:** Template literal with user input:
+
 ```typescript
-`Hier ist ein Transkript als Kontext:\n\n${pendingTranscript}\n\n...`
+`Hier ist ein Transkript als Kontext:\n\n${pendingTranscript}\n\n...`;
 ```
 
 While not directly rendered as HTML, could be problematic if content is later rendered unsanitized
@@ -284,6 +323,7 @@ While not directly rendered as HTML, could be problematic if content is later re
 ---
 
 ### 4.8 Missing Type Definitions
+
 **Severity: LOW-MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\app\api\upload\route.ts` (Lines 18-43)
@@ -297,6 +337,7 @@ While not directly rendered as HTML, could be problematic if content is later re
 ### 5.1 Critical TODOs
 
 #### TODO #1: Data Cleanup Not Implemented
+
 **Severity: MEDIUM-HIGH**
 
 **Location:** `D:\TiMax\my-app\src\app\api\cron\cleanup\route.ts` (Line 38)
@@ -304,6 +345,7 @@ While not directly rendered as HTML, could be problematic if content is later re
 **TODO:** `// TODO: Database-Integration implementieren`
 
 **Impact:**
+
 - Data retention/cleanup is completely non-functional
 - No actual file deletion happening despite cron job configured in `vercel.json`
 - Old data accumulates indefinitely
@@ -311,6 +353,7 @@ While not directly rendered as HTML, could be problematic if content is later re
 ---
 
 #### TODO #2: Email Signup Non-Functional
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\components\home\email-signup.tsx`
@@ -322,9 +365,11 @@ While not directly rendered as HTML, could be problematic if content is later re
 ---
 
 #### TODO #3-10: Legal Pages Incomplete
+
 **Severity: HIGH (Legal Compliance Risk)**
 
 **Affected Files:**
+
 1. `D:\TiMax\my-app\src\app\impressum\page.tsx` (4 TODOs - company data)
 2. `D:\TiMax\my-app\src\app\datenschutz\page.tsx` (2 TODOs)
 3. `D:\TiMax\my-app\src\app\agb\page.tsx` (1 TODO)
@@ -339,9 +384,11 @@ While not directly rendered as HTML, could be problematic if content is later re
 ## 6. DEPENDENCY & PACKAGE ISSUES
 
 ### 6.1 Package Management Inconsistencies
+
 **Severity: MEDIUM**
 
 **Issue:** Both lock files present:
+
 - `D:\TiMax\my-app\package-lock.json` (577KB)
 - `D:\TiMax\my-app\pnpm-lock.yaml` (369KB)
 
@@ -350,15 +397,17 @@ While not directly rendered as HTML, could be problematic if content is later re
 ---
 
 ### 6.2 Extraneous Dependencies
+
 **Severity: HIGH**
 
 **Count:** 143 extraneous dependencies detected
 
 **Issue:** Dependencies installed but not declared in package.json
 
-**Examples:** @babel/*, @csstools/*, numerous test/build tools
+**Examples:** @babel/_, @csstools/_, numerous test/build tools
 
 **Action:**
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install
@@ -367,6 +416,7 @@ npm install
 ---
 
 ### 6.3 Security Audit Results
+
 **Status: GOOD** ✅
 
 No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 low)
@@ -376,6 +426,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 6.4 Deprecated/Old Packages
+
 **Severity: MEDIUM**
 
 - TypeScript `^5` - using caret allows major version updates
@@ -387,11 +438,13 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ## 7. DATABASE & SUPABASE SETUP ISSUES
 
 ### 7.1 RLS Configuration Not Verified
+
 **Severity: MEDIUM-HIGH**
 
 **Location:** `D:\TiMax\supabase-schema.sql`
 
 **Issues:**
+
 - RLS policies check `current_setting('request.headers.x-user-id', true)`
 - Header is **never set in code**
 - No server-side validation that Clerk user ID is passed to Supabase
@@ -402,9 +455,11 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 7.2 Missing Database Migration Files
+
 **Severity: LOW-MEDIUM**
 
 **Issue:**
+
 - No migration files for schema changes
 - Manual SQL script requires manual execution (error-prone)
 
@@ -413,6 +468,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 7.3 Incomplete Data Retention
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\supabase-schema.sql` (Lines 57-69)
@@ -424,6 +480,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ## 8. FRONTEND/REACT ISSUES
 
 ### 8.1 localStorage Usage Without SSR Check
+
 **Severity: MEDIUM**
 
 **Affected Files:**
@@ -441,6 +498,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 8.2 localStorage Sensitive Data Storage
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\hooks\useChat.ts` (Lines 40, 49)
@@ -454,28 +512,33 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 8.3 Missing Accessibility Features
+
 **Severity: MEDIUM**
 
 **Good:** Components have `aria-label` (e.g., ChatInput line 38) ✅
 
 **Issues:**
+
 - `dark-mode-toggle.tsx` - no aria-pressed or aria-label for toggle button
 - Error boundary (line 68) - AlertCircle icon has `aria-hidden="true"` but no alternative text
 
 ---
 
 ### 8.4 Performance Issues
+
 **Severity: LOW-MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\app\page.tsx`
 
 **Issues:**
+
 - Multiple heavy icon imports (lines 16-28) imported in component
 - Not using dynamic imports for below-the-fold sections
 
 ---
 
 ### 8.5 XSS Prevention
+
 **Status: GOOD** ✅
 
 - No `dangerouslySetInnerHTML` found
@@ -487,11 +550,13 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ## 9. API ROUTE ISSUES
 
 ### 9.1 N8N Webhook Error Handling
+
 **Severity: MEDIUM-HIGH**
 
 **Location:** `D:\TiMax\my-app\src\app\api\upload\route.ts` (Lines 186-393)
 
 **Issues:**
+
 - Extremely complex response parsing (130+ lines of code)
 - Handles 10+ different possible response formats from n8n
 - Very fragile - if n8n changes response format, everything breaks
@@ -502,6 +567,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 9.2 Missing Request Validation
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\app\api\uploads\route.ts` (Lines 66-67)
@@ -513,6 +579,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 9.3 No Request Size Limits
+
 **Severity: MEDIUM**
 
 **Issue:** API routes don't specify request body size limits
@@ -522,17 +589,20 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 9.4 Insufficient Logging for Debugging
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\app\api\chat\route.ts` (Lines 104-106)
 
 **Issue:**
+
 - Line 106: Error text not logged before throwing
 - No correlation IDs for tracing requests through system
 
 ---
 
 ### 9.5 Missing Timeout Configuration
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\app\api\chat\route.ts` (Lines 87-102)
@@ -546,6 +616,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ## 10. CONFIGURATION & BUILD ISSUES
 
 ### 10.1 Weak ESLint Configuration
+
 **Severity: LOW-MEDIUM**
 
 **Location:** `D:\TiMax\my-app\eslint.config.mjs`
@@ -557,11 +628,13 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 10.2 CSP Header Too Permissive
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\next.config.ts` (Line 12)
 
 **Issue:** CSP contains `'unsafe-inline'` for scripts
+
 - Allows inline scripts in clerk.timax.xyz and clerk.accounts.dev domains
 - Still quite permissive for security
 - Should be more restrictive if possible
@@ -569,11 +642,13 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 10.3 Hardcoded Domains in CSP
+
 **Severity: LOW-MEDIUM**
 
 **Location:** `D:\TiMax\my-app\next.config.ts`
 
 **Issue:** Domains are hardcoded:
+
 - `https://clerk.timax.xyz`
 - `https://*.clerk.accounts.dev`
 
@@ -584,6 +659,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ## 11. ERROR HANDLING & TYPE SAFETY
 
 ### 11.1 Unhandled Promise Rejections
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\components\upload\file-upload.tsx` (Lines 96-130)
@@ -593,6 +669,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 11.2 Missing Null Checks
+
 **Severity: MEDIUM**
 
 **Affected Files:**
@@ -606,6 +683,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 11.3 Silent Failures
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\app\api\uploads\route.ts` (Lines 70-86)
@@ -619,11 +697,13 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ## 12. DOCUMENTATION ISSUES
 
 ### 12.1 Incomplete Setup Guide
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\SETUP_SUPABASE.md`
 
 **Issues:**
+
 - Step 5 asks "Soll ich diese API-Endpunkte erstellen?" but they already exist
 - No troubleshooting for Windows users (script uses Linux paths)
 - n8n workflow imports referenced but not included in docs
@@ -631,9 +711,11 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 12.2 Missing Developer Documentation
+
 **Severity: LOW-MEDIUM**
 
 **Missing:**
+
 - Architecture documentation
 - API endpoint documentation
 - Component documentation
@@ -642,11 +724,13 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 12.3 Outdated README
+
 **Severity: LOW-MEDIUM**
 
 **Location:** `D:\TiMax\README.md`
 
 **Issues:**
+
 - No mention of environment setup
 - Minimal information about features
 - No troubleshooting section
@@ -656,6 +740,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ## 13. GIT & VERSION CONTROL ISSUES
 
 ### 13.1 Secrets in Commit History
+
 **Severity: CRITICAL**
 
 **Issue:** All environment secrets are in `.env.local` which is committed
@@ -667,11 +752,13 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 13.2 Auto-Pull Script Issues
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\auto-pull.sh` (Lines 1-81)
 
 **Issues:**
+
 - Requires bash shell (not compatible with Windows natively)
 - Uses `~/.nvm/nvm.sh` - may not exist on all systems
 - No error handling if npm install fails
@@ -681,6 +768,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ## 14. PERFORMANCE CONCERNS
 
 ### 14.1 Large File Upload Without Chunking
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\lib\upload-config.ts` (Lines 48-50)
@@ -694,6 +782,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 14.2 Full Message History Sent with Every Request
+
 **Severity: LOW-MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\hooks\useChat.ts` (Lines 152-155)
@@ -705,6 +794,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 14.3 No Pagination on Chats/Uploads Lists
+
 **Severity: LOW**
 
 **Location:** `D:\TiMax\my-app\src\app\api\chats\route.ts`
@@ -716,6 +806,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ## 15. SECURITY & DATA HANDLING
 
 ### 15.1 No Rate Limiting on File Download/Access
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\app\api\uploads\[id]\route.ts` (Lines 50-93)
@@ -727,6 +818,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 15.2 No File Size Validation on Upload
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\app\api\upload\route.ts`
@@ -738,6 +830,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 15.3 No Content-Type Validation for n8n Responses
+
 **Severity: MEDIUM**
 
 **Location:** `D:\TiMax\my-app\src\app\api\upload\route.ts` (Lines 186-212)
@@ -751,6 +844,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ## 16. MISCELLANEOUS ISSUES
 
 ### 16.1 Inconsistent Error Messages
+
 **Severity: LOW**
 
 **Issue:** Error messages are in German and English mixed throughout codebase
@@ -760,6 +854,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 16.2 Magic Numbers and Strings
+
 **Severity: LOW-MEDIUM**
 
 **Issue:** Timeout values scattered: `2000`, `3000`, `5000`
@@ -769,6 +864,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 16.3 No Request Correlation IDs
+
 **Severity: LOW-MEDIUM**
 
 **Issue:** Hard to trace requests through logs
@@ -778,6 +874,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ---
 
 ### 16.4 localStorage Not Cleared on Logout
+
 **Severity: LOW**
 
 **Issue:** When user logs out via Clerk, localStorage items remain
@@ -789,17 +886,20 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 ## IMMEDIATE ACTION ITEMS (Priority Order)
 
 ### 🔴 CRITICAL (Do First)
+
 1. ✅ **ROTATE ALL SECRETS** - All exposed credentials should be rotated immediately
 2. ✅ **Remove Secrets from Git History** - Use git-filter-repo to clean commit history
 3. ✅ **Implement Redis Rate Limiting** - Configure Upstash Redis or application is vulnerable
 
 ### 🟠 HIGH (Do Soon)
+
 4. ✅ **Fix RLS Header Configuration** - Ensure x-user-id header is passed to Supabase
 5. ✅ **Add CSRF Protection** - Protect all state-changing endpoints
 6. ✅ **Remove Console Logging** - Security risk in production
 7. ✅ **Complete Legal Pages** - Add required company information (German law compliance)
 
 ### 🟡 MEDIUM (Do Before Launch)
+
 8. ✅ **Implement Data Cleanup** - Complete the cron job implementation
 9. ✅ **Validate n8n Integration** - The response parsing is too fragile
 10. ✅ **Fix Type Safety Issues** - Remove `any` types, add proper validation
@@ -807,6 +907,7 @@ No vulnerabilities detected in current audit (0 critical, 0 high, 0 moderate, 0 
 12. ✅ **Configure ESLint Rules** - Enable automated code quality checks
 
 ### 🟢 LOW (Improvements)
+
 13. Documentation improvements
 14. Performance optimizations
 15. Code cleanup and refactoring

@@ -10,18 +10,12 @@ interface RouteParams {
 }
 
 // GET: Einzelnen Upload laden
-export async function GET(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     // Admin-Check
@@ -42,10 +36,7 @@ export async function GET(
       .single();
 
     if (error || !upload) {
-      return NextResponse.json(
-        { success: false, error: "Upload nicht gefunden" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "Upload nicht gefunden" }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -66,18 +57,12 @@ export async function GET(
 }
 
 // DELETE: Upload löschen
-export async function DELETE(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     // Admin-Check
@@ -100,8 +85,7 @@ export async function DELETE(
 
     // Falls Datei im Storage existiert, auch dort löschen
     if (upload?.storage_path) {
-      const { error: storageError } = await supabase
-        .storage
+      const { error: storageError } = await supabase.storage
         .from("timax-uploads")
         .remove([upload.storage_path]);
 
@@ -112,10 +96,7 @@ export async function DELETE(
     }
 
     // Upload aus Datenbank löschen
-    const { error } = await supabase
-      .from("uploads")
-      .delete()
-      .eq("id", uploadId);
+    const { error } = await supabase.from("uploads").delete().eq("id", uploadId);
 
     if (error) {
       logger.error("[Admin Upload API] Fehler beim Löschen:", error);

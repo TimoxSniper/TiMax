@@ -11,6 +11,7 @@ Bitte richte das folgende Projekt **komplett automatisch** ein – vom Klonen bi
 Wenn ein Befehl fehlschlägt, erkläre mir kurz warum und schlage einen Fix vor.
 
 1. **Repository klonen** (falls der Ordner noch nicht existiert):
+
    ```bash
    cd ~
    if [ ! -d "TiMax" ]; then
@@ -20,14 +21,16 @@ Wenn ein Befehl fehlschlägt, erkläre mir kurz warum und schlage einen Fix vor.
    ```
 
 2. **Erstelle die `.env.local` Datei** im Root-Verzeichnis (`/home/[USER]/TiMax/.env.local`) mit dem Inhalt, den ich dir zusätzlich sende:
-   ```
-  GITHUB_USERNAME=TimoxSniper
-GITHUB_TOKEN=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s
-GITHUB_REPO_URL=github.com/TimoxSniper/TiMax.git
 
    ```
-   
+   GITHUB_USERNAME=TimoxSniper
+   GITHUB_TOKEN=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s
+   GITHUB_REPO_URL=github.com/TimoxSniper/TiMax.git
+
+   ```
+
    Beispiel-Format (ersetze mit echten Werten):
+
    ```
    GITHUB_TOKEN=ghp_xxxxxxxxxxxxx
    GITHUB_USERNAME=dein_username
@@ -35,12 +38,14 @@ GITHUB_REPO_URL=github.com/TimoxSniper/TiMax.git
    ```
 
 3. **Installiere alle Dependencies**:
+
    ```bash
    cd my-app
    npm install
    ```
-   
+
    Falls nvm verwendet wird oder npm nicht gefunden wird:
+
    ```bash
    source ~/.nvm/nvm.sh
    nvm use default
@@ -49,6 +54,7 @@ GITHUB_REPO_URL=github.com/TimoxSniper/TiMax.git
    ```
 
 4. **Git Remote konfigurieren** (falls GitHub Token in .env.local vorhanden):
+
    ```bash
    cd /home/[USER]/TiMax
    chmod +x use-github-token.sh
@@ -56,14 +62,16 @@ GITHUB_REPO_URL=github.com/TimoxSniper/TiMax.git
    ```
 
 5. **Starte den Entwicklungsserver** im Hintergrund:
+
    ```bash
    cd my-app
    npm run dev
    ```
-   
+
    Der Server sollte dann unter http://localhost:3000 erreichbar sein.
 
-**WICHTIG:** 
+**WICHTIG:**
+
 - Ersetze `[HIER DEINE .env.local INHALTE EINFÜGEN]` mit dem tatsächlichen Inhalt deiner `.env.local` Datei!
 - Ersetze `[USER]` mit dem tatsächlichen Benutzernamen
 - Führe alle Schritte nacheinander aus und prüfe nach jedem Schritt, ob er erfolgreich war
@@ -79,4 +87,3 @@ GITHUB_REPO_URL=github.com/TimoxSniper/TiMax.git
 4. Ersetze `[USER]` mit seinem Linux-Benutzernamen
 5. Füge diesen Prompt in seinen KI-Assistenten ein
 6. Die KI wird dann automatisch alles einrichten!
-

@@ -8,9 +8,10 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Impressum",
-  description: "Impressum und rechtliche Angaben zu timax - Angaben gemäß § 5 TMG. Firmensitz, Kontaktdaten und Handelsregistereintrag.",
+  description:
+    "Impressum und rechtliche Angaben zu timax - Angaben gemäß § 5 TMG. Firmensitz, Kontaktdaten und Handelsregistereintrag.",
   alternates: {
-    canonical: '/impressum',
+    canonical: "/impressum",
   },
   openGraph: {
     title: "Impressum - timax",
@@ -22,14 +23,10 @@ export const metadata: Metadata = {
 
 export default function ImpressumPage() {
   return (
-    <main className="min-h-screen bg-background">
-      <JsonLd data={getLegalPageSchema('impressum')} />
+    <main className="bg-background min-h-screen">
+      <JsonLd data={getLegalPageSchema("impressum")} />
       <div className="container mx-auto max-w-3xl px-4 py-16 lg:py-24">
-        <Button
-          variant="ghost"
-          asChild
-          className="mb-8 text-muted-foreground hover:text-accent"
-        >
+        <Button variant="ghost" asChild className="text-muted-foreground hover:text-accent mb-8">
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Zurück zur Startseite
@@ -38,96 +35,103 @@ export default function ImpressumPage() {
 
         <article className="max-w-none">
           <header className="mb-16">
-            <h1 className="font-serif text-5xl lg:text-6xl font-bold mb-6 text-foreground">
+            <h1 className="text-foreground mb-6 font-serif text-5xl font-bold lg:text-6xl">
               Impressum
             </h1>
-            <div className="w-24 h-1 bg-accent mb-8" />
-            <p className="font-sans text-xs uppercase tracking-wide text-muted-foreground font-medium">
+            <div className="bg-accent mb-8 h-1 w-24" />
+            <p className="text-muted-foreground font-sans text-xs font-medium tracking-wide uppercase">
               Angaben gemäß § 5 TMG
             </p>
           </header>
 
-          <section className="space-y-12 font-sans text-base lg:text-lg leading-relaxed text-foreground">
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+          <section className="text-foreground space-y-12 font-sans text-base leading-relaxed lg:text-lg">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 Angaben gemäß § 5 TMG
               </h2>
               <p className="mb-2">
                 <strong>timax</strong>
               </p>
               <p className="mb-2">
-                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                <span className="rounded bg-red-100 px-2 py-1 font-bold text-red-600 dark:bg-red-900/30">
                   [FIRMENNAME HIER EINTRAGEN]
                 </span>
                 <br />
-                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                <span className="rounded bg-red-100 px-2 py-1 font-bold text-red-600 dark:bg-red-900/30">
                   [VOLLSTÄNDIGE ANSCHRIFT - KEIN POSTFACH!]
                 </span>
                 <br />
-                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                <span className="rounded bg-red-100 px-2 py-1 font-bold text-red-600 dark:bg-red-900/30">
                   [PLZ ORT LAND]
                 </span>
               </p>
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2 text-foreground">
-                Kontakt
-              </h3>
+              <h3 className="text-foreground mb-2 text-xl font-semibold">Kontakt</h3>
               <p className="mb-2">
-                E-Mail: <a href="mailto:info@timax.app" className="text-primary hover:underline">info@timax.app</a>
+                E-Mail:{" "}
+                <a href="mailto:info@timax.app" className="text-primary hover:underline">
+                  info@timax.app
+                </a>
               </p>
-              <p className="mb-2">
-                Telefon: +49 176 5569211
-              </p>
+              <p className="mb-2">Telefon: +49 176 5569211</p>
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2 text-foreground">
+              <h3 className="text-foreground mb-2 text-xl font-semibold">
                 Vertretungsberechtigte Person(en)
               </h3>
               <p>
-                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                <span className="rounded bg-red-100 px-2 py-1 font-bold text-red-600 dark:bg-red-900/30">
                   [NAME DES GESCHÄFTSFÜHRERS / VERTRETUNGSBERECHTIGTEN]
                 </span>
               </p>
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2 text-foreground">
-                Handelsregister
-              </h3>
+              <h3 className="text-foreground mb-2 text-xl font-semibold">Handelsregister</h3>
               <p className="mb-2">
-                Registergericht: <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">[z.B. Amtsgericht München - falls GmbH/UG]</span>
+                Registergericht:{" "}
+                <span className="rounded bg-red-100 px-2 py-1 font-bold text-red-600 dark:bg-red-900/30">
+                  [z.B. Amtsgericht München - falls GmbH/UG]
+                </span>
               </p>
               <p>
-                Registernummer: <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">[z.B. HRB 123456 - falls GmbH/UG]</span>
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold mb-2 text-foreground">
-                Umsatzsteuer-ID
-              </h3>
-              <p>
-                Umsatzsteuer-Identifikationsnummer gemäß §27 a Umsatzsteuergesetz: <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">[DE123456789 - falls vorhanden]</span>
+                Registernummer:{" "}
+                <span className="rounded bg-red-100 px-2 py-1 font-bold text-red-600 dark:bg-red-900/30">
+                  [z.B. HRB 123456 - falls GmbH/UG]
+                </span>
               </p>
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2 text-foreground">
-                Aufsichtsbehörde
-              </h3>
+              <h3 className="text-foreground mb-2 text-xl font-semibold">Umsatzsteuer-ID</h3>
               <p>
-                <span className="text-gray-500 dark:text-gray-400 italic">
+                Umsatzsteuer-Identifikationsnummer gemäß §27 a Umsatzsteuergesetz:{" "}
+                <span className="rounded bg-red-100 px-2 py-1 font-bold text-red-600 dark:bg-red-900/30">
+                  [DE123456789 - falls vorhanden]
+                </span>
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-foreground mb-2 text-xl font-semibold">Aufsichtsbehörde</h3>
+              <p>
+                <span className="text-gray-500 italic dark:text-gray-400">
                   [Falls relevant für bestimmte Branchen, sonst leer lassen]
                 </span>
               </p>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-black/10 dark:border-white/10">
+            <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/10">
               <p className="text-sm text-black/60 dark:text-white/60">
-                Stand: {new Date().toLocaleDateString("de-DE", { year: "numeric", month: "long", day: "numeric" })}
+                Stand:{" "}
+                {new Date().toLocaleDateString("de-DE", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
               </p>
             </div>
           </section>
@@ -136,4 +140,3 @@ export default function ImpressumPage() {
     </main>
   );
 }
-

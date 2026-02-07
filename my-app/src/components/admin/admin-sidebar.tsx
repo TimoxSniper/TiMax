@@ -63,9 +63,9 @@ export function AdminSidebar() {
   return (
     <>
       {/* Mobile Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 h-14 border-b border-border bg-card flex items-center justify-between px-4 md:hidden">
+      <header className="border-border bg-card fixed top-0 right-0 left-0 z-40 flex h-14 items-center justify-between border-b px-4 md:hidden">
         <div className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-accent" />
+          <Shield className="text-accent h-5 w-5" />
           <span className="font-serif text-lg font-semibold">TiMax Admin</span>
         </div>
         <Button
@@ -89,20 +89,20 @@ export function AdminSidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 h-screen w-64 border-r border-border bg-card z-50 transition-transform duration-300",
+          "border-border bg-card fixed top-0 z-50 h-screen w-64 border-r transition-transform duration-300",
           "md:left-0 md:z-40 md:translate-x-0",
           isMobileMenuOpen ? "left-0 translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="flex h-full flex-col">
           {/* Header - Desktop only */}
-          <div className="hidden md:flex h-16 items-center gap-2 border-b border-border px-6">
-            <Shield className="h-6 w-6 text-accent" />
+          <div className="border-border hidden h-16 items-center gap-2 border-b px-6 md:flex">
+            <Shield className="text-accent h-6 w-6" />
             <span className="font-serif text-xl font-semibold">TiMax Admin</span>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-1 p-4 mt-14 md:mt-0">
+          <nav className="mt-14 flex-1 space-y-1 p-4 md:mt-0">
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
@@ -127,10 +127,10 @@ export function AdminSidebar() {
           </nav>
 
           {/* Footer */}
-          <div className="border-t border-border p-4">
+          <div className="border-border border-t p-4">
             <Link
               href="/chat"
-              className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="text-muted-foreground hover:bg-muted hover:text-foreground flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors"
             >
               <ArrowLeft className="h-5 w-5" />
               Zurück zur App

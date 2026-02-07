@@ -10,22 +10,22 @@ statements.
 ## Rule Details
 
 ```js
-import foo from './foo'
+import foo from "./foo";
 
 // some module-level initializer
-initWith(foo)
+initWith(foo);
 
-import bar from './bar' // <- reported
+import bar from "./bar"; // <- reported
 ```
 
 Providing `absolute-first` as an option will report any absolute imports (i.e.
 packages) that come after any relative imports:
 
 ```js
-import foo from 'foo'
-import bar from './bar'
+import foo from "foo";
+import bar from "./bar";
 
-import * as _ from 'lodash' // <- reported
+import * as _ from "lodash"; // <- reported
 ```
 
 If you really want import type ordering, check out [`import/order`].
@@ -40,9 +40,9 @@ Directives are allowed as long as they occur strictly before any `import` declar
 as follows:
 
 ```js
-'use super-mega-strict'
+"use super-mega-strict";
 
-import { suchFoo } from 'lame-fake-module-name'  // no report here
+import { suchFoo } from "lame-fake-module-name"; // no report here
 ```
 
 A directive in this case is assumed to be a single statement that contains only
@@ -59,7 +59,7 @@ Given that, see [#255] for the reasoning.
 This rule contains a fixer to reorder in-body import to top, the following criteria applied:
 
 1. Never re-order relative to each other, even if `absolute-first` is set.
-2. If an import creates an identifier, and that identifier is referenced at module level *before* the import itself, that won't be re-ordered.
+2. If an import creates an identifier, and that identifier is referenced at module level _before_ the import itself, that won't be re-ordered.
 
 ## When Not To Use It
 
@@ -68,8 +68,8 @@ enable this rule.
 
 ## Further Reading
 
- - [`import/order`]: a major step up from `absolute-first`
- - Issue [#255]
+- [`import/order`]: a major step up from `absolute-first`
+- Issue [#255]
 
 [`import/order`]: ./order.md
 [#255]: https://github.com/import-js/eslint-plugin-import/issues/255

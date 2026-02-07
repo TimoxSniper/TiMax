@@ -2,22 +2,10 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-  Search,
-  MessageSquare,
-  FileAudio,
-  Loader2,
-  ArrowRight,
-  Command,
-} from "lucide-react";
+import { Search, MessageSquare, FileAudio, Loader2, ArrowRight, Command } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logger } from "@/lib/logger";
 
@@ -130,44 +118,44 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl p-0 gap-0 overflow-hidden">
+      <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-xl">
         <DialogHeader className="sr-only">
           <DialogTitle>Suche</DialogTitle>
         </DialogHeader>
 
         {/* Search Input */}
-        <div className="flex items-center gap-3 px-4 border-b">
-          <Search className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+        <div className="flex items-center gap-3 border-b px-4">
+          <Search className="text-muted-foreground h-5 w-5 flex-shrink-0" />
           <Input
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Chats und Uploads durchsuchen..."
-            className="flex-1 h-14 border-0 bg-transparent focus-visible:ring-0 text-base"
+            className="h-14 flex-1 border-0 bg-transparent text-base focus-visible:ring-0"
           />
-          {isSearching && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}
+          {isSearching && <Loader2 className="text-muted-foreground h-5 w-5 animate-spin" />}
         </div>
 
         {/* Results */}
         <div className="max-h-[400px] overflow-y-auto">
           {query.length < 2 ? (
-            <div className="p-8 text-center text-muted-foreground">
-              <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <div className="text-muted-foreground p-8 text-center">
+              <Search className="mx-auto mb-4 h-12 w-12 opacity-50" />
               <p className="text-sm">Gib mindestens 2 Zeichen ein, um zu suchen</p>
-              <div className="flex items-center justify-center gap-2 mt-4 text-xs">
-                <kbd className="px-2 py-1 bg-muted rounded text-muted-foreground">
-                  <Command className="h-3 w-3 inline" /> K
+              <div className="mt-4 flex items-center justify-center gap-2 text-xs">
+                <kbd className="bg-muted text-muted-foreground rounded px-2 py-1">
+                  <Command className="inline h-3 w-3" /> K
                 </kbd>
                 <span>zum Öffnen</span>
-                <kbd className="px-2 py-1 bg-muted rounded text-muted-foreground">↑↓</kbd>
+                <kbd className="bg-muted text-muted-foreground rounded px-2 py-1">↑↓</kbd>
                 <span>Navigation</span>
-                <kbd className="px-2 py-1 bg-muted rounded text-muted-foreground">Enter</kbd>
+                <kbd className="bg-muted text-muted-foreground rounded px-2 py-1">Enter</kbd>
                 <span>Öffnen</span>
               </div>
             </div>
           ) : results.length === 0 && !isSearching ? (
-            <div className="p-8 text-center text-muted-foreground">
+            <div className="text-muted-foreground p-8 text-center">
               <p className="text-sm">Keine Ergebnisse für &quot;{query}&quot;</p>
             </div>
           ) : (
@@ -175,7 +163,7 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
               {/* Chats Section */}
               {groupedResults.chats.length > 0 && (
                 <div className="mb-2">
-                  <div className="px-4 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <div className="text-muted-foreground px-4 py-2 text-xs font-medium tracking-wider uppercase">
                     Chats
                   </div>
                   {groupedResults.chats.map((result, index) => {
@@ -196,7 +184,7 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
               {/* Uploads Section */}
               {groupedResults.uploads.length > 0 && (
                 <div>
-                  <div className="px-4 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <div className="text-muted-foreground px-4 py-2 text-xs font-medium tracking-wider uppercase">
                     Uploads
                   </div>
                   {groupedResults.uploads.map((result, index) => {
@@ -219,16 +207,18 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
 
         {/* Footer */}
         {results.length > 0 && (
-          <div className="px-4 py-3 border-t bg-muted/50 text-xs text-muted-foreground flex justify-between items-center">
-            <span>{results.length} Ergebnis{results.length !== 1 ? "se" : ""}</span>
+          <div className="bg-muted/50 text-muted-foreground flex items-center justify-between border-t px-4 py-3 text-xs">
+            <span>
+              {results.length} Ergebnis{results.length !== 1 ? "se" : ""}
+            </span>
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-background rounded border">↑</kbd>
-                <kbd className="px-1.5 py-0.5 bg-background rounded border">↓</kbd>
+                <kbd className="bg-background rounded border px-1.5 py-0.5">↑</kbd>
+                <kbd className="bg-background rounded border px-1.5 py-0.5">↓</kbd>
                 Navigation
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-background rounded border">Enter</kbd>
+                <kbd className="bg-background rounded border px-1.5 py-0.5">Enter</kbd>
                 Öffnen
               </span>
             </div>
@@ -246,12 +236,7 @@ interface SearchResultItemProps {
   onMouseEnter: () => void;
 }
 
-function SearchResultItem({
-  result,
-  isSelected,
-  onClick,
-  onMouseEnter,
-}: SearchResultItemProps) {
+function SearchResultItem({ result, isSelected, onClick, onMouseEnter }: SearchResultItemProps) {
   const Icon = result.type === "chat" ? MessageSquare : FileAudio;
 
   return (
@@ -259,37 +244,28 @@ function SearchResultItem({
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       className={cn(
-        "w-full flex items-center gap-3 px-4 py-3 text-left transition-colors",
+        "flex w-full items-center gap-3 px-4 py-3 text-left transition-colors",
         isSelected ? "bg-primary/10" : "hover:bg-muted/50"
       )}
     >
       <div
         className={cn(
-          "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
+          "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg",
           result.type === "chat" ? "bg-primary/10" : "bg-accent/10"
         )}
       >
-        <Icon
-          className={cn(
-            "h-5 w-5",
-            result.type === "chat" ? "text-primary" : "text-accent"
-          )}
-        />
+        <Icon className={cn("h-5 w-5", result.type === "chat" ? "text-primary" : "text-accent")} />
       </div>
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-sm truncate">{result.title}</span>
-          <Badge variant="secondary" className="text-xs flex-shrink-0">
+          <span className="truncate text-sm font-medium">{result.title}</span>
+          <Badge variant="secondary" className="flex-shrink-0 text-xs">
             {result.type === "chat" ? "Chat" : "Upload"}
           </Badge>
         </div>
-        <p className="text-xs text-muted-foreground truncate mt-0.5">
-          {result.preview}
-        </p>
+        <p className="text-muted-foreground mt-0.5 truncate text-xs">{result.preview}</p>
       </div>
-      {isSelected && (
-        <ArrowRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-      )}
+      {isSelected && <ArrowRight className="text-muted-foreground h-4 w-4 flex-shrink-0" />}
     </button>
   );
 }

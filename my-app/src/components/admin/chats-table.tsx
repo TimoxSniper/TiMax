@@ -38,7 +38,13 @@ interface ChatsTableProps {
   onDelete?: (chatId: string) => Promise<void>;
 }
 
-export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelete }: ChatsTableProps) {
+export function ChatsTable({
+  chats,
+  isLoading,
+  pagination,
+  onPageChange,
+  onDelete,
+}: ChatsTableProps) {
   const [deleteChat, setDeleteChat] = useState<Chat | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -55,14 +61,17 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
 
   if (isLoading) {
     return (
-      <Card className="hover:translate-y-0 hover:shadow-editorial-md">
+      <Card className="hover:shadow-editorial-md hover:translate-y-0">
         <CardHeader>
           <CardTitle>Chats</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="flex items-center justify-between p-3 border border-border rounded-md">
+              <div
+                key={i}
+                className="border-border flex items-center justify-between rounded-md border p-3"
+              >
                 <Skeleton className="h-4 w-48" />
                 <div className="flex gap-4">
                   <Skeleton className="h-4 w-24" />
@@ -78,18 +87,18 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
 
   return (
     <>
-      <Card className="hover:translate-y-0 hover:shadow-editorial-md">
+      <Card className="hover:shadow-editorial-md hover:translate-y-0">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base md:text-lg">Chats</CardTitle>
           {pagination && (
-            <span className="text-xs md:text-sm text-muted-foreground">
+            <span className="text-muted-foreground text-xs md:text-sm">
               {pagination.total} gesamt
             </span>
           )}
         </CardHeader>
         <CardContent>
           {/* Table Header - Desktop only */}
-          <div className="hidden md:grid grid-cols-[1fr_120px_80px_140px_80px] gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b border-border">
+          <div className="text-muted-foreground border-border hidden grid-cols-[1fr_120px_80px_140px_80px] gap-4 border-b px-4 py-2 text-sm font-medium md:grid">
             <div>Titel</div>
             <div>User ID</div>
             <div className="text-center">Nachrichten</div>
@@ -98,26 +107,26 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
           </div>
 
           {/* Table Body */}
-          <div className="divide-y divide-border">
+          <div className="divide-border divide-y">
             {chats.length === 0 ? (
-              <div className="py-8 text-center text-muted-foreground text-sm">
+              <div className="text-muted-foreground py-8 text-center text-sm">
                 Keine Chats gefunden
               </div>
             ) : (
               chats.map((chat) => (
                 <div key={chat.id} className="group hover:bg-muted/50 transition-colors">
                   {/* Mobile Card Layout */}
-                  <div className="md:hidden p-3 space-y-2">
+                  <div className="space-y-2 p-3 md:hidden">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium truncate text-sm" title={chat.title}>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-medium" title={chat.title}>
                           {chat.title}
                         </div>
                         <div className="mt-1">
                           <UserIdDisplay userId={chat.user_id} />
                         </div>
                       </div>
-                      <div className="flex gap-1 shrink-0">
+                      <div className="flex shrink-0 gap-1">
                         <Button
                           variant="ghost"
                           size="icon-xs"
@@ -141,7 +150,7 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
                         </Button>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <div className="text-muted-foreground flex items-center justify-between text-xs">
                       <div className="flex items-center gap-1.5">
                         <MessageSquare className="h-3.5 w-3.5" />
                         <span>{chat.messageCount} Nachrichten</span>
@@ -151,16 +160,16 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
                   </div>
 
                   {/* Desktop Grid Layout */}
-                  <div className="hidden md:grid grid-cols-[1fr_120px_80px_140px_80px] gap-4 px-4 py-3 items-center">
-                    <div className="font-medium truncate" title={chat.title}>
+                  <div className="hidden grid-cols-[1fr_120px_80px_140px_80px] items-center gap-4 px-4 py-3 md:grid">
+                    <div className="truncate font-medium" title={chat.title}>
                       {chat.title}
                     </div>
                     <UserIdDisplay userId={chat.user_id} />
                     <div className="flex items-center justify-center gap-1.5">
-                      <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                      <MessageSquare className="text-muted-foreground h-4 w-4" />
                       <span>{chat.messageCount}</span>
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-muted-foreground text-sm">
                       {formatDate(chat.created_at)}
                     </div>
                     <div className="flex items-center justify-center gap-1">
@@ -194,11 +203,11 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
 
           {/* Pagination */}
           {pagination && pagination.totalPages > 1 && (
-            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between pt-4 border-t border-border mt-4">
-              <span className="text-xs md:text-sm text-muted-foreground text-center md:text-left">
+            <div className="border-border mt-4 flex flex-col gap-2 border-t pt-4 md:flex-row md:items-center md:justify-between">
+              <span className="text-muted-foreground text-center text-xs md:text-left md:text-sm">
                 Seite {pagination.page} von {pagination.totalPages}
               </span>
-              <div className="flex gap-2 justify-center md:justify-end">
+              <div className="flex justify-center gap-2 md:justify-end">
                 <Button
                   variant="outline"
                   size="sm"
@@ -234,7 +243,8 @@ export function ChatsTable({ chats, isLoading, pagination, onPageChange, onDelet
             <DialogTitle>Chat löschen</DialogTitle>
             <DialogDescription>
               Bist du sicher, dass du den Chat &quot;{deleteChat?.title}&quot; löschen möchtest?
-              Alle Nachrichten werden ebenfalls gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.
+              Alle Nachrichten werden ebenfalls gelöscht. Diese Aktion kann nicht rückgängig gemacht
+              werden.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

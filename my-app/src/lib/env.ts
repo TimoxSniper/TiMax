@@ -135,4 +135,3 @@ export function getEnvValue(key: keyof z.infer<typeof envSchema>): string | unde
   const env = getEnv();
   return env[key];
 }
-

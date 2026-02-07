@@ -1,6 +1,6 @@
 /**
  * CSRF Protection Utilities
- * 
+ *
  * Implements Double Submit Cookie pattern for CSRF protection
  * https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#double-submit-cookie
  */
@@ -53,9 +53,7 @@ export async function setCsrfCookie(token: string): Promise<void> {
  * Validate CSRF token
  * Returns null if valid, error response if invalid
  */
-export async function validateCsrfToken(
-  request: NextRequest
-): Promise<NextResponse | null> {
+export async function validateCsrfToken(request: NextRequest): Promise<NextResponse | null> {
   // Skip CSRF validation for GET, HEAD, OPTIONS requests (they should be idempotent)
   const method = request.method.toUpperCase();
   if (["GET", "HEAD", "OPTIONS"].includes(method)) {

@@ -8,18 +8,12 @@ import { logger } from "@/lib/logger";
  * POST /api/uploads/[id]/retry
  * Retry a failed upload by resetting its status to pending
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     const { id: uploadId } = await params;
@@ -35,10 +29,7 @@ export async function POST(
 
     if (fetchError || !upload) {
       logger.error("[Upload Retry API] Upload nicht gefunden:", fetchError);
-      return NextResponse.json(
-        { success: false, error: "Upload nicht gefunden" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "Upload nicht gefunden" }, { status: 404 });
     }
 
     // Verify ownership
@@ -94,9 +85,6 @@ export async function POST(
       tags: { api_route: "/api/uploads/[id]/retry" },
     });
 
-    return NextResponse.json(
-      { success: false, error: "Fehler beim Retry" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: "Fehler beim Retry" }, { status: 500 });
   }
 }

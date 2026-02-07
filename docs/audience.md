@@ -5,6 +5,7 @@
 Für Menschen, die **Wissen in Videos oder Audios haben** und daraus Texte machen wollen.
 
 Du erkennst dich wieder, wenn du:
+
 - Einen **Podcast** aufnimmst und daraus LinkedIn-Posts machen willst
 - **Videos** drehst und einen Newsletter daraus schreiben möchtest
 - **Vorträge oder Workshops** hältst und das Wissen nicht verloren gehen soll
@@ -17,6 +18,7 @@ Du erkennst dich wieder, wenn du:
 ## Das Problem
 
 Du hast Videos oder Audios aufgenommen, aber:
+
 - Dein Wissen bleibt "gefangen" in der Aufnahme
 - Niemand schaut sich 1-Stunden-Videos an
 - Du weißt, du könntest daraus Posts machen – aber der Aufwand ist zu groß
@@ -36,17 +38,16 @@ TiMax macht aus deinen Videos und Audios **fertige Texte** – LinkedIn-Posts, N
 
 ## Was du daraus machen kannst
 
-| Du hast... | Daraus wird... |
-|------------|----------------|
-| Podcast-Episode | LinkedIn-Posts, Newsletter |
-| Video | Blog-Artikel, Social Media Posts |
-| Vortrag/Workshop | Zusammenfassung, Artikel-Serie |
-| Sprachmemo | ausformulierter Text, Post |
-| Interview | Zitate, Zusammenfassung |
+| Du hast...       | Daraus wird...                   |
+| ---------------- | -------------------------------- |
+| Podcast-Episode  | LinkedIn-Posts, Newsletter       |
+| Video            | Blog-Artikel, Social Media Posts |
+| Vortrag/Workshop | Zusammenfassung, Artikel-Serie   |
+| Sprachmemo       | ausformulierter Text, Post       |
+| Interview        | Zitate, Zusammenfassung          |
 
 ---
 
 ## Kernbotschaft
 
 > "Du hast was zu sagen. TiMax hilft dir, es aufzuschreiben."
-

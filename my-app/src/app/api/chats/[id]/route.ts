@@ -6,18 +6,12 @@ import { logger } from "@/lib/logger";
 import { validateCsrfToken } from "@/lib/csrf";
 
 // GET Handler (idempotent - CSRF optional)
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -26,26 +20,26 @@ export async function GET(
     // Chat mit allen Nachrichten laden
     const { data: chat, error } = await supabase
       .from("chats")
-      .select(`
+      .select(
+        `
         *,
         messages(*)
-      `)
+      `
+      )
       .eq("id", id)
       .eq("user_id", userId)
       .single();
 
     if (error) {
       logger.error("[Chat API] Fehler beim Laden:", error);
-      return NextResponse.json(
-        { success: false, error: "Chat nicht gefunden" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "Chat nicht gefunden" }, { status: 404 });
     }
 
     // Nachrichten nach Zeit sortieren
     if (chat?.messages) {
-      chat.messages.sort((a: { created_at: string }, b: { created_at: string }) =>
-        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      chat.messages.sort(
+        (a: { created_at: string }, b: { created_at: string }) =>
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       );
     }
 
@@ -74,21 +68,14 @@ export async function DELETE(
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     const { id } = await params;
     const supabase = createAdminClient();
 
     // Lösche Chat (cascade löscht auch Nachrichten)
-    const { error } = await supabase
-      .from("chats")
-      .delete()
-      .eq("id", id)
-      .eq("user_id", userId);
+    const { error } = await supabase.from("chats").delete().eq("id", id).eq("user_id", userId);
 
     if (error) {
       logger.error("[Chat API] Fehler beim Löschen:", error);
@@ -109,10 +96,7 @@ export async function DELETE(
 }
 
 // PATCH: Chat aktualisieren (z.B. Titel ändern)
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const csrfError = await validateCsrfToken(request);
     if (csrfError) return csrfError;
@@ -120,10 +104,7 @@ export async function PATCH(
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     const { id } = await params;

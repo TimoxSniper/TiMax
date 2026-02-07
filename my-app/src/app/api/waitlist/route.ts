@@ -51,15 +51,13 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     // Get IP for rate limiting
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-               request.headers.get("x-real-ip") ||
-               "unknown";
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
 
     // Rate limiting check
-    const rateLimit = await checkRateLimit(
-      `waitlist:${ip}`,
-      RATE_LIMIT_CONFIG
-    );
+    const rateLimit = await checkRateLimit(`waitlist:${ip}`, RATE_LIMIT_CONFIG);
 
     if (!rateLimit.allowed) {
       return NextResponse.json(
@@ -85,10 +83,7 @@ export async function POST(request: NextRequest) {
 
     if (!validation.success) {
       const errorMessage = validation.error.issues[0]?.message || "Ungültige Eingabe";
-      return NextResponse.json(
-        { success: false, error: errorMessage },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: errorMessage }, { status: 400 });
     }
 
     const { email, source } = validation.data;
@@ -158,7 +153,10 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(
-      { success: false, error: "Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es später erneut." },
+      {
+        success: false,
+        error: "Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es später erneut.",
+      },
       { status: 500 }
     );
   }

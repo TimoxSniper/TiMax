@@ -11,6 +11,7 @@ The application is running in "fail-open" mode, which means if Redis is unavaila
 ## Option 1: Upstash Redis (Recommended for Production)
 
 ### Why Upstash?
+
 - Serverless Redis (no server management)
 - Global edge caching
 - Free tier available (10,000 requests/day)
@@ -34,6 +35,7 @@ The application is running in "fail-open" mode, which means if Redis is unavaila
    - Copy "UPSTASH_REDIS_REST_TOKEN"
 
 4. **Add to Environment Variables**
+
    ```bash
    # In .env.local
    UPSTASH_REDIS_REST_URL=https://your-database.upstash.io
@@ -41,6 +43,7 @@ The application is running in "fail-open" mode, which means if Redis is unavaila
    ```
 
 5. **Verify Configuration**
+
    ```bash
    cd my-app
    npm run dev
@@ -60,6 +63,7 @@ The application is running in "fail-open" mode, which means if Redis is unavaila
 ⚠️ **WARNING:** This is only suitable for development/testing. DO NOT use in production!
 
 An in-memory fallback has been implemented that will work without Redis, but it:
+
 - Only works on a single server (doesn't scale)
 - Resets when server restarts
 - Won't work with Vercel (serverless functions)
@@ -70,16 +74,17 @@ An in-memory fallback has been implemented that will work without Redis, but it:
 
 Current limits (can be customized in .env.local):
 
-| Endpoint | Max Requests | Window | Env Variable |
-|----------|--------------|--------|--------------|
-| `/api/upload` | 5 | 1 hour | RATE_LIMIT_UPLOAD_MAX |
-| `/api/chat` | 20 | 1 minute | RATE_LIMIT_CHAT_MAX |
-| `/api/generate` | 10 | 1 hour | RATE_LIMIT_GENERATE_MAX |
-| Default (all other) | 100 | 1 minute | RATE_LIMIT_DEFAULT_MAX |
+| Endpoint            | Max Requests | Window   | Env Variable            |
+| ------------------- | ------------ | -------- | ----------------------- |
+| `/api/upload`       | 5            | 1 hour   | RATE_LIMIT_UPLOAD_MAX   |
+| `/api/chat`         | 20           | 1 minute | RATE_LIMIT_CHAT_MAX     |
+| `/api/generate`     | 10           | 1 hour   | RATE_LIMIT_GENERATE_MAX |
+| Default (all other) | 100          | 1 minute | RATE_LIMIT_DEFAULT_MAX  |
 
 ### Customize Limits
 
 Add to `.env.local`:
+
 ```env
 # More restrictive
 RATE_LIMIT_UPLOAD_MAX=3
@@ -95,6 +100,7 @@ RATE_LIMIT_CHAT_MAX=50
 ## Testing Rate Limiting
 
 ### Manual Test:
+
 ```bash
 # Test upload endpoint (should block after 5 requests in 1 hour)
 for i in {1..10}; do
@@ -110,6 +116,7 @@ done
 ```
 
 ### Check Headers:
+
 ```bash
 curl -I http://localhost:3000/api/chat
 # Look for:
@@ -123,6 +130,7 @@ curl -I http://localhost:3000/api/chat
 ## Monitoring
 
 ### Check Redis Connection:
+
 ```bash
 # Add to any API route temporarily:
 import { redis } from '@/lib/redis';
@@ -131,6 +139,7 @@ console.log('Redis status:', ping); // Should log "PONG"
 ```
 
 ### Upstash Dashboard:
+
 - Go to https://console.upstash.com
 - View your database
 - Check "Metrics" tab for:
@@ -147,6 +156,7 @@ console.log('Redis status:', ping); // Should log "PONG"
 **Cause:** Redis credentials not configured or invalid
 
 **Fix:**
+
 1. Check `.env.local` has UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN
 2. Verify credentials are correct (no extra spaces, quotes)
 3. Test connection with curl:
@@ -161,6 +171,7 @@ console.log('Redis status:', ping); // Should log "PONG"
 **Symptoms:** Can make unlimited requests
 
 **Debug Steps:**
+
 1. Check console for warning message
 2. Verify middleware.ts is being executed (add console.log)
 3. Check Redis connection
@@ -171,6 +182,7 @@ console.log('Redis status:', ping); // Should log "PONG"
 **Cause:** Rate limit set too low or IP detection issue
 
 **Fix:**
+
 1. Check rate limit configuration
 2. Verify IP detection in middleware (check getClientIP function)
 3. Clear Redis keys: Delete key pattern `ratelimit:*` in Upstash dashboard
@@ -199,11 +211,13 @@ console.log('Redis status:', ping); // Should log "PONG"
 ## Cost Estimation (Upstash Free Tier)
 
 Free Tier Limits:
+
 - 10,000 requests/day
 - 100 MB storage
 - Global replication
 
 For TiMax with ~1000 users/day:
+
 - Average: ~50,000 rate limit checks/day
 - **Exceeds free tier** → Upgrade to Pro ($0.20/100K requests)
 - Monthly cost: ~$3-5 for 1M requests

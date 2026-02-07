@@ -8,9 +8,10 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Allgemeine Geschäftsbedingungen",
-  description: "AGB von timax - Nutzungsbedingungen für die KI-gestützte Transkriptions- und Textgenerierungsplattform. Leistungsumfang, Nutzungsrechte und Haftung.",
+  description:
+    "AGB von timax - Nutzungsbedingungen für die KI-gestützte Transkriptions- und Textgenerierungsplattform. Leistungsumfang, Nutzungsrechte und Haftung.",
   alternates: {
-    canonical: '/agb',
+    canonical: "/agb",
   },
   openGraph: {
     title: "Allgemeine Geschäftsbedingungen - timax",
@@ -22,14 +23,10 @@ export const metadata: Metadata = {
 
 export default function AGBPage() {
   return (
-    <main className="min-h-screen bg-background">
-      <JsonLd data={getLegalPageSchema('agb')} />
+    <main className="bg-background min-h-screen">
+      <JsonLd data={getLegalPageSchema("agb")} />
       <div className="container mx-auto max-w-3xl px-4 py-16 lg:py-24">
-        <Button
-          variant="ghost"
-          asChild
-          className="mb-8 text-muted-foreground hover:text-accent"
-        >
+        <Button variant="ghost" asChild className="text-muted-foreground hover:text-accent mb-8">
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Zurück zur Startseite
@@ -38,201 +35,235 @@ export default function AGBPage() {
 
         <article className="max-w-none">
           <header className="mb-16">
-            <h1 className="font-serif text-5xl lg:text-6xl font-bold mb-6 text-foreground">
+            <h1 className="text-foreground mb-6 font-serif text-5xl font-bold lg:text-6xl">
               Allgemeine Geschäftsbedingungen
             </h1>
-            <div className="w-24 h-1 bg-accent mb-8" />
-            <p className="font-sans text-xs uppercase tracking-wide text-muted-foreground font-medium">
-              Stand: {new Date().toLocaleDateString("de-DE", { year: "numeric", month: "long", day: "numeric" })}
+            <div className="bg-accent mb-8 h-1 w-24" />
+            <p className="text-muted-foreground font-sans text-xs font-medium tracking-wide uppercase">
+              Stand:{" "}
+              {new Date().toLocaleDateString("de-DE", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </p>
           </header>
 
-          <section className="space-y-12 font-sans text-base lg:text-lg leading-relaxed text-foreground">
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+          <section className="text-foreground space-y-12 font-sans text-base leading-relaxed lg:text-lg">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 1. Geltungsbereich
               </h2>
               <p className="mb-4">
-                Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für alle Leistungen der timax Plattform (nachfolgend "timax" oder "wir") zur automatischen Transkription von Videos und Audios sowie zur KI-gestützten Textgenerierung.
+                Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für alle Leistungen der timax
+                Plattform (nachfolgend "timax" oder "wir") zur automatischen Transkription von
+                Videos und Audios sowie zur KI-gestützten Textgenerierung.
               </p>
               <p>
-                Abweichende, entgegenstehende oder ergänzende AGB des Kunden werden nicht Vertragsbestandteil, es sei denn, ihrer Geltung wird ausdrücklich schriftlich zugestimmt.
+                Abweichende, entgegenstehende oder ergänzende AGB des Kunden werden nicht
+                Vertragsbestandteil, es sei denn, ihrer Geltung wird ausdrücklich schriftlich
+                zugestimmt.
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 2. Leistungsumfang
               </h2>
-              <p className="mb-4">
-                timax bietet folgende Leistungen an:
-              </p>
-              <ul className="list-disc pl-6 mb-4 space-y-2">
+              <p className="mb-4">timax bietet folgende Leistungen an:</p>
+              <ul className="mb-4 list-disc space-y-2 pl-6">
                 <li>Upload und Speicherung von Video- und Audio-Dateien</li>
                 <li>Automatische Transkription von Videos und Audios mittels KI (Whisper API)</li>
-                <li>KI-gestützte Textgenerierung aus Transkripten in verschiedenen Formaten (Social Media Posts, Blog-Artikel, Newsletter, etc.)</li>
+                <li>
+                  KI-gestützte Textgenerierung aus Transkripten in verschiedenen Formaten (Social
+                  Media Posts, Blog-Artikel, Newsletter, etc.)
+                </li>
                 <li>Chat-Interface für Dialog mit der KI</li>
                 <li>Verwaltung und Organisation von Transkripten und generierten Texten</li>
               </ul>
               <p>
-                Der genaue Leistungsumfang richtet sich nach dem gewählten Tarif. timax behält sich vor, die Leistungen zu erweitern, zu ändern oder einzustellen, soweit dies technisch erforderlich ist oder gesetzlichen Bestimmungen entspricht.
+                Der genaue Leistungsumfang richtet sich nach dem gewählten Tarif. timax behält sich
+                vor, die Leistungen zu erweitern, zu ändern oder einzustellen, soweit dies technisch
+                erforderlich ist oder gesetzlichen Bestimmungen entspricht.
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 3. Vertragsschluss
               </h2>
               <p className="mb-4">
-                Der Vertrag kommt durch die Registrierung des Nutzers und die Annahme dieser AGB zustande. Mit der Registrierung erklärt der Nutzer, dass er die AGB gelesen, verstanden und akzeptiert hat.
+                Der Vertrag kommt durch die Registrierung des Nutzers und die Annahme dieser AGB
+                zustande. Mit der Registrierung erklärt der Nutzer, dass er die AGB gelesen,
+                verstanden und akzeptiert hat.
               </p>
-              <p>
-                timax behält sich vor, Registrierungen ohne Angabe von Gründen abzulehnen.
-              </p>
+              <p>timax behält sich vor, Registrierungen ohne Angabe von Gründen abzulehnen.</p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 4. Preise und Zahlungsbedingungen
               </h2>
               <p className="mb-4">
-                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                <span className="rounded bg-red-100 px-2 py-1 font-bold text-red-600 dark:bg-red-900/30">
                   [PREISE HIER EINTRAGEN - z.B. "Kostenlos" oder "Ab 9,99€/Monat"]
                 </span>
               </p>
               <p className="mb-4 text-gray-600 dark:text-gray-400">
-                Beispiel: Die Preise für die Nutzung von timax richten sich nach dem gewählten Tarif. Alle Preise verstehen sich in Euro und enthalten die gesetzliche Mehrwertsteuer. Zahlungen sind sofort fällig.
+                Beispiel: Die Preise für die Nutzung von timax richten sich nach dem gewählten
+                Tarif. Alle Preise verstehen sich in Euro und enthalten die gesetzliche
+                Mehrwertsteuer. Zahlungen sind sofort fällig.
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 5. Nutzungsrechte
               </h2>
-              <h3 className="font-serif text-2xl font-semibold mb-2 mt-6 text-foreground">
+              <h3 className="text-foreground mt-6 mb-2 font-serif text-2xl font-semibold">
                 5.1 Rechte an hochgeladenen Inhalten
               </h3>
               <p className="mb-4">
-                Der Nutzer behält alle Rechte an den von ihm hochgeladenen Videos und Audios. Mit dem Upload räumt der Nutzer timax das Recht ein, die Dateien zur Erbringung der Dienstleistung (Transkription, Textgenerierung) zu verwenden.
+                Der Nutzer behält alle Rechte an den von ihm hochgeladenen Videos und Audios. Mit
+                dem Upload räumt der Nutzer timax das Recht ein, die Dateien zur Erbringung der
+                Dienstleistung (Transkription, Textgenerierung) zu verwenden.
               </p>
 
-              <h3 className="font-serif text-2xl font-semibold mb-2 mt-6 text-foreground">
+              <h3 className="text-foreground mt-6 mb-2 font-serif text-2xl font-semibold">
                 5.2 Rechte an generierten Inhalten
               </h3>
               <p className="mb-4">
-                Alle durch timax generierten Transkripte und Texte stehen dem Nutzer zur freien Verwendung zur Verfügung. timax erhebt keine Rechte an generierten Inhalten. Der Nutzer kann die generierten Inhalte für beliebige Zwecke nutzen, verändern und verbreiten.
+                Alle durch timax generierten Transkripte und Texte stehen dem Nutzer zur freien
+                Verwendung zur Verfügung. timax erhebt keine Rechte an generierten Inhalten. Der
+                Nutzer kann die generierten Inhalte für beliebige Zwecke nutzen, verändern und
+                verbreiten.
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 6. Haftungsbeschränkung für KI-Inhalte
               </h2>
               <p className="mb-4">
-                <strong>WICHTIG:</strong> KI-generierte Transkripte und Texte können Fehler, Ungenauigkeiten oder Halluzinationen enthalten. Der Nutzer ist verpflichtet, alle generierten Inhalte vor Veröffentlichung oder Verwendung sorgfältig zu überprüfen.
+                <strong>WICHTIG:</strong> KI-generierte Transkripte und Texte können Fehler,
+                Ungenauigkeiten oder Halluzinationen enthalten. Der Nutzer ist verpflichtet, alle
+                generierten Inhalte vor Veröffentlichung oder Verwendung sorgfältig zu überprüfen.
               </p>
-              <p className="mb-4">
-                timax haftet nicht für:
-              </p>
-              <ul className="list-disc pl-6 mb-4 space-y-2">
+              <p className="mb-4">timax haftet nicht für:</p>
+              <ul className="mb-4 list-disc space-y-2 pl-6">
                 <li>Fehlerhafte oder unvollständige Transkriptionen</li>
                 <li>Ungenauigkeiten in generierten Texten</li>
                 <li>Halluzinationen oder falsche Informationen in KI-generierten Inhalten</li>
                 <li>Schäden, die durch die Verwendung fehlerhafter KI-Generierungen entstehen</li>
-                <li>Urheberrechtsverletzungen durch KI-generierte Inhalte (der Nutzer ist für die Prüfung verantwortlich)</li>
+                <li>
+                  Urheberrechtsverletzungen durch KI-generierte Inhalte (der Nutzer ist für die
+                  Prüfung verantwortlich)
+                </li>
               </ul>
               <p>
-                Der Nutzer trägt die alleinige Verantwortung für die Verwendung der generierten Inhalte.
+                Der Nutzer trägt die alleinige Verantwortung für die Verwendung der generierten
+                Inhalte.
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 7. Upload-Beschränkungen
               </h2>
-              <p className="mb-4">
-                Der Nutzer verpflichtet sich, nur Dateien hochzuladen, die:
-              </p>
-              <ul className="list-disc pl-6 mb-4 space-y-2">
+              <p className="mb-4">Der Nutzer verpflichtet sich, nur Dateien hochzuladen, die:</p>
+              <ul className="mb-4 list-disc space-y-2 pl-6">
                 <li>den geltenden Gesetzen entsprechen</li>
                 <li>keine Urheberrechtsverletzungen enthalten</li>
                 <li>keine illegalen, beleidigenden oder diffamierenden Inhalte enthalten</li>
                 <li>keine Malware oder schädlichen Code enthalten</li>
-                <li>die maximal erlaubte Dateigröße nicht überschreiten (aktuell: 100MB pro Datei)</li>
+                <li>
+                  die maximal erlaubte Dateigröße nicht überschreiten (aktuell: 100MB pro Datei)
+                </li>
                 <li>in den erlaubten Formaten vorliegen (MP3, MP4, WAV, M4A, WebM)</li>
               </ul>
               <p>
-                timax behält sich vor, Inhalte zu löschen, die gegen diese Bestimmungen verstoßen, und den Zugang des Nutzers zu sperren.
+                timax behält sich vor, Inhalte zu löschen, die gegen diese Bestimmungen verstoßen,
+                und den Zugang des Nutzers zu sperren.
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 8. Verfügbarkeit und Störungen
               </h2>
               <p className="mb-4">
-                timax bemüht sich um eine hohe Verfügbarkeit des Services. Eine 100%ige Verfügbarkeit kann jedoch nicht garantiert werden. Geplante Wartungsarbeiten werden, soweit möglich, vorher angekündigt.
+                timax bemüht sich um eine hohe Verfügbarkeit des Services. Eine 100%ige
+                Verfügbarkeit kann jedoch nicht garantiert werden. Geplante Wartungsarbeiten werden,
+                soweit möglich, vorher angekündigt.
               </p>
               <p>
-                timax haftet nicht für Ausfälle oder Störungen, die auf höhere Gewalt, technische Probleme bei Drittanbietern (z.B. OpenAI, Anthropic) oder andere Umstände zurückzuführen sind, die außerhalb des Einflussbereichs von timax liegen.
+                timax haftet nicht für Ausfälle oder Störungen, die auf höhere Gewalt, technische
+                Probleme bei Drittanbietern (z.B. OpenAI, Anthropic) oder andere Umstände
+                zurückzuführen sind, die außerhalb des Einflussbereichs von timax liegen.
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 9. Kündigung und Account-Löschung
               </h2>
               <p className="mb-4">
-                Der Nutzer kann seinen Account jederzeit ohne Angabe von Gründen kündigen. Die Kündigung erfolgt über die Account-Einstellungen oder per E-Mail an info@timax.app.
+                Der Nutzer kann seinen Account jederzeit ohne Angabe von Gründen kündigen. Die
+                Kündigung erfolgt über die Account-Einstellungen oder per E-Mail an info@timax.app.
               </p>
               <p className="mb-4">
                 timax kann den Account des Nutzers mit sofortiger Wirkung kündigen, wenn:
               </p>
-              <ul className="list-disc pl-6 mb-4 space-y-2">
+              <ul className="mb-4 list-disc space-y-2 pl-6">
                 <li>der Nutzer gegen diese AGB verstößt</li>
                 <li>der Nutzer illegale Inhalte hochlädt</li>
                 <li>der Nutzer versucht, den Service zu manipulieren oder zu missbrauchen</li>
                 <li>Zahlungen ausbleiben (bei kostenpflichtigen Tarifen)</li>
               </ul>
               <p>
-                Bei Kündigung werden alle Daten des Nutzers gemäß unserer Datenschutzerklärung gelöscht.
+                Bei Kündigung werden alle Daten des Nutzers gemäß unserer Datenschutzerklärung
+                gelöscht.
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 10. Widerrufsrecht
               </h2>
               <p className="mb-4">
-                Verbraucher haben ein 14-tägiges Widerrufsrecht. Einzelheiten finden Sie in unserer <Link href="/widerruf" className="text-primary hover:underline">Widerrufsbelehrung</Link>.
+                Verbraucher haben ein 14-tägiges Widerrufsrecht. Einzelheiten finden Sie in unserer{" "}
+                <Link href="/widerruf" className="text-primary hover:underline">
+                  Widerrufsbelehrung
+                </Link>
+                .
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 11. Änderungen der AGB
               </h2>
               <p>
-                timax behält sich vor, diese AGB zu ändern. Änderungen werden dem Nutzer per E-Mail oder über die Plattform mitgeteilt. Widerspricht der Nutzer nicht innerhalb von 14 Tagen, gelten die geänderten AGB als akzeptiert.
+                timax behält sich vor, diese AGB zu ändern. Änderungen werden dem Nutzer per E-Mail
+                oder über die Plattform mitgeteilt. Widerspricht der Nutzer nicht innerhalb von 14
+                Tagen, gelten die geänderten AGB als akzeptiert.
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 12. Schlussbestimmungen
               </h2>
-              <p className="mb-4">
-                Es gilt deutsches Recht unter Ausschluss des UN-Kaufrechts.
-              </p>
+              <p className="mb-4">Es gilt deutsches Recht unter Ausschluss des UN-Kaufrechts.</p>
               <p>
-                Gerichtsstand ist, soweit der Nutzer Kaufmann, juristische Person des öffentlichen Rechts oder öffentlich-rechtliches Sondervermögen ist, der Sitz von timax. Andernfalls bleibt der gesetzliche Gerichtsstand unberührt.
+                Gerichtsstand ist, soweit der Nutzer Kaufmann, juristische Person des öffentlichen
+                Rechts oder öffentlich-rechtliches Sondervermögen ist, der Sitz von timax.
+                Andernfalls bleibt der gesetzliche Gerichtsstand unberührt.
               </p>
             </div>
-
           </section>
         </article>
       </div>
     </main>
   );
 }
-

@@ -15,10 +15,7 @@ async function createUploadHandler(request: NextRequest) {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -28,7 +25,7 @@ async function createUploadHandler(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "fileName, fileSize und fileType sind erforderlich"
+          error: "fileName, fileSize und fileType sind erforderlich",
         },
         { status: 400 }
       );

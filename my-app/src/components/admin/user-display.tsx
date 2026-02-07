@@ -34,7 +34,7 @@ export function UserIdDisplay({ userId, className }: { userId: string; className
   return (
     <div className={cn("flex items-center gap-1", className)}>
       <code
-        className="font-mono text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+        className="text-muted-foreground hover:text-foreground cursor-pointer font-mono text-xs transition-colors"
         onClick={() => setExpanded(!expanded)}
         title={expanded ? "Klicken zum Kürzen" : "Klicken für volle ID"}
       >
@@ -42,13 +42,13 @@ export function UserIdDisplay({ userId, className }: { userId: string; className
       </code>
       <button
         onClick={handleCopy}
-        className="p-0.5 hover:bg-muted rounded transition-colors opacity-0 group-hover:opacity-100"
+        className="hover:bg-muted rounded p-0.5 opacity-0 transition-colors group-hover:opacity-100"
         title="User ID kopieren"
       >
         {copied ? (
-          <Check className="w-3 h-3 text-green-600" />
+          <Check className="h-3 w-3 text-green-600" />
         ) : (
-          <Copy className="w-3 h-3 text-muted-foreground" />
+          <Copy className="text-muted-foreground h-3 w-3" />
         )}
       </button>
     </div>
@@ -68,9 +68,7 @@ export function UserDisplay({
   const [copied, setCopied] = useState(false);
 
   const hasName = firstName || lastName;
-  const displayName = hasName
-    ? `${firstName || ""} ${lastName || ""}`.trim()
-    : null;
+  const displayName = hasName ? `${firstName || ""} ${lastName || ""}`.trim() : null;
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -85,17 +83,17 @@ export function UserDisplay({
   };
 
   return (
-    <div className={cn("flex items-center gap-2 min-w-0", className)}>
+    <div className={cn("flex min-w-0 items-center gap-2", className)}>
       {/* Avatar */}
       {imageUrl ? (
         <img
           src={imageUrl}
           alt={displayName || "User"}
-          className="w-8 h-8 rounded-full shrink-0 object-cover"
+          className="h-8 w-8 shrink-0 rounded-full object-cover"
         />
       ) : (
-        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-          <User className="w-4 h-4 text-muted-foreground" />
+        <div className="bg-muted flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+          <User className="text-muted-foreground h-4 w-4" />
         </div>
       )}
 
@@ -104,7 +102,7 @@ export function UserDisplay({
         {showId ? (
           <div className="flex items-center gap-1.5">
             <code
-              className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded truncate cursor-pointer hover:bg-muted/80"
+              className="bg-muted hover:bg-muted/80 cursor-pointer truncate rounded px-1.5 py-0.5 font-mono text-xs"
               onClick={() => setShowId(false)}
               title="Klicken um Name anzuzeigen"
             >
@@ -112,13 +110,13 @@ export function UserDisplay({
             </code>
             <button
               onClick={handleCopy}
-              className="p-1 hover:bg-muted rounded transition-colors shrink-0"
+              className="hover:bg-muted shrink-0 rounded p-1 transition-colors"
               title="User ID kopieren"
             >
               {copied ? (
-                <Check className="w-3 h-3 text-green-600" />
+                <Check className="h-3 w-3 text-green-600" />
               ) : (
-                <Copy className="w-3 h-3 text-muted-foreground" />
+                <Copy className="text-muted-foreground h-3 w-3" />
               )}
             </button>
           </div>
@@ -130,17 +128,15 @@ export function UserDisplay({
           >
             {displayName ? (
               <div>
-                <span className="font-medium text-sm hover:text-accent transition-colors">
+                <span className="hover:text-accent text-sm font-medium transition-colors">
                   {displayName}
                 </span>
                 {showEmail && email && (
-                  <span className="text-xs text-muted-foreground ml-2">
-                    {email}
-                  </span>
+                  <span className="text-muted-foreground ml-2 text-xs">{email}</span>
                 )}
               </div>
             ) : (
-              <span className="font-mono text-xs text-muted-foreground hover:text-foreground transition-colors">
+              <span className="text-muted-foreground hover:text-foreground font-mono text-xs transition-colors">
                 {truncateUserId(userId)}
               </span>
             )}

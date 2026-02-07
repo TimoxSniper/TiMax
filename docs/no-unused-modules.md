@@ -4,9 +4,9 @@
 
 Reports:
 
- - modules without any exports
- - individual exports not being statically `import`ed or `require`ed from other modules in the same project
- - dynamic imports are supported if argument is a literal string
+- modules without any exports
+- individual exports not being statically `import`ed or `require`ed from other modules in the same project
+- dynamic imports are supported if argument is a literal string
 
 ## Rule Details
 
@@ -27,11 +27,11 @@ Example:
 
 This rule takes the following option:
 
- - **`missingExports`**: if `true`, files without any exports are reported (defaults to `false`)
- - **`unusedExports`**: if `true`, exports without any static usage within other modules are reported (defaults to `false`)
- - **`ignoreUnusedTypeExports`**: if `true`, TypeScript type exports without any static usage within other modules are reported (defaults to `false` and has no effect unless `unusedExports` is `true`)
- - **`src`**: an array with files/paths to be analyzed. It only applies to unused exports. Defaults to `process.cwd()`, if not provided
- - **`ignoreExports`**: an array with files/paths for which unused exports will not be reported (e.g module entry points in a published package)
+- **`missingExports`**: if `true`, files without any exports are reported (defaults to `false`)
+- **`unusedExports`**: if `true`, exports without any static usage within other modules are reported (defaults to `false`)
+- **`ignoreUnusedTypeExports`**: if `true`, TypeScript type exports without any static usage within other modules are reported (defaults to `false` and has no effect unless `unusedExports` is `true`)
+- **`src`**: an array with files/paths to be analyzed. It only applies to unused exports. Defaults to `process.cwd()`, if not provided
+- **`ignoreExports`**: an array with files/paths for which unused exports will not be reported (e.g module entry points in a published package)
 
 ### Example for missing exports
 
@@ -46,19 +46,23 @@ function makeClass() { return new MyClass(...arguments) }
 #### The following will not be reported
 
 ```js
-export default function () { /*...*/ }
+export default function () {
+  /*...*/
+}
 ```
 
 ```js
-export const foo = function () { /*...*/ }
+export const foo = function () {
+  /*...*/
+};
 ```
 
 ```js
-export { foo, bar }
+export { foo, bar };
 ```
 
 ```js
-export { foo as bar }
+export { foo as bar };
 ```
 
 ### Example for unused exports
@@ -66,55 +70,55 @@ export { foo as bar }
 given file-f:
 
 ```js
-import { e } from 'file-a'
-import { f } from 'file-b'
-import * as fileC from  'file-c'
-export { default, i0 } from 'file-d' // both will be reported
+import { e } from "file-a";
+import { f } from "file-b";
+import * as fileC from "file-c";
+export { default, i0 } from "file-d"; // both will be reported
 
-export const j = 99 // will be reported
+export const j = 99; // will be reported
 ```
 
 and file-d:
 
 ```js
-export const i0 = 9 // will not be reported
-export const i1 = 9 // will be reported
-export default () => {} // will not be reported
+export const i0 = 9; // will not be reported
+export const i1 = 9; // will be reported
+export default () => {}; // will not be reported
 ```
 
 and file-c:
 
 ```js
-export const h = 8 // will not be reported
-export default () => {} // will be reported, as export * only considers named exports and ignores default exports
+export const h = 8; // will not be reported
+export default () => {}; // will be reported, as export * only considers named exports and ignores default exports
 ```
 
 and file-b:
 
 ```js
-import two, { b, c, doAnything } from 'file-a'
+import two, { b, c, doAnything } from "file-a";
 
-export const f = 6 // will not be reported
+export const f = 6; // will not be reported
 ```
 
 and file-a:
 
 ```js
-const b = 2
-const c = 3
-const d = 4
+const b = 2;
+const c = 3;
+const d = 4;
 
-export const a = 1 // will be reported
+export const a = 1; // will be reported
 
-export { b, c } // will not be reported
+export { b, c }; // will not be reported
 
-export { d as e } // will not be reported
+export { d as e }; // will not be reported
 
 export function doAnything() {
   // some code
-}  // will not be reported
+} // will not be reported
 
-export default 5 // will not be reported
+export default 5; // will not be reported
 ```
 
 ### Unused exports with `ignoreUnusedTypeExports` set to `true`

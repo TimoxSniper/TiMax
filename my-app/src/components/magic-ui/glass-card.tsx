@@ -11,7 +11,13 @@ interface EditorialCardProps {
   overflow?: "hidden" | "visible";
 }
 
-export function EditorialCard({ children, className, hover = true, variant = "default", overflow = "hidden" }: EditorialCardProps) {
+export function EditorialCard({
+  children,
+  className,
+  hover = true,
+  variant = "default",
+  overflow = "hidden",
+}: EditorialCardProps) {
   const variantClasses = {
     default: "bg-card text-card-foreground border border-border shadow-editorial-md",
     subtle: "bg-secondary text-secondary-foreground border border-border shadow-editorial-sm",
@@ -25,9 +31,9 @@ export function EditorialCard({ children, className, hover = true, variant = "de
         "relative rounded-[6px]",
         overflow === "hidden" ? "overflow-hidden" : "overflow-visible",
         variantClasses[variant],
-        "transition-all duration-300 ease-out cubic-bezier(0.4, 0, 0.2, 1)",
+        "cubic-bezier(0.4, 0, 0.2, 1) transition-all duration-300 ease-out",
         hover && "hover:shadow-editorial-lg hover:-translate-y-[2px]",
-        "focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-accent",
+        "focus-within:ring-accent focus-within:ring-2 focus-within:ring-offset-2",
         className
       )}
     >

@@ -43,26 +43,29 @@ export default function AdminUsersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const { showToast } = useToast();
 
-  const fetchUsers = useCallback(async (page: number) => {
-    setIsLoading(true);
-    try {
-      const res = await fetch(`/api/admin/users?page=${page}&limit=25`);
-      if (res.ok) {
-        const data = await res.json();
-        setUsers(data.users || []);
-        setFilteredUsers(data.users || []);
-        setPagination(data.pagination);
-      } else {
-        throw new Error("Fehler beim Laden");
+  const fetchUsers = useCallback(
+    async (page: number) => {
+      setIsLoading(true);
+      try {
+        const res = await fetch(`/api/admin/users?page=${page}&limit=25`);
+        if (res.ok) {
+          const data = await res.json();
+          setUsers(data.users || []);
+          setFilteredUsers(data.users || []);
+          setPagination(data.pagination);
+        } else {
+          throw new Error("Fehler beim Laden");
+        }
+      } catch (error) {
+        logger.error("Fehler beim Laden der Benutzer:", error);
+        showToast("Benutzer konnten nicht geladen werden", "error");
+      } finally {
+        setIsLoading(false);
+        setIsInitialLoad(false);
       }
-    } catch (error) {
-      logger.error("Fehler beim Laden der Benutzer:", error);
-      showToast("Benutzer konnten nicht geladen werden", "error");
-    } finally {
-      setIsLoading(false);
-      setIsInitialLoad(false);
-    }
-  }, [showToast]);
+    },
+    [showToast]
+  );
 
   useEffect(() => {
     fetchUsers(currentPage);
@@ -92,19 +95,15 @@ export default function AdminUsersPage() {
   };
 
   const handleExportCSV = () => {
-    exportToCSV(
-      filteredUsers,
-      `users-${new Date().toISOString().split("T")[0]}`,
-      [
-        { key: "userId", label: "User ID" },
-        { key: "firstName", label: "Vorname" },
-        { key: "lastName", label: "Nachname" },
-        { key: "email", label: "Email" },
-        { key: "chatCount", label: "Chats" },
-        { key: "uploadCount", label: "Uploads" },
-        { key: "lastActivity", label: "Letzte Aktivität" },
-      ]
-    );
+    exportToCSV(filteredUsers, `users-${new Date().toISOString().split("T")[0]}`, [
+      { key: "userId", label: "User ID" },
+      { key: "firstName", label: "Vorname" },
+      { key: "lastName", label: "Nachname" },
+      { key: "email", label: "Email" },
+      { key: "chatCount", label: "Chats" },
+      { key: "uploadCount", label: "Uploads" },
+      { key: "lastActivity", label: "Letzte Aktivität" },
+    ]);
   };
 
   const handleExportJSON = () => {
@@ -115,16 +114,16 @@ export default function AdminUsersPage() {
     <div className="space-y-6 md:space-y-8">
       {/* Header */}
       <div>
-        <h1 className="font-serif text-2xl md:text-3xl font-bold">Benutzer</h1>
+        <h1 className="font-serif text-2xl font-bold md:text-3xl">Benutzer</h1>
         <p className="text-muted-foreground mt-1 text-sm md:text-base">
           Übersicht aller registrierten Benutzer und ihre Aktivitäten
         </p>
       </div>
 
       {/* Search and Actions */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
             placeholder="Benutzer suchen (Name, Email, ID)..."
             value={searchQuery}
@@ -151,12 +150,8 @@ export default function AdminUsersPage() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={handleExportCSV}>
-              Als CSV exportieren
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleExportJSON}>
-              Als JSON exportieren
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportCSV}>Als CSV exportieren</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportJSON}>Als JSON exportieren</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

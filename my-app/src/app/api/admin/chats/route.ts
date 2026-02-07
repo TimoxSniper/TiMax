@@ -12,10 +12,7 @@ export async function GET(request: NextRequest) {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     // Admin-Check
@@ -55,9 +52,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Gesamtanzahl für Pagination
-    let countQuery = supabase
-      .from("chats")
-      .select("*", { count: "exact", head: true });
+    let countQuery = supabase.from("chats").select("*", { count: "exact", head: true });
 
     if (filterUserId) {
       countQuery = countQuery.eq("user_id", filterUserId);
@@ -92,7 +87,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Message-Counts für alle Chats auf einmal laden (verhindert N+1 Problem)
-    const chatIds = (chats || []).map(chat => chat.id);
+    const chatIds = (chats || []).map((chat) => chat.id);
 
     let chatsWithMessageCount = chats || [];
 
@@ -104,11 +99,11 @@ export async function GET(request: NextRequest) {
 
       // Message-Counts gruppieren
       const messageCountMap = new Map<string, number>();
-      messageCounts?.forEach(msg => {
+      messageCounts?.forEach((msg) => {
         messageCountMap.set(msg.chat_id, (messageCountMap.get(msg.chat_id) || 0) + 1);
       });
 
-      chatsWithMessageCount = chats.map(chat => ({
+      chatsWithMessageCount = chats.map((chat) => ({
         ...chat,
         messageCount: messageCountMap.get(chat.id) || 0,
       }));

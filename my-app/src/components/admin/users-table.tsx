@@ -33,14 +33,17 @@ interface UsersTableProps {
 export function UsersTable({ users, isLoading, pagination, onPageChange }: UsersTableProps) {
   if (isLoading) {
     return (
-      <Card className="hover:translate-y-0 hover:shadow-editorial-md">
+      <Card className="hover:shadow-editorial-md hover:translate-y-0">
         <CardHeader>
           <CardTitle>Benutzer</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="flex items-center justify-between p-3 border border-border rounded-md">
+              <div
+                key={i}
+                className="border-border flex items-center justify-between rounded-md border p-3"
+              >
                 <Skeleton className="h-4 w-32" />
                 <div className="flex gap-4">
                   <Skeleton className="h-4 w-16" />
@@ -56,18 +59,18 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
   }
 
   return (
-    <Card className="hover:translate-y-0 hover:shadow-editorial-md">
+    <Card className="hover:shadow-editorial-md hover:translate-y-0">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-base md:text-lg">Benutzer</CardTitle>
         {pagination && (
-          <span className="text-xs md:text-sm text-muted-foreground">
+          <span className="text-muted-foreground text-xs md:text-sm">
             {pagination.total} gesamt
           </span>
         )}
       </CardHeader>
       <CardContent>
         {/* Table Header - Desktop only */}
-        <div className="hidden md:grid grid-cols-[1fr_80px_80px_140px] gap-4 px-4 py-2 text-sm font-medium text-muted-foreground border-b border-border">
+        <div className="text-muted-foreground border-border hidden grid-cols-[1fr_80px_80px_140px] gap-4 border-b px-4 py-2 text-sm font-medium md:grid">
           <div>Benutzer</div>
           <div className="text-center">Chats</div>
           <div className="text-center">Uploads</div>
@@ -75,9 +78,9 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
         </div>
 
         {/* Table Body */}
-        <div className="divide-y divide-border md:divide-y-0 md:divide-y md:divide-border">
+        <div className="divide-border md:divide-border divide-y md:divide-y md:divide-y-0">
           {users.length === 0 ? (
-            <div className="py-8 text-center text-muted-foreground text-sm">
+            <div className="text-muted-foreground py-8 text-center text-sm">
               Keine Benutzer gefunden
             </div>
           ) : (
@@ -85,10 +88,10 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
               <Link
                 key={user.userId}
                 href={`/admin/users/${user.userId}`}
-                className="block hover:bg-muted/50 transition-colors cursor-pointer"
+                className="hover:bg-muted/50 block cursor-pointer transition-colors"
               >
                 {/* Mobile Card Layout */}
-                <div className="md:hidden p-3 space-y-2">
+                <div className="space-y-2 p-3 md:hidden">
                   <UserDisplay
                     userId={user.userId}
                     firstName={user.firstName}
@@ -97,25 +100,25 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
                     imageUrl={user.imageUrl}
                     showEmail
                   />
-                  <div className="flex items-center justify-between text-sm pt-2">
+                  <div className="flex items-center justify-between pt-2 text-sm">
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-1.5">
-                        <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
+                        <MessageSquare className="text-muted-foreground h-3.5 w-3.5" />
                         <span className="text-accent font-medium">{user.chatCount}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <FileAudio className="h-3.5 w-3.5 text-muted-foreground" />
+                        <FileAudio className="text-muted-foreground h-3.5 w-3.5" />
                         <span className="text-accent font-medium">{user.uploadCount}</span>
                       </div>
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-muted-foreground text-xs">
                       {formatDate(user.lastActivity)}
                     </div>
                   </div>
                 </div>
 
                 {/* Desktop Grid Layout */}
-                <div className="hidden md:grid grid-cols-[1fr_80px_80px_140px] gap-4 px-4 py-3 items-center">
+                <div className="hidden grid-cols-[1fr_80px_80px_140px] items-center gap-4 px-4 py-3 md:grid">
                   <UserDisplay
                     userId={user.userId}
                     firstName={user.firstName}
@@ -125,14 +128,14 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
                     showEmail
                   />
                   <div className="flex items-center justify-center gap-1.5">
-                    <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                    <MessageSquare className="text-muted-foreground h-4 w-4" />
                     <span className="text-accent">{user.chatCount}</span>
                   </div>
                   <div className="flex items-center justify-center gap-1.5">
-                    <FileAudio className="h-4 w-4 text-muted-foreground" />
+                    <FileAudio className="text-muted-foreground h-4 w-4" />
                     <span className="text-accent">{user.uploadCount}</span>
                   </div>
-                  <div className="text-right text-sm text-muted-foreground">
+                  <div className="text-muted-foreground text-right text-sm">
                     {formatDate(user.lastActivity)}
                   </div>
                 </div>
@@ -143,11 +146,11 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
 
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
-          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between pt-4 border-t border-border mt-4">
-            <span className="text-xs md:text-sm text-muted-foreground text-center md:text-left">
+          <div className="border-border mt-4 flex flex-col gap-2 border-t pt-4 md:flex-row md:items-center md:justify-between">
+            <span className="text-muted-foreground text-center text-xs md:text-left md:text-sm">
               Seite {pagination.page} von {pagination.totalPages}
             </span>
-            <div className="flex gap-2 justify-center md:justify-end">
+            <div className="flex justify-center gap-2 md:justify-end">
               <Button
                 variant="outline"
                 size="sm"

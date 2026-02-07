@@ -9,11 +9,13 @@ Ein Cron Job führt das Script regelmäßig aus (z.B. alle 5 Minuten).
 ### Einrichtung:
 
 1. **Crontab öffnen:**
+
    ```bash
    crontab -e
    ```
 
 2. **Eintrag hinzufügen** (prüft alle 5 Minuten):
+
    ```bash
    */5 * * * * /home/Tynox/TiMax/auto-pull.sh >/dev/null 2>&1
    ```
@@ -27,11 +29,13 @@ Ein Cron Job führt das Script regelmäßig aus (z.B. alle 5 Minuten).
 3. **Crontab speichern** (in vim/nano: `:wq` oder `Ctrl+X`, dann `Y`)
 
 ### Cron Job prüfen:
+
 ```bash
 crontab -l
 ```
 
 ### Logs ansehen:
+
 ```bash
 tail -f ~/TiMax-auto-pull.log
 ```
@@ -47,6 +51,7 @@ sudo nano /etc/systemd/system/timax-auto-pull.service
 ```
 
 Inhalt:
+
 ```ini
 [Unit]
 Description=TiMax Auto Pull Service
@@ -68,6 +73,7 @@ sudo nano /etc/systemd/system/timax-auto-pull.timer
 ```
 
 Inhalt:
+
 ```ini
 [Unit]
 Description=TiMax Auto Pull Timer
@@ -90,6 +96,7 @@ sudo systemctl start timax-auto-pull.timer
 ```
 
 ### Status prüfen:
+
 ```bash
 sudo systemctl status timax-auto-pull.timer
 sudo systemctl status timax-auto-pull.service
@@ -110,6 +117,7 @@ pkill -f watch-pull.sh
 ## Option 4: GitHub Webhook (Erweitert)
 
 Für sofortige Reaktion auf Pushes benötigst du:
+
 1. Einen Webhook-Server auf deinem anderen Gerät
 2. GitHub Webhook konfigurieren, der auf Push-Events reagiert
 3. Der Server führt dann `git pull` aus
@@ -126,6 +134,7 @@ Für sofortige Reaktion auf Pushes benötigst du:
 ## Troubleshooting
 
 ### Script funktioniert nicht:
+
 ```bash
 # Prüfe ob Script ausführbar ist
 ls -l /home/Tynox/TiMax/auto-pull.sh
@@ -135,6 +144,7 @@ ls -l /home/Tynox/TiMax/auto-pull.sh
 ```
 
 ### Cron Job läuft nicht:
+
 ```bash
 # Prüfe Cron-Logs
 grep CRON /var/log/syslog
@@ -144,8 +154,5 @@ systemctl status cron
 ```
 
 ### Git-Authentifizierung:
+
 Stelle sicher, dass `use-github-token.sh` ausgeführt wurde, damit Git Zugriff auf GitHub hat.
-
-
-
-

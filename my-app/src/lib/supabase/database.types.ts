@@ -1,20 +1,14 @@
 /**
  * TiMax Supabase Database Types
- * 
+ *
  * Diese Datei definiert TypeScript-Typen für alle Supabase-Tabellen.
  * Basierend auf dem Schema in /supabase-schema.sql
- * 
+ *
  * HINWEIS: Bei Schema-Änderungen manuell aktualisieren oder
  * mit `npx supabase gen types typescript` automatisch generieren.
  */
 
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type UploadStatus = "pending" | "processing" | "completed" | "failed" | "cancelled";
 export type WaitlistStatus = "pending" | "notified" | "registered";
@@ -77,7 +71,7 @@ export interface Database {
             columns: ["chat_id"];
             referencedRelation: "chats";
             referencedColumns: ["id"];
-          }
+          },
         ];
       };
       uploads: {
@@ -170,7 +164,13 @@ export interface Database {
 export interface UploadMetadata {
   topics?: string[];
   intention?: "bildung" | "motivation" | "argumentation" | "beispiel" | "geschichte" | "general";
-  platform_suitability?: ("reel_hook" | "linkedin_post" | "twitter_thread" | "youtube_short" | "blog_post")[];
+  platform_suitability?: (
+    | "reel_hook"
+    | "linkedin_post"
+    | "twitter_thread"
+    | "youtube_short"
+    | "blog_post"
+  )[];
   tone?: "enthusiastisch" | "kritisch" | "sachlich" | "inspirierend" | "neutral";
   content_quality?: number; // 1-10
   key_quotes?: string[];

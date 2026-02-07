@@ -120,13 +120,11 @@ export async function uploadFileInChunks(
   try {
     const uploadPromises = chunks.map((chunk, index) => {
       const metadata = createChunkMetadata(file, index, totalChunks, uploadId);
-      
+
       return uploadChunk(chunk, metadata, (chunkProgress) => {
         // Berechne Gesamt-Progress
         if (onProgress) {
-          const overallProgress = Math.round(
-            ((index * 100 + chunkProgress) / totalChunks) / 100
-          );
+          const overallProgress = Math.round((index * 100 + chunkProgress) / totalChunks / 100);
           onProgress(overallProgress);
         }
       });
@@ -160,4 +158,3 @@ export async function uploadFileInChunks(
     };
   }
 }
-

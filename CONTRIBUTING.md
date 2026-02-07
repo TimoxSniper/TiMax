@@ -135,9 +135,11 @@ security(csp): tighten content security policy
 
 ```markdown
 ## Beschreibung
+
 Kurze Beschreibung der Änderungen.
 
 ## Type
+
 - [ ] Feature
 - [ ] Bugfix
 - [ ] Dokumentation
@@ -146,24 +148,29 @@ Kurze Beschreibung der Änderungen.
 - [ ] Security
 
 ## Änderungen
+
 - Änderung 1
 - Änderung 2
 
 ## Tests
+
 - [ ] Unit Tests hinzugefügt
 - [ ] Integration Tests hinzugefügt
 - [ ] Manuelle Tests durchgeführt
 
 ## Checkliste
+
 - [ ] Code folgt Style-Guide
 - [ ] Dokumentation aktualisiert
 - [ ] Keine Breaking Changes (oder dokumentiert)
 - [ ] Security-Aspekte berücksichtigt
 
 ## Screenshots (falls UI)
+
 <!-- Screenshots einfügen -->
 
 ## Verwandte Issues
+
 Closes #123
 ```
 
@@ -179,7 +186,7 @@ function formatUserName(user: User): string {
 
 // ❌ Schlecht
 function formatUserName(user: any) {
-  return user.firstName + ' ' + user.lastName;
+  return user.firstName + " " + user.lastName;
 }
 ```
 
@@ -193,13 +200,13 @@ interface ButtonProps {
   onClick?: () => void;
 }
 
-export function Button({ 
-  variant = "primary", 
-  children, 
-  onClick 
+export function Button({
+  variant = "primary",
+  children,
+  onClick
 }: ButtonProps) {
   return (
-    <button 
+    <button
       className={cn(buttonVariants({ variant }))}
       onClick={onClick}
     >
@@ -351,6 +358,7 @@ export function generateCsrfToken(): string {
 ## Fragen?
 
 Bei Fragen:
+
 1. Zuerst Dokumentation lesen
 2. Bestehende Issues durchsuchen
 3. Neues Issue erstellen

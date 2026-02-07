@@ -1,20 +1,15 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { CHAT_UI_TEXTS, CHAT_ERROR_TEXTS } from "@/lib/constants";
 import * as Sentry from "@sentry/nextjs";
 import { logger } from "@/lib/logger";
+import { useChatReducer, ChatState, Message } from "./useChatReducer";
 
-// Das Message-Interface wird von der Komponente importiert,
-// daher definieren wir es hier wieder oder importieren es von einem geteilten Ort.
-export interface Message {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  timestamp: Date;
-}
+// Exportiere Message-Typ für andere Komponenten
+export type { Message };
 
 interface RawMessage {
   id: string;
@@ -29,50 +24,47 @@ interface UseChatOptions {
 }
 
 export function useChat({ initialSessionId }: UseChatOptions = {}) {
-  const [messages, setMessages] = useState<Message[]>([]);
-  // sessionId direkt bei Initialisierung generieren, um Race Conditions zu vermeiden
-  const [sessionId, setSessionId] = useState<string>(
-    initialSessionId || `chat-${uuidv4()}`
-  );
-  const [chatId, setChatId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
+  const { state, dispatch } = useChatReducer(initialSessionId);
   const requestIdRef = useRef<number>(0);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   // Prüfe auf Transkript-Übergabe aus Dashboard (einmalig beim Mount)
   useEffect(() => {
     const pendingTranscript = localStorage.getItem("pending_transcript");
-    if (pendingTranscript && messages.length === 0) {
+    if (pendingTranscript && state.messages.length === 0) {
       const initialMessage: Message = {
         id: `context-${uuidv4()}`,
         role: "user",
         content: `Hier ist ein Transkript als Kontext:\n\n${pendingTranscript}\n\nBitte hilf mir, dieses Transkript zu analysieren oder Inhalte daraus zu generieren.`,
         timestamp: new Date(),
       };
-      setMessages([initialMessage]);
+      dispatch({ type: "SET_MESSAGES", payload: [initialMessage] });
       localStorage.removeItem("pending_transcript");
     }
   }, []); // Nur beim ersten Mount ausführen
 
   // Lade Historie wenn chatId gesetzt wird
   useEffect(() => {
-    if (!chatId) return;
+    if (!state.chatId) return;
 
     const abortController = new AbortController();
 
     const loadHistory = async () => {
-      setIsLoading(true);
-      setError(null);
+      dispatch({ type: "SET_LOADING", payload: true });
+      dispatch({ type: "SET_ERROR", payload: null });
+      
       try {
-        const response = await fetch(`/api/chat?chat_id=${chatId}`, {
+        const response = await fetch(`/api/chat?chat_id=${state.chatId}`, {
           signal: abortController.signal,
         });
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || CHAT_ERROR_TEXTS.HISTORY_LOAD_ERROR || "Historie konnte nicht geladen werden");
+          throw new Error(
+            errorData.error ||
+              CHAT_ERROR_TEXTS.HISTORY_LOAD_ERROR ||
+              "Historie konnte nicht geladen werden"
+          );
         }
 
         const data = await response.json();
@@ -87,10 +79,10 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
 
           // Wenn der Chat eine Session-ID hat, übernehmen wir diese
           if (data.chat.session_id) {
-            setSessionId(data.chat.session_id);
+            dispatch({ type: "SET_SESSION_ID", payload: data.chat.session_id });
           }
 
-          setMessages(loadedMessages);
+          dispatch({ type: "SET_MESSAGES", payload: loadedMessages });
         } else {
           throw new Error(data.error || "Unerwartetes Format der Historien-Daten");
         }
@@ -100,13 +92,16 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
         }
 
         logger.error("Fehler beim Laden der Historie:", err);
-        setError(err instanceof Error ? err.message : "Historie konnte nicht geladen werden");
+        dispatch({ 
+          type: "SET_ERROR", 
+          payload: err instanceof Error ? err.message : "Historie konnte nicht geladen werden" 
+        });
 
         Sentry.captureException(err, {
-          extra: { chatId, action: "loadHistory" }
+          extra: { chatId: state.chatId, action: "loadHistory" },
         });
       } finally {
-        setIsLoading(false);
+        dispatch({ type: "SET_LOADING", payload: false });
       }
     };
 
@@ -115,10 +110,10 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
     return () => {
       abortController.abort();
     };
-  }, [chatId]);
+  }, [state.chatId]);
 
   const handleSendMessage = async (content: string) => {
-    if (!content.trim() || isLoading) return;
+    if (!content.trim() || state.isLoading) return;
 
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -135,9 +130,9 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
-    setIsLoading(true);
-    setError(null);
+    dispatch({ type: "ADD_MESSAGE", payload: userMessage });
+    dispatch({ type: "SET_LOADING", payload: true });
+    dispatch({ type: "SET_ERROR", payload: null });
 
     try {
       // Hole CSRF-Token vor dem POST
@@ -153,9 +148,9 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
         signal: abortController.signal,
         body: JSON.stringify({
           message: content.trim(),
-          sessionId,
-          chat_id: chatId, // Sende bestehende chat_id mit
-          chatHistory: [...messages, userMessage].slice(-10).map((msg) => ({
+          sessionId: state.sessionId,
+          chat_id: state.chatId, // Sende bestehende chat_id mit
+          chatHistory: [...state.messages, userMessage].slice(-10).map((msg) => ({
             role: msg.role,
             content: msg.content,
           })),
@@ -178,8 +173,8 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
       }
 
       // Speichere die chat_id vom Server
-      if (data.chat_id && !chatId) {
-        setChatId(data.chat_id);
+      if (data.chat_id && !state.chatId) {
+        dispatch({ type: "SET_CHAT_ID", payload: data.chat_id });
       }
 
       const assistantMessage: Message = {
@@ -190,7 +185,7 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
       };
 
       if (currentRequestId === requestIdRef.current) {
-        setMessages((prev) => [...prev, assistantMessage]);
+        dispatch({ type: "ADD_MESSAGE", payload: assistantMessage });
       }
     } catch (err) {
       if (err instanceof Error && err.name === "AbortError") {
@@ -200,35 +195,30 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
 
       if (currentRequestId === requestIdRef.current) {
         const errorMessage = err instanceof Error ? err.message : CHAT_ERROR_TEXTS.UNKNOWN_ERROR;
-        setError(errorMessage);
+        dispatch({ type: "SET_ERROR", payload: errorMessage });
 
         // Sentry Integration für Production Error-Tracking
         Sentry.captureException(err, {
           extra: {
-            sessionId,
-            chatId,
-            messageCount: messages.length,
-            requestId: currentRequestId
-          }
+            sessionId: state.sessionId,
+            chatId: state.chatId,
+            messageCount: state.messages.length,
+            requestId: currentRequestId,
+          },
         });
 
         logger.error(CHAT_ERROR_TEXTS.CHAT_ERROR_LOG_PREFIX, err);
       }
     } finally {
       if (currentRequestId === requestIdRef.current) {
-        setIsLoading(false);
+        dispatch({ type: "SET_LOADING", payload: false });
         abortControllerRef.current = null;
       }
     }
   };
 
   const startNewChat = () => {
-    setMessages([]);
-    setChatId(null);
-    const newSessionId = `chat-${uuidv4()}`;
-    setSessionId(newSessionId);
-    setError(null);
-    setIsLoading(false);
+    dispatch({ type: "RESET_CHAT" });
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
@@ -236,13 +226,13 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
   };
 
   return {
-    messages,
-    sessionId,
-    chatId,
-    isLoading,
-    error,
+    messages: state.messages,
+    sessionId: state.sessionId,
+    chatId: state.chatId,
+    isLoading: state.isLoading,
+    error: state.error,
     handleSendMessage,
     startNewChat,
-    setChatId,
+    setChatId: (id: string | null) => dispatch({ type: "SET_CHAT_ID", payload: id }),
   };
 }

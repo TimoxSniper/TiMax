@@ -13,12 +13,12 @@ export function TranscriptViewer({ transcript, wordCount }: TranscriptViewerProp
   const calculatedWordCount = wordCount || transcript.split(/\s+/).filter(Boolean).length;
 
   return (
-    <Card className="h-full flex flex-col transition-all duration-200 hover:shadow-md">
+    <Card className="flex h-full flex-col transition-all duration-200 hover:shadow-md">
       <CardHeader>
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center size-8 rounded-[4px] bg-secondary text-accent">
+              <div className="bg-secondary text-accent flex size-8 items-center justify-center rounded-[4px]">
                 <FileText className="size-4" aria-hidden="true" />
               </div>
               <CardTitle className="text-lg sm:text-xl">Original-Transkript</CardTitle>
@@ -27,8 +27,8 @@ export function TranscriptViewer({ transcript, wordCount }: TranscriptViewerProp
               Beispiel-Content zur Demonstration der Text-Generierung
             </CardDescription>
           </div>
-          <Badge 
-            variant="secondary" 
+          <Badge
+            variant="secondary"
             className="shrink-0 font-mono tabular-nums"
             aria-label={`${calculatedWordCount} Wörter im Transkript`}
           >
@@ -37,26 +37,29 @@ export function TranscriptViewer({ transcript, wordCount }: TranscriptViewerProp
         </div>
       </CardHeader>
       <CardContent className="flex-1">
-        <div 
-          className="max-h-[600px] overflow-y-auto rounded-lg border bg-muted/30 p-4 sm:p-6 space-y-4 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 transition-all"
+        <div
+          className="bg-muted/30 focus-within:ring-ring max-h-[600px] space-y-4 overflow-y-auto rounded-lg border p-4 transition-all focus-within:ring-2 focus-within:ring-offset-2 sm:p-6"
           role="region"
           aria-label="Transkript-Inhalt"
           tabIndex={0}
         >
           {transcript.trim() ? (
-            transcript.split('\n\n').filter(p => p.trim()).map((paragraph, index) => (
-              <p 
-                key={index} 
-                className="text-sm sm:text-base leading-relaxed text-foreground/90 last:mb-0"
-              >
-                {paragraph}
-              </p>
-            ))
+            transcript
+              .split("\n\n")
+              .filter((p) => p.trim())
+              .map((paragraph, index) => (
+                <p
+                  key={index}
+                  className="text-foreground/90 text-sm leading-relaxed last:mb-0 sm:text-base"
+                >
+                  {paragraph}
+                </p>
+              ))
           ) : (
-            <div className="flex flex-col items-center justify-center h-full min-h-[200px] text-center text-muted-foreground">
-              <FileText className="size-12 opacity-40 mb-4" aria-hidden="true" />
-              <p className="text-sm font-medium mb-2 text-foreground">Noch kein Transkript</p>
-              <p className="text-xs max-w-xs">
+            <div className="text-muted-foreground flex h-full min-h-[200px] flex-col items-center justify-center text-center">
+              <FileText className="mb-4 size-12 opacity-40" aria-hidden="true" />
+              <p className="text-foreground mb-2 text-sm font-medium">Noch kein Transkript</p>
+              <p className="max-w-xs text-xs">
                 Laden Sie eine Audio- oder Videodatei hoch, um das Transkript zu sehen.
               </p>
             </div>
@@ -66,4 +69,3 @@ export function TranscriptViewer({ transcript, wordCount }: TranscriptViewerProp
     </Card>
   );
 }
-

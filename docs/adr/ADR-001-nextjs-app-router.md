@@ -6,6 +6,7 @@ Status: Akzeptiert
 ## Kontext
 
 Wir mussten entscheiden, welchen Routing-Ansatz wir für TiMax verwenden:
+
 - Next.js Pages Router (traditionell, stabil)
 - Next.js App Router (modern, experimentell)
 
@@ -34,12 +35,14 @@ Wir verwenden den **Next.js App Router**.
 ## Konsequenzen
 
 ### Positiv
+
 - Bessere Performance durch Server Components
 - Weniger Client-Side JavaScript
 - Moderne Architektur
 - Einfachere Layout-Verwaltung
 
 ### Negativ
+
 - Team muss neue Konzepte lernen
 - Manche npm-Packages funktionieren nicht out-of-the-box
 - Debuggen kann komplexer sein
@@ -47,11 +50,13 @@ Wir verwenden den **Next.js App Router**.
 ## Alternativen erwogen
 
 ### Pages Router
+
 - Stabil und bewährt
 - Größeres Ökosystem
 - Aber: Weniger optimiert für moderne Patterns
 
 ### Remix
+
 - Gute Alternative
 - Aber: Kleinere Community, weniger Integration mit Vercel
 

@@ -8,9 +8,10 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Datenschutzerklärung",
-  description: "Datenschutzerklärung von timax gemäß DSGVO - Informationen zur Datenverarbeitung, Ihre Rechte und wie wir Ihre Daten schützen.",
+  description:
+    "Datenschutzerklärung von timax gemäß DSGVO - Informationen zur Datenverarbeitung, Ihre Rechte und wie wir Ihre Daten schützen.",
   alternates: {
-    canonical: '/datenschutz',
+    canonical: "/datenschutz",
   },
   openGraph: {
     title: "Datenschutzerklärung - timax",
@@ -22,14 +23,10 @@ export const metadata: Metadata = {
 
 export default function DatenschutzPage() {
   return (
-    <main className="min-h-screen bg-background">
-      <JsonLd data={getLegalPageSchema('datenschutz')} />
+    <main className="bg-background min-h-screen">
+      <JsonLd data={getLegalPageSchema("datenschutz")} />
       <div className="container mx-auto max-w-3xl px-4 py-16 lg:py-24">
-        <Button
-          variant="ghost"
-          asChild
-          className="mb-8 text-muted-foreground hover:text-accent"
-        >
+        <Button variant="ghost" asChild className="text-muted-foreground hover:text-accent mb-8">
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Zurück zur Startseite
@@ -38,95 +35,117 @@ export default function DatenschutzPage() {
 
         <article className="max-w-none">
           <header className="mb-16">
-            <h1 className="font-serif text-5xl lg:text-6xl font-bold mb-6 text-foreground">
+            <h1 className="text-foreground mb-6 font-serif text-5xl font-bold lg:text-6xl">
               Datenschutzerklärung
             </h1>
-            <div className="w-24 h-1 bg-accent mb-8" />
-            <p className="font-sans text-xs uppercase tracking-wide text-muted-foreground font-medium">
-              Stand: {new Date().toLocaleDateString("de-DE", { year: "numeric", month: "long", day: "numeric" })}
+            <div className="bg-accent mb-8 h-1 w-24" />
+            <p className="text-muted-foreground font-sans text-xs font-medium tracking-wide uppercase">
+              Stand:{" "}
+              {new Date().toLocaleDateString("de-DE", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </p>
           </header>
 
-          <section className="space-y-12 font-sans text-base lg:text-lg leading-relaxed text-foreground">
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+          <section className="text-foreground space-y-12 font-sans text-base leading-relaxed lg:text-lg">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 1. Verantwortlicher
               </h2>
               <p className="mb-2">
                 Verantwortlicher für die Datenverarbeitung auf dieser Website ist:
               </p>
               <p className="mb-2">
-                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                <span className="rounded bg-red-100 px-2 py-1 font-bold text-red-600 dark:bg-red-900/30">
                   [FIRMENNAME HIER EINTRAGEN]
                 </span>
                 <br />
-                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                <span className="rounded bg-red-100 px-2 py-1 font-bold text-red-600 dark:bg-red-900/30">
                   [VOLLSTÄNDIGE ANSCHRIFT]
                 </span>
                 <br />
-                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
+                <span className="rounded bg-red-100 px-2 py-1 font-bold text-red-600 dark:bg-red-900/30">
                   [PLZ ORT]
                 </span>
               </p>
               <p className="mb-2">
-                E-Mail: <a href="mailto:info@timax.app" className="text-primary hover:underline">info@timax.app</a>
+                E-Mail:{" "}
+                <a href="mailto:info@timax.app" className="text-primary hover:underline">
+                  info@timax.app
+                </a>
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 2. Datenschutzbeauftragter
               </h2>
               <p className="mb-2">
-                Bei Fragen zum Datenschutz können Sie sich an unseren Datenschutzbeauftragten wenden:
+                Bei Fragen zum Datenschutz können Sie sich an unseren Datenschutzbeauftragten
+                wenden:
               </p>
               <p>
-                <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">
-                  [NAME DES DATENSCHUTZBEAUFTRAGTEN - falls vorhanden (bei &gt;20 Mitarbeitern verpflichtend)]
+                <span className="rounded bg-red-100 px-2 py-1 font-bold text-red-600 dark:bg-red-900/30">
+                  [NAME DES DATENSCHUTZBEAUFTRAGTEN - falls vorhanden (bei &gt;20 Mitarbeitern
+                  verpflichtend)]
                 </span>
                 <br />
-                E-Mail: <span className="text-red-600 font-bold bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded">[datenschutz@firma.de]</span>
+                E-Mail:{" "}
+                <span className="rounded bg-red-100 px-2 py-1 font-bold text-red-600 dark:bg-red-900/30">
+                  [datenschutz@firma.de]
+                </span>
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 3. Erhebung und Speicherung personenbezogener Daten
               </h2>
-              
-              <h3 className="text-xl font-semibold mb-2 mt-4 text-foreground">
+
+              <h3 className="text-foreground mt-4 mb-2 text-xl font-semibold">
                 3.1 Beim Besuch der Website
               </h3>
               <p className="mb-4">
-                Beim Aufruf unserer Website werden durch den auf Ihrem Endgerät zum Einsatz kommenden Browser automatisch Informationen an den Server unserer Website gesendet. Diese Informationen werden temporär in einem sogenannten Logfile gespeichert. Folgende Informationen werden dabei ohne Ihr Zutun erfasst und bis zur automatisierten Löschung gespeichert:
+                Beim Aufruf unserer Website werden durch den auf Ihrem Endgerät zum Einsatz
+                kommenden Browser automatisch Informationen an den Server unserer Website gesendet.
+                Diese Informationen werden temporär in einem sogenannten Logfile gespeichert.
+                Folgende Informationen werden dabei ohne Ihr Zutun erfasst und bis zur
+                automatisierten Löschung gespeichert:
               </p>
-              <ul className="list-disc pl-6 mb-4 space-y-2">
+              <ul className="mb-4 list-disc space-y-2 pl-6">
                 <li>IP-Adresse des anfragenden Rechners</li>
                 <li>Datum und Uhrzeit des Zugriffs</li>
                 <li>Name und URL der abgerufenen Datei</li>
                 <li>Website, von der aus der Zugriff erfolgt (Referrer-URL)</li>
-                <li>verwendeter Browser und ggf. das Betriebssystem Ihres Rechners sowie der Name Ihres Access-Providers</li>
+                <li>
+                  verwendeter Browser und ggf. das Betriebssystem Ihres Rechners sowie der Name
+                  Ihres Access-Providers
+                </li>
               </ul>
               <p className="mb-4">
                 Die genannten Daten werden durch uns zu folgenden Zwecken verarbeitet:
               </p>
-              <ul className="list-disc pl-6 mb-4 space-y-2">
+              <ul className="mb-4 list-disc space-y-2 pl-6">
                 <li>Gewährleistung eines reibungslosen Verbindungsaufbaus der Website</li>
                 <li>Gewährleistung einer komfortablen Nutzung unserer Website</li>
                 <li>Auswertung der Systemsicherheit und -stabilität</li>
                 <li>zu weiteren administrativen Zwecken</li>
               </ul>
               <p>
-                Die Rechtsgrundlage für die Datenverarbeitung ist Art. 6 Abs. 1 S. 1 lit. f DSGVO. Unser berechtigtes Interesse folgt aus oben aufgelisteten Zwecken zur Datenerhebung.
+                Die Rechtsgrundlage für die Datenverarbeitung ist Art. 6 Abs. 1 S. 1 lit. f DSGVO.
+                Unser berechtigtes Interesse folgt aus oben aufgelisteten Zwecken zur Datenerhebung.
               </p>
 
-              <h3 className="text-xl font-semibold mb-2 mt-6 text-foreground">
+              <h3 className="text-foreground mt-6 mb-2 text-xl font-semibold">
                 3.2 Bei Registrierung und Nutzung unseres Dienstes
               </h3>
               <p className="mb-4">
-                Wenn Sie sich bei uns registrieren und unseren Service nutzen, erheben wir folgende Daten:
+                Wenn Sie sich bei uns registrieren und unseren Service nutzen, erheben wir folgende
+                Daten:
               </p>
-              <ul className="list-disc pl-6 mb-4 space-y-2">
+              <ul className="mb-4 list-disc space-y-2 pl-6">
                 <li>E-Mail-Adresse</li>
                 <li>Name (optional)</li>
                 <li>Hochgeladene Videos und Audios</li>
@@ -136,109 +155,222 @@ export default function DatenschutzPage() {
                 <li>Nutzungsstatistiken</li>
               </ul>
               <p>
-                Diese Daten werden zur Erbringung unserer Dienstleistung benötigt. Rechtsgrundlage ist Art. 6 Abs. 1 S. 1 lit. b DSGVO (Vertragserfüllung).
+                Diese Daten werden zur Erbringung unserer Dienstleistung benötigt. Rechtsgrundlage
+                ist Art. 6 Abs. 1 S. 1 lit. b DSGVO (Vertragserfüllung).
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 4. Weitergabe von Daten
               </h2>
               <p className="mb-4">
                 Wir geben Ihre personenbezogenen Daten nur an Dritte weiter, wenn:
               </p>
-              <ul className="list-disc pl-6 mb-4 space-y-2">
-                <li>Sie Ihre ausdrückliche Einwilligung dazu erteilt haben (Art. 6 Abs. 1 S. 1 lit. a DSGVO)</li>
-                <li>die Weitergabe zur Erfüllung vertraglicher Verpflichtungen erforderlich ist (Art. 6 Abs. 1 S. 1 lit. b DSGVO)</li>
-                <li>die Weitergabe zur Erfüllung einer rechtlichen Verpflichtung erforderlich ist (Art. 6 Abs. 1 S. 1 lit. c DSGVO)</li>
+              <ul className="mb-4 list-disc space-y-2 pl-6">
+                <li>
+                  Sie Ihre ausdrückliche Einwilligung dazu erteilt haben (Art. 6 Abs. 1 S. 1 lit. a
+                  DSGVO)
+                </li>
+                <li>
+                  die Weitergabe zur Erfüllung vertraglicher Verpflichtungen erforderlich ist (Art.
+                  6 Abs. 1 S. 1 lit. b DSGVO)
+                </li>
+                <li>
+                  die Weitergabe zur Erfüllung einer rechtlichen Verpflichtung erforderlich ist
+                  (Art. 6 Abs. 1 S. 1 lit. c DSGVO)
+                </li>
               </ul>
               <p className="mb-4">
                 Wir nutzen folgende externe Dienstleister für die Verarbeitung Ihrer Daten:
               </p>
-              <ul className="list-disc pl-6 mb-4 space-y-2">
-                <li><strong>Vercel</strong> (Hosting) - Datenschutzerklärung: <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">vercel.com/legal/privacy-policy</a></li>
-                <li><strong>OpenAI</strong> (Whisper API für Transkription) - Datenschutzerklärung: <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">openai.com/policies/privacy-policy</a></li>
-                <li><strong>Anthropic</strong> (Claude API für Textgenerierung) - Datenschutzerklärung: <a href="https://www.anthropic.com/privacy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">anthropic.com/privacy</a></li>
-                <li><strong>n8n</strong> (Workflow-Automatisierung) - Datenschutzerklärung: <a href="https://n8n.io/privacy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">n8n.io/privacy</a></li>
+              <ul className="mb-4 list-disc space-y-2 pl-6">
+                <li>
+                  <strong>Vercel</strong> (Hosting) - Datenschutzerklärung:{" "}
+                  <a
+                    href="https://vercel.com/legal/privacy-policy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    vercel.com/legal/privacy-policy
+                  </a>
+                </li>
+                <li>
+                  <strong>OpenAI</strong> (Whisper API für Transkription) - Datenschutzerklärung:{" "}
+                  <a
+                    href="https://openai.com/policies/privacy-policy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    openai.com/policies/privacy-policy
+                  </a>
+                </li>
+                <li>
+                  <strong>Anthropic</strong> (Claude API für Textgenerierung) -
+                  Datenschutzerklärung:{" "}
+                  <a
+                    href="https://www.anthropic.com/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    anthropic.com/privacy
+                  </a>
+                </li>
+                <li>
+                  <strong>n8n</strong> (Workflow-Automatisierung) - Datenschutzerklärung:{" "}
+                  <a
+                    href="https://n8n.io/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    n8n.io/privacy
+                  </a>
+                </li>
               </ul>
               <p className="mb-4">
-                <strong>Wichtig:</strong> Einige dieser Dienstleister verarbeiten Daten in den USA. Wir haben mit diesen Dienstleistern entsprechende Auftragsverarbeitungsverträge (AVV) abgeschlossen und nutzen Standardvertragsklauseln gemäß Art. 46 DSGVO.
+                <strong>Wichtig:</strong> Einige dieser Dienstleister verarbeiten Daten in den USA.
+                Wir haben mit diesen Dienstleistern entsprechende Auftragsverarbeitungsverträge
+                (AVV) abgeschlossen und nutzen Standardvertragsklauseln gemäß Art. 46 DSGVO.
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 5. Speicherdauer
               </h2>
               <p className="mb-4">
-                Wir speichern Ihre personenbezogenen Daten nur so lange, wie dies für die jeweiligen Zwecke erforderlich ist:
+                Wir speichern Ihre personenbezogenen Daten nur so lange, wie dies für die jeweiligen
+                Zwecke erforderlich ist:
               </p>
-              <ul className="list-disc pl-6 mb-4 space-y-2">
-                <li><strong>Hochgeladene Dateien:</strong> 7 Tage nach Upload, wenn keine Transkription erfolgt. Nach erfolgreicher Transkription: 90 Tage ohne Aktivität.</li>
-                <li><strong>Transkripte:</strong> 90 Tage ohne Aktivität, danach automatische Löschung.</li>
-                <li><strong>Generierte Texte:</strong> 90 Tage ohne Aktivität, danach automatische Löschung.</li>
-                <li><strong>Account-Daten:</strong> Bis zur Löschung des Accounts durch den Nutzer oder nach 2 Jahren Inaktivität.</li>
-                <li><strong>Log-Daten:</strong> 7 Tage, danach automatische Löschung.</li>
+              <ul className="mb-4 list-disc space-y-2 pl-6">
+                <li>
+                  <strong>Hochgeladene Dateien:</strong> 7 Tage nach Upload, wenn keine
+                  Transkription erfolgt. Nach erfolgreicher Transkription: 90 Tage ohne Aktivität.
+                </li>
+                <li>
+                  <strong>Transkripte:</strong> 90 Tage ohne Aktivität, danach automatische
+                  Löschung.
+                </li>
+                <li>
+                  <strong>Generierte Texte:</strong> 90 Tage ohne Aktivität, danach automatische
+                  Löschung.
+                </li>
+                <li>
+                  <strong>Account-Daten:</strong> Bis zur Löschung des Accounts durch den Nutzer
+                  oder nach 2 Jahren Inaktivität.
+                </li>
+                <li>
+                  <strong>Log-Daten:</strong> 7 Tage, danach automatische Löschung.
+                </li>
               </ul>
               <p>
-                Nach Ablauf der Speicherfristen werden die Daten routinemäßig und entsprechend den gesetzlichen Vorschriften gelöscht.
+                Nach Ablauf der Speicherfristen werden die Daten routinemäßig und entsprechend den
+                gesetzlichen Vorschriften gelöscht.
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 6. Cookies und Tracking
               </h2>
               <p className="mb-4">
-                Wir setzen Cookies ein, um unsere Website nutzerfreundlicher zu gestalten. Einzelheiten finden Sie in unserer <Link href="/cookies" className="text-primary hover:underline">Cookie-Richtlinie</Link>.
+                Wir setzen Cookies ein, um unsere Website nutzerfreundlicher zu gestalten.
+                Einzelheiten finden Sie in unserer{" "}
+                <Link href="/cookies" className="text-primary hover:underline">
+                  Cookie-Richtlinie
+                </Link>
+                .
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 7. Ihre Rechte
               </h2>
-              <p className="mb-4">
-                Sie haben folgende Rechte:
-              </p>
-              <ul className="list-disc pl-6 mb-4 space-y-2">
-                <li><strong>Auskunftsrecht (Art. 15 DSGVO):</strong> Sie können Auskunft über Ihre von uns verarbeiteten personenbezogenen Daten verlangen.</li>
-                <li><strong>Berichtigungsrecht (Art. 16 DSGVO):</strong> Sie können die Berichtigung unrichtiger oder die Vervollständigung Ihrer bei uns gespeicherten personenbezogenen Daten verlangen.</li>
-                <li><strong>Löschungsrecht (Art. 17 DSGVO):</strong> Sie können die Löschung Ihrer personenbezogenen Daten verlangen, soweit nicht gesetzliche Aufbewahrungspflichten oder ein anderer gesetzlich zulässiger Grund der Löschung entgegensteht.</li>
-                <li><strong>Einschränkung der Verarbeitung (Art. 18 DSGVO):</strong> Sie können die Einschränkung der Verarbeitung Ihrer personenbezogenen Daten verlangen.</li>
-                <li><strong>Datenübertragbarkeit (Art. 20 DSGVO):</strong> Sie können verlangen, dass wir Ihnen Ihre personenbezogenen Daten in einem strukturierten, gängigen und maschinenlesbaren Format übergeben.</li>
-                <li><strong>Widerspruchsrecht (Art. 21 DSGVO):</strong> Sie können der Verarbeitung Ihrer personenbezogenen Daten aus Gründen, die sich aus Ihrer besonderen Situation ergeben, jederzeit widersprechen.</li>
-                <li><strong>Widerruf der Einwilligung (Art. 7 Abs. 3 DSGVO):</strong> Sie haben das Recht, Ihre erteilte Einwilligung jederzeit zu widerrufen.</li>
+              <p className="mb-4">Sie haben folgende Rechte:</p>
+              <ul className="mb-4 list-disc space-y-2 pl-6">
+                <li>
+                  <strong>Auskunftsrecht (Art. 15 DSGVO):</strong> Sie können Auskunft über Ihre von
+                  uns verarbeiteten personenbezogenen Daten verlangen.
+                </li>
+                <li>
+                  <strong>Berichtigungsrecht (Art. 16 DSGVO):</strong> Sie können die Berichtigung
+                  unrichtiger oder die Vervollständigung Ihrer bei uns gespeicherten
+                  personenbezogenen Daten verlangen.
+                </li>
+                <li>
+                  <strong>Löschungsrecht (Art. 17 DSGVO):</strong> Sie können die Löschung Ihrer
+                  personenbezogenen Daten verlangen, soweit nicht gesetzliche Aufbewahrungspflichten
+                  oder ein anderer gesetzlich zulässiger Grund der Löschung entgegensteht.
+                </li>
+                <li>
+                  <strong>Einschränkung der Verarbeitung (Art. 18 DSGVO):</strong> Sie können die
+                  Einschränkung der Verarbeitung Ihrer personenbezogenen Daten verlangen.
+                </li>
+                <li>
+                  <strong>Datenübertragbarkeit (Art. 20 DSGVO):</strong> Sie können verlangen, dass
+                  wir Ihnen Ihre personenbezogenen Daten in einem strukturierten, gängigen und
+                  maschinenlesbaren Format übergeben.
+                </li>
+                <li>
+                  <strong>Widerspruchsrecht (Art. 21 DSGVO):</strong> Sie können der Verarbeitung
+                  Ihrer personenbezogenen Daten aus Gründen, die sich aus Ihrer besonderen Situation
+                  ergeben, jederzeit widersprechen.
+                </li>
+                <li>
+                  <strong>Widerruf der Einwilligung (Art. 7 Abs. 3 DSGVO):</strong> Sie haben das
+                  Recht, Ihre erteilte Einwilligung jederzeit zu widerrufen.
+                </li>
               </ul>
               <p className="mb-4">
-                Zur Ausübung Ihrer Rechte wenden Sie sich bitte an: <a href="mailto:info@timax.app" className="text-primary hover:underline">info@timax.app</a>
+                Zur Ausübung Ihrer Rechte wenden Sie sich bitte an:{" "}
+                <a href="mailto:info@timax.app" className="text-primary hover:underline">
+                  info@timax.app
+                </a>
               </p>
               <p>
-                Sie haben zudem das Recht, sich bei einer Aufsichtsbehörde über die Verarbeitung personenbezogener Daten durch uns zu beschweren (Art. 77 DSGVO).
+                Sie haben zudem das Recht, sich bei einer Aufsichtsbehörde über die Verarbeitung
+                personenbezogener Daten durch uns zu beschweren (Art. 77 DSGVO).
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 8. Automatisierte Entscheidungsfindung
               </h2>
               <p>
-                Wir setzen KI-Technologien (OpenAI Whisper, Anthropic Claude) zur Transkription und Textgenerierung ein. Diese Systeme treffen automatisierte Entscheidungen. Sie haben das Recht, nicht einer ausschließlich auf einer automatisierten Verarbeitung beruhenden Entscheidung unterworfen zu werden (Art. 22 DSGVO). Sie können jederzeit eine manuelle Überprüfung verlangen.
+                Wir setzen KI-Technologien (OpenAI Whisper, Anthropic Claude) zur Transkription und
+                Textgenerierung ein. Diese Systeme treffen automatisierte Entscheidungen. Sie haben
+                das Recht, nicht einer ausschließlich auf einer automatisierten Verarbeitung
+                beruhenden Entscheidung unterworfen zu werden (Art. 22 DSGVO). Sie können jederzeit
+                eine manuelle Überprüfung verlangen.
               </p>
             </div>
 
-            <div className="border-t border-border pt-8">
-              <h2 className="font-serif text-3xl font-semibold mb-4 text-foreground">
+            <div className="border-border border-t pt-8">
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-semibold">
                 9. Datensicherheit
               </h2>
               <p>
-                Wir setzen technische und organisatorische Maßnahmen ein, um Ihre Daten gegen Verlust, Zerstörung, Manipulation und unberechtigten Zugriff zu schützen. Alle unsere Mitarbeiter und die von uns beauftragten Dienstleister sind zur Vertraulichkeit und zum Datenschutz verpflichtet.
+                Wir setzen technische und organisatorische Maßnahmen ein, um Ihre Daten gegen
+                Verlust, Zerstörung, Manipulation und unberechtigten Zugriff zu schützen. Alle
+                unsere Mitarbeiter und die von uns beauftragten Dienstleister sind zur
+                Vertraulichkeit und zum Datenschutz verpflichtet.
               </p>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-black/10 dark:border-white/10">
+            <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/10">
               <p className="text-sm text-black/60 dark:text-white/60">
-                Stand: {new Date().toLocaleDateString("de-DE", { year: "numeric", month: "long", day: "numeric" })}
+                Stand:{" "}
+                {new Date().toLocaleDateString("de-DE", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
               </p>
             </div>
           </section>
@@ -247,4 +379,3 @@ export default function DatenschutzPage() {
     </main>
   );
 }
-

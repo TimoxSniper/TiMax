@@ -52,15 +52,15 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
 
   if (isLoading) {
     return (
-      <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
         {[...Array(4)].map((_, i) => (
-          <Card key={i} className="hover:translate-y-0 hover:shadow-editorial-md">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 p-4 md:p-6">
+          <Card key={i} className="hover:shadow-editorial-md hover:translate-y-0">
+            <CardHeader className="flex flex-row items-center justify-between p-4 pb-2 md:p-6">
               <Skeleton className="h-3 w-16 md:h-4 md:w-24" />
               <Skeleton className="h-4 w-4 md:h-5 md:w-5" />
             </CardHeader>
             <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
-              <Skeleton className="h-7 w-12 mb-1 md:h-8 md:w-16" />
+              <Skeleton className="mb-1 h-7 w-12 md:h-8 md:w-16" />
               <Skeleton className="h-3 w-24 md:w-32" />
             </CardContent>
           </Card>
@@ -70,22 +70,24 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
   }
 
   return (
-    <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
       {cards.map((card) => (
         <Card
           key={card.title}
-          className="hover:translate-y-0 hover:shadow-editorial-md cursor-pointer transition-all"
+          className="hover:shadow-editorial-md cursor-pointer transition-all hover:translate-y-0"
           onClick={() => router.push(card.href)}
         >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-4 md:p-6">
-            <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-2 md:p-6">
+            <CardTitle className="text-muted-foreground text-xs font-medium md:text-sm">
               {card.title}
             </CardTitle>
-            <card.icon className="h-4 w-4 md:h-5 md:w-5 text-accent" />
+            <card.icon className="text-accent h-4 w-4 md:h-5 md:w-5" />
           </CardHeader>
           <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
-            <div className="text-2xl md:text-3xl font-bold font-serif">{card.value.toLocaleString("de-DE")}</div>
-            <p className="text-xs text-muted-foreground mt-1">{card.description}</p>
+            <div className="font-serif text-2xl font-bold md:text-3xl">
+              {card.value.toLocaleString("de-DE")}
+            </div>
+            <p className="text-muted-foreground mt-1 text-xs">{card.description}</p>
           </CardContent>
         </Card>
       ))}

@@ -3,7 +3,7 @@ import { currentUser } from "@clerk/nextjs/server";
 /**
  * Prüft ob der aktuelle Benutzer Admin-Rechte hat
  * Admin-Status wird über Clerk publicMetadata.role = "admin" verwaltet
- * 
+ *
  * Einrichtung im Clerk Dashboard:
  * 1. Users -> Benutzer auswählen -> Edit Metadata
  * 2. Public metadata: { "role": "admin" }
@@ -12,7 +12,7 @@ export async function isAdmin(): Promise<boolean> {
   try {
     const user = await currentUser();
     if (!user) return false;
-    
+
     return user.publicMetadata?.role === "admin";
   } catch {
     return false;
@@ -43,7 +43,7 @@ export async function getAdminStatus(): Promise<{
     if (!user) {
       return { isAdmin: false, userId: null };
     }
-    
+
     return {
       isAdmin: user.publicMetadata?.role === "admin",
       userId: user.id,

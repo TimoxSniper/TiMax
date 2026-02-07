@@ -18,11 +18,11 @@ const directionClasses = {
   fade: "",
 } as const;
 
-export const AnimatedSection = memo(function AnimatedSection({ 
-  children, 
-  className, 
+export const AnimatedSection = memo(function AnimatedSection({
+  children,
+  className,
   delay = 0,
-  direction = "up" 
+  direction = "up",
 }: AnimatedSectionProps) {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -36,7 +36,7 @@ export const AnimatedSection = memo(function AnimatedSection({
       const rect = currentRef.getBoundingClientRect();
       const windowHeight = window.innerHeight || document.documentElement.clientHeight;
       const isInViewport = rect.top < windowHeight && rect.bottom > 0;
-      
+
       if (isInViewport) {
         setIsVisible(true);
       }
@@ -51,7 +51,7 @@ export const AnimatedSection = memo(function AnimatedSection({
           setIsVisible(true);
         }
       },
-      { threshold: 0.1, rootMargin: '50px' } // rootMargin für frühere Erkennung
+      { threshold: 0.1, rootMargin: "50px" } // rootMargin für frühere Erkennung
     );
 
     observer.observe(currentRef);
@@ -65,9 +65,9 @@ export const AnimatedSection = memo(function AnimatedSection({
     <div
       ref={ref}
       className={cn(
-        "transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1)",
+        "cubic-bezier(0.4, 0, 0.2, 1) transition-all duration-500",
         isVisible
-          ? "opacity-100 translate-y-0 translate-x-0"
+          ? "translate-x-0 translate-y-0 opacity-100"
           : `opacity-0 ${directionClasses[direction]}`,
         className
       )}
@@ -77,4 +77,3 @@ export const AnimatedSection = memo(function AnimatedSection({
     </div>
   );
 });
-

@@ -26,7 +26,7 @@ export interface N8nResponseItem {
 
 /**
  * Parses various n8n response formats into a standardized output string.
- * This helper is used in both Chat and Upload API routes to handle the 
+ * This helper is used in both Chat and Upload API routes to handle the
  * flexible (but fragile) response structure of n8n.
  */
 export function extractOutputFromN8nResponse(
@@ -80,7 +80,7 @@ export function extractOutputFromN8nResponse(
         })
         .join(" ")
         .trim();
-      
+
       if (combinedText.length > 0) return combinedText;
     }
 
@@ -107,24 +107,36 @@ export function extractMetadataFromN8nResponse(data: unknown): {
   chatId?: string;
 } {
   const result: { status?: string; fileName?: string; uploadId?: string; chatId?: string } = {};
-  
+
   if (!data || typeof data !== "object") return result;
 
   const items = Array.isArray(data) ? data : [data];
-  
+
   for (const item of items) {
     const record = item as Record<string, unknown>;
     const json = (record.json || {}) as Record<string, unknown>;
-    
+
     // Status
     result.status = result.status || (record.status as string) || (json.status as string);
-    
+
     // File Name
-    result.fileName = result.fileName || (record.fileName as string) || (json.fileName as string) || (record.file_name as string);
-    
+    result.fileName =
+      result.fileName ||
+      (record.fileName as string) ||
+      (json.fileName as string) ||
+      (record.file_name as string);
+
     // IDs
-    result.uploadId = result.uploadId || (record.upload_id as string) || (json.upload_id as string) || (record.uploadId as string);
-    result.chatId = result.chatId || (record.chat_id as string) || (json.chat_id as string) || (record.chatId as string);
+    result.uploadId =
+      result.uploadId ||
+      (record.upload_id as string) ||
+      (json.upload_id as string) ||
+      (record.uploadId as string);
+    result.chatId =
+      result.chatId ||
+      (record.chat_id as string) ||
+      (json.chat_id as string) ||
+      (record.chatId as string);
   }
 
   return result;

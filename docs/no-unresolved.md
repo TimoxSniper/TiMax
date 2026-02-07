@@ -25,17 +25,19 @@ By default, only ES6 imports will be resolved:
 
 ```js
 /*eslint import/no-unresolved: 2*/
-import x from './foo' // reports if './foo' cannot be resolved on the filesystem
+import x from "./foo"; // reports if './foo' cannot be resolved on the filesystem
 ```
 
 If `{commonjs: true}` is provided, single-argument `require` calls will be resolved:
 
 ```js
 /*eslint import/no-unresolved: [2, { commonjs: true }]*/
-const { default: x } = require('./foo') // reported if './foo' is not found
+const { default: x } = require("./foo"); // reported if './foo' is not found
 
-require(0) // ignored
-require(['x', 'y'], function (x, y) { /*...*/ }) // ignored
+require(0); // ignored
+require(["x", "y"], function (x, y) {
+  /*...*/
+}); // ignored
 ```
 
 Similarly, if `{ amd: true }` is provided, dependency paths for `define` and `require`
@@ -43,19 +45,27 @@ calls will be resolved:
 
 ```js
 /*eslint import/no-unresolved: [2, { amd: true }]*/
-define(['./foo'], function (foo) { /*...*/ }) // reported if './foo' is not found
-require(['./foo'], function (foo) { /*...*/ }) // reported if './foo' is not found
+define(["./foo"], function (foo) {
+  /*...*/
+}); // reported if './foo' is not found
+require(["./foo"], function (foo) {
+  /*...*/
+}); // reported if './foo' is not found
 
-const { default: x } = require('./foo') // ignored
+const { default: x } = require("./foo"); // ignored
 ```
 
 Both may be provided, too:
 
 ```js
 /*eslint import/no-unresolved: [2, { commonjs: true, amd: true }]*/
-const { default: x } = require('./foo') // reported if './foo' is not found
-define(['./foo'], function (foo) { /*...*/ }) // reported if './foo' is not found
-require(['./foo'], function (foo) { /*...*/ }) // reported if './foo' is not found
+const { default: x } = require("./foo"); // reported if './foo' is not found
+define(["./foo"], function (foo) {
+  /*...*/
+}); // reported if './foo' is not found
+require(["./foo"], function (foo) {
+  /*...*/
+}); // reported if './foo' is not found
 ```
 
 #### `ignore`
@@ -67,9 +77,9 @@ To suppress errors from files that may not be properly resolved by your [resolve
 ```js
 /*eslint import/no-unresolved: [2, { ignore: ['\\.img$'] }]*/
 
-import { x } from './mod' // may be reported, if not resolved to a module
+import { x } from "./mod"; // may be reported, if not resolved to a module
 
-import coolImg from '../../img/coolImg.img' // will not be reported, even if not found
+import coolImg from "../../img/coolImg.img"; // will not be reported, even if not found
 ```
 
 #### `caseSensitive`
@@ -78,7 +88,7 @@ By default, this rule will report paths whose case do not match the underlying f
 
 ```js
 /*eslint import/no-unresolved: [2, { caseSensitive: true (default) | false }]*/
-const { default: x } = require('./foo') // reported if './foo' is actually './Foo' and caseSensitive: true
+const { default: x } = require("./foo"); // reported if './foo' is actually './Foo' and caseSensitive: true
 ```
 
 #### `caseSensitiveStrict`
@@ -102,9 +112,9 @@ If you're using a module bundler other than Node or Webpack, you may end up with
 
 ## Further Reading
 
- - [Resolver plugins](../../README.md#resolvers)
- - [Node resolver](https://npmjs.com/package/eslint-import-resolver-node) (default)
- - [Webpack resolver](https://npmjs.com/package/eslint-import-resolver-webpack)
- - [`import/ignore`] global setting
+- [Resolver plugins](../../README.md#resolvers)
+- [Node resolver](https://npmjs.com/package/eslint-import-resolver-node) (default)
+- [Webpack resolver](https://npmjs.com/package/eslint-import-resolver-webpack)
+- [`import/ignore`] global setting
 
 [`import/ignore`]: ../../README.md#importignore

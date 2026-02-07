@@ -27,15 +27,15 @@ import type SomeType from './mod'
 ...whereas here, both `./mod` imports will be reported:
 
 ```js
-import SomeDefaultClass from './mod'
+import SomeDefaultClass from "./mod";
 
 // oops, some other import separated these lines
-import foo from './some-other-mod'
+import foo from "./some-other-mod";
 
-import * as names from './mod'
+import * as names from "./mod";
 
 // will catch this too, assuming it is the same target module
-import { something } from './mod.js'
+import { something } from "./mod.js";
 ```
 
 The motivation is that this is likely a result of two developers importing different
@@ -55,9 +55,9 @@ Config:
 And then the following code becomes valid:
 
 ```js
-import minifiedMod from './mod?minify'
-import noCommentsMod from './mod?comments=0'
-import originalMod from './mod'
+import minifiedMod from "./mod?minify";
+import noCommentsMod from "./mod?comments=0";
+import originalMod from "./mod";
 ```
 
 It will still catch duplicates when using the same module and the exact same query string:

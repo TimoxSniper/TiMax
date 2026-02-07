@@ -15,29 +15,35 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-auto border-t border-border py-8 sm:py-12 z-10 bg-background" role="contentinfo">
+    <footer
+      className="border-border bg-background relative z-10 mt-auto border-t py-8 sm:py-12"
+      role="contentinfo"
+    >
       <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8">
-          <div className="flex flex-col items-center md:items-start gap-3 sm:gap-4">
+        <div className="flex flex-col items-center justify-between gap-6 sm:gap-8 md:flex-row">
+          <div className="flex flex-col items-center gap-3 sm:gap-4 md:items-start">
             <Link
               href="/"
-              className="flex items-center gap-2 text-lg sm:text-xl font-bold text-foreground hover:text-primary transition-colors"
+              className="text-foreground hover:text-primary flex items-center gap-2 text-lg font-bold transition-colors sm:text-xl"
               aria-label="TiMax Startseite"
             >
-              <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-primary" aria-hidden="true" />
+              <Zap className="text-primary h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" />
               <span>timax</span>
             </Link>
-            <p className="text-xs sm:text-sm text-muted-foreground text-center md:text-left max-w-xs">
+            <p className="text-muted-foreground max-w-xs text-center text-xs sm:text-sm md:text-left">
               Transformiere deine Videos und Audios in kraftvolle Texte.
             </p>
           </div>
 
-          <nav className="flex flex-wrap justify-center gap-x-3 sm:gap-x-6 gap-y-2" aria-label="Footer Navigation">
+          <nav
+            className="flex flex-wrap justify-center gap-x-3 gap-y-2 sm:gap-x-6"
+            aria-label="Footer Navigation"
+          >
             {FOOTER_LINKS.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-xs sm:text-sm text-muted-foreground hover:text-accent transition-colors duration-300 font-medium uppercase tracking-wide"
+                className="text-muted-foreground hover:text-accent text-xs font-medium tracking-wide uppercase transition-colors duration-300 sm:text-sm"
               >
                 {link.name}
               </Link>
@@ -45,11 +51,11 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
-          <p className="text-xs sm:text-sm text-muted-foreground">
+        <div className="border-border mt-6 flex flex-col items-center justify-between gap-3 border-t pt-6 sm:mt-8 sm:gap-4 sm:pt-8 md:flex-row">
+          <p className="text-muted-foreground text-xs sm:text-sm">
             © {currentYear} TiMax. Alle Rechte vorbehalten.
           </p>
-          <p className="text-[10px] sm:text-xs text-muted-foreground/60">
+          <p className="text-muted-foreground/60 text-[10px] sm:text-xs">
             Made with ❤️ for Content Creators
           </p>
         </div>

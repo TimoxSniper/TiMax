@@ -13,6 +13,7 @@
 ### Das Problem
 
 Du hast Videos oder Audios aufgenommen, aber:
+
 - Dein Wissen bleibt "gefangen" in der Aufnahme
 - Niemand schaut sich 1-Stunden-Videos an
 - Du weißt, du könntest daraus Posts machen – aber der Aufwand ist zu groß
@@ -35,6 +36,7 @@ TiMax macht aus deinen Videos und Audios **fertige Texte** – LinkedIn-Posts, N
 Für Menschen, die **Wissen in Videos oder Audios haben** und daraus Texte machen wollen.
 
 Du erkennst dich wieder, wenn du:
+
 - Einen **Podcast** aufnimmst und daraus LinkedIn-Posts machen willst
 - **Videos** drehst und einen Newsletter daraus schreiben möchtest
 - **Vorträge oder Workshops** hältst und das Wissen nicht verloren gehen soll
@@ -42,13 +44,13 @@ Du erkennst dich wieder, wenn du:
 
 ### Was du daraus machen kannst
 
-| Du hast... | Daraus wird... |
-|------------|----------------|
-| Podcast-Episode | LinkedIn-Posts, Newsletter |
-| Video | Blog-Artikel, Social Media Posts |
-| Vortrag/Workshop | Zusammenfassung, Artikel-Serie |
-| Sprachmemo | ausformulierter Text, Post |
-| Interview | Zitate, Zusammenfassung |
+| Du hast...       | Daraus wird...                   |
+| ---------------- | -------------------------------- |
+| Podcast-Episode  | LinkedIn-Posts, Newsletter       |
+| Video            | Blog-Artikel, Social Media Posts |
+| Vortrag/Workshop | Zusammenfassung, Artikel-Serie   |
+| Sprachmemo       | ausformulierter Text, Post       |
+| Interview        | Zitate, Zusammenfassung          |
 
 ---
 
@@ -90,29 +92,29 @@ Du erkennst dich wieder, wenn du:
 
 ### 5.1 Frontend
 
-| Technologie | Version | Zweck |
-|-------------|---------|-------|
-| Next.js | 16.1.5 | App Router Framework |
-| React | 19.2.4 | UI Library |
-| TypeScript | 5.x | Type Safety |
-| Tailwind CSS | 4.x | Styling |
-| shadcn/ui | New York | Component Library |
-| Framer Motion | 12.x | Animationen |
-| Lucide React | 0.563.x | Icons |
+| Technologie   | Version  | Zweck                |
+| ------------- | -------- | -------------------- |
+| Next.js       | 16.1.5   | App Router Framework |
+| React         | 19.2.4   | UI Library           |
+| TypeScript    | 5.x      | Type Safety          |
+| Tailwind CSS  | 4.x      | Styling              |
+| shadcn/ui     | New York | Component Library    |
+| Framer Motion | 12.x     | Animationen          |
+| Lucide React  | 0.563.x  | Icons                |
 
 ### 5.2 Backend & Services
 
-| Service | Zweck |
-|---------|-------|
-| **Clerk** | Authentifizierung (inkl. deutscher Lokalisierung) |
-| **Supabase** | PostgreSQL-Datenbank + File Storage |
-| **n8n** | Workflow-Automatisierung (Transkription + Chat) |
-| **Qdrant** | Vector-Datenbank für Knowledge Base |
-| **ElevenLabs** | Speech-to-Text (Whisper API) |
-| **Google Gemini** | LLM für Chat + Embeddings |
-| **Upstash Redis** | Rate Limiting |
-| **Sentry** | Error Tracking |
-| **Vercel** | Hosting + Cron Jobs |
+| Service           | Zweck                                             |
+| ----------------- | ------------------------------------------------- |
+| **Clerk**         | Authentifizierung (inkl. deutscher Lokalisierung) |
+| **Supabase**      | PostgreSQL-Datenbank + File Storage               |
+| **n8n**           | Workflow-Automatisierung (Transkription + Chat)   |
+| **Qdrant**        | Vector-Datenbank für Knowledge Base               |
+| **ElevenLabs**    | Speech-to-Text (Whisper API)                      |
+| **Google Gemini** | LLM für Chat + Embeddings                         |
+| **Upstash Redis** | Rate Limiting                                     |
+| **Sentry**        | Error Tracking                                    |
+| **Vercel**        | Hosting + Cron Jobs                               |
 
 ### 5.3 Architektur-Diagramm
 
@@ -122,23 +124,23 @@ flowchart TB
         UI[React UI]
         API[API Routes]
     end
-    
+
     subgraph auth [Authentication]
         Clerk[Clerk]
     end
-    
+
     subgraph backend [Backend Services]
         Supabase[(Supabase DB)]
         Storage[(Supabase Storage)]
         n8n[n8n Workflows]
         Qdrant[(Qdrant Vector DB)]
     end
-    
+
     subgraph ai [AI Services]
         ElevenLabs[ElevenLabs STT]
         Gemini[Google Gemini]
     end
-    
+
     UI --> API
     API --> Clerk
     API --> Supabase
@@ -157,37 +159,37 @@ flowchart TB
 
 **chats**
 
-| Spalte | Typ | Beschreibung |
-|--------|-----|--------------|
-| id | UUID | Primary Key |
-| user_id | TEXT | Clerk User ID |
-| session_id | TEXT | Session für Memory |
-| title | TEXT | Chat-Titel |
-| created_at | TIMESTAMPTZ | Erstelldatum |
-| updated_at | TIMESTAMPTZ | Letzte Änderung |
+| Spalte     | Typ         | Beschreibung       |
+| ---------- | ----------- | ------------------ |
+| id         | UUID        | Primary Key        |
+| user_id    | TEXT        | Clerk User ID      |
+| session_id | TEXT        | Session für Memory |
+| title      | TEXT        | Chat-Titel         |
+| created_at | TIMESTAMPTZ | Erstelldatum       |
+| updated_at | TIMESTAMPTZ | Letzte Änderung    |
 
 **messages**
 
-| Spalte | Typ | Beschreibung |
-|--------|-----|--------------|
-| id | UUID | Primary Key |
-| chat_id | UUID | FK zu chats |
-| role | TEXT | 'user', 'assistant', 'system' |
-| content | TEXT | Nachrichteninhalt |
-| created_at | TIMESTAMPTZ | Erstelldatum |
+| Spalte     | Typ         | Beschreibung                  |
+| ---------- | ----------- | ----------------------------- |
+| id         | UUID        | Primary Key                   |
+| chat_id    | UUID        | FK zu chats                   |
+| role       | TEXT        | 'user', 'assistant', 'system' |
+| content    | TEXT        | Nachrichteninhalt             |
+| created_at | TIMESTAMPTZ | Erstelldatum                  |
 
 **uploads**
 
-| Spalte | Typ | Beschreibung |
-|--------|-----|--------------|
-| id | UUID | Primary Key |
-| user_id | TEXT | Clerk User ID |
-| file_name | TEXT | Original-Dateiname |
-| file_size | BIGINT | Größe in Bytes |
-| file_type | TEXT | MIME-Type |
-| transcript | TEXT | Transkribierter Text |
-| status | TEXT | pending/processing/completed/failed |
-| metadata | JSONB | Topics, Intention, Tone etc. |
+| Spalte     | Typ    | Beschreibung                        |
+| ---------- | ------ | ----------------------------------- |
+| id         | UUID   | Primary Key                         |
+| user_id    | TEXT   | Clerk User ID                       |
+| file_name  | TEXT   | Original-Dateiname                  |
+| file_size  | BIGINT | Größe in Bytes                      |
+| file_type  | TEXT   | MIME-Type                           |
+| transcript | TEXT   | Transkribierter Text                |
+| status     | TEXT   | pending/processing/completed/failed |
+| metadata   | JSONB  | Topics, Intention, Tone etc.        |
 
 ### 6.2 Entity Relationship Diagram
 
@@ -196,13 +198,13 @@ erDiagram
     USERS ||--o{ CHATS : owns
     USERS ||--o{ UPLOADS : owns
     CHATS ||--o{ MESSAGES : contains
-    
+
     USERS {
         string clerk_id PK
         string email
         string name
     }
-    
+
     CHATS {
         uuid id PK
         string user_id FK
@@ -211,7 +213,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     MESSAGES {
         uuid id PK
         uuid chat_id FK
@@ -219,7 +221,7 @@ erDiagram
         text content
         timestamp created_at
     }
-    
+
     UPLOADS {
         uuid id PK
         string user_id FK
@@ -238,32 +240,32 @@ erDiagram
 
 ### 7.1 Chat APIs
 
-| Methode | Endpoint | Beschreibung |
-|---------|----------|--------------|
-| GET | `/api/chats` | Alle Chats des Users |
-| POST | `/api/chats` | Neuen Chat erstellen |
-| GET | `/api/chats/[id]` | Chat mit Nachrichten abrufen |
-| PATCH | `/api/chats/[id]` | Chat aktualisieren (Titel) |
-| DELETE | `/api/chats/[id]` | Chat löschen |
-| POST | `/api/chat` | Nachricht senden + KI-Antwort |
+| Methode | Endpoint          | Beschreibung                  |
+| ------- | ----------------- | ----------------------------- |
+| GET     | `/api/chats`      | Alle Chats des Users          |
+| POST    | `/api/chats`      | Neuen Chat erstellen          |
+| GET     | `/api/chats/[id]` | Chat mit Nachrichten abrufen  |
+| PATCH   | `/api/chats/[id]` | Chat aktualisieren (Titel)    |
+| DELETE  | `/api/chats/[id]` | Chat löschen                  |
+| POST    | `/api/chat`       | Nachricht senden + KI-Antwort |
 
 ### 7.2 Upload APIs
 
-| Methode | Endpoint | Beschreibung |
-|---------|----------|--------------|
-| GET | `/api/uploads` | Alle Uploads des Users |
-| POST | `/api/upload` | Datei hochladen |
-| GET | `/api/uploads/[id]` | Upload-Details |
-| DELETE | `/api/uploads/[id]` | Upload löschen |
+| Methode | Endpoint            | Beschreibung           |
+| ------- | ------------------- | ---------------------- |
+| GET     | `/api/uploads`      | Alle Uploads des Users |
+| POST    | `/api/upload`       | Datei hochladen        |
+| GET     | `/api/uploads/[id]` | Upload-Details         |
+| DELETE  | `/api/uploads/[id]` | Upload löschen         |
 
 ### 7.3 Admin APIs
 
-| Methode | Endpoint | Beschreibung |
-|---------|----------|--------------|
-| GET | `/api/admin/stats` | Plattform-Statistiken |
-| GET | `/api/admin/chats` | Alle Chats (paginiert) |
-| GET | `/api/admin/uploads` | Alle Uploads (paginiert) |
-| GET | `/api/admin/users` | Alle User mit Stats |
+| Methode | Endpoint             | Beschreibung             |
+| ------- | -------------------- | ------------------------ |
+| GET     | `/api/admin/stats`   | Plattform-Statistiken    |
+| GET     | `/api/admin/chats`   | Alle Chats (paginiert)   |
+| GET     | `/api/admin/uploads` | Alle Uploads (paginiert) |
+| GET     | `/api/admin/users`   | Alle User mit Stats      |
 
 ---
 
@@ -280,32 +282,32 @@ erDiagram
 
 **Light Mode:**
 
-| Farbe | Hex | Verwendung |
-|-------|-----|------------|
-| Background | `#F8F7F4` | Warmes Editorial-Papier |
-| Foreground | `#1A1A1A` | Text |
-| Primary | `#9A6F4F` | Bronze (Buttons, Akzente) |
-| Secondary | `#E8E6E1` | Hintergründe |
-| Muted | `#666461` | Sekundärtext |
-| Destructive | `#B23A2F` | Fehler/Löschen |
-| Border | `#D4D2CC` | Rahmen |
+| Farbe       | Hex       | Verwendung                |
+| ----------- | --------- | ------------------------- |
+| Background  | `#F8F7F4` | Warmes Editorial-Papier   |
+| Foreground  | `#1A1A1A` | Text                      |
+| Primary     | `#9A6F4F` | Bronze (Buttons, Akzente) |
+| Secondary   | `#E8E6E1` | Hintergründe              |
+| Muted       | `#666461` | Sekundärtext              |
+| Destructive | `#B23A2F` | Fehler/Löschen            |
+| Border      | `#D4D2CC` | Rahmen                    |
 
 **Dark Mode:**
 
-| Farbe | Hex | Verwendung |
-|-------|-----|------------|
-| Background | `#0F0F0F` | Near-Black |
-| Foreground | `#EFEDE8` | Text |
-| Primary | `#D4A574` | Helleres Bronze |
-| Secondary | `#242424` | Hintergründe |
+| Farbe      | Hex       | Verwendung      |
+| ---------- | --------- | --------------- |
+| Background | `#0F0F0F` | Near-Black      |
+| Foreground | `#EFEDE8` | Text            |
+| Primary    | `#D4A574` | Helleres Bronze |
+| Secondary  | `#242424` | Hintergründe    |
 
 ### 8.3 Typografie
 
-| Schrift | Font | Verwendung |
-|---------|------|------------|
-| Serif | Crimson | Headlines, Editorial-Elemente |
-| Sans-Serif | DM Sans | Body-Text, UI-Elemente |
-| Mono | JetBrains Mono | Code, technische Inhalte |
+| Schrift    | Font           | Verwendung                    |
+| ---------- | -------------- | ----------------------------- |
+| Serif      | Crimson        | Headlines, Editorial-Elemente |
+| Sans-Serif | DM Sans        | Body-Text, UI-Elemente        |
+| Mono       | JetBrains Mono | Code, technische Inhalte      |
 
 ### 8.4 Schatten-System
 
@@ -316,14 +318,14 @@ erDiagram
 
 ### 8.5 Komponenten-Übersicht
 
-| Kategorie | Komponenten |
-|-----------|-------------|
-| **ui/** | Button, Card, Input, Badge, Dialog, Sheet, Toast, Progress, Skeleton |
-| **chat/** | ChatInterface, ChatSidebar, ChatHeader, ChatInput, MessageList, MessageBubble |
-| **upload/** | FileUpload, UploadList |
-| **layout/** | MainNavigation, Footer, Breadcrumbs, CookieConsent |
-| **home/** | HeroSection, StatsSection, Testimonials, EmailSignup |
-| **admin/** | AdminSidebar, ChatsTable, UploadsTable, UsersTable, StatsCards |
+| Kategorie   | Komponenten                                                                   |
+| ----------- | ----------------------------------------------------------------------------- |
+| **ui/**     | Button, Card, Input, Badge, Dialog, Sheet, Toast, Progress, Skeleton          |
+| **chat/**   | ChatInterface, ChatSidebar, ChatHeader, ChatInput, MessageList, MessageBubble |
+| **upload/** | FileUpload, UploadList                                                        |
+| **layout/** | MainNavigation, Footer, Breadcrumbs, CookieConsent                            |
+| **home/**   | HeroSection, StatsSection, Testimonials, EmailSignup                          |
+| **admin/**  | AdminSidebar, ChatsTable, UploadsTable, UsersTable, StatsCards                |
 
 ---
 
@@ -342,12 +344,12 @@ erDiagram
 
 ### 9.3 Rate Limiting
 
-| Endpoint | Limit |
-|----------|-------|
-| `/api/upload` | 5 req/Stunde |
-| `/api/chat` | 20 req/Minute |
-| `/api/generate` | 10 req/Stunde |
-| Default | 100 req/Minute |
+| Endpoint        | Limit          |
+| --------------- | -------------- |
+| `/api/upload`   | 5 req/Stunde   |
+| `/api/chat`     | 20 req/Minute  |
+| `/api/generate` | 10 req/Stunde  |
+| Default         | 100 req/Minute |
 
 ### 9.4 Datenisolierung
 
@@ -359,22 +361,22 @@ erDiagram
 
 ## 10. Preismodell
 
-| Plan | Preis/Monat | Jährlich | Features |
-|------|-------------|----------|----------|
-| **Starter** | 29€ | 290€ (2 Monate gratis) | 10 Uploads, 2h Transkription, 100 KI-Anfragen |
-| **Pro** | 49€ | 490€ (2 Monate gratis) | 50 Uploads, 10h Transkription, 500 KI-Anfragen |
-| **Business** | 79€ | 790€ (2 Monate gratis) | Unbegrenzt Uploads, 30h Transkription, Unbegrenzte KI-Anfragen |
+| Plan         | Preis/Monat | Jährlich               | Features                                                       |
+| ------------ | ----------- | ---------------------- | -------------------------------------------------------------- |
+| **Starter**  | 29€         | 290€ (2 Monate gratis) | 10 Uploads, 2h Transkription, 100 KI-Anfragen                  |
+| **Pro**      | 49€         | 490€ (2 Monate gratis) | 50 Uploads, 10h Transkription, 500 KI-Anfragen                 |
+| **Business** | 79€         | 790€ (2 Monate gratis) | Unbegrenzt Uploads, 30h Transkription, Unbegrenzte KI-Anfragen |
 
 ### Feature-Details
 
-| Feature | Starter | Pro | Business |
-|---------|---------|-----|----------|
-| Uploads/Monat | 10 | 50 | Unbegrenzt |
-| Transkription | 2 Stunden | 10 Stunden | 30 Stunden |
-| KI-Chat Anfragen | 100 | 500 | Unbegrenzt |
-| Textformate | Alle | Alle | Alle |
-| Support | E-Mail | Priorität | Persönlich |
-| 14-Tage Geld-zurück | Ja | Ja | Ja |
+| Feature             | Starter   | Pro        | Business   |
+| ------------------- | --------- | ---------- | ---------- |
+| Uploads/Monat       | 10        | 50         | Unbegrenzt |
+| Transkription       | 2 Stunden | 10 Stunden | 30 Stunden |
+| KI-Chat Anfragen    | 100       | 500        | Unbegrenzt |
+| Textformate         | Alle      | Alle       | Alle       |
+| Support             | E-Mail    | Priorität  | Persönlich |
+| 14-Tage Geld-zurück | Ja        | Ja         | Ja         |
 
 ---
 
@@ -390,7 +392,7 @@ sequenceDiagram
     participant SB as Supabase
     participant N8N as n8n
     participant EL as ElevenLabs
-    
+
     U->>FE: Datei auswählen
     FE->>FE: Validierung (Typ, Größe)
     FE->>API: POST /api/upload
@@ -414,7 +416,7 @@ sequenceDiagram
     participant N8N as n8n
     participant Gemini as Google Gemini
     participant QD as Qdrant
-    
+
     U->>FE: Nachricht eingeben
     FE->>API: POST /api/chat
     API->>SB: Nachricht speichern

@@ -16,6 +16,7 @@
 ## 📖 Übersicht: Was muss gemacht werden
 
 ### Aktueller Stand
+
 - ✅ Frontend: Chat-Interface für KI-Dialog implementiert
 - ✅ Frontend: Upload-Funktionalität für Audio/Video integriert
 - ✅ Frontend: Integration mit n8n Webhooks aktiv
@@ -43,6 +44,7 @@
 ### Workflow 1: Voice Upload & Processing
 
 #### Datenfluss:
+
 ```
 1. Form Upload (Webhook)
    ↓
@@ -66,12 +68,14 @@
 ```
 
 #### Webhook-Endpunkt:
+
 - **URL**: Wird vom Form-Trigger generiert (dynamisch)
 - **Methode**: POST (multipart/form-data)
 - **Feldname**: "Audio/Video Datei"
 - **Response**: JSON mit `status` und `fileName`
 
 #### Beispiel Response:
+
 ```json
 {
   "status": "✅ Erfolgreich gespeichert",
@@ -82,6 +86,7 @@
 ### Workflow 2: Content Generation Agent
 
 #### Datenfluss:
+
 ```
 1. Webhook Request (POST)
    ↓
@@ -99,11 +104,13 @@
 ```
 
 #### Webhook-Endpunkt:
+
 - **URL**: `https://zapkothimofej.app.n8n.cloud/webhook/create-content`
 - **Methode**: POST
 - **Content-Type**: `application/json`
 
 #### Request Body:
+
 ```json
 {
   "message": "mach daraus einen linkedin post",
@@ -113,6 +120,7 @@
 ```
 
 #### Response Body:
+
 ```json
 {
   "output": "Hier ist dein LinkedIn Post:\n\n..."
@@ -120,6 +128,7 @@
 ```
 
 #### Session-Management:
+
 - Jede Chat-Session hat eine eindeutige `sessionId`
 - Format: `chat-{timestamp}-{random}`
 - Memory speichert bis zu 10000 Zeichen Context
@@ -132,11 +141,13 @@
 ### Schritt 1: Neue Seitenstruktur erstellen
 
 #### 1.1 Chat-Interface Seite
+
 **Datei**: `my-app/src/app/chat/page.tsx`
 
 Diese Seite wird das Haupt-Chat-Interface enthalten.
 
 #### 1.2 Upload-Seite (optional, kann auch in Chat integriert werden)
+
 **Datei**: `my-app/src/app/upload/page.tsx`
 
 Oder: Upload direkt in Chat-Interface integrieren.
@@ -146,6 +157,7 @@ Oder: Upload direkt in Chat-Interface integrieren.
 **Datei**: `my-app/src/components/chat/chat-interface.tsx`
 
 Diese Komponente muss folgende Features haben:
+
 - Message-Liste mit Scroll
 - Input-Feld für Nachrichten
 - Send-Button
@@ -159,6 +171,7 @@ Diese Komponente muss folgende Features haben:
 **Datei**: `my-app/src/components/upload/file-upload.tsx`
 
 Features:
+
 - Drag & Drop
 - File-Select Button
 - Progress-Bar während Upload
@@ -168,6 +181,7 @@ Features:
 ### Schritt 4: API-Routen erstellen
 
 **Dateien**:
+
 - `my-app/src/app/api/chat/route.ts` - Chat-API
 - `my-app/src/app/api/upload/route.ts` - Upload-API
 
@@ -193,6 +207,7 @@ src/components/chat/
 **Datei**: `my-app/src/components/chat/chat-interface.tsx`
 
 **Features**:
+
 - State-Management für Messages
 - Session-ID Generation
 - API-Calls zu `/api/chat`
@@ -205,6 +220,7 @@ src/components/chat/
 **Datei**: `my-app/src/components/chat/message-bubble.tsx`
 
 **Features**:
+
 - User vs. AI Messages (unterschiedliche Styles)
 - Timestamp
 - Copy-Button für AI-Messages
@@ -215,6 +231,7 @@ src/components/chat/
 **Datei**: `my-app/src/components/chat/chat-input.tsx`
 
 **Features**:
+
 - Text-Input mit Auto-Resize
 - Send-Button (Enter-Taste)
 - Disabled während Loading
@@ -229,6 +246,7 @@ src/components/chat/
 **Datei**: `my-app/src/components/upload/file-upload.tsx`
 
 **Features**:
+
 - Drag & Drop Zone
 - File-Select Button
 - File-Validation:
@@ -255,12 +273,14 @@ src/components/chat/
 
 **Datei**: `my-app/src/app/api/chat/route.ts`
 
-**Funktion**: 
+**Funktion**:
+
 - Empfängt Chat-Nachrichten vom Frontend
 - Sendet Request an n8n Webhook
 - Gibt Response zurück
 
 **Request**:
+
 ```typescript
 POST /api/chat
 Body: {
@@ -271,6 +291,7 @@ Body: {
 ```
 
 **Response**:
+
 ```typescript
 {
   success: boolean;
@@ -284,18 +305,21 @@ Body: {
 **Datei**: `my-app/src/app/api/upload/route.ts`
 
 **Funktion**:
+
 - Empfängt Datei-Upload
 - Validiert Datei
 - Sendet zu n8n Form-Webhook
 - Gibt Status zurück
 
 **Request**:
+
 ```typescript
 POST /api/upload
 Body: FormData mit 'file' field
 ```
 
 **Response**:
+
 ```typescript
 {
   success: boolean;
@@ -310,6 +334,7 @@ Body: FormData mit 'file' field
 **Datei**: `my-app/src/app/api/session/route.ts`
 
 **Funktion**:
+
 - Erstellt neue Session
 - Lädt Session-Historie
 - Speichert Session-Daten (localStorage oder Backend)
@@ -445,7 +470,7 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
   return (
     <Card className="flex flex-col h-[calc(100vh-8rem)] max-h-[800px]">
       <ChatHeader sessionId={sessionId} messageCount={messages.length} />
-      
+
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
@@ -459,24 +484,24 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
         ) : (
           <MessageList messages={messages} />
         )}
-        
+
         {isLoading && (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="w-4 h-4 animate-spin" />
             <span className="text-sm">REX denkt nach...</span>
           </div>
         )}
-        
+
         {error && (
           <div className="flex items-center gap-2 text-destructive bg-destructive/10 p-3 rounded-lg">
             <AlertCircle className="w-4 h-4" />
             <span className="text-sm">{error}</span>
           </div>
         )}
-        
+
         <div ref={messagesEndRef} />
       </div>
-      
+
       <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
     </Card>
   );
@@ -521,7 +546,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           <Bot className="w-4 h-4 text-primary" />
         </div>
       )}
-      
+
       <Card
         className={`max-w-[80%] ${
           isUser
@@ -557,7 +582,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           </div>
         </div>
       </Card>
-      
+
       {isUser && (
         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
           <User className="w-4 h-4 text-primary" />
@@ -742,7 +767,7 @@ export async function POST(request: NextRequest) {
     if (!N8N_CHAT_WEBHOOK_URL) {
       return NextResponse.json(
         { success: false, error: "Chat-Webhook nicht konfiguriert" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -752,7 +777,7 @@ export async function POST(request: NextRequest) {
     if (!message || !sessionId) {
       return NextResponse.json(
         { success: false, error: "message und sessionId sind erforderlich" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -781,7 +806,7 @@ export async function POST(request: NextRequest) {
     // n8n gibt die Antwort in verschiedenen Formaten zurück
     // Wir müssen die Struktur anpassen
     let output = "";
-    
+
     if (typeof data === "string") {
       output = data;
     } else if (data.output) {
@@ -809,7 +834,7 @@ export async function POST(request: NextRequest) {
             ? error.message
             : "Unbekannter Fehler bei der Chat-Anfrage",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -927,7 +952,7 @@ export function FileUpload({
 
       setSuccess(true);
       onUploadSuccess?.(data.fileName || file.name);
-      
+
       // Reset nach 3 Sekunden
       setTimeout(() => {
         setFile(null);
@@ -1084,7 +1109,7 @@ export async function POST(request: NextRequest) {
     if (!N8N_UPLOAD_WEBHOOK_URL) {
       return NextResponse.json(
         { success: false, error: "Upload-Webhook nicht konfiguriert" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -1094,7 +1119,7 @@ export async function POST(request: NextRequest) {
     if (!file) {
       return NextResponse.json(
         { success: false, error: "Keine Datei bereitgestellt" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -1146,7 +1171,7 @@ export async function POST(request: NextRequest) {
             ? error.message
             : "Unbekannter Fehler beim Upload",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -1188,6 +1213,7 @@ export function Progress({ value, className }: ProgressProps) {
 **Datei**: `my-app/src/app/text-generator/page.tsx`
 
 **Änderungen**:
+
 - Upload-Komponente hinzufügen
 - Link zu Chat-Interface
 - Optional: Chat direkt integrieren
@@ -1201,7 +1227,7 @@ import Link from "next/link";
 
 // In der JSX:
 <div className="mb-6">
-  <FileUpload 
+  <FileUpload
     onUploadSuccess={(fileName) => {
       // Optional: Toast oder Notification
       console.log("Upload erfolgreich:", fileName);
@@ -1224,6 +1250,7 @@ import Link from "next/link";
 ### Lokales Testing
 
 1. **Umgebungsvariablen setzen**:
+
    ```bash
    cd my-app
    cp .env.example .env.local
@@ -1231,6 +1258,7 @@ import Link from "next/link";
    ```
 
 2. **Development Server starten**:
+
    ```bash
    npm run dev
    ```
@@ -1283,24 +1311,29 @@ import Link from "next/link";
 ## 📚 Zusätzliche Features (Optional)
 
 ### 1. Session-Persistenz
+
 - LocalStorage für Chat-Historie
 - Backend-Session-Speicherung
 - Session-Wiederherstellung
 
 ### 2. Markdown-Rendering
+
 - Markdown in AI-Responses rendern
 - Code-Blocks formatieren
 - Links klickbar machen
 
 ### 3. Voice-Input
+
 - Browser Speech-to-Text API
 - Mikrofon-Button im Chat-Input
 
 ### 4. Export-Funktionen
+
 - Chat als PDF exportieren
 - Generierter Content direkt zu Plattformen posten
 
 ### 5. Analytics
+
 - Nachrichten-Tracking
 - Upload-Statistiken
 - Usage-Analytics
@@ -1340,5 +1373,4 @@ import Link from "next/link";
 
 ---
 
-*Diese Anleitung ist vollständig und enthält alle notwendigen Code-Beispiele für die komplette Integration des n8n Workflows in dein Frontend.*
-
+_Diese Anleitung ist vollständig und enthält alle notwendigen Code-Beispiele für die komplette Integration des n8n Workflows in dein Frontend._

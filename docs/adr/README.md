@@ -5,6 +5,7 @@ Dieses Verzeichnis enthält Architecture Decision Records (ADRs) für TiMax.
 ## Was ist ein ADR?
 
 Ein ADR dokumentiert eine wichtige Architekturentscheidung, die:
+
 - Den Projektverlauf beeinflusst
 - Langfristige Konsequenzen hat
 - Schwierig zu ändern ist
@@ -18,20 +19,25 @@ Datum: [YYYY-MM-DD]
 Status: [vorgeschlagen | akzeptiert | deprecated | überschrieben]
 
 ## Kontext
+
 Was ist der Hintergrund? Welches Problem lösen wir?
 
 ## Entscheidung
+
 Was haben wir entschieden?
 
 ## Konsequenzen
+
 - Positiv: Was ist besser?
 - Negativ: Was ist schwieriger?
 - Neutral: Was muss dokumentiert werden?
 
 ## Alternativen
+
 Welche Alternativen haben wir erwogen?
 
 ## Verwandte ADRs
+
 - Links zu verwandten ADRs
 ```
 

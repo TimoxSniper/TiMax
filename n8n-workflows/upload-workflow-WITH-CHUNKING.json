@@ -1,0 +1,721 @@
+{
+  "name": "TiMax Upload Workflow (WITH CHUNKING)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "timax-upload",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "9d04e474-8c53-4980-b4a3-ef99d52c613f",
+      "name": "Upload Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [14848, 6720],
+      "webhookId": "timax-upload",
+      "notes": "CORS aktiviert für Direct Client Upload"
+    },
+    {
+      "parameters": {
+        "jsCode": "// EXTRACT REQUEST DATA FROM CLIENT\n// Client sendet direkt zu n8n (nicht über Next.js API)\n\nconst input = $input.first();\nconst headers = input.json.headers || {};\nconst body = input.json.body || {};\n\n// Upload ID aus Header (REQUIRED)\nconst uploadId = headers['x-upload-id'] || body.upload_id;\nif (!uploadId) {\n  throw new Error('X-Upload-ID Header ist erforderlich');\n}\n\n// Dateiname aus Header\nconst fileName = headers['x-file-name'] || body.fileName || 'unbekannt';\n\n// User ID wird NICHT vom Client gesendet (Sicherheit!)\n// Stattdessen laden wir sie aus dem Supabase Upload-Eintrag\n\nreturn {\n  json: {\n    upload_id: uploadId,\n    file_name: fileName,\n    timestamp: new Date().toISOString()\n  },\n  binary: input.binary\n};"
+      },
+      "id": "4da03c5d-9b3a-44cc-89ef-5f343fecbe75",
+      "name": "Extract Request Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [15072, 6720],
+      "onError": "continueErrorOutput",
+      "notes": "Extrahiert uploadId und fileName vom Client"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "uploads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $json.upload_id }}"
+            }
+          ]
+        }
+      },
+      "id": "26171206-deee-4bf4-a965-c8920d5378d4",
+      "name": "Get Upload Entry",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [15296, 6656],
+      "credentials": {
+        "supabaseApi": {
+          "id": "8XMpaC9AdFcb3fSO",
+          "name": "TiMax"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Lädt user_id aus Supabase mit Filter (FIXED!)"
+    },
+    {
+      "parameters": {
+        "jsCode": "// VALIDATE UPLOAD ENTRY AND EXTRACT USER ID\nconst input = $input.first().json;\nconst extractedData = $('Extract Request Data').first();\n\n// Prüfe ob Upload existiert\nif (!input || !input.user_id) {\n  throw new Error('Upload-Eintrag nicht gefunden oder ungültig');\n}\n\n// Prüfe ob Status valid ist (pending oder processing)\nif (input.status && !['pending', 'processing'].includes(input.status)) {\n  throw new Error(`Upload-Eintrag hat ungültigen Status: ${input.status}`);\n}\n\nreturn {\n  json: {\n    user_id: input.user_id,\n    upload_id: extractedData.json.upload_id,\n    file_name: extractedData.json.file_name || input.file_name,\n    timestamp: extractedData.json.timestamp\n  },\n  binary: extractedData.binary\n};"
+      },
+      "id": "099ff04f-d2d5-4b0f-b53d-d4bac332e27e",
+      "name": "Validate Entry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [15520, 6576],
+      "onError": "continueErrorOutput",
+      "notes": "Validiert Upload und extrahiert user_id"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "uploads",
+        "filterType": "string",
+        "filterString": "=id=eq.{{ $json.upload_id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "processing"
+            }
+          ]
+        }
+      },
+      "id": "ef0409ea-0c26-4c7f-850e-2118e7368cb2",
+      "name": "Set Processing",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [15744, 6512],
+      "credentials": {
+        "supabaseApi": {
+          "id": "8XMpaC9AdFcb3fSO",
+          "name": "TiMax"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Setzt Status auf processing"
+    },
+    {
+      "parameters": {
+        "resource": "speech",
+        "operation": "speechToText",
+        "file": "file",
+        "additionalOptions": {
+          "languageCode": "de"
+        },
+        "requestOptions": {}
+      },
+      "id": "564fae6a-363c-499c-8475-9aed01dc6757",
+      "name": "ElevenLabs STT",
+      "type": "@elevenlabs/n8n-nodes-elevenlabs.elevenLabs",
+      "typeVersion": 1,
+      "position": [16192, 6432],
+      "credentials": {
+        "elevenLabsApi": {
+          "id": "e6MMDFDQ1dbDxpvE",
+          "name": "ElevenLabs account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// PREPARE TRANSCRIPT\nconst input = $input.first().json;\nconst validatedData = $('Validate Entry').item.json;\n\n// Transkript extrahieren\nlet transcript = '';\n\nif (input.text) {\n  transcript = input.text;\n} else if (input.words && Array.isArray(input.words)) {\n  transcript = input.words.map(w => w.text || w).join(' ');\n} else {\n  // Fallback\n  transcript = JSON.stringify(input);\n}\n\nif (!transcript || transcript.trim().length < 5) {\n  throw new Error('Transkription fehlgeschlagen: Kein Text erkannt');\n}\n\nreturn {\n  json: {\n    user_id: validatedData.user_id,\n    upload_id: validatedData.upload_id,\n    file_name: validatedData.file_name,\n    transcript: transcript.trim(),\n    transcript_length: transcript.length,\n    timestamp: validatedData.timestamp\n  }\n};"
+      },
+      "id": "56236a7d-71fe-46bf-bab6-97ada84a0348",
+      "name": "Prepare Transcript",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [16416, 6368],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analysiere diesen transkribierten Text und extrahiere Metadaten.\n\n=== TRANSKRIPT ===\n{{ $json.transcript.substring(0, 5000) }}\n\n=== DATEINAME ===\n{{ $json.file_name }}\n\n=== AUFGABE ===\nGib ein JSON-Objekt zurück mit:\n\n{\n  \"topics\": [\"thema1\", \"thema2\", \"thema3\"],\n  \"intention\": \"bildung|motivation|argumentation|beispiel|geschichte|unterhaltung\",\n  \"tone\": \"enthusiastisch|kritisch|sachlich|inspirierend|humorvoll\",\n  \"content_quality\": 7,\n  \"key_quotes\": [\"wichtiges Zitat\"],\n  \"summary\": \"Kurze Zusammenfassung in 2 Sätzen\"\n}\n\nRegeln:\n- topics: 3-5 relevante Schlagwörter\n- content_quality: 1-10\n- key_quotes: 1-3 bemerkenswerte Zitate\n- summary: Max 200 Zeichen\n\nAntworte NUR mit dem JSON, ohne Erklärung.",
+        "batching": {}
+      },
+      "id": "0b899fb4-f203-4bbe-b682-e58385873ab8",
+      "name": "AI Metadata",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [16640, 6240],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "f26feb67-f2b3-4a11-b247-2cf579219944",
+      "name": "Google Gemini",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [16720, 6464],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "BWPxLiVPTdHxDSZp",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// COMBINE DATA\nconst input = $input.first().json;\nconst preparedData = $('Prepare Transcript').item.json;\n\n// Default Metadaten\nlet metadata = {\n  topics: [],\n  intention: 'general',\n  tone: 'neutral',\n  content_quality: 5,\n  key_quotes: [],\n  summary: ''\n};\n\ntry {\n  let jsonText = input.output || input.text || '';\n  \n  // Markdown Code-Blöcke entfernen\n  jsonText = jsonText.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n  \n  // JSON extrahieren\n  const jsonMatch = jsonText.match(/\\{[\\s\\S]*\\}/);\n  if (jsonMatch) {\n    const parsed = JSON.parse(jsonMatch[0]);\n    metadata = { ...metadata, ...parsed };\n  }\n} catch (e) {\n  // Bei Fehler: Default-Werte verwenden\n  console.log('Metadata parsing failed, using defaults');\n}\n\n// Validierung\nmetadata.topics = Array.isArray(metadata.topics) ? metadata.topics.slice(0, 10) : [];\nmetadata.content_quality = Math.min(10, Math.max(1, parseInt(metadata.content_quality) || 5));\nmetadata.key_quotes = Array.isArray(metadata.key_quotes) ? metadata.key_quotes.slice(0, 5) : [];\n\nreturn {\n  json: {\n    user_id: preparedData.user_id,\n    upload_id: preparedData.upload_id,\n    file_name: preparedData.file_name,\n    transcript: preparedData.transcript,\n    transcript_length: preparedData.transcript_length,\n    metadata: metadata,\n    timestamp: preparedData.timestamp\n  }\n};"
+      },
+      "id": "c66d15fe-e54f-45ea-938e-e6a6d6cd1d99",
+      "name": "Combine Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [16992, 6160],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "uploads",
+        "filterType": "string",
+        "filterString": "=id=eq.{{ $json.upload_id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "transcript",
+              "fieldValue": "={{ $json.transcript }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "processing"
+            },
+            {
+              "fieldId": "metadata",
+              "fieldValue": "={{ JSON.stringify($json.metadata) }}"
+            }
+          ]
+        }
+      },
+      "id": "af6deec6-02cd-44b1-8508-21bf9bc675b4",
+      "name": "Update Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [17216, 6096],
+      "credentials": {
+        "supabaseApi": {
+          "id": "8XMpaC9AdFcb3fSO",
+          "name": "TiMax"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ { \"text\": $('Combine Data').item.json.transcript } }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "user_id",
+                "value": "={{ $('Combine Data').item.json.user_id }}"
+              },
+              {
+                "name": "upload_id",
+                "value": "={{ $('Combine Data').item.json.upload_id }}"
+              },
+              {
+                "name": "file_name",
+                "value": "={{ $('Combine Data').item.json.file_name }}"
+              },
+              {
+                "name": "topics",
+                "value": "={{ JSON.stringify($('Combine Data').item.json.metadata.topics || []) }}"
+              },
+              {
+                "name": "intention",
+                "value": "={{ $('Combine Data').item.json.metadata.intention || 'general' }}"
+              },
+              {
+                "name": "tone",
+                "value": "={{ $('Combine Data').item.json.metadata.tone || 'neutral' }}"
+              },
+              {
+                "name": "uploaded_at",
+                "value": "={{ $('Combine Data').item.json.timestamp }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "967d5b82-7b4b-4d3c-bc10-d063b4d623ac",
+      "name": "Prepare for Pinecone",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [17584, 6192],
+      "notes": "⚠️ WICHTIG: Verbinde Text Splitter hier!"
+    },
+    {
+      "parameters": {
+        "chunkSize": 1000,
+        "chunkOverlap": 200
+      },
+      "id": "text-splitter-chunking",
+      "name": "Text Splitter (CHUNKING)",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [17584, 6384],
+      "notes": "✅ CHUNKING AKTIVIERT!\n- 1000 Zeichen pro Chunk\n- 200 Zeichen Überlappung\n→ Viele kleine Einträge statt 1 großer!"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "timax-knowledge",
+          "mode": "list",
+          "cachedResultName": "timax-knowledge"
+        },
+        "options": {
+          "pineconeNamespace": "={{ $('Combine Data').item.json.user_id }}"
+        }
+      },
+      "id": "82d514a0-af37-4e88-8b37-2af5aee6b499",
+      "name": "Insert Pinecone",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [17440, 5968],
+      "credentials": {
+        "pineconeApi": {
+          "id": "Rc8c6l5NUc3AtyZP",
+          "name": "TiMAx"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, upload_id: $('Combine Data').item.json.upload_id, transcript: $('Combine Data').item.json.transcript, transcript_length: $('Combine Data').item.json.transcript_length, status: 'completed' }) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "POST, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, X-Upload-ID, X-File-Name"
+              }
+            ]
+          }
+        }
+      },
+      "id": "8ef9f73f-98b0-4217-a2da-6bc5e0778a92",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [18016, 5920],
+      "notes": "Mit CORS Headers"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "uploads",
+        "filterType": "string",
+        "filterString": "=id=eq.{{ $('Extract Request Data').item.json.upload_id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "failed"
+            },
+            {
+              "fieldId": "error_message",
+              "fieldValue": "={{ $json.error?.message || 'Fehler bei der Verarbeitung' }}"
+            }
+          ]
+        }
+      },
+      "id": "64b69feb-7293-4c67-bd38-51f91e51f010",
+      "name": "Mark Failed",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [17792, 6704],
+      "credentials": {
+        "supabaseApi": {
+          "id": "8XMpaC9AdFcb3fSO",
+          "name": "TiMax"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: false, error: $json.error?.message || 'Verarbeitung fehlgeschlagen', upload_id: $('Extract Request Data').item.json?.upload_id || null }) }}",
+        "options": {
+          "responseCode": 500,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "fb99df2e-e037-42fe-958d-8bb7e85272bb",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [18016, 6704],
+      "notes": "Mit CORS Headers"
+    },
+    {
+      "parameters": {
+        "jsCode": "const supabaseData = $input.first().json;\nconst validatedData = $('Validate Entry').first();\n\nreturn {\n  json: supabaseData,\n  binary: validatedData.binary\n};"
+      },
+      "id": "8f341060-e7fb-454c-a2ff-cedd22f979c3",
+      "name": "Restore Binary Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [15968, 6432]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "uploads",
+        "filterType": "string",
+        "filterString": "=id=eq.{{ $('Combine Data').item.json.upload_id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "completed"
+            }
+          ]
+        }
+      },
+      "id": "8b635da2-49ed-473c-92aa-78829e24c320",
+      "name": "Mark Completed",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [17792, 5920],
+      "credentials": {
+        "supabaseApi": {
+          "id": "8XMpaC9AdFcb3fSO",
+          "name": "TiMax"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-004"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [17488, 6176],
+      "id": "faf02778-2352-49c2-bcad-8f200b7ae726",
+      "name": "Embeddings",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "BWPxLiVPTdHxDSZp",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      },
+      "notes": "✅ text-embedding-004 mit 768 Dimensionen"
+    }
+  ],
+  "connections": {
+    "Upload Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Request Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Request Data": {
+      "main": [
+        [
+          {
+            "node": "Get Upload Entry",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Upload Entry": {
+      "main": [
+        [
+          {
+            "node": "Validate Entry",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Entry": {
+      "main": [
+        [
+          {
+            "node": "Set Processing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Processing": {
+      "main": [
+        [
+          {
+            "node": "Restore Binary Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ElevenLabs STT": {
+      "main": [
+        [
+          {
+            "node": "Prepare Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Transcript": {
+      "main": [
+        [
+          {
+            "node": "AI Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Metadata": {
+      "main": [
+        [
+          {
+            "node": "Combine Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Metadata",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Data": {
+      "main": [
+        [
+          {
+            "node": "Update Supabase",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Insert Pinecone",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Supabase": {
+      "main": [
+        [
+          {
+            "node": "Insert Pinecone",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare for Pinecone": {
+      "ai_document": [
+        [
+          {
+            "node": "Insert Pinecone",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Splitter (CHUNKING)": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Prepare for Pinecone",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Pinecone": {
+      "main": [
+        [
+          {
+            "node": "Mark Completed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Failed": {
+      "main": [
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restore Binary Data": {
+      "main": [
+        [
+          {
+            "node": "ElevenLabs STT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Completed": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Insert Pinecone",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "timax-upload-with-chunking"
+  }
+}

@@ -10,18 +10,12 @@ interface RouteParams {
 }
 
 // GET: Einzelnen Chat mit Messages laden
-export async function GET(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     // Admin-Check
@@ -43,10 +37,7 @@ export async function GET(
       .single();
 
     if (chatError || !chat) {
-      return NextResponse.json(
-        { success: false, error: "Chat nicht gefunden" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "Chat nicht gefunden" }, { status: 404 });
     }
 
     // Messages laden
@@ -80,18 +71,12 @@ export async function GET(
 }
 
 // DELETE: Chat löschen (kaskadiert zu Messages)
-export async function DELETE(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     // Admin-Check
@@ -106,10 +91,7 @@ export async function DELETE(
     const supabase = createAdminClient();
 
     // Chat löschen (Messages werden durch CASCADE automatisch gelöscht)
-    const { error } = await supabase
-      .from("chats")
-      .delete()
-      .eq("id", chatId);
+    const { error } = await supabase.from("chats").delete().eq("id", chatId);
 
     if (error) {
       logger.error("[Admin Chat API] Fehler beim Löschen:", error);

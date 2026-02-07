@@ -46,8 +46,8 @@ export function ChatInput({ onSendMessage, disabled, isMobile = false }: ChatInp
   // ========== MOBILE LAYOUT ==========
   if (isMobile) {
     return (
-      <div className="border-t bg-card/95 backdrop-blur-sm px-3 py-3 safe-area-bottom">
-        <div className="flex gap-2 items-end">
+      <div className="bg-card/95 safe-area-bottom border-t px-3 py-3 backdrop-blur-sm">
+        <div className="flex items-end gap-2">
           <textarea
             ref={textareaRef}
             value={input}
@@ -60,12 +60,12 @@ export function ChatInput({ onSendMessage, disabled, isMobile = false }: ChatInp
             disabled={disabled}
             rows={1}
             className={cn(
-              "flex-1 px-4 py-3 rounded-2xl border border-border bg-background",
-              "text-base leading-normal resize-none",
+              "border-border bg-background flex-1 rounded-2xl border px-4 py-3",
+              "resize-none text-base leading-normal",
               "placeholder:text-muted-foreground/60",
-              "focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent/50",
-              "disabled:opacity-50 disabled:cursor-not-allowed",
-              "min-h-[48px] max-h-[120px]"
+              "focus:ring-accent/30 focus:border-accent/50 focus:ring-2 focus:outline-none",
+              "disabled:cursor-not-allowed disabled:opacity-50",
+              "max-h-[120px] min-h-[48px]"
             )}
             style={{ fontSize: "16px" }} // Verhindert iOS Zoom
           />
@@ -74,22 +74,18 @@ export function ChatInput({ onSendMessage, disabled, isMobile = false }: ChatInp
             disabled={disabled || !input.trim()}
             size="icon"
             className={cn(
-              "h-12 w-12 rounded-full shrink-0",
+              "h-12 w-12 shrink-0 rounded-full",
               "bg-primary hover:bg-primary/90",
               "disabled:opacity-40"
             )}
             aria-label="Nachricht senden"
           >
-            {disabled ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              <Send className="w-5 h-5" />
-            )}
+            {disabled ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
           </Button>
         </div>
-        
+
         {/* Hinweis für Mobile */}
-        <p className="text-[10px] text-muted-foreground/50 text-center mt-2">
+        <p className="text-muted-foreground/50 mt-2 text-center text-[10px]">
           Tippe auf den Senden-Button zum Absenden
         </p>
       </div>
@@ -99,7 +95,7 @@ export function ChatInput({ onSendMessage, disabled, isMobile = false }: ChatInp
   // ========== DESKTOP LAYOUT ==========
   return (
     <div className="border-t p-4">
-      <div className="flex gap-2 items-end">
+      <div className="flex items-end gap-2">
         <textarea
           ref={textareaRef}
           value={input}
@@ -113,9 +109,9 @@ export function ChatInput({ onSendMessage, disabled, isMobile = false }: ChatInp
           disabled={disabled}
           rows={1}
           className={cn(
-            "flex-1 min-h-[44px] max-h-32 px-3 py-2 rounded-md border border-input bg-background text-sm transition-all duration-200",
+            "border-input bg-background max-h-32 min-h-[44px] flex-1 rounded-md border px-3 py-2 text-sm transition-all duration-200",
             "resize-none overflow-y-auto",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 focus-visible:border-accent/50",
+            "focus-visible:ring-accent/30 focus-visible:border-accent/50 focus-visible:ring-2 focus-visible:outline-none",
             "disabled:cursor-not-allowed disabled:opacity-50",
             "placeholder:text-muted-foreground/70"
           )}
@@ -127,11 +123,7 @@ export function ChatInput({ onSendMessage, disabled, isMobile = false }: ChatInp
           className="h-11 w-11 shrink-0"
           aria-label="Nachricht senden"
         >
-          {disabled ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Send className="w-4 h-4" />
-          )}
+          {disabled ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
         </Button>
       </div>
     </div>

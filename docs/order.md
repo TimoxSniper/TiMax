@@ -10,26 +10,26 @@ With the [`groups`][18] option set to `["builtin", "external", "internal", "pare
 
 ```ts
 // 1. node "builtin" modules
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 // 2. "external" modules
-import _ from 'lodash';
-import chalk from 'chalk';
+import _ from "lodash";
+import chalk from "chalk";
 // 3. "internal" modules
 // (if you have configured your path or webpack to handle your internal paths differently)
-import foo from 'src/foo';
+import foo from "src/foo";
 // 4. modules from a "parent" directory
-import foo from '../foo';
-import qux from '../../foo/qux';
+import foo from "../foo";
+import qux from "../../foo/qux";
 // 5. "sibling" modules from the same or a sibling's directory
-import bar from './bar';
-import baz from './bar/baz';
+import bar from "./bar";
+import baz from "./bar/baz";
 // 6. "index" of the current directory
-import main from './';
+import main from "./";
 // 7. "object"-imports (only available in TypeScript)
 import log = console.log;
 // 8. "type" imports (only available in Flow and TypeScript)
-import type { Foo } from 'foo';
+import type { Foo } from "foo";
 ```
 
 See [here][3] for further details on how imports are grouped.
@@ -37,42 +37,42 @@ See [here][3] for further details on how imports are grouped.
 ## Fail
 
 ```ts
-import _ from 'lodash';
-import path from 'path'; // `path` import should occur before import of `lodash`
+import _ from "lodash";
+import path from "path"; // `path` import should occur before import of `lodash`
 
 // -----
 
-var _ = require('lodash');
-var path = require('path'); // `path` import should occur before import of `lodash`
+var _ = require("lodash");
+var path = require("path"); // `path` import should occur before import of `lodash`
 
 // -----
 
-var path = require('path');
-import foo from './foo'; // `import` statements must be before `require` statement
+var path = require("path");
+import foo from "./foo"; // `import` statements must be before `require` statement
 ```
 
 ## Pass
 
 ```ts
-import path from 'path';
-import _ from 'lodash';
+import path from "path";
+import _ from "lodash";
 
 // -----
 
-var path = require('path');
-var _ = require('lodash');
+var path = require("path");
+var _ = require("lodash");
 
 // -----
 
 // Allowed as ̀`babel-register` is not assigned.
-require('babel-register');
-var path = require('path');
+require("babel-register");
+var path = require("path");
 
 // -----
 
 // Allowed as `import` must be before `require`
-import foo from './foo';
-var path = require('path');
+import foo from "./foo";
+var path = require("path");
 ```
 
 ## Limitations of `--fix`
@@ -80,35 +80,35 @@ var path = require('path');
 Unbound imports are assumed to have side effects, and will never be moved/reordered. This can cause other imports to get "stuck" around them, and the fix to fail.
 
 ```javascript
-import b from 'b'
-import 'format.css';  // This will prevent --fix from working.
-import a from 'a'
+import b from "b";
+import "format.css"; // This will prevent --fix from working.
+import a from "a";
 ```
 
 As a workaround, move unbound imports to be entirely above or below bound ones.
 
 ```javascript
-import 'format1.css';  // OK
-import b from 'b'
-import a from 'a'
-import 'format2.css';  // OK
+import "format1.css"; // OK
+import b from "b";
+import a from "a";
+import "format2.css"; // OK
 ```
 
 ## Options
 
 This rule supports the following options (none of which are required):
 
- - [`groups`][18]
- - [`pathGroups`][8]
- - [`pathGroupsExcludedImportTypes`][9]
- - [`distinctGroup`][32]
- - [`newlines-between`][20]
- - [`alphabetize`][30]
- - [`named`][33]
- - [`warnOnUnassignedImports`][5]
- - [`sortTypesGroup`][7]
- - [`newlines-between-types`][27]
- - [`consolidateIslands`][25]
+- [`groups`][18]
+- [`pathGroups`][8]
+- [`pathGroupsExcludedImportTypes`][9]
+- [`distinctGroup`][32]
+- [`newlines-between`][20]
+- [`alphabetize`][30]
+- [`named`][33]
+- [`warnOnUnassignedImports`][5]
+- [`sortTypesGroup`][7]
+- [`newlines-between-types`][27]
+- [`consolidateIslands`][25]
 
 ---
 
@@ -129,19 +129,22 @@ together at the end.
 
 ```jsonc
 {
-  "import/order": ["error", {
-    "groups": [
-      // Imports of builtins are first
-      "builtin",
-      // Then sibling and parent imports. They can be mingled together
-      ["sibling", "parent"],
-      // Then index file imports
-      "index",
-      // Then any arcane TypeScript imports
-      "object",
-      // Then the omitted imports: internal, external, type, unknown
-    ],
-  }],
+  "import/order": [
+    "error",
+    {
+      "groups": [
+        // Imports of builtins are first
+        "builtin",
+        // Then sibling and parent imports. They can be mingled together
+        ["sibling", "parent"],
+        // Then index file imports
+        "index",
+        // Then any arcane TypeScript imports
+        "object",
+        // Then the omitted imports: internal, external, type, unknown
+      ],
+    },
+  ],
 }
 ```
 
@@ -150,9 +153,9 @@ together at the end.
 An import (a `ImportDeclaration`, `TSImportEqualsDeclaration`, or `require()` `CallExpression`) is grouped by its type (`"require"` vs `"import"`), its [specifier][4], and any corresponding identifiers.
 
 ```ts
-import { identifier1, identifier2 } from 'specifier1';
-import type { MyType } from 'specifier2';
-const identifier3 = require('specifier3');
+import { identifier1, identifier2 } from "specifier1";
+import type { MyType } from "specifier2";
+const identifier3 = require("specifier3");
 ```
 
 Roughly speaking, the grouping algorithm is as follows:
@@ -193,27 +196,30 @@ Imports are associated with a [`PathGroup`][13] based on path matching against t
 
 |     property     | required |          type          | description                                                                                                                     |
 | :--------------: | :------: | :--------------------: | ------------------------------------------------------------------------------------------------------------------------------- |
-|     `pattern`    |    ☑️    |        `string`        | [Minimatch pattern][16] for specifier matching                                                                                  |
+|    `pattern`     |    ☑️    |        `string`        | [Minimatch pattern][16] for specifier matching                                                                                  |
 | `patternOptions` |          |        `object`        | [Minimatch options][17]; default: `{nocomment: true}`                                                                           |
-|      `group`     |    ☑️    | [predefined group][18] | One of the [predefined groups][18] to which matching imports will be positioned relatively                                      |
-|    `position`    |          |  `"after" \| "before"` | Where, in relation to `group`, matching imports will be positioned; default: same position as `group` (neither before or after) |
+|     `group`      |    ☑️    | [predefined group][18] | One of the [predefined groups][18] to which matching imports will be positioned relatively                                      |
+|    `position`    |          | `"after" \| "before"`  | Where, in relation to `group`, matching imports will be positioned; default: same position as `group` (neither before or after) |
 
 #### Example
 
 ```jsonc
 {
-  "import/order": ["error", {
-    "pathGroups": [
-      {
-        // Minimatch pattern used to match against specifiers
-        "pattern": "~/**",
-        // The predefined group this PathGroup is defined in relation to
-        "group": "external",
-        // How matching imports will be positioned relative to "group"
-        "position": "after"
-      }
-    ]
-  }]
+  "import/order": [
+    "error",
+    {
+      "pathGroups": [
+        {
+          // Minimatch pattern used to match against specifiers
+          "pattern": "~/**",
+          // The predefined group this PathGroup is defined in relation to
+          "group": "external",
+          // How matching imports will be positioned relative to "group"
+          "position": "after",
+        },
+      ],
+    },
+  ],
 }
 ```
 
@@ -230,23 +236,26 @@ Use `pathGroupsExcludedImportTypes` to modify which groups are excluded.
 > If using imports with custom specifier aliases (e.g.
 > you're using `eslint-import-resolver-alias`, `paths` in `tsconfig.json`, etc) that [end up
 > grouped][3] as `"builtin"` or `"external"` imports,
-> remove them from  `pathGroupsExcludedImportTypes` to ensure they are ordered
+> remove them from `pathGroupsExcludedImportTypes` to ensure they are ordered
 > correctly.
 
 #### Example
 
 ```jsonc
 {
-  "import/order": ["error", {
-    "pathGroups": [
-      {
-        "pattern": "@app/**",
-        "group": "external",
-        "position": "after"
-      }
-    ],
-    "pathGroupsExcludedImportTypes": ["builtin"]
-  }]
+  "import/order": [
+    "error",
+    {
+      "pathGroups": [
+        {
+          "pattern": "@app/**",
+          "group": "external",
+          "position": "after",
+        },
+      ],
+      "pathGroupsExcludedImportTypes": ["builtin"],
+    },
+  ],
 }
 ```
 
@@ -270,17 +279,20 @@ This behavior can be undesirable when using [`PathGroup.position`][13] to order 
 
 ```jsonc
 {
-  "import/order": ["error", {
-    "distinctGroup": false,
-    "newlines-between": "always",
-    "pathGroups": [
-      {
-        "pattern": "@app/**",
-        "group": "external",
-        "position": "after"
-      }
-    ]
-  }]
+  "import/order": [
+    "error",
+    {
+      "distinctGroup": false,
+      "newlines-between": "always",
+      "pathGroups": [
+        {
+          "pattern": "@app/**",
+          "group": "external",
+          "position": "after",
+        },
+      ],
+    },
+  ],
 }
 ```
 
@@ -291,17 +303,17 @@ Default: `"ignore"`
 
 Enforces or forbids new lines between import groups.
 
- - If set to `ignore`, no errors related to new lines between import groups will be reported
+- If set to `ignore`, no errors related to new lines between import groups will be reported
 
- - If set to `always`, at least one new line between each group will be enforced, and new lines inside a group will be forbidden
+- If set to `always`, at least one new line between each group will be enforced, and new lines inside a group will be forbidden
 
-  > [!TIP]
-  >
-  > To prevent multiple lines between imports, the [`no-multiple-empty-lines` rule][21], or a tool like [Prettier][22], can be used.
+> [!TIP]
+>
+> To prevent multiple lines between imports, the [`no-multiple-empty-lines` rule][21], or a tool like [Prettier][22], can be used.
 
- - If set to `always-and-inside-groups`, it will act like `always` except new lines are allowed inside import groups
+- If set to `always-and-inside-groups`, it will act like `always` except new lines are allowed inside import groups
 
- - If set to `never`, no new lines are allowed in the entire import section
+- If set to `never`, no new lines are allowed in the entire import section
 
 #### Example
 
@@ -309,60 +321,60 @@ With the default [`groups`][18] setting, the following will fail the rule check:
 
 ```ts
 /* eslint import/order: ["error", {"newlines-between": "always"}] */
-import fs from 'fs';
-import path from 'path';
-import sibling from './foo';
-import index from './';
+import fs from "fs";
+import path from "path";
+import sibling from "./foo";
+import index from "./";
 ```
 
 ```ts
 /* eslint import/order: ["error", {"newlines-between": "always-and-inside-groups"}] */
-import fs from 'fs';
+import fs from "fs";
 
-import path from 'path';
-import sibling from './foo';
-import index from './';
+import path from "path";
+import sibling from "./foo";
+import index from "./";
 ```
 
 ```ts
 /* eslint import/order: ["error", {"newlines-between": "never"}] */
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
-import sibling from './foo';
+import sibling from "./foo";
 
-import index from './';
+import index from "./";
 ```
 
 While this will pass:
 
 ```ts
 /* eslint import/order: ["error", {"newlines-between": "always"}] */
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
-import sibling from './foo';
+import sibling from "./foo";
 
-import index from './';
+import index from "./";
 ```
 
 ```ts
 /* eslint import/order: ["error", {"newlines-between": "always-and-inside-groups"}] */
-import fs from 'fs';
+import fs from "fs";
 
-import path from 'path';
+import path from "path";
 
-import sibling from './foo';
+import sibling from "./foo";
 
-import index from './';
+import index from "./";
 ```
 
 ```ts
 /* eslint import/order: ["error", {"newlines-between": "never"}] */
-import fs from 'fs';
-import path from 'path';
-import sibling from './foo';
-import index from './';
+import fs from "fs";
+import path from "path";
+import sibling from "./foo";
+import index from "./";
 ```
 
 ### `alphabetize`
@@ -379,11 +391,11 @@ Determine the sort order of imports within each [predefined group][18] or [`Path
 
 Valid properties and their values include:
 
- - **`order`**: use `"asc"` to sort in ascending order, `"desc"` to sort in descending order, or "ignore" to prevent sorting
+- **`order`**: use `"asc"` to sort in ascending order, `"desc"` to sort in descending order, or "ignore" to prevent sorting
 
- - **`orderImportKind`**: use `"asc"` to sort various _import kinds_, e.g. [type-only and typeof imports][6], in ascending order, `"desc"` to sort them in descending order, or "ignore" to prevent sorting
+- **`orderImportKind`**: use `"asc"` to sort various _import kinds_, e.g. [type-only and typeof imports][6], in ascending order, `"desc"` to sort them in descending order, or "ignore" to prevent sorting
 
- - **`caseInsensitive`**: use `true` to ignore case and `false` to consider case when sorting
+- **`caseInsensitive`**: use `true` to ignore case and `false` to consider case when sorting
 
 #### Example
 
@@ -391,33 +403,36 @@ Given the following settings:
 
 ```jsonc
 {
-  "import/order": ["error", {
-    "alphabetize": {
-      "order": "asc",
-      "caseInsensitive": true
-    }
-  }]
+  "import/order": [
+    "error",
+    {
+      "alphabetize": {
+        "order": "asc",
+        "caseInsensitive": true,
+      },
+    },
+  ],
 }
 ```
 
 This will fail the rule check:
 
 ```ts
-import React, { PureComponent } from 'react';
-import aTypes from 'prop-types';
-import { compose, apply } from 'xcompose';
-import * as classnames from 'classnames';
-import blist from 'BList';
+import React, { PureComponent } from "react";
+import aTypes from "prop-types";
+import { compose, apply } from "xcompose";
+import * as classnames from "classnames";
+import blist from "BList";
 ```
 
 While this will pass:
 
 ```ts
-import blist from 'BList';
-import * as classnames from 'classnames';
-import aTypes from 'prop-types';
-import React, { PureComponent } from 'react';
-import { compose, apply } from 'xcompose';
+import blist from "BList";
+import * as classnames from "classnames";
+import aTypes from "prop-types";
+import React, { PureComponent } from "react";
+import { compose, apply } from "xcompose";
 ```
 
 ### `named`
@@ -432,41 +447,41 @@ If set to `false` or `{ enabled: false }`, named imports can occur in any order.
 
 If set to `{ enabled: true, ... }`, and any of the properties `import`, `export`, `require`, or `cjsExports` are set to `false`, named ordering is disabled with respect to the following kind of expressions:
 
- - `import`:
+- `import`:
 
-  ```ts
-  import { Readline } from "readline";
-  ```
+```ts
+import { Readline } from "readline";
+```
 
- - `export`:
+- `export`:
 
-  ```ts
-  export { Readline };
-  // and
-  export { Readline } from "readline";
-  ```
+```ts
+export { Readline };
+// and
+export { Readline } from "readline";
+```
 
- - `require`:
+- `require`:
 
-  ```ts
-  const { Readline } = require("readline");
-  ```
+```ts
+const { Readline } = require("readline");
+```
 
- - `cjsExports`:
+- `cjsExports`:
 
-  ```ts
-  module.exports.Readline = Readline;
-  // and
-  module.exports = { Readline };
-  ```
+```ts
+module.exports.Readline = Readline;
+// and
+module.exports = { Readline };
+```
 
 Further, the `named.types` option allows you to specify the order of [import identifiers with inline type qualifiers][23] (or "type-only" identifiers/names), e.g. `import { type TypeIdentifier1, normalIdentifier2 } from 'specifier';`.
 
 `named.types` accepts the following values:
 
- - `types-first`: forces type-only identifiers to occur first
- - `types-last`: forces type-only identifiers to occur last
- - `mixed`: sorts all identifiers in alphabetical order
+- `types-first`: forces type-only identifiers to occur first
+- `types-last`: forces type-only identifiers to occur last
+- `mixed`: sorts all identifiers in alphabetical order
 
 #### Example
 
@@ -474,25 +489,28 @@ Given the following settings:
 
 ```jsonc
 {
-  "import/order": ["error", {
-    "named": true,
-    "alphabetize": {
-      "order": "asc"
-    }
-  }]
+  "import/order": [
+    "error",
+    {
+      "named": true,
+      "alphabetize": {
+        "order": "asc",
+      },
+    },
+  ],
 }
 ```
 
 This will fail the rule check:
 
 ```ts
-import { compose, apply } from 'xcompose';
+import { compose, apply } from "xcompose";
 ```
 
 While this will pass:
 
 ```ts
-import { apply, compose } from 'xcompose';
+import { apply, compose } from "xcompose";
 ```
 
 ### `warnOnUnassignedImports`
@@ -514,26 +532,29 @@ Given the following settings:
 
 ```jsonc
 {
-  "import/order": ["error", {
-    "warnOnUnassignedImports": true
-  }]
+  "import/order": [
+    "error",
+    {
+      "warnOnUnassignedImports": true,
+    },
+  ],
 }
 ```
 
 This will fail the rule check:
 
 ```ts
-import fs from 'fs';
-import './styles.css';
-import path from 'path';
+import fs from "fs";
+import "./styles.css";
+import path from "path";
 ```
 
 While this will pass:
 
 ```ts
-import fs from 'fs';
-import path from 'path';
-import './styles.css';
+import fs from "fs";
+import path from "path";
+import "./styles.css";
 ```
 
 ### `sortTypesGroup`
@@ -555,10 +576,13 @@ Given the following settings:
 
 ```jsonc
 {
-  "import/order": ["error", {
-    "groups": ["type", "builtin", "parent", "sibling", "index"],
-    "alphabetize": { "order": "asc" }
-  }]
+  "import/order": [
+    "error",
+    {
+      "groups": ["type", "builtin", "parent", "sibling", "index"],
+      "alphabetize": { "order": "asc" },
+    },
+  ],
 }
 ```
 
@@ -569,7 +593,7 @@ import type A from "fs";
 import type B from "path";
 import type C from "../foo.js";
 import type D from "./bar.js";
-import type E from './';
+import type E from "./";
 
 import a from "fs";
 import b from "path";
@@ -584,11 +608,14 @@ This happens because [type-only imports][6] are considered part of one global
 
 ```jsonc
 {
-  "import/order": ["error", {
-    "groups": ["type", "builtin", "parent", "sibling", "index"],
-    "alphabetize": { "order": "asc" },
-    "sortTypesGroup": true
-  }]
+  "import/order": [
+    "error",
+    {
+      "groups": ["type", "builtin", "parent", "sibling", "index"],
+      "alphabetize": { "order": "asc" },
+      "sortTypesGroup": true,
+    },
+  ],
 }
 ```
 
@@ -613,11 +640,14 @@ Given the following settings:
 
 ```jsonc
 {
-  "import/order": ["error", {
-    "groups": ["type", "builtin", "parent", "sibling", "index"],
-    "sortTypesGroup": true,
-    "newlines-between": "always"
-  }]
+  "import/order": [
+    "error",
+    {
+      "groups": ["type", "builtin", "parent", "sibling", "index"],
+      "sortTypesGroup": true,
+      "newlines-between": "always",
+    },
+  ],
 }
 ```
 
@@ -628,7 +658,7 @@ import type A from "fs";
 import type B from "path";
 import type C from "../foo.js";
 import type D from "./bar.js";
-import type E from './';
+import type E from "./";
 
 import a from "fs";
 import b from "path";
@@ -644,12 +674,15 @@ However, if we set `newlines-between-types` to `"ignore"`:
 
 ```jsonc
 {
-  "import/order": ["error", {
-    "groups": ["type", "builtin", "parent", "sibling", "index"],
-    "sortTypesGroup": true,
-    "newlines-between": "always",
-    "newlines-between-types": "ignore"
-  }]
+  "import/order": [
+    "error",
+    {
+      "groups": ["type", "builtin", "parent", "sibling", "index"],
+      "sortTypesGroup": true,
+      "newlines-between": "always",
+      "newlines-between-types": "ignore",
+    },
+  ],
 }
 ```
 
@@ -665,12 +698,15 @@ The next example will pass even though there's a new line preceding the normal i
 
 ```jsonc
 {
-  "import/order": ["error", {
-    "groups": ["type", "builtin", "parent", "sibling", "index"],
-    "sortTypesGroup": true,
-    "newlines-between": "never",
-    "newlines-between-types": "always"
-  }]
+  "import/order": [
+    "error",
+    {
+      "groups": ["type", "builtin", "parent", "sibling", "index"],
+      "sortTypesGroup": true,
+      "newlines-between": "never",
+      "newlines-between-types": "always",
+    },
+  ],
 }
 ```
 
@@ -683,7 +719,7 @@ import type C from "../foo.js";
 
 import type D from "./bar.js";
 
-import type E from './';
+import type E from "./";
 
 import a from "fs";
 import b from "path";
@@ -696,12 +732,15 @@ While the following fails due to the new line between the last type import and t
 
 ```jsonc
 {
-  "import/order": ["error", {
-    "groups": ["type", "builtin", "parent", "sibling", "index"],
-    "sortTypesGroup": true,
-    "newlines-between": "always",
-    "newlines-between-types": "never"
-  }]
+  "import/order": [
+    "error",
+    {
+      "groups": ["type", "builtin", "parent", "sibling", "index"],
+      "sortTypesGroup": true,
+      "newlines-between": "always",
+      "newlines-between-types": "never",
+    },
+  ],
 }
 ```
 
@@ -710,7 +749,7 @@ import type A from "fs";
 import type B from "path";
 import type C from "../foo.js";
 import type D from "./bar.js";
-import type E from './';
+import type E from "./";
 
 import a from "fs";
 
@@ -738,9 +777,9 @@ When set to `"inside-groups"`, this ensures imports spanning multiple lines are 
 >
 > When all of the following are true:
 >
->  - [`sortTypesGroup`][7] is set to `true`
->  - `consolidateIslands` is set to `"inside-groups"`
->  - [`newlines-between`][20] is set to `"always-and-inside-groups"` when [`newlines-between-types`][27] is set to `"never"` (or vice-versa)
+> - [`sortTypesGroup`][7] is set to `true`
+> - `consolidateIslands` is set to `"inside-groups"`
+> - [`newlines-between`][20] is set to `"always-and-inside-groups"` when [`newlines-between-types`][27] is set to `"never"` (or vice-versa)
 >
 > Then [`newlines-between`][20]/[`newlines-between-types`][27] will yield to
 > `consolidateIslands` and allow new lines to separate multi-line imports
@@ -757,59 +796,50 @@ Given the following settings:
 
 ```jsonc
 {
-  "import/order": ["error", {
-    "newlines-between": "always-and-inside-groups",
-    "consolidateIslands": "inside-groups"
-  }]
+  "import/order": [
+    "error",
+    {
+      "newlines-between": "always-and-inside-groups",
+      "consolidateIslands": "inside-groups",
+    },
+  ],
 }
 ```
 
 This will fail the rule check:
 
 ```ts
-var fs = require('fs');
-var path = require('path');
-var { util1, util2, util3 } = require('util');
-var async = require('async');
-var relParent1 = require('../foo');
-var {
-  relParent21,
-  relParent22,
-  relParent23,
-  relParent24,
-} = require('../');
-var relParent3 = require('../bar');
-var { sibling1,
-  sibling2, sibling3 } = require('./foo');
-var sibling2 = require('./bar');
-var sibling3 = require('./foobar');
+var fs = require("fs");
+var path = require("path");
+var { util1, util2, util3 } = require("util");
+var async = require("async");
+var relParent1 = require("../foo");
+var { relParent21, relParent22, relParent23, relParent24 } = require("../");
+var relParent3 = require("../bar");
+var { sibling1, sibling2, sibling3 } = require("./foo");
+var sibling2 = require("./bar");
+var sibling3 = require("./foobar");
 ```
 
 While this will succeed (and is what `--fix` would yield):
 
 ```ts
-var fs = require('fs');
-var path = require('path');
-var { util1, util2, util3 } = require('util');
+var fs = require("fs");
+var path = require("path");
+var { util1, util2, util3 } = require("util");
 
-var async = require('async');
+var async = require("async");
 
-var relParent1 = require('../foo');
+var relParent1 = require("../foo");
 
-var {
-  relParent21,
-  relParent22,
-  relParent23,
-  relParent24,
-} = require('../');
+var { relParent21, relParent22, relParent23, relParent24 } = require("../");
 
-var relParent3 = require('../bar');
+var relParent3 = require("../bar");
 
-var { sibling1,
-  sibling2, sibling3 } = require('./foo');
+var { sibling1, sibling2, sibling3 } = require("./foo");
 
-var sibling2 = require('./bar');
-var sibling3 = require('./foobar');
+var sibling2 = require("./bar");
+var sibling3 = require("./foobar");
 ```
 
 Note the intragroup "islands" of grouped single-line imports, as well as multi-line imports, are surrounded by new lines. At the same time, note the typical new lines separating different groups are still maintained thanks to [`newlines-between`][20].
@@ -818,31 +848,34 @@ The same holds true for the next example; when given the following settings:
 
 ```jsonc
 {
-  "import/order": ["error", {
-    "alphabetize": { "order": "asc" },
-    "groups": ["external", "internal", "index", "type"],
-    "pathGroups": [
-      {
-        "pattern": "dirA/**",
-        "group": "internal",
-        "position": "after"
-      },
-      {
-        "pattern": "dirB/**",
-        "group": "internal",
-        "position": "before"
-      },
-      {
-        "pattern": "dirC/**",
-        "group": "internal"
-      }
-    ],
-    "newlines-between": "always-and-inside-groups",
-    "newlines-between-types": "never",
-    "pathGroupsExcludedImportTypes": [],
-    "sortTypesGroup": true,
-    "consolidateIslands": "inside-groups"
-  }]
+  "import/order": [
+    "error",
+    {
+      "alphabetize": { "order": "asc" },
+      "groups": ["external", "internal", "index", "type"],
+      "pathGroups": [
+        {
+          "pattern": "dirA/**",
+          "group": "internal",
+          "position": "after",
+        },
+        {
+          "pattern": "dirB/**",
+          "group": "internal",
+          "position": "before",
+        },
+        {
+          "pattern": "dirC/**",
+          "group": "internal",
+        },
+      ],
+      "newlines-between": "always-and-inside-groups",
+      "newlines-between-types": "never",
+      "pathGroupsExcludedImportTypes": [],
+      "sortTypesGroup": true,
+      "consolidateIslands": "inside-groups",
+    },
+  ],
 }
 ```
 
@@ -857,143 +890,79 @@ The same holds true for the next example; when given the following settings:
 This will fail the rule check:
 
 ```ts
-import c from 'Bar';
-import d from 'bar';
-import {
-  aa,
-  bb,
-  cc,
-  dd,
-  ee,
-  ff,
-  gg
-} from 'baz';
-import {
-  hh,
-  ii,
-  jj,
-  kk,
-  ll,
-  mm,
-  nn
-} from 'fizz';
-import a from 'foo';
-import b from 'dirA/bar';
-import index from './';
-import type { AA,
-  BB, CC } from 'abc';
-import type { Z } from 'fizz';
-import type {
-  A,
-  B
-} from 'foo';
-import type { C2 } from 'dirB/Bar';
-import type {
-  D2,
-  X2,
-  Y2
-} from 'dirB/bar';
-import type { E2 } from 'dirB/baz';
-import type { C3 } from 'dirC/Bar';
-import type {
-  D3,
-  X3,
-  Y3
-} from 'dirC/bar';
-import type { E3 } from 'dirC/baz';
-import type { F3 } from 'dirC/caz';
-import type { C1 } from 'dirA/Bar';
-import type {
-  D1,
-  X1,
-  Y1
-} from 'dirA/bar';
-import type { E1 } from 'dirA/baz';
-import type { F } from './index.js';
-import type { G } from './aaa.js';
-import type { H } from './bbb';
+import c from "Bar";
+import d from "bar";
+import { aa, bb, cc, dd, ee, ff, gg } from "baz";
+import { hh, ii, jj, kk, ll, mm, nn } from "fizz";
+import a from "foo";
+import b from "dirA/bar";
+import index from "./";
+import type { AA, BB, CC } from "abc";
+import type { Z } from "fizz";
+import type { A, B } from "foo";
+import type { C2 } from "dirB/Bar";
+import type { D2, X2, Y2 } from "dirB/bar";
+import type { E2 } from "dirB/baz";
+import type { C3 } from "dirC/Bar";
+import type { D3, X3, Y3 } from "dirC/bar";
+import type { E3 } from "dirC/baz";
+import type { F3 } from "dirC/caz";
+import type { C1 } from "dirA/Bar";
+import type { D1, X1, Y1 } from "dirA/bar";
+import type { E1 } from "dirA/baz";
+import type { F } from "./index.js";
+import type { G } from "./aaa.js";
+import type { H } from "./bbb";
 ```
 
 While this will succeed (and is what `--fix` would yield):
 
 ```ts
-import c from 'Bar';
-import d from 'bar';
+import c from "Bar";
+import d from "bar";
 
-import {
-  aa,
-  bb,
-  cc,
-  dd,
-  ee,
-  ff,
-  gg
-} from 'baz';
+import { aa, bb, cc, dd, ee, ff, gg } from "baz";
 
-import {
-  hh,
-  ii,
-  jj,
-  kk,
-  ll,
-  mm,
-  nn
-} from 'fizz';
+import { hh, ii, jj, kk, ll, mm, nn } from "fizz";
 
-import a from 'foo';
+import a from "foo";
 
-import b from 'dirA/bar';
+import b from "dirA/bar";
 
-import index from './';
+import index from "./";
 
-import type { AA,
-  BB, CC } from 'abc';
+import type { AA, BB, CC } from "abc";
 
-import type { Z } from 'fizz';
+import type { Z } from "fizz";
 
-import type {
-  A,
-  B
-} from 'foo';
+import type { A, B } from "foo";
 
-import type { C2 } from 'dirB/Bar';
+import type { C2 } from "dirB/Bar";
 
-import type {
-  D2,
-  X2,
-  Y2
-} from 'dirB/bar';
+import type { D2, X2, Y2 } from "dirB/bar";
 
-import type { E2 } from 'dirB/baz';
-import type { C3 } from 'dirC/Bar';
+import type { E2 } from "dirB/baz";
+import type { C3 } from "dirC/Bar";
 
-import type {
-  D3,
-  X3,
-  Y3
-} from 'dirC/bar';
+import type { D3, X3, Y3 } from "dirC/bar";
 
-import type { E3 } from 'dirC/baz';
-import type { F3 } from 'dirC/caz';
-import type { C1 } from 'dirA/Bar';
+import type { E3 } from "dirC/baz";
+import type { F3 } from "dirC/caz";
+import type { C1 } from "dirA/Bar";
 
-import type {
-  D1,
-  X1,
-  Y1
-} from 'dirA/bar';
+import type { D1, X1, Y1 } from "dirA/bar";
 
-import type { E1 } from 'dirA/baz';
-import type { F } from './index.js';
-import type { G } from './aaa.js';
-import type { H } from './bbb';
+import type { E1 } from "dirA/baz";
+import type { F } from "./index.js";
+import type { G } from "./aaa.js";
+import type { H } from "./bbb";
 ```
 
 ## Related
 
- - [`import/external-module-folders`][29]
- - [`import/internal-regex`][28]
- - [`import/core-modules`][11]
+- [`import/external-module-folders`][29]
+- [`import/internal-regex`][28]
+- [`import/core-modules`][11]
 
 [3]: #how-imports-are-grouped
 [4]: https://nodejs.org/api/esm.html#terminology

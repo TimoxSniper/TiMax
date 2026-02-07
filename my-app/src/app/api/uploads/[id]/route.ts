@@ -7,92 +7,76 @@ import { validateCsrfToken } from "@/lib/csrf";
 
 // DELETE: Upload-Eintrag löschen
 export async function DELETE(
-    request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-    try {
-        const csrfError = await validateCsrfToken(request);
-        if (csrfError) return csrfError;
+  try {
+    const csrfError = await validateCsrfToken(request);
+    if (csrfError) return csrfError;
 
-        const { userId } = await auth();
+    const { userId } = await auth();
 
-        if (!userId) {
-            return NextResponse.json(
-                { success: false, error: "Nicht authentifiziert" },
-                { status: 401 }
-            );
-        }
-
-        const { id } = await params;
-        const supabase = await createClient();
-
-        // Lösche Upload
-        const { error } = await supabase
-            .from("uploads")
-            .delete()
-            .eq("id", id)
-            .eq("user_id", userId);
-
-        if (error) {
-            logger.error("[Upload API] Fehler beim Löschen:", error);
-            throw error;
-        }
-
-        return NextResponse.json({ success: true, message: "Datei-Eintrag gelöscht" });
-    } catch (error) {
-        Sentry.captureException(error, {
-            tags: { api_route: "/api/uploads/[id]" },
-        });
-
-        return NextResponse.json(
-            { success: false, error: "Fehler beim Löschen der Datei" },
-            { status: 500 }
-        );
+    if (!userId) {
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
+
+    const { id } = await params;
+    const supabase = await createClient();
+
+    // Lösche Upload
+    const { error } = await supabase.from("uploads").delete().eq("id", id).eq("user_id", userId);
+
+    if (error) {
+      logger.error("[Upload API] Fehler beim Löschen:", error);
+      throw error;
+    }
+
+    return NextResponse.json({ success: true, message: "Datei-Eintrag gelöscht" });
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { api_route: "/api/uploads/[id]" },
+    });
+
+    return NextResponse.json(
+      { success: false, error: "Fehler beim Löschen der Datei" },
+      { status: 500 }
+    );
+  }
 }
 
 // GET: Einzelnen Upload-Eintrag laden (z.B. für Transkript-Detail)
-export async function GET(
-    request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
-) {
-    try {
-        const { userId } = await auth();
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { userId } = await auth();
 
-        if (!userId) {
-            return NextResponse.json(
-                { success: false, error: "Nicht authentifiziert" },
-                { status: 401 }
-            );
-        }
-
-        const { id } = await params;
-        const supabase = await createClient();
-
-        const { data: upload, error } = await supabase
-            .from("uploads")
-            .select("*")
-            .eq("id", id)
-            .eq("user_id", userId)
-            .single();
-
-        if (error) {
-            logger.error("[Upload API] Fehler beim Laden:", error);
-            return NextResponse.json(
-                { success: false, error: "Datei nicht gefunden" },
-                { status: 404 }
-            );
-        }
-
-        return NextResponse.json({ success: true, upload });
-    } catch (error) {
-        Sentry.captureException(error, {
-            tags: { api_route: "/api/uploads/[id]" },
-        });
-
-        return NextResponse.json(
-            { success: false, error: "Fehler beim Laden der Datei" },
-            { status: 500 }
-        );
+    if (!userId) {
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
+
+    const { id } = await params;
+    const supabase = await createClient();
+
+    const { data: upload, error } = await supabase
+      .from("uploads")
+      .select("*")
+      .eq("id", id)
+      .eq("user_id", userId)
+      .single();
+
+    if (error) {
+      logger.error("[Upload API] Fehler beim Laden:", error);
+      return NextResponse.json({ success: false, error: "Datei nicht gefunden" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, upload });
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { api_route: "/api/uploads/[id]" },
+    });
+
+    return NextResponse.json(
+      { success: false, error: "Fehler beim Laden der Datei" },
+      { status: 500 }
+    );
+  }
 }

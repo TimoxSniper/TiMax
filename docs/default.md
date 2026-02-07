@@ -25,32 +25,40 @@ Given:
 
 ```js
 // ./foo.js
-export default function () { return 42 }
+export default function () {
+  return 42;
+}
 
 // ./bar.js
-export function bar() { return null }
+export function bar() {
+  return null;
+}
 
 // ./baz.js
-module.exports = function () { /* ... */ }
+module.exports = function () {
+  /* ... */
+};
 
 // node_modules/some-module/index.js
-exports.sharedFunction = function shared() { /* ... */ }
+exports.sharedFunction = function shared() {
+  /* ... */
+};
 ```
 
 The following is considered valid:
 
 ```js
-import foo from './foo'
+import foo from "./foo";
 
 // assuming 'node_modules' are ignored (true by default)
-import someModule from 'some-module'
+import someModule from "some-module";
 ```
 
 ...and the following cases are reported:
 
 ```js
-import bar from './bar' // no default export found in ./bar
-import baz from './baz' // no default export found in ./baz
+import bar from "./bar"; // no default export found in ./bar
+import baz from "./baz"; // no default export found in ./baz
 ```
 
 ## When Not To Use It
@@ -63,9 +71,9 @@ either, so such a situation will be reported in the importing module.
 
 ## Further Reading
 
- - Lee Byron's [ES7] export proposal
- - [`import/ignore`] setting
- - [`jsnext:main`] (Rollup)
+- Lee Byron's [ES7] export proposal
+- [`import/ignore`] setting
+- [`jsnext:main`] (Rollup)
 
 [ES7]: https://github.com/leebyron/ecmascript-more-export-from
 [`import/ignore`]: ../../README.md#importignore

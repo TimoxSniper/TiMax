@@ -21,12 +21,9 @@ interface UserStats {
 export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     // Admin-Check
@@ -59,14 +56,20 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Map für User-Statistiken erstellen
-    const userStatsMap = new Map<string, { chatCount: number; uploadCount: number; lastActivity: string | null }>();
+    const userStatsMap = new Map<
+      string,
+      { chatCount: number; uploadCount: number; lastActivity: string | null }
+    >();
 
     // Chats verarbeiten
-    chatsResult.data?.forEach(chat => {
+    chatsResult.data?.forEach((chat) => {
       const existing = userStatsMap.get(chat.user_id);
       if (existing) {
         existing.chatCount++;
-        if (chat.updated_at && (!existing.lastActivity || chat.updated_at > existing.lastActivity)) {
+        if (
+          chat.updated_at &&
+          (!existing.lastActivity || chat.updated_at > existing.lastActivity)
+        ) {
           existing.lastActivity = chat.updated_at;
         }
       } else {
@@ -79,11 +82,14 @@ export async function GET(request: NextRequest) {
     });
 
     // Uploads verarbeiten
-    uploadsResult.data?.forEach(upload => {
+    uploadsResult.data?.forEach((upload) => {
       const existing = userStatsMap.get(upload.user_id);
       if (existing) {
         existing.uploadCount++;
-        if (upload.updated_at && (!existing.lastActivity || upload.updated_at > existing.lastActivity)) {
+        if (
+          upload.updated_at &&
+          (!existing.lastActivity || upload.updated_at > existing.lastActivity)
+        ) {
           existing.lastActivity = upload.updated_at;
         }
       } else {
@@ -96,7 +102,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Alle Clerk-Benutzer mit ihren Statistiken kombinieren
-    const allUsers: UserStats[] = allClerkUsers.map(clerkUser => {
+    const allUsers: UserStats[] = allClerkUsers.map((clerkUser) => {
       const stats = userStatsMap.get(clerkUser.id) || {
         chatCount: 0,
         uploadCount: 0,

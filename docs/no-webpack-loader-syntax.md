@@ -17,21 +17,21 @@ This syntax is non-standard, so it couples the code to Webpack. The recommended 
 ### Fail
 
 ```js
-import myModule from 'my-loader!my-module';
-import theme from 'style!css!./theme.css';
+import myModule from "my-loader!my-module";
+import theme from "style!css!./theme.css";
 
-var myModule = require('my-loader!./my-module');
-var theme = require('style!css!./theme.css');
+var myModule = require("my-loader!./my-module");
+var theme = require("style!css!./theme.css");
 ```
 
 ### Pass
 
 ```js
-import myModule from 'my-module';
-import theme from './theme.css';
+import myModule from "my-module";
+import theme from "./theme.css";
 
-var myModule = require('my-module');
-var theme = require('./theme.css');
+var myModule = require("my-module");
+var theme = require("./theme.css");
 ```
 
 ## When Not To Use It

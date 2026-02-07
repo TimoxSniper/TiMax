@@ -5,7 +5,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DarkModeToggle } from "@/components/home/dark-mode-toggle";
-import { Menu, X, Zap, MessageSquare, Home, LogIn, User, Sparkles, Upload, FolderOpen, CreditCard, Search } from "lucide-react";
+import {
+  Menu,
+  X,
+  Zap,
+  MessageSquare,
+  Home,
+  LogIn,
+  User,
+  Sparkles,
+  Upload,
+  FolderOpen,
+  CreditCard,
+  Search,
+} from "lucide-react";
 import { SearchModal } from "@/components/search/search-modal";
 import { cn } from "@/lib/utils";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
@@ -23,9 +36,7 @@ const landingPageNavigation: Array<{
   name: string;
   href: string;
   icon: typeof Sparkles;
-}> = [
-  { name: "Preise", href: "/pricing", icon: CreditCard },
-];
+}> = [{ name: "Preise", href: "/pricing", icon: CreditCard }];
 
 export function MainNavigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -44,8 +55,8 @@ export function MainNavigation() {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [mobileMenuOpen]);
 
   // Schließe Menü wenn Gerättyp sich ändert (z.B. von Mobile zu Desktop)
@@ -58,48 +69,43 @@ export function MainNavigation() {
   // Cmd/Ctrl+K für Search
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
         setSearchOpen(true);
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   return (
-    <header ref={navRef} className="sticky top-0 z-50 w-full border-b border-border bg-background transition-all duration-300">
+    <header
+      ref={navRef}
+      className="border-border bg-background sticky top-0 z-50 w-full border-b transition-all duration-300"
+    >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8" aria-label="Hauptnavigation">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2">
             <Link
               href="/"
-              className="flex items-center gap-2 text-xl font-bold text-foreground hover:text-primary transition-colors"
+              className="text-foreground hover:text-primary flex items-center gap-2 text-xl font-bold transition-colors"
               aria-label="TiMax Startseite"
             >
-              <Zap className="h-6 w-6 text-primary" aria-hidden="true" />
+              <Zap className="text-primary h-6 w-6" aria-hidden="true" />
               <span className="hidden sm:inline">timax</span>
             </Link>
           </div>
 
           {/* Desktop Navigation - nur wenn NICHT auf echtem Mobile */}
-          <div className={cn(
-            "items-center gap-1",
-            isMobileDevice ? "hidden" : "flex"
-          )}>
+          <div className={cn("items-center gap-1", isMobileDevice ? "hidden" : "flex")}>
             {/* Landing Page Links nur für nicht angemeldete User */}
             <SignedOut>
               {landingPageNavigation.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <Button
-                    key={item.name}
-                    variant="ghost"
-                    asChild
-                    className="gap-2"
-                  >
+                  <Button key={item.name} variant="ghost" asChild className="gap-2">
                     <Link href={item.href}>
                       <Icon className="h-4 w-4" aria-hidden="true" />
                       {item.name}
@@ -111,7 +117,7 @@ export function MainNavigation() {
 
             {/* Navigation für eingeloggte User */}
             <SignedIn>
-              <div className="w-px h-6 bg-border mx-2" aria-hidden="true" />
+              <div className="bg-border mx-2 h-6 w-px" aria-hidden="true" />
               {protectedNavigation.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
@@ -121,13 +127,13 @@ export function MainNavigation() {
                     href={item.href}
                     aria-current={isActive ? "page" : undefined}
                     className={cn(
-                      "gap-2 px-3 py-2 text-sm font-medium uppercase tracking-wide transition-all duration-300 relative group",
+                      "group relative gap-2 px-3 py-2 text-sm font-medium tracking-wide uppercase transition-all duration-300",
                       "text-foreground hover:text-accent",
-                      "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-accent after:transition-all after:duration-300",
+                      "after:bg-accent after:absolute after:bottom-0 after:left-0 after:h-[2px] after:transition-all after:duration-300",
                       isActive ? "after:w-full" : "after:w-0 group-hover:after:w-full"
                     )}
                   >
-                    <Icon className="h-4 w-4 inline mr-1" aria-hidden="true" />
+                    <Icon className="mr-1 inline h-4 w-4" aria-hidden="true" />
                     {item.name}
                   </Link>
                 );
@@ -155,13 +161,10 @@ export function MainNavigation() {
             {/* Auth Buttons - nur auf Desktop (echte Geräte) */}
             <SignedOut>
               <SignInButton mode="modal">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className={cn(
-                    "gap-2",
-                    isMobileDevice ? "hidden" : "flex"
-                  )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn("gap-2", isMobileDevice ? "hidden" : "flex")}
                 >
                   <LogIn className="h-4 w-4" />
                   Anmelden
@@ -176,14 +179,18 @@ export function MainNavigation() {
                 appearance={{
                   elements: {
                     // Avatar Styling
-                    avatarBox: "w-9 h-9 border-2 border-border hover:border-accent transition-colors",
+                    avatarBox:
+                      "w-9 h-9 border-2 border-border hover:border-accent transition-colors",
                     avatarImage: "rounded-full",
                     // Trigger Button
-                    userButtonTrigger: "focus:shadow-none focus:ring-2 focus:ring-accent/30 rounded-full",
+                    userButtonTrigger:
+                      "focus:shadow-none focus:ring-2 focus:ring-accent/30 rounded-full",
                     // Popover Card
-                    userButtonPopoverCard: "bg-card border border-border rounded-[6px] shadow-editorial-lg mt-2",
+                    userButtonPopoverCard:
+                      "bg-card border border-border rounded-[6px] shadow-editorial-lg mt-2",
                     userButtonPopoverActions: "border-t border-border",
-                    userButtonPopoverActionButton: "text-foreground hover:bg-secondary rounded-none",
+                    userButtonPopoverActionButton:
+                      "text-foreground hover:bg-secondary rounded-none",
                     userButtonPopoverActionButtonText: "text-sm",
                     userButtonPopoverActionButtonIcon: "text-muted-foreground",
                     userButtonPopoverFooter: "hidden",
@@ -219,7 +226,7 @@ export function MainNavigation() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-              className="border-t border-border/50 overflow-hidden"
+              className="border-border/50 overflow-hidden border-t"
             >
               <div className="flex flex-col gap-2 py-4">
                 {/* Landing Page Links nur für nicht angemeldete User */}
@@ -231,7 +238,7 @@ export function MainNavigation() {
                         key={item.name}
                         variant="ghost"
                         asChild
-                        className="justify-start gap-2 w-full"
+                        className="w-full justify-start gap-2"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         <Link href={item.href}>
@@ -241,7 +248,7 @@ export function MainNavigation() {
                       </Button>
                     );
                   })}
-                  <div className="my-2 border-t border-border/50" />
+                  <div className="border-border/50 my-2 border-t" />
                 </SignedOut>
 
                 {/* Navigation nur für eingeloggte User */}
@@ -255,7 +262,7 @@ export function MainNavigation() {
                         variant={isActive ? "default" : "ghost"}
                         asChild
                         className={cn(
-                          "justify-start gap-2 w-full",
+                          "w-full justify-start gap-2",
                           isActive && "bg-primary text-primary-foreground"
                         )}
                         onClick={() => setMobileMenuOpen(false)}
@@ -285,7 +292,7 @@ export function MainNavigation() {
                 </SignedIn>
 
                 {/* Mobile Auth */}
-                <div className="border-t pt-2 mt-2">
+                <div className="mt-2 border-t pt-2">
                   <SignedOut>
                     <SignInButton mode="modal">
                       <Button variant="outline" className="w-full justify-start gap-2">
@@ -296,10 +303,10 @@ export function MainNavigation() {
                   </SignedOut>
 
                   <SignedIn>
-                    <div className="flex items-center justify-between px-3 py-3 bg-secondary/50 rounded-[6px] border border-border">
+                    <div className="bg-secondary/50 border-border flex items-center justify-between rounded-[6px] border px-3 py-3">
                       <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm font-medium text-foreground">Mein Konto</span>
+                        <User className="text-muted-foreground h-4 w-4" />
+                        <span className="text-foreground text-sm font-medium">Mein Konto</span>
                       </div>
                       <UserButton
                         afterSignOutUrl="/"
@@ -307,7 +314,8 @@ export function MainNavigation() {
                         appearance={{
                           elements: {
                             avatarBox: "w-8 h-8 border-2 border-border",
-                            userButtonPopoverCard: "bg-card border border-border rounded-[6px] shadow-editorial-lg",
+                            userButtonPopoverCard:
+                              "bg-card border border-border rounded-[6px] shadow-editorial-lg",
                             userButtonPopoverFooter: "hidden",
                           },
                         }}

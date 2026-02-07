@@ -12,8 +12,8 @@ export function ChatHeader({ _sessionId, messageCount }: ChatHeaderProps) {
   return (
     <CardHeader className="border-b pl-16 lg:pl-6">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-[rgb(var(--accent-rgb)_/_0.1)] flex items-center justify-center">
-          <Sparkles className="w-5 h-5 text-accent" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[rgb(var(--accent-rgb)_/_0.1)]">
+          <Sparkles className="text-accent h-5 w-5" />
         </div>
         <div className="flex-1">
           <CardTitle className="text-lg">TiMax</CardTitle>

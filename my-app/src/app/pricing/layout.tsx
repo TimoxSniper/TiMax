@@ -2,9 +2,10 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Preise",
-  description: "Einfache, transparente Preisgestaltung für timax. Ein Preis, alle Features inklusive. Starte jetzt mit 29€/Monat oder spare mit dem Jahresabo.",
+  description:
+    "Einfache, transparente Preisgestaltung für timax. Ein Preis, alle Features inklusive. Starte jetzt mit 29€/Monat oder spare mit dem Jahresabo.",
   alternates: {
-    canonical: '/pricing',
+    canonical: "/pricing",
   },
   openGraph: {
     title: "Preise | timax",
@@ -14,10 +15,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PricingLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PricingLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

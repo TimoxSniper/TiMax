@@ -47,34 +47,37 @@ export default function AdminChatsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const { showToast } = useToast();
 
-  const fetchChats = useCallback(async (page: number) => {
-    setIsLoading(true);
-    try {
-      let url = `/api/admin/chats?page=${page}&limit=20`;
-      if (userIdFilter) {
-        url += `&userId=${encodeURIComponent(userIdFilter)}`;
-      }
-      if (timeFilter) {
-        url += `&timeFilter=${encodeURIComponent(timeFilter)}`;
-      }
+  const fetchChats = useCallback(
+    async (page: number) => {
+      setIsLoading(true);
+      try {
+        let url = `/api/admin/chats?page=${page}&limit=20`;
+        if (userIdFilter) {
+          url += `&userId=${encodeURIComponent(userIdFilter)}`;
+        }
+        if (timeFilter) {
+          url += `&timeFilter=${encodeURIComponent(timeFilter)}`;
+        }
 
-      const res = await fetch(url);
-      if (res.ok) {
-        const data = await res.json();
-        setChats(data.chats || []);
-        setFilteredChats(data.chats || []);
-        setPagination(data.pagination);
-      } else {
-        throw new Error("Fehler beim Laden");
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          setChats(data.chats || []);
+          setFilteredChats(data.chats || []);
+          setPagination(data.pagination);
+        } else {
+          throw new Error("Fehler beim Laden");
+        }
+      } catch (error) {
+        logger.error("Fehler beim Laden der Chats:", error);
+        showToast("Chats konnten nicht geladen werden", "error");
+      } finally {
+        setIsLoading(false);
+        setIsInitialLoad(false);
       }
-    } catch (error) {
-      logger.error("Fehler beim Laden der Chats:", error);
-      showToast("Chats konnten nicht geladen werden", "error");
-    } finally {
-      setIsLoading(false);
-      setIsInitialLoad(false);
-    }
-  }, [userIdFilter, timeFilter, showToast]);
+    },
+    [userIdFilter, timeFilter, showToast]
+  );
 
   useEffect(() => {
     setCurrentPage(1);
@@ -115,7 +118,7 @@ export default function AdminChatsPage() {
     const { csrfToken } = await csrfResponse.json();
     const res = await fetch(`/api/admin/chats/${chatId}`, {
       method: "DELETE",
-      headers: { "x-csrf-token": csrfToken }
+      headers: { "x-csrf-token": csrfToken },
     });
     if (res.ok) {
       showToast("Chat wurde gelöscht", "success");
@@ -143,26 +146,26 @@ export default function AdminChatsPage() {
 
   const getTimeFilterLabel = () => {
     switch (timeFilter) {
-      case "today": return "Heute";
-      case "week": return "Diese Woche";
-      case "month": return "Dieser Monat";
-      default: return "Alle Zeit";
+      case "today":
+        return "Heute";
+      case "week":
+        return "Diese Woche";
+      case "month":
+        return "Dieser Monat";
+      default:
+        return "Alle Zeit";
     }
   };
 
   const handleExportCSV = () => {
-    exportToCSV(
-      filteredChats,
-      `chats-${new Date().toISOString().split("T")[0]}`,
-      [
-        { key: "id", label: "Chat ID" },
-        { key: "title", label: "Titel" },
-        { key: "user_id", label: "User ID" },
-        { key: "messageCount", label: "Nachrichten" },
-        { key: "created_at", label: "Erstellt" },
-        { key: "updated_at", label: "Aktualisiert" },
-      ]
-    );
+    exportToCSV(filteredChats, `chats-${new Date().toISOString().split("T")[0]}`, [
+      { key: "id", label: "Chat ID" },
+      { key: "title", label: "Titel" },
+      { key: "user_id", label: "User ID" },
+      { key: "messageCount", label: "Nachrichten" },
+      { key: "created_at", label: "Erstellt" },
+      { key: "updated_at", label: "Aktualisiert" },
+    ]);
   };
 
   const handleExportJSON = () => {
@@ -174,7 +177,7 @@ export default function AdminChatsPage() {
       {/* Header */}
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="font-serif text-2xl md:text-3xl font-bold">Chats</h1>
+          <h1 className="font-serif text-2xl font-bold md:text-3xl">Chats</h1>
           <p className="text-muted-foreground mt-1 text-sm md:text-base">
             Alle Chat-Verläufe der Benutzer
           </p>
@@ -183,18 +186,14 @@ export default function AdminChatsPage() {
         {/* Zeit-Filter Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2 w-full md:w-auto">
+            <Button variant="outline" className="w-full gap-2 md:w-auto">
               <Calendar className="h-4 w-4" />
               <span className="md:inline">{getTimeFilterLabel()}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setTimeFilterValue(null)}>
-              Alle Zeit
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTimeFilterValue("today")}>
-              Heute
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTimeFilterValue(null)}>Alle Zeit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTimeFilterValue("today")}>Heute</DropdownMenuItem>
             <DropdownMenuItem onClick={() => setTimeFilterValue("week")}>
               Diese Woche
             </DropdownMenuItem>
@@ -207,9 +206,9 @@ export default function AdminChatsPage() {
 
       {/* Search and Filter Badges */}
       <div className="flex flex-col gap-3">
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <Input
               placeholder="Chats suchen (Titel, User ID)..."
               value={searchQuery}
@@ -236,22 +235,26 @@ export default function AdminChatsPage() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleExportCSV}>
-                Als CSV exportieren
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleExportJSON}>
-                Als JSON exportieren
-              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleExportCSV}>Als CSV exportieren</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleExportJSON}>Als JSON exportieren</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
 
         {userIdFilter && (
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-muted rounded-md text-sm w-fit">
+          <div className="bg-muted flex w-fit items-center gap-2 rounded-md px-3 py-1.5 text-sm">
             <span>
-              User: <code className="font-mono text-xs bg-background px-1.5 py-0.5 rounded">{userIdFilter}</code>
+              User:{" "}
+              <code className="bg-background rounded px-1.5 py-0.5 font-mono text-xs">
+                {userIdFilter}
+              </code>
             </span>
-            <Button variant="ghost" size="icon-xs" onClick={clearUserFilter} aria-label="Filter entfernen">
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={clearUserFilter}
+              aria-label="Filter entfernen"
+            >
               <X className="h-3 w-3" />
             </Button>
           </div>

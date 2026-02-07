@@ -10,6 +10,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 ### Added
 
 #### Testing
+
 - **224 Tests** hinzugefügt (von 3 auf 224!)
 - Unit Tests für alle Utility-Funktionen
 - Tests für CSRF-Schutz
@@ -20,6 +21,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Tests für Logger
 
 #### Development Tools
+
 - ESLint Konfiguration mit TypeScript, Import und Unused Imports Regeln
 - Prettier Konfiguration mit Tailwind Plugin
 - Husky Git Hooks für Pre-commit Checks
@@ -27,6 +29,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Bundle Analyzer Script
 
 #### Performance
+
 - `optimizePackageImports` für lucide-react, framer-motion
 - Image Optimization mit avif/webp
 - Cache-Control Headers für statische Assets
@@ -34,6 +37,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Rewrites für sitemap.xml und robots.txt
 
 #### Documentation
+
 - Umfassende README mit Tech Stack, API Docs, Contributing Guide
 - CONTRIBUTING.md mit detaillierten Guidelines
 - CHANGELOG.md (diese Datei)
@@ -42,11 +46,13 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 ### Changed
 
 #### Dependencies
+
 - Entfernt: Dupliziertes `radix-ui` Package
 - Konsolidierung auf einzelne `@radix-ui/*` Pakete
 - Import-Pfade korrigiert in `dialog.tsx`
 
 #### Architecture
+
 - Zentraler `lib/index.ts` für konsistente Imports
 - Verbesserte TypeScript-Strictness in Tests
 - `typecheck` Script hinzugefügt
@@ -61,6 +67,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 ### Added
 
 #### Core Features
+
 - **Upload** - Videos und Audios hochladen (bis 100MB)
 - **Transkription** - Automatische Umwandlung in Text (Whisper API)
 - **KI-Chat** - Dialog mit Claude AI für Textgenerierung
@@ -68,6 +75,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 - **Multi-User** - Authentifizierung mit Clerk
 
 #### Security
+
 - CSRF-Schutz mit Double Submit Cookie
 - Rate Limiting (IP + User basiert)
 - XSS-Schutz durch Input Sanitization
@@ -76,6 +84,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Row Level Security in Supabase
 
 #### Tech Stack
+
 - Next.js 16 mit App Router
 - React 19
 - TypeScript 5 (Strict Mode)
@@ -86,6 +95,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Vitest (Testing)
 
 #### SEO & Performance
+
 - JSON-LD Structured Data
 - OpenGraph Meta Tags
 - Sitemap

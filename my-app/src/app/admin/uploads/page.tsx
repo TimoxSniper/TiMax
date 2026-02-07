@@ -37,7 +37,7 @@ interface Pagination {
 export default function AdminUploadsPage() {
   const searchParams = useSearchParams();
   const userIdFilter = searchParams.get("userId");
-  
+
   const [uploads, setUploads] = useState<Upload[]>([]);
   const [filteredUploads, setFilteredUploads] = useState<Upload[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
@@ -48,34 +48,37 @@ export default function AdminUploadsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const { showToast } = useToast();
 
-  const fetchUploads = useCallback(async (page: number, status: string) => {
-    setIsLoading(true);
-    try {
-      let url = `/api/admin/uploads?page=${page}&limit=20`;
-      if (userIdFilter) {
-        url += `&userId=${encodeURIComponent(userIdFilter)}`;
-      }
-      if (status) {
-        url += `&status=${status}`;
-      }
+  const fetchUploads = useCallback(
+    async (page: number, status: string) => {
+      setIsLoading(true);
+      try {
+        let url = `/api/admin/uploads?page=${page}&limit=20`;
+        if (userIdFilter) {
+          url += `&userId=${encodeURIComponent(userIdFilter)}`;
+        }
+        if (status) {
+          url += `&status=${status}`;
+        }
 
-      const res = await fetch(url);
-      if (res.ok) {
-        const data = await res.json();
-        setUploads(data.uploads || []);
-        setFilteredUploads(data.uploads || []);
-        setPagination(data.pagination);
-      } else {
-        throw new Error("Fehler beim Laden");
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          setUploads(data.uploads || []);
+          setFilteredUploads(data.uploads || []);
+          setPagination(data.pagination);
+        } else {
+          throw new Error("Fehler beim Laden");
+        }
+      } catch (error) {
+        logger.error("Fehler beim Laden der Uploads:", error);
+        showToast("Uploads konnten nicht geladen werden", "error");
+      } finally {
+        setIsLoading(false);
+        setIsInitialLoad(false);
       }
-    } catch (error) {
-      logger.error("Fehler beim Laden der Uploads:", error);
-      showToast("Uploads konnten nicht geladen werden", "error");
-    } finally {
-      setIsLoading(false);
-      setIsInitialLoad(false);
-    }
-  }, [userIdFilter, showToast]);
+    },
+    [userIdFilter, showToast]
+  );
 
   useEffect(() => {
     setCurrentPage(1);
@@ -122,7 +125,7 @@ export default function AdminUploadsPage() {
     const { csrfToken } = await csrfResponse.json();
     const res = await fetch(`/api/admin/uploads/${uploadId}`, {
       method: "DELETE",
-      headers: { "x-csrf-token": csrfToken }
+      headers: { "x-csrf-token": csrfToken },
     });
     if (res.ok) {
       showToast("Upload wurde gelöscht", "success");
@@ -138,19 +141,15 @@ export default function AdminUploadsPage() {
   };
 
   const handleExportCSV = () => {
-    exportToCSV(
-      filteredUploads,
-      `uploads-${new Date().toISOString().split("T")[0]}`,
-      [
-        { key: "id", label: "Upload ID" },
-        { key: "file_name", label: "Dateiname" },
-        { key: "user_id", label: "User ID" },
-        { key: "file_size", label: "Größe (Bytes)" },
-        { key: "file_type", label: "Typ" },
-        { key: "status", label: "Status" },
-        { key: "created_at", label: "Erstellt" },
-      ]
-    );
+    exportToCSV(filteredUploads, `uploads-${new Date().toISOString().split("T")[0]}`, [
+      { key: "id", label: "Upload ID" },
+      { key: "file_name", label: "Dateiname" },
+      { key: "user_id", label: "User ID" },
+      { key: "file_size", label: "Größe (Bytes)" },
+      { key: "file_type", label: "Typ" },
+      { key: "status", label: "Status" },
+      { key: "created_at", label: "Erstellt" },
+    ]);
   };
 
   const handleExportJSON = () => {
@@ -161,7 +160,7 @@ export default function AdminUploadsPage() {
     <div className="space-y-6 md:space-y-8">
       {/* Header */}
       <div>
-        <h1 className="font-serif text-2xl md:text-3xl font-bold">Uploads</h1>
+        <h1 className="font-serif text-2xl font-bold md:text-3xl">Uploads</h1>
         <p className="text-muted-foreground mt-1 text-sm md:text-base">
           Alle hochgeladenen Audio- und Video-Dateien
         </p>
@@ -169,9 +168,9 @@ export default function AdminUploadsPage() {
 
       {/* Search and Actions */}
       <div className="flex flex-col gap-3">
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <Input
               placeholder="Uploads suchen (Dateiname, Typ, User ID)..."
               value={searchQuery}
@@ -198,22 +197,26 @@ export default function AdminUploadsPage() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleExportCSV}>
-                Als CSV exportieren
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleExportJSON}>
-                Als JSON exportieren
-              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleExportCSV}>Als CSV exportieren</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleExportJSON}>Als JSON exportieren</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
 
         {userIdFilter && (
-          <div className="flex items-center gap-2 p-2 md:p-3 bg-muted rounded-md w-fit">
+          <div className="bg-muted flex w-fit items-center gap-2 rounded-md p-2 md:p-3">
             <span className="text-xs md:text-sm">
-              User: <code className="font-mono text-xs bg-background px-1.5 py-0.5 rounded break-all">{userIdFilter}</code>
+              User:{" "}
+              <code className="bg-background rounded px-1.5 py-0.5 font-mono text-xs break-all">
+                {userIdFilter}
+              </code>
             </span>
-            <Button variant="ghost" size="icon-xs" onClick={clearFilter} aria-label="Filter entfernen">
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={clearFilter}
+              aria-label="Filter entfernen"
+            >
               <X className="h-3 w-3 md:h-4 md:w-4" />
             </Button>
           </div>

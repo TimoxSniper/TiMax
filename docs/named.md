@@ -24,34 +24,34 @@ Given:
 
 ```js
 // ./foo.js
-export const foo = "I'm so foo"
+export const foo = "I'm so foo";
 ```
 
 The following is considered valid:
 
 ```js
 // ./bar.js
-import { foo } from './foo'
+import { foo } from "./foo";
 
 // ES7 proposal
-export { foo as bar } from './foo'
+export { foo as bar } from "./foo";
 
 // node_modules without jsnext:main are not analyzed by default
 // (import/ignore setting)
-import { SomeNonsenseThatDoesntExist } from 'react'
+import { SomeNonsenseThatDoesntExist } from "react";
 ```
 
 ...and the following are reported:
 
 ```js
 // ./baz.js
-import { notFoo } from './foo'
+import { notFoo } from "./foo";
 
 // ES7 proposal
-export { notFoo as defNotBar } from './foo'
+export { notFoo as defNotBar } from "./foo";
 
 // will follow 'jsnext:main', if available
-import { dontCreateStore } from 'redux'
+import { dontCreateStore } from "redux";
 ```
 
 ### Settings
@@ -83,7 +83,7 @@ then the following is not reported:
 // ./foo.js
 
 // can't be analyzed, and ignored, so not reported
-import { notWhatever } from './whatever'
+import { notWhatever } from "./whatever";
 ```
 
 ## When Not To Use It
@@ -93,9 +93,9 @@ runtime, you will likely see false positives with this rule.
 
 ## Further Reading
 
- - [`import/ignore`] setting
- - [`jsnext:main`] deprecation
- - [`pkg.module`] (Rollup)
+- [`import/ignore`] setting
+- [`jsnext:main`] deprecation
+- [`pkg.module`] (Rollup)
 
 [`jsnext:main`]: https://github.com/jsforum/jsforum/issues/5
 [`pkg.module`]: https://github.com/rollup/rollup/wiki/pkg.module

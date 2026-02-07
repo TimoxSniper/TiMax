@@ -9,14 +9,16 @@ This includes cycles of depth 1 (imported module imports me) to `"∞"` (or `Inf
 
 ```js
 // dep-b.js
-import './dep-a.js'
+import "./dep-a.js";
 
-export function b() { /* ... */ }
+export function b() {
+  /* ... */
+}
 ```
 
 ```js
 // dep-a.js
-import { b } from './dep-b.js' // reported: Dependency cycle detected.
+import { b } from "./dep-b.js"; // reported: Dependency cycle detected.
 ```
 
 This rule does _not_ detect imports that resolve directly to the linted module;
@@ -40,19 +42,21 @@ There is a `maxDepth` option available to prevent full expansion of very deep de
 /*eslint import/no-cycle: [2, { maxDepth: 1 }]*/
 
 // dep-c.js
-import './dep-a.js'
+import "./dep-a.js";
 ```
 
 ```js
 // dep-b.js
-import './dep-c.js'
+import "./dep-c.js";
 
-export function b() { /* ... */ }
+export function b() {
+  /* ... */
+}
 ```
 
 ```js
 // dep-a.js
-import { b } from './dep-b.js' // not reported as the cycle is at depth 2
+import { b } from "./dep-b.js"; // not reported as the cycle is at depth 2
 ```
 
 This is not necessarily recommended, but available as a cost/benefit tradeoff mechanism
@@ -66,14 +70,16 @@ An `ignoreExternal` option is available to prevent the cycle detection to expand
 /*eslint import/no-cycle: [2, { ignoreExternal: true }]*/
 
 // dep-a.js
-import 'module-b/dep-b.js'
+import "module-b/dep-b.js";
 
-export function a() { /* ... */ }
+export function a() {
+  /* ... */
+}
 ```
 
 ```js
 // node_modules/module-b/dep-b.js
-import { a } from './dep-a.js' // not reported as this module is external
+import { a } from "./dep-a.js"; // not reported as this module is external
 ```
 
 Its value is `false` by default, but can be set to `true` for reducing total project lint time, if needed.
@@ -84,12 +90,14 @@ This option disable reporting of errors if a cycle is detected with at least one
 
 ```js
 // bar.js
-import { foo } from './foo';
+import { foo } from "./foo";
 export const bar = foo;
 
 // foo.js
-export const foo = 'Foo';
-export function getBar() { return import('./bar'); }
+export const foo = "Foo";
+export function getBar() {
+  return import("./bar");
+}
 ```
 
 > Cyclic dependency are **always** a dangerous anti-pattern as discussed extensively in [#2265](https://github.com/import-js/eslint-plugin-import/issues/2265). Please be extra careful about using this option.
@@ -110,10 +118,9 @@ this rule enabled.
 
 ## Further Reading
 
- - [Original inspiring issue](https://github.com/import-js/eslint-plugin-import/issues/941)
- - Rule to detect that module imports itself: [`no-self-import`]
- - [`import/external-module-folders`] setting
+- [Original inspiring issue](https://github.com/import-js/eslint-plugin-import/issues/941)
+- Rule to detect that module imports itself: [`no-self-import`]
+- [`import/external-module-folders`] setting
 
 [`no-self-import`]: ./no-self-import.md
-
 [`import/external-module-folders`]: ../../README.md#importexternal-module-folders

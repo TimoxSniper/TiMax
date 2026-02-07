@@ -5,18 +5,12 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdmin } from "@/lib/auth/admin";
 import { logger } from "@/lib/logger";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { success: false, error: "Nicht authentifiziert" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
     }
 
     // Admin-Check
@@ -91,9 +85,10 @@ export async function GET(
 
     let lastActivity = null;
     if (lastChatActivity && lastUploadActivity) {
-      lastActivity = new Date(lastChatActivity) > new Date(lastUploadActivity)
-        ? lastChatActivity
-        : lastUploadActivity;
+      lastActivity =
+        new Date(lastChatActivity) > new Date(lastUploadActivity)
+          ? lastChatActivity
+          : lastUploadActivity;
     } else {
       lastActivity = lastChatActivity || lastUploadActivity;
     }

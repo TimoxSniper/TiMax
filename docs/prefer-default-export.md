@@ -46,8 +46,7 @@ The following patterns are considered warnings:
 // bad.js
 
 // There is only a single module export and it's a named export.
-export const foo = 'foo';
-
+export const foo = "foo";
 ```
 
 The following patterns are not warnings:
@@ -56,8 +55,8 @@ The following patterns are not warnings:
 // good1.js
 
 // There is a default export.
-export const foo = 'foo';
-const bar = 'bar';
+export const foo = "foo";
+const bar = "bar";
 export default bar;
 ```
 
@@ -65,32 +64,32 @@ export default bar;
 // good2.js
 
 // There is more than one named export in the module.
-export const foo = 'foo';
-export const bar = 'bar';
+export const foo = "foo";
+export const bar = "bar";
 ```
 
 ```javascript
 // good3.js
 
 // There is more than one named export in the module
-const foo = 'foo';
-const bar = 'bar';
-export { foo, bar }
+const foo = "foo";
+const bar = "bar";
+export { foo, bar };
 ```
 
 ```javascript
 // good4.js
 
 // There is a default export.
-const foo = 'foo';
-export { foo as default }
+const foo = "foo";
+export { foo as default };
 ```
 
 ```javascript
 // export-star.js
 
 // Any batch export will disable this rule. The remote module is not inspected.
-export * from './other-module'
+export * from "./other-module";
 ```
 
 #### any
@@ -109,13 +108,13 @@ How to setup config file for this rule:
 }
 ```
 
-The following patterns are *not* considered warnings:
+The following patterns are _not_ considered warnings:
 
 ```javascript
 // good1.js
 
 //has default export
-export default function bar() {};
+export default function bar() {}
 ```
 
 ```javascript
@@ -123,7 +122,7 @@ export default function bar() {};
 
 // has default export
 let foo;
-export { foo as default }
+export { foo as default };
 ```
 
 ```javascript
@@ -131,23 +130,23 @@ export { foo as default }
 
 //contains multiple exports AND default export
 export const a = 5;
-export function bar(){};
+export function bar() {}
 let foo;
-export { foo as default }
+export { foo as default };
 ```
 
 ```javascript
 // good4.js
 
 // does not contain any exports => file is not checked by the rule
-import * as foo from './foo';﻿
+import * as foo from "./foo";
 ```
 
 ```javascript
 // export-star.js
 
 // Any batch export will disable this rule. The remote module is not inspected.
-export * from './other-module'
+export * from "./other-module";
 ```
 
 The following patterns are considered warnings:
@@ -156,8 +155,8 @@ The following patterns are considered warnings:
 // bad1.js
 
 //has 2 named exports, but no default export
-export const foo = 'foo';
-export const bar = 'bar';
+export const foo = "foo";
+export const bar = "bar";
 ```
 
 ```javascript
@@ -165,14 +164,14 @@ export const bar = 'bar';
 
 // does not have default export
 let foo, bar;
-export { foo, bar }
+export { foo, bar };
 ```
 
 ```javascript
 // bad3.js
 
 // does not have default export
-export { a, b } from "foo.js"﻿
+export { a, b } from "foo.js";
 ```
 
 ```javascript

@@ -11,8 +11,8 @@ Reports the use of empty named import blocks.
 ### Valid
 
 ```js
-import { mod } from 'mod'
-import Default, { mod } from 'mod'
+import { mod } from "mod";
+import Default, { mod } from "mod";
 ```
 
 When using typescript
@@ -30,8 +30,8 @@ import typeof { mod } from 'mod'
 ### Invalid
 
 ```js
-import {} from 'mod'
-import Default, {} from 'mod'
+import {} from "mod";
+import Default from "mod";
 ```
 
 When using typescript

@@ -71,7 +71,7 @@ export default function AdminDashboardPage() {
     const { csrfToken } = await csrfResponse.json();
     const res = await fetch(`/api/admin/chats/${chatId}`, {
       method: "DELETE",
-      headers: { "x-csrf-token": csrfToken }
+      headers: { "x-csrf-token": csrfToken },
     });
     if (res.ok) {
       showToast("Chat wurde gelöscht", "success");
@@ -86,7 +86,7 @@ export default function AdminDashboardPage() {
     const { csrfToken } = await csrfResponse.json();
     const res = await fetch(`/api/admin/uploads/${uploadId}`, {
       method: "DELETE",
-      headers: { "x-csrf-token": csrfToken }
+      headers: { "x-csrf-token": csrfToken },
     });
     if (res.ok) {
       showToast("Upload wurde gelöscht", "success");
@@ -100,7 +100,7 @@ export default function AdminDashboardPage() {
     <div className="space-y-6 md:space-y-8">
       {/* Header */}
       <div>
-        <h1 className="font-serif text-2xl md:text-3xl font-bold">Dashboard</h1>
+        <h1 className="font-serif text-2xl font-bold md:text-3xl">Dashboard</h1>
         <p className="text-muted-foreground mt-1 text-sm md:text-base">
           Übersicht über alle Aktivitäten auf TiMax
         </p>
@@ -113,17 +113,15 @@ export default function AdminDashboardPage() {
       <div className="grid gap-6 md:gap-8 lg:grid-cols-2">
         {/* Recent Chats */}
         <div>
-          <h2 className="font-serif text-lg md:text-xl font-semibold mb-3 md:mb-4">Letzte Chats</h2>
-          <ChatsTable
-            chats={recentChats}
-            isLoading={isLoading}
-            onDelete={handleDeleteChat}
-          />
+          <h2 className="mb-3 font-serif text-lg font-semibold md:mb-4 md:text-xl">Letzte Chats</h2>
+          <ChatsTable chats={recentChats} isLoading={isLoading} onDelete={handleDeleteChat} />
         </div>
 
         {/* Recent Uploads */}
         <div>
-          <h2 className="font-serif text-lg md:text-xl font-semibold mb-3 md:mb-4">Letzte Uploads</h2>
+          <h2 className="mb-3 font-serif text-lg font-semibold md:mb-4 md:text-xl">
+            Letzte Uploads
+          </h2>
           <UploadsTable
             uploads={recentUploads}
             isLoading={isLoading}

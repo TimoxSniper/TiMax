@@ -6,12 +6,14 @@ Status: Akzeptiert
 ## Kontext
 
 Wir benötigten ein Backend für:
+
 - Datenbank (PostgreSQL)
 - Authentifizierung
 - Real-time Features
 - File Storage
 
 Optionen:
+
 - Supabase (Firebase-Alternative)
 - Firebase
 - Eigenes Backend (Node.js + PostgreSQL)
@@ -43,12 +45,14 @@ Wir verwenden **Supabase**.
 ## Konsequenzen
 
 ### Positiv
+
 - PostgreSQL = Industriestandard
 - RLS = Sichere Datenbankzugriffe
 - Real-time = Live Chat/Updates einfach
 - Open Source = Flexibilität
 
 ### Negativ
+
 - Neue Technologie für Team
 - Dokumentation manchmal unvollständig
 
