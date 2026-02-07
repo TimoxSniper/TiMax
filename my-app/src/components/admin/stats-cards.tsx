@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, MessageSquare, FileAudio, MessagesSquare } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/navigation";
 
 interface StatsCardsProps {
   stats: {
@@ -16,30 +17,36 @@ interface StatsCardsProps {
 }
 
 export function StatsCards({ stats, isLoading }: StatsCardsProps) {
+  const router = useRouter();
+
   const cards = [
     {
       title: "Benutzer",
       value: stats?.totalUsers ?? 0,
       icon: Users,
       description: "Registrierte Nutzer",
+      href: "/admin/users",
     },
     {
       title: "Chats",
       value: stats?.totalChats ?? 0,
       icon: MessageSquare,
       description: "Erstellte Chats",
+      href: "/admin/chats",
     },
     {
       title: "Nachrichten",
       value: stats?.totalMessages ?? 0,
       icon: MessagesSquare,
       description: "Gesendete Nachrichten",
+      href: "/admin/chats",
     },
     {
       title: "Uploads",
       value: stats?.totalUploads ?? 0,
       icon: FileAudio,
       description: `${stats?.uploadsByStatus?.completed ?? 0} abgeschlossen`,
+      href: "/admin/uploads",
     },
   ];
 
@@ -65,7 +72,11 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
   return (
     <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4">
       {cards.map((card) => (
-        <Card key={card.title} className="hover:translate-y-0 hover:shadow-editorial-md">
+        <Card
+          key={card.title}
+          className="hover:translate-y-0 hover:shadow-editorial-md cursor-pointer transition-all"
+          onClick={() => router.push(card.href)}
+        >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-4 md:p-6">
             <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">
               {card.title}

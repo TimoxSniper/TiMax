@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdmin } from "@/lib/auth/admin";
@@ -8,7 +8,7 @@ import { logger } from "@/lib/logger";
 export async function GET() {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json(
         { success: false, error: "Nicht authentifiziert" },
@@ -25,6 +25,7 @@ export async function GET() {
     }
 
     const supabase = createAdminClient();
+    const clerk = await clerkClient();
 
     // Parallele Abfragen für Performance
     const [
@@ -33,7 +34,7 @@ export async function GET() {
       uploadsResult,
       uploadsByStatusResult,
       uploadsByTypeResult,
-      uniqueUsersResult,
+      clerkUsersResponse,
     ] = await Promise.all([
       // Gesamtzahl Chats
       supabase.from("chats").select("*", { count: "exact", head: true }),
@@ -45,19 +46,9 @@ export async function GET() {
       supabase.from("uploads").select("status"),
       // Uploads nach Dateityp
       supabase.from("uploads").select("file_type"),
-      // Eindeutige Benutzer aus Chats
-      supabase.from("chats").select("user_id"),
+      // Alle Clerk-Benutzer zählen
+      clerk.users.getCount(),
     ]);
-
-    // Auch User IDs aus Uploads sammeln
-    const uploadsUsersResult = await supabase
-      .from("uploads")
-      .select("user_id");
-
-    // Eindeutige Benutzer berechnen
-    const chatUserIds = uniqueUsersResult.data?.map(c => c.user_id) || [];
-    const uploadUserIds = uploadsUsersResult.data?.map(u => u.user_id) || [];
-    const allUserIds = [...new Set([...chatUserIds, ...uploadUserIds])];
 
     // Uploads nach Status gruppieren
     const uploadsByStatus: Record<string, number> = {};
@@ -74,7 +65,7 @@ export async function GET() {
     });
 
     const stats = {
-      totalUsers: allUserIds.length,
+      totalUsers: clerkUsersResponse,
       totalChats: chatsResult.count || 0,
       totalMessages: messagesResult.count || 0,
       totalUploads: uploadsResult.count || 0,
