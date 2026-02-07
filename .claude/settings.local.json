@@ -21,7 +21,8 @@
       "Bash(=20.0.0 that will automatically upgrade\"\n2. \"husky - install command is DEPRECATED\"\n3. \"Both outputFileTracingRoot and turbopack.root are set\"\n\nThe remaining edge runtime warning is expected for image generation routes.\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(npx shadcn@latest add:*)",
       "Bash(curl:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(tokei:*)"
     ]
   }
 }
