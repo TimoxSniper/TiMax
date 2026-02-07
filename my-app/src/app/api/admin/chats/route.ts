@@ -91,20 +91,28 @@ export async function GET(request: NextRequest) {
       throw error;
     }
 
-    // Message-Counts für jeden Chat laden
-    const chatsWithMessageCount = await Promise.all(
-      (chats || []).map(async (chat) => {
-        const { count } = await supabase
-          .from("messages")
-          .select("*", { count: "exact", head: true })
-          .eq("chat_id", chat.id);
+    // Message-Counts für alle Chats auf einmal laden (verhindert N+1 Problem)
+    const chatIds = (chats || []).map(chat => chat.id);
 
-        return {
-          ...chat,
-          messageCount: count || 0,
-        };
-      })
-    );
+    let chatsWithMessageCount = chats || [];
+
+    if (chatIds.length > 0) {
+      const { data: messageCounts } = await supabase
+        .from("messages")
+        .select("chat_id")
+        .in("chat_id", chatIds);
+
+      // Message-Counts gruppieren
+      const messageCountMap = new Map<string, number>();
+      messageCounts?.forEach(msg => {
+        messageCountMap.set(msg.chat_id, (messageCountMap.get(msg.chat_id) || 0) + 1);
+      });
+
+      chatsWithMessageCount = chats.map(chat => ({
+        ...chat,
+        messageCount: messageCountMap.get(chat.id) || 0,
+      }));
+    }
 
     return NextResponse.json({
       success: true,

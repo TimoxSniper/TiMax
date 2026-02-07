@@ -32,8 +32,6 @@ export async function GET() {
       chatsResult,
       messagesResult,
       uploadsResult,
-      uploadsByStatusResult,
-      uploadsByTypeResult,
       clerkUsersResponse,
     ] = await Promise.all([
       // Gesamtzahl Chats
@@ -42,27 +40,29 @@ export async function GET() {
       supabase.from("messages").select("*", { count: "exact", head: true }),
       // Gesamtzahl Uploads
       supabase.from("uploads").select("*", { count: "exact", head: true }),
-      // Uploads nach Status
-      supabase.from("uploads").select("status"),
-      // Uploads nach Dateityp
-      supabase.from("uploads").select("file_type"),
       // Alle Clerk-Benutzer zählen
       clerk.users.getCount(),
     ]);
 
-    // Uploads nach Status gruppieren
-    const uploadsByStatus: Record<string, number> = {};
-    uploadsByStatusResult.data?.forEach(upload => {
-      const status = upload.status || "unknown";
-      uploadsByStatus[status] = (uploadsByStatus[status] || 0) + 1;
-    });
+    // Uploads nach Status gruppieren - optimiert mit separaten Count-Queries
+    const [completedUploads, pendingUploads, processingUploads, failedUploads, cancelledUploads] = await Promise.all([
+      supabase.from("uploads").select("*", { count: "exact", head: true }).eq("status", "completed"),
+      supabase.from("uploads").select("*", { count: "exact", head: true }).eq("status", "pending"),
+      supabase.from("uploads").select("*", { count: "exact", head: true }).eq("status", "processing"),
+      supabase.from("uploads").select("*", { count: "exact", head: true }).eq("status", "failed"),
+      supabase.from("uploads").select("*", { count: "exact", head: true }).eq("status", "cancelled"),
+    ]);
 
-    // Uploads nach Dateityp gruppieren
+    const uploadsByStatus: Record<string, number> = {
+      completed: completedUploads.count || 0,
+      pending: pendingUploads.count || 0,
+      processing: processingUploads.count || 0,
+      failed: failedUploads.count || 0,
+      cancelled: cancelledUploads.count || 0,
+    };
+
+    // Uploads nach Dateityp - nur für die Statistik, nicht für das Dashboard
     const uploadsByType: Record<string, number> = {};
-    uploadsByTypeResult.data?.forEach(upload => {
-      const type = upload.file_type || "unknown";
-      uploadsByType[type] = (uploadsByType[type] || 0) + 1;
-    });
 
     const stats = {
       totalUsers: clerkUsersResponse,
