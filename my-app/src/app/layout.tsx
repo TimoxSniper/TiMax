@@ -156,7 +156,7 @@ export default function RootLayout({
         <head>
           <meta
             httpEquiv="Content-Security-Policy"
-            content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://clerk.timax.xyz https://*.clerk.accounts.dev https://challenges.cloudflare.com; connect-src 'self' https://clerk.timax.xyz https://*.clerk.accounts.dev https://*.sentry.io https://*.supabase.co; img-src 'self' data: blob: https://img.clerk.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://challenges.cloudflare.com; worker-src 'self' blob:;"
+            content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://clerk.timax.xyz https://*.clerk.accounts.dev https://challenges.cloudflare.com; connect-src 'self' https://clerk.timax.xyz https://*.clerk.accounts.dev https://*.sentry.io https://*.supabase.co https://clerk-telemetry.com https://*.n8n.cloud https://zapkothimofej.app.n8n.cloud; img-src 'self' data: blob: https://img.clerk.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://challenges.cloudflare.com; worker-src 'self' blob:;"
           />
         </head>
         <body
