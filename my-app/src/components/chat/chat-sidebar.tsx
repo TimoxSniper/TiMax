@@ -79,8 +79,15 @@ export function ChatSidebar({ currentChatId, onSelectChat, onCreateNewChat, _onR
 
     setDeletingId(chatId);
     try {
+      // CSRF-Token holen
+      const csrfResponse = await fetch("/api/csrf");
+      const { csrfToken } = await csrfResponse.json();
+
       const response = await fetch(`/api/chats/${chatId}`, {
         method: "DELETE",
+        headers: {
+          "x-csrf-token": csrfToken,
+        },
       });
 
       if (response.ok) {

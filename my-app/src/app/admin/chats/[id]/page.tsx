@@ -75,7 +75,12 @@ export default function AdminChatDetailPage() {
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/admin/chats/${chatId}`, { method: "DELETE" });
+      const csrfResponse = await fetch("/api/csrf");
+      const { csrfToken } = await csrfResponse.json();
+      const res = await fetch(`/api/admin/chats/${chatId}`, {
+        method: "DELETE",
+        headers: { "x-csrf-token": csrfToken }
+      });
       if (res.ok) {
         showToast("Chat wurde gelöscht", "success");
         router.push("/admin/chats");

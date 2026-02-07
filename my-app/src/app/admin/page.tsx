@@ -67,7 +67,12 @@ export default function AdminDashboardPage() {
   }, [fetchData]);
 
   const handleDeleteChat = async (chatId: string) => {
-    const res = await fetch(`/api/admin/chats/${chatId}`, { method: "DELETE" });
+    const csrfResponse = await fetch("/api/csrf");
+    const { csrfToken } = await csrfResponse.json();
+    const res = await fetch(`/api/admin/chats/${chatId}`, {
+      method: "DELETE",
+      headers: { "x-csrf-token": csrfToken }
+    });
     if (res.ok) {
       showToast("Chat wurde gelöscht", "success");
       fetchData();
@@ -77,7 +82,12 @@ export default function AdminDashboardPage() {
   };
 
   const handleDeleteUpload = async (uploadId: string) => {
-    const res = await fetch(`/api/admin/uploads/${uploadId}`, { method: "DELETE" });
+    const csrfResponse = await fetch("/api/csrf");
+    const { csrfToken } = await csrfResponse.json();
+    const res = await fetch(`/api/admin/uploads/${uploadId}`, {
+      method: "DELETE",
+      headers: { "x-csrf-token": csrfToken }
+    });
     if (res.ok) {
       showToast("Upload wurde gelöscht", "success");
       fetchData();

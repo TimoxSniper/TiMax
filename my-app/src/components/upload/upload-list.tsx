@@ -93,12 +93,22 @@ export function UploadList() {
         if (!confirm("Möchtest du dieses Transkript wirklich löschen?")) return;
 
         try {
+            // CSRF-Token holen
+            const csrfResponse = await fetch("/api/csrf");
+            const { csrfToken } = await csrfResponse.json();
+
             const response = await fetch(`/api/uploads/${id}`, {
                 method: "DELETE",
+                headers: {
+                    "x-csrf-token": csrfToken,
+                },
             });
             if (response.ok) {
                 setUploads((prev) => prev.filter((u) => u.id !== id));
                 toast.success("Datei gelöscht");
+            } else {
+                const data = await response.json();
+                toast.error(data.error || "Löschen fehlgeschlagen");
             }
         } catch (error) {
             logger.error("Failed to delete upload:", error);

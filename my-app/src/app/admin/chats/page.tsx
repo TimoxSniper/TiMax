@@ -111,7 +111,12 @@ export default function AdminChatsPage() {
   };
 
   const handleDelete = async (chatId: string) => {
-    const res = await fetch(`/api/admin/chats/${chatId}`, { method: "DELETE" });
+    const csrfResponse = await fetch("/api/csrf");
+    const { csrfToken } = await csrfResponse.json();
+    const res = await fetch(`/api/admin/chats/${chatId}`, {
+      method: "DELETE",
+      headers: { "x-csrf-token": csrfToken }
+    });
     if (res.ok) {
       showToast("Chat wurde gelöscht", "success");
       fetchChats(currentPage);

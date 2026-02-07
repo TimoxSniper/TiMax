@@ -89,6 +89,7 @@ export default function TranscriptDetailPage() {
                     "x-csrf-token": csrfToken,
                 }
             });
+
             if (response.ok) {
                 toast.success("Gelöscht");
                 router.push("/uploads");

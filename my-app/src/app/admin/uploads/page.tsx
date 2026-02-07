@@ -118,7 +118,12 @@ export default function AdminUploadsPage() {
   };
 
   const handleDelete = async (uploadId: string) => {
-    const res = await fetch(`/api/admin/uploads/${uploadId}`, { method: "DELETE" });
+    const csrfResponse = await fetch("/api/csrf");
+    const { csrfToken } = await csrfResponse.json();
+    const res = await fetch(`/api/admin/uploads/${uploadId}`, {
+      method: "DELETE",
+      headers: { "x-csrf-token": csrfToken }
+    });
     if (res.ok) {
       showToast("Upload wurde gelöscht", "success");
       fetchUploads(currentPage, statusFilter);
