@@ -79,10 +79,22 @@ export default function TranscriptDetailPage() {
     const handleDelete = async () => {
         if (!confirm("Wirklich löschen?")) return;
         try {
-            const response = await fetch(`/api/uploads/${id}`, { method: "DELETE" });
+            // CSRF-Token holen
+            const csrfResponse = await fetch("/api/csrf");
+            const { csrfToken } = await csrfResponse.json();
+
+            const response = await fetch(`/api/uploads/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "x-csrf-token": csrfToken,
+                }
+            });
             if (response.ok) {
                 toast.success("Gelöscht");
                 router.push("/uploads");
+            } else {
+                const data = await response.json();
+                toast.error(data.error || "Fehler beim Löschen");
             }
         } catch {
             toast.error("Fehler beim Löschen");
