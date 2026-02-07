@@ -11,10 +11,10 @@ interface Step {
 }
 
 const STEPS: Step[] = [
-  { id: "upload", label: "Datei wird sicher hochgeladen", duration: 2000 },
-  { id: "stt", label: "KI transkribiert Audio (STT)", duration: 4000 },
-  { id: "analysis", label: "Inhalt wird analysiert", duration: 3000 },
-  { id: "save", label: "In Wissensdatenbank gespeichert", duration: 2000 },
+  { id: "upload", label: "Datei wird sicher hochgeladen", duration: 5000 },
+  { id: "stt", label: "KI transkribiert Audio (STT)", duration: 100000 }, // 100s - längster Teil
+  { id: "analysis", label: "Inhalt wird analysiert", duration: 30000 },
+  { id: "save", label: "In Wissensdatenbank gespeichert", duration: 15000 },
 ];
 
 interface ProcessingStatusProps {
