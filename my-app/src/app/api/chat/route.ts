@@ -21,9 +21,9 @@ async function chatHandler(request: NextRequest) {
       );
     }
 
-    // SICHERHEIT: User ID nur in Development loggen
+    // SICHERHEIT: User ID nur in Development loggen (gehasht für Datenschutz)
     if (process.env.NODE_ENV === "development") {
-      logger.log("[Chat API] User authentifiziert:", userId);
+      logger.log("[Chat API] User authentifiziert:", userId.substring(0, 8) + "...");
     }
 
     // 2. Supabase Admin Client erstellen (bypassed RLS, Sicherheit durch Clerk-Auth)

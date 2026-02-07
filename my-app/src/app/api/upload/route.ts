@@ -127,8 +127,11 @@ async function uploadHandler(request: NextRequest) {
     // SICHERHEIT: Webhook URL niemals loggen!
     // logger.log("[Upload API] Sende Request an n8n:", env.N8N_UPLOAD_WEBHOOK_URL);
 
-    // Upload zu n8n Form-Webhook
+    // Upload zu n8n Form-Webhook mit Timeout
     // WICHTIG: X-Upload-ID wird gesendet, damit n8n den bestehenden Eintrag aktualisieren kann
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 Sekunden Timeout
+    
     const response = await fetch(env.N8N_UPLOAD_WEBHOOK_URL, {
       method: "POST",
       headers: {
@@ -138,7 +141,10 @@ async function uploadHandler(request: NextRequest) {
         "X-File-Name": file.name,      // Original-Dateiname
       },
       body: n8nFormData,
+      signal: controller.signal,
     });
+    
+    clearTimeout(timeoutId);
 
     logger.log("[Upload API] n8n Response erhalten:", {
       status: response.status,
