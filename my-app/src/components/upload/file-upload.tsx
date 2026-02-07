@@ -77,10 +77,37 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
     setSuccess(false);
 
     try {
-      // CSRF-Token holen
+      // Schritt 1: CSRF-Token holen
       const csrfResponse = await fetch("/api/csrf");
       const { csrfToken } = await csrfResponse.json();
 
+      // Schritt 2: Upload-Eintrag in Supabase erstellen
+      const createResponse = await fetch("/api/uploads/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrf-token": csrfToken,
+        },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileSize: file.size,
+          fileType: file.type,
+        }),
+      });
+
+      if (!createResponse.ok) {
+        throw new Error("Fehler beim Erstellen des Upload-Eintrags");
+      }
+
+      const { uploadId } = await createResponse.json();
+
+      // Schritt 3: n8n Webhook URL aus ENV (Public, da Client-Side)
+      const n8nWebhookUrl = process.env.NEXT_PUBLIC_N8N_UPLOAD_WEBHOOK_URL;
+      if (!n8nWebhookUrl) {
+        throw new Error("n8n Webhook URL ist nicht konfiguriert");
+      }
+
+      // Schritt 4: Datei direkt zu n8n hochladen
       const formData = new FormData();
       formData.append("file", file);
 
@@ -96,25 +123,31 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
       });
 
       // Promise für async/await
-      const uploadPromise = new Promise<{ success: boolean; fileName?: string; transcript?: string; error?: string }>((resolve, reject) => {
+      const uploadPromise = new Promise<{ success: boolean; fileName?: string; transcript?: string }>((resolve, reject) => {
         xhr.addEventListener("load", () => {
           if (xhr.status >= 200 && xhr.status < 300) {
             try {
-              const data = JSON.parse(xhr.responseText);
-              if (data.success) {
-                resolve({
-                  success: true,
-                  fileName: data.fileName || file.name,
-                  transcript: data.transcript
-                });
-              } else {
-                reject(new Error(data.error || "Upload fehlgeschlagen"));
+              const responseText = xhr.responseText;
+
+              // n8n kann JSON oder Text zurückgeben
+              let transcript: string | undefined;
+              try {
+                const data = JSON.parse(responseText);
+                transcript = data.transcript || data.output || data.text;
+              } catch {
+                // Falls kein JSON, ist es vielleicht reiner Text
+                transcript = responseText.trim();
               }
+
+              resolve({
+                success: true,
+                fileName: file.name,
+                transcript
+              });
             } catch {
               reject(new Error("Ungültige Antwort vom Server"));
             }
           } else {
-            // Versuche Fehlerdetails aus Response zu extrahieren
             try {
               const errorData = JSON.parse(xhr.responseText);
               reject(new Error(errorData.error || `Upload fehlgeschlagen: ${xhr.statusText}`));
@@ -132,30 +165,27 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
           reject(new Error("Upload abgebrochen"));
         });
 
-        xhr.open("POST", "/api/upload");
-        // CSRF Header setzen
-        xhr.setRequestHeader("x-csrf-token", csrfToken);
+        // Sende zu n8n mit wichtigen Headers
+        xhr.open("POST", n8nWebhookUrl);
+        xhr.setRequestHeader("X-Upload-ID", uploadId);
+        xhr.setRequestHeader("X-File-Name", file.name);
+        // Note: User ID wird von n8n aus der Session gelesen (via Clerk)
         xhr.send(formData);
       });
 
       const result = await uploadPromise;
       setProgress(100);
-      setIsUploading(false); // Physical upload done
-      setIsProcessingAI(true); // Start fake AI processing steps
-      
-      // We don't call onUploadSuccess yet, we wait for the fake steps to "complete"
-      // Or we can call it but keep the UI in processing state
-      
+      setIsUploading(false);
+      setIsProcessingAI(true);
+
       onUploadSuccess?.(result.fileName || file.name, result.transcript);
 
-      // We'll let the ProcessingStatus component handle its thing.
-      // We'll set success to true after a small delay to match the fake steps.
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unbekannter Upload-Fehler";
       setError(errorMessage);
       onUploadError?.(errorMessage);
       setProgress(0);
-      // In Production: Hier würde man zu einem Error-Tracking-Service loggen
+
       if (process.env.NODE_ENV === "development") {
         logger.error("Upload-Fehler:", err);
       }
