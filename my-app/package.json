@@ -21,7 +21,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "test:ci": "vitest run --coverage --reporter=verbose",
-    "test:single": "vitest run"
+    "test:single": "vitest run",
     "analyze": "cross-env ANALYZE=true next build",
     "prepare": "husky || true",
     "precommit": "lint-staged",

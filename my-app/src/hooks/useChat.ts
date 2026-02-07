@@ -4,10 +4,10 @@ import { useState, useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { CHAT_UI_TEXTS, CHAT_ERROR_TEXTS } from "@/lib/constants";
-import * as Sentry from "@sentry/nextjs";
 import { logger } from "@/lib/logger";
 import { useMessages, Message } from "./useMessages";
 import { useSession } from "./useSession";
+import { handleError } from "@/lib/error-handler";
 
 // Exportiere Message-Typ für andere Komponenten
 export type { Message };
@@ -26,10 +26,12 @@ interface UseChatOptions {
 
 export function useChat({ initialSessionId }: UseChatOptions = {}) {
   const { messages, addMessage, setMessages } = useMessages();
-  const { sessionId, setSessionId, chatId, setChatId, createNewSession } = useSession({ initialSessionId });
+  const { sessionId, setSessionId, chatId, setChatId, createNewSession } = useSession({
+    initialSessionId,
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const requestIdRef = useRef<number>(0);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -57,7 +59,7 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
     const loadHistory = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         const response = await fetch(`/api/chat?chat_id=${chatId}`, {
           signal: abortController.signal,
@@ -96,12 +98,14 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
           return;
         }
 
-        logger.error("Fehler beim Laden der Historie:", err);
-        setError(err instanceof Error ? err.message : "Historie konnte nicht geladen werden");
-
-        Sentry.captureException(err, {
-          extra: { chatId, action: "loadHistory" },
+        // Verwende das zentrale Error-Handling
+        const handledError = handleError(err, {
+          action: "loadHistory",
+          chatId,
+          component: "useChat",
         });
+
+        setError(handledError.userMessage || "Historie konnte nicht geladen werden");
       } finally {
         setIsLoading(false);
       }
@@ -125,7 +129,7 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
 
-    const userMessage: Omit<Message, 'id' | 'timestamp'> = {
+    const userMessage: Omit<Message, "id" | "timestamp"> = {
       role: "user",
       content: content.trim(),
     };
@@ -150,10 +154,15 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
           message: content.trim(),
           sessionId,
           chat_id: chatId, // Sende bestehende chat_id mit
-          chatHistory: [...messages, { ...userMessage, id: `temp-${uuidv4()}`, timestamp: new Date() }].slice(-10).map((msg) => ({
-            role: msg.role,
-            content: msg.content,
-          })),
+          chatHistory: [
+            ...messages,
+            { ...userMessage, id: `temp-${uuidv4()}`, timestamp: new Date() },
+          ]
+            .slice(-10)
+            .map((msg) => ({
+              role: msg.role,
+              content: msg.content,
+            })),
         }),
       });
 
@@ -177,7 +186,7 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
         setChatId(data.chat_id);
       }
 
-      const assistantMessage: Omit<Message, 'id' | 'timestamp'> = {
+      const assistantMessage: Omit<Message, "id" | "timestamp"> = {
         role: "assistant",
         content: data.output || CHAT_UI_TEXTS.ASSISTANT_DEFAULT_RESPONSE,
       };
@@ -192,20 +201,17 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
       }
 
       if (currentRequestId === requestIdRef.current) {
-        const errorMessage = err instanceof Error ? err.message : CHAT_ERROR_TEXTS.UNKNOWN_ERROR;
-        setError(errorMessage);
-
-        // Sentry Integration für Production Error-Tracking
-        Sentry.captureException(err, {
-          extra: {
-            sessionId,
-            chatId,
-            messageCount: messages.length,
-            requestId: currentRequestId,
-          },
+        // Verwende das zentrale Error-Handling
+        const handledError = handleError(err, { 
+          action: "sendMessage", 
+          sessionId,
+          chatId,
+          messageCount: messages.length,
+          requestId: currentRequestId,
+          component: "useChat"
         });
-
-        logger.error(CHAT_ERROR_TEXTS.CHAT_ERROR_LOG_PREFIX, err);
+        
+        setError(handledError.userMessage || CHAT_ERROR_TEXTS.UNKNOWN_ERROR);
       }
     } finally {
       if (currentRequestId === requestIdRef.current) {

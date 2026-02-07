@@ -10,6 +10,7 @@ const envSchema = z.object({
   N8N_CHAT_WEBHOOK_URL: z.string().url().optional(),
   N8N_UPLOAD_WEBHOOK_URL: z.string().url().optional(),
   N8N_TRANSCRIPTION_WEBHOOK_URL: z.string().url().optional(),
+  NEXT_PUBLIC_N8N_UPLOAD_WEBHOOK_URL: z.string().url().optional(),
 
   // n8n API (optional, für MCP Server)
   N8N_API_URL: z.string().url().optional().default("http://localhost:5678"),
@@ -27,6 +28,27 @@ const envSchema = z.object({
   // Analytics (optional)
   NEXT_PUBLIC_PLAUSIBLE_DOMAIN: z.string().optional(),
   NEXT_PUBLIC_GA_ID: z.string().optional(),
+
+  // Upload Configuration
+  MAX_FILE_SIZE: z.string().transform(Number).optional(),
+  ALLOWED_FILE_TYPES: z.string().optional(),
+  SESSION_STORAGE_KEY: z.string().optional(),
+
+  // Rate Limiting (optional)
+  UPSTASH_REDIS_REST_URL: z.string().url().optional(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
+  RATE_LIMIT_UPLOAD_MAX: z.string().transform(Number).optional(),
+  RATE_LIMIT_CHAT_MAX: z.string().transform(Number).optional(),
+  RATE_LIMIT_GENERATE_MAX: z.string().transform(Number).optional(),
+  RATE_LIMIT_DEFAULT_MAX: z.string().transform(Number).optional(),
+
+  // Clerk Auth (optional)
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().optional(),
+  CLERK_SECRET_KEY: z.string().optional(),
+  NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().optional(),
+  NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string().optional(),
+  NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL: z.string().optional(),
+  NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL: z.string().optional(),
 
   // Node Environment
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
@@ -67,6 +89,10 @@ export function validateRequiredEnv() {
     errors.push("N8N_UPLOAD_WEBHOOK_URL ist erforderlich");
   }
 
+  if (!env.NEXT_PUBLIC_N8N_UPLOAD_WEBHOOK_URL) {
+    errors.push("NEXT_PUBLIC_N8N_UPLOAD_WEBHOOK_URL ist erforderlich");
+  }
+
   // Supabase Credentials
   if (!env.NEXT_PUBLIC_SUPABASE_URL) {
     errors.push("NEXT_PUBLIC_SUPABASE_URL ist erforderlich");
@@ -84,6 +110,7 @@ export function validateRequiredEnv() {
     // n8n
     N8N_CHAT_WEBHOOK_URL: env.N8N_CHAT_WEBHOOK_URL!,
     N8N_UPLOAD_WEBHOOK_URL: env.N8N_UPLOAD_WEBHOOK_URL!,
+    NEXT_PUBLIC_N8N_UPLOAD_WEBHOOK_URL: env.NEXT_PUBLIC_N8N_UPLOAD_WEBHOOK_URL!,
     N8N_TRANSCRIPTION_WEBHOOK_URL: env.N8N_TRANSCRIPTION_WEBHOOK_URL || env.N8N_UPLOAD_WEBHOOK_URL!,
     N8N_API_URL: env.N8N_API_URL || "http://localhost:5678",
     N8N_API_KEY: env.N8N_API_KEY,
@@ -131,7 +158,7 @@ export function getEnv() {
 /**
  * Helper-Funktion für sichere ENV-Zugriffe
  */
-export function getEnvValue(key: keyof z.infer<typeof envSchema>): string | undefined {
+export function getEnvValue(key: keyof z.infer<typeof envSchema>): string | number | undefined {
   const env = getEnv();
   return env[key];
 }

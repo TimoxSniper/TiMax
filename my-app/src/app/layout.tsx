@@ -5,7 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { deDE } from "@clerk/localizations";
 import { clerkAppearance } from "@/lib/clerk-theme";
 import { ToastProvider } from "@/components/ui/toast";
-import { ErrorBoundary } from "@/components/error-boundary";
+import ErrorBoundary from "@/components/error-boundary";
 import { CookieConsent } from "@/components/layout/cookie-consent";
 import { ScrollToTop } from "@/components/layout/scroll-to-top";
 import { JsonLd } from "@/components/seo/json-ld";
