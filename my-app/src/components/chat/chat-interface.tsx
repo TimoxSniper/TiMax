@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import { MessageList } from "./message-list";
 import { ChatInput } from "./chat-input";
 import { ChatHeader } from "./chat-header";
@@ -21,7 +21,7 @@ interface ChatInterfaceProps {
   initialSessionId?: string;
 }
 
-export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
+export const ChatInterface = memo(({ initialSessionId }: ChatInterfaceProps) => {
   const {
     messages,
     sessionId,
@@ -245,4 +245,6 @@ export function ChatInterface({ initialSessionId }: ChatInterfaceProps) {
       </Card>
     </div>
   );
-}
+});
+
+ChatInterface.displayName = "ChatInterface";

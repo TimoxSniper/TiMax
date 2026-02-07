@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, KeyboardEvent } from "react";
+import { useState, useRef, KeyboardEvent, memo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Send, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,11 +11,11 @@ interface ChatInputProps {
   isMobile?: boolean;
 }
 
-export function ChatInput({ onSendMessage, disabled, isMobile = false }: ChatInputProps) {
+export const ChatInput = memo(({ onSendMessage, disabled, isMobile = false }: ChatInputProps) => {
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleSend = () => {
+  const handleSend = useCallback(() => {
     if (input.trim() && !disabled) {
       onSendMessage(input);
       setInput("");
@@ -24,24 +24,24 @@ export function ChatInput({ onSendMessage, disabled, isMobile = false }: ChatInp
         textareaRef.current.style.height = "auto";
       }
     }
-  };
+  }, [input, disabled, onSendMessage]);
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = useCallback((e: KeyboardEvent<HTMLTextAreaElement>) => {
     // Auf Mobile: Enter sendet nicht automatisch (Nutzer wollen oft mehrzeilige Nachrichten)
     if (!isMobile && e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
-  };
+  }, [isMobile, handleSend]);
 
   // Auto-resize textarea
-  const handleInput = () => {
+  const handleInput = useCallback(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       const maxHeight = isMobile ? 120 : 128;
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, maxHeight)}px`;
     }
-  };
+  }, [isMobile]);
 
   // ========== MOBILE LAYOUT ==========
   if (isMobile) {
@@ -128,4 +128,6 @@ export function ChatInput({ onSendMessage, disabled, isMobile = false }: ChatInp
       </div>
     </div>
   );
-}
+});
+
+ChatInput.displayName = "ChatInput";

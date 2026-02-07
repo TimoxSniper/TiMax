@@ -4,7 +4,7 @@ import { Message } from "./chat-interface";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Copy, Check, User, Bot } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo, useCallback } from "react";
 import { logger } from "@/lib/logger";
 import { cn } from "@/lib/utils";
 
@@ -13,7 +13,7 @@ interface MessageBubbleProps {
   isMobile?: boolean;
 }
 
-export function MessageBubble({ message, isMobile = false }: MessageBubbleProps) {
+export const MessageBubble = memo(({ message, isMobile = false }: MessageBubbleProps) => {
   const [copied, setCopied] = useState(false);
 
   // Cleanup für Timeout
@@ -24,7 +24,7 @@ export function MessageBubble({ message, isMobile = false }: MessageBubbleProps)
     }
   }, [copied]);
 
-  const handleCopy = async () => {
+  const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(message.content);
       setCopied(true);
@@ -33,7 +33,7 @@ export function MessageBubble({ message, isMobile = false }: MessageBubbleProps)
         logger.error("Kopieren fehlgeschlagen:", err);
       }
     }
-  };
+  }, [message.content]);
 
   const isUser = message.role === "user";
 
@@ -153,4 +153,6 @@ export function MessageBubble({ message, isMobile = false }: MessageBubbleProps)
       )}
     </div>
   );
-}
+});
+
+MessageBubble.displayName = "MessageBubble";
