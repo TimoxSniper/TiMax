@@ -1,0 +1,474 @@
+{
+  "name": "TiMax Upload Workflow (Direct Client + Pinecone) - FIXED",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "timax-upload",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "webhook-upload",
+      "name": "Upload Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [-1200, 0],
+      "webhookId": "timax-upload",
+      "notes": "CORS aktiviert für Direct Client Upload"
+    },
+    {
+      "parameters": {
+        "jsCode": "// EXTRACT REQUEST DATA FROM CLIENT\n// Client sendet direkt zu n8n (nicht über Next.js API)\n\nconst input = $input.first();\nconst headers = input.json.headers || {};\nconst body = input.json.body || {};\n\n// Upload ID aus Header (REQUIRED)\nconst uploadId = headers['x-upload-id'] || body.upload_id;\nif (!uploadId) {\n  throw new Error('X-Upload-ID Header ist erforderlich');\n}\n\n// Dateiname aus Header\nconst fileName = headers['x-file-name'] || body.fileName || 'unbekannt';\n\n// User ID wird NICHT vom Client gesendet (Sicherheit!)\n// Stattdessen laden wir sie aus dem Supabase Upload-Eintrag\n\nreturn {\n  json: {\n    upload_id: uploadId,\n    file_name: fileName,\n    timestamp: new Date().toISOString()\n  },\n  binary: input.binary\n};"
+      },
+      "id": "extract-data",
+      "name": "Extract Request Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-960, 0],
+      "onError": "continueErrorOutput",
+      "notes": "Extrahiert uploadId und fileName vom Client"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "uploads",
+        "filterType": "string",
+        "filterString": "=id=eq.{{ $json.upload_id }}",
+        "options": {}
+      },
+      "id": "get-upload-entry",
+      "name": "Get Upload Entry",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [-800, 0],
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Lädt user_id aus Supabase mit Filter (FIXED!)"
+    },
+    {
+      "parameters": {
+        "jsCode": "// VALIDATE UPLOAD ENTRY AND EXTRACT USER ID\nconst input = $input.first().json;\nconst extractedData = $('Extract Request Data').item.json;\n\n// Prüfe ob Upload existiert\nif (!input || !input.user_id) {\n  throw new Error('Upload-Eintrag nicht gefunden oder ungültig');\n}\n\n// Prüfe ob Status valid ist (pending oder processing)\nif (input.status && !['pending', 'processing'].includes(input.status)) {\n  throw new Error(`Upload-Eintrag hat ungültigen Status: ${input.status}`);\n}\n\nreturn {\n  json: {\n    user_id: input.user_id,\n    upload_id: extractedData.upload_id,\n    file_name: extractedData.file_name || input.file_name,\n    timestamp: extractedData.timestamp\n  },\n  binary: $('Extract Request Data').item.binary\n};"
+      },
+      "id": "validate-entry",
+      "name": "Validate Entry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-640, 0],
+      "onError": "continueErrorOutput",
+      "notes": "Validiert Upload und extrahiert user_id"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "uploads",
+        "filterType": "string",
+        "filterString": "=id=eq.{{ $json.upload_id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "status",
+              "fieldValue": "processing"
+            }
+          ]
+        }
+      },
+      "id": "set-processing",
+      "name": "Set Processing",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [-480, 0],
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Setzt Status auf processing"
+    },
+    {
+      "parameters": {
+        "resource": "speech",
+        "operation": "speechToText",
+        "additionalOptions": {
+          "languageCode": "de"
+        }
+      },
+      "id": "elevenlabs-stt",
+      "name": "ElevenLabs STT",
+      "type": "@elevenlabs/n8n-nodes-elevenlabs.elevenLabs",
+      "typeVersion": 1,
+      "position": [-320, 0],
+      "credentials": {
+        "elevenLabsApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "ElevenLabs API"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// PREPARE TRANSCRIPT\nconst input = $input.first().json;\nconst validatedData = $('Validate Entry').item.json;\n\n// Transkript extrahieren\nlet transcript = '';\n\nif (input.text) {\n  transcript = input.text;\n} else if (input.words && Array.isArray(input.words)) {\n  transcript = input.words.map(w => w.text || w).join(' ');\n} else {\n  // Fallback\n  transcript = JSON.stringify(input);\n}\n\nif (!transcript || transcript.trim().length < 5) {\n  throw new Error('Transkription fehlgeschlagen: Kein Text erkannt');\n}\n\nreturn {\n  json: {\n    user_id: validatedData.user_id,\n    upload_id: validatedData.upload_id,\n    file_name: validatedData.file_name,\n    transcript: transcript.trim(),\n    transcript_length: transcript.length,\n    timestamp: validatedData.timestamp\n  }\n};"
+      },
+      "id": "prepare-transcript",
+      "name": "Prepare Transcript",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-80, 0],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analysiere diesen transkribierten Text und extrahiere Metadaten.\n\n=== TRANSKRIPT ===\n{{ $json.transcript.substring(0, 5000) }}\n\n=== DATEINAME ===\n{{ $json.file_name }}\n\n=== AUFGABE ===\nGib ein JSON-Objekt zurück mit:\n\n{\n  \"topics\": [\"thema1\", \"thema2\", \"thema3\"],\n  \"intention\": \"bildung|motivation|argumentation|beispiel|geschichte|unterhaltung\",\n  \"tone\": \"enthusiastisch|kritisch|sachlich|inspirierend|humorvoll\",\n  \"content_quality\": 7,\n  \"key_quotes\": [\"wichtiges Zitat\"],\n  \"summary\": \"Kurze Zusammenfassung in 2 Sätzen\"\n}\n\nRegeln:\n- topics: 3-5 relevante Schlagwörter\n- content_quality: 1-10\n- key_quotes: 1-3 bemerkenswerte Zitate\n- summary: Max 200 Zeichen\n\nAntworte NUR mit dem JSON, ohne Erklärung."
+      },
+      "id": "ai-metadata",
+      "name": "AI Metadata",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [160, 0],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": "gemini-1.5-flash",
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "gemini-metadata",
+      "name": "Google Gemini",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [160, 240],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Google Gemini API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// COMBINE DATA\nconst input = $input.first().json;\nconst preparedData = $('Prepare Transcript').item.json;\n\n// Default Metadaten\nlet metadata = {\n  topics: [],\n  intention: 'general',\n  tone: 'neutral',\n  content_quality: 5,\n  key_quotes: [],\n  summary: ''\n};\n\ntry {\n  let jsonText = input.output || input.text || '';\n  \n  // Markdown Code-Blöcke entfernen\n  jsonText = jsonText.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n  \n  // JSON extrahieren\n  const jsonMatch = jsonText.match(/\\{[\\s\\S]*\\}/);\n  if (jsonMatch) {\n    const parsed = JSON.parse(jsonMatch[0]);\n    metadata = { ...metadata, ...parsed };\n  }\n} catch (e) {\n  // Bei Fehler: Default-Werte verwenden\n  console.log('Metadata parsing failed, using defaults');\n}\n\n// Validierung\nmetadata.topics = Array.isArray(metadata.topics) ? metadata.topics.slice(0, 10) : [];\nmetadata.content_quality = Math.min(10, Math.max(1, parseInt(metadata.content_quality) || 5));\nmetadata.key_quotes = Array.isArray(metadata.key_quotes) ? metadata.key_quotes.slice(0, 5) : [];\n\nreturn {\n  json: {\n    user_id: preparedData.user_id,\n    upload_id: preparedData.upload_id,\n    file_name: preparedData.file_name,\n    transcript: preparedData.transcript,\n    transcript_length: preparedData.transcript_length,\n    metadata: metadata,\n    timestamp: preparedData.timestamp\n  }\n};"
+      },
+      "id": "combine-data",
+      "name": "Combine Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 0],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "uploads",
+        "filterType": "string",
+        "filterString": "=id=eq.{{ $json.upload_id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "transcript",
+              "fieldValue": "={{ $json.transcript }}"
+            },
+            {
+              "fieldName": "status",
+              "fieldValue": "completed"
+            },
+            {
+              "fieldName": "metadata",
+              "fieldValue": "={{ JSON.stringify($json.metadata) }}"
+            }
+          ]
+        }
+      },
+      "id": "supabase-update",
+      "name": "Update Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [640, 0],
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $('Combine Data').item.json.transcript }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "user_id",
+                "value": "={{ $('Combine Data').item.json.user_id }}"
+              },
+              {
+                "name": "upload_id",
+                "value": "={{ $('Combine Data').item.json.upload_id }}"
+              },
+              {
+                "name": "file_name",
+                "value": "={{ $('Combine Data').item.json.file_name }}"
+              },
+              {
+                "name": "topics",
+                "value": "={{ JSON.stringify($('Combine Data').item.json.metadata.topics || []) }}"
+              },
+              {
+                "name": "intention",
+                "value": "={{ $('Combine Data').item.json.metadata.intention || 'general' }}"
+              },
+              {
+                "name": "tone",
+                "value": "={{ $('Combine Data').item.json.metadata.tone || 'neutral' }}"
+              },
+              {
+                "name": "uploaded_at",
+                "value": "={{ $('Combine Data').item.json.timestamp }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "prepare-document",
+      "name": "Prepare for Pinecone",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [640, 240]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "mode": "id",
+          "value": "timax-knowledge"
+        },
+        "options": {
+          "pineconeNamespace": "={{ $('Combine Data').item.json.user_id }}"
+        }
+      },
+      "id": "pinecone-insert",
+      "name": "Insert Pinecone",
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1,
+      "position": [880, 0],
+      "credentials": {
+        "pineconeApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Pinecone API"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-004"
+      },
+      "id": "gemini-embeddings",
+      "name": "Embeddings",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [880, 240],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Google Gemini API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, upload_id: $('Combine Data').item.json.upload_id, transcript: $('Combine Data').item.json.transcript, transcript_length: $('Combine Data').item.json.transcript_length, status: 'completed' }) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "POST, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, X-Upload-ID, X-File-Name"
+              }
+            ]
+          }
+        }
+      },
+      "id": "success-response",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [1120, 0],
+      "notes": "Mit CORS Headers"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "uploads",
+        "filterType": "string",
+        "filterString": "=id=eq.{{ $('Extract Request Data').item.json.upload_id }}",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "status",
+              "fieldValue": "failed"
+            },
+            {
+              "fieldName": "error_message",
+              "fieldValue": "={{ $json.error?.message || 'Fehler bei der Verarbeitung' }}"
+            }
+          ]
+        }
+      },
+      "id": "mark-failed",
+      "name": "Mark Failed",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [880, 480],
+      "credentials": {
+        "supabaseApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Supabase API"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: false, error: $json.error?.message || 'Verarbeitung fehlgeschlagen', upload_id: $('Extract Request Data').item.json?.upload_id || null }) }}",
+        "options": {
+          "responseCode": 500,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "error-response",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [1120, 480],
+      "notes": "Mit CORS Headers"
+    }
+  ],
+  "connections": {
+    "Upload Webhook": {
+      "main": [
+        [{"node": "Extract Request Data", "type": "main", "index": 0}]
+      ]
+    },
+    "Extract Request Data": {
+      "main": [
+        [{"node": "Get Upload Entry", "type": "main", "index": 0}],
+        [{"node": "Mark Failed", "type": "main", "index": 0}]
+      ]
+    },
+    "Get Upload Entry": {
+      "main": [
+        [{"node": "Validate Entry", "type": "main", "index": 0}],
+        [{"node": "Mark Failed", "type": "main", "index": 0}]
+      ]
+    },
+    "Validate Entry": {
+      "main": [
+        [{"node": "Set Processing", "type": "main", "index": 0}],
+        [{"node": "Mark Failed", "type": "main", "index": 0}]
+      ]
+    },
+    "Set Processing": {
+      "main": [
+        [{"node": "ElevenLabs STT", "type": "main", "index": 0}],
+        [{"node": "Mark Failed", "type": "main", "index": 0}]
+      ]
+    },
+    "ElevenLabs STT": {
+      "main": [
+        [{"node": "Prepare Transcript", "type": "main", "index": 0}],
+        [{"node": "Mark Failed", "type": "main", "index": 0}]
+      ]
+    },
+    "Prepare Transcript": {
+      "main": [
+        [{"node": "AI Metadata", "type": "main", "index": 0}],
+        [{"node": "Mark Failed", "type": "main", "index": 0}]
+      ]
+    },
+    "AI Metadata": {
+      "main": [
+        [{"node": "Combine Data", "type": "main", "index": 0}],
+        [{"node": "Mark Failed", "type": "main", "index": 0}]
+      ]
+    },
+    "Google Gemini": {
+      "ai_languageModel": [
+        [{"node": "AI Metadata", "type": "ai_languageModel", "index": 0}]
+      ]
+    },
+    "Combine Data": {
+      "main": [
+        [{"node": "Update Supabase", "type": "main", "index": 0}],
+        [{"node": "Mark Failed", "type": "main", "index": 0}]
+      ]
+    },
+    "Update Supabase": {
+      "main": [
+        [{"node": "Insert Pinecone", "type": "main", "index": 0}],
+        [{"node": "Mark Failed", "type": "main", "index": 0}]
+      ]
+    },
+    "Prepare for Pinecone": {
+      "ai_document": [
+        [{"node": "Insert Pinecone", "type": "ai_document", "index": 0}]
+      ]
+    },
+    "Embeddings": {
+      "ai_embedding": [
+        [{"node": "Insert Pinecone", "type": "ai_embedding", "index": 0}]
+      ]
+    },
+    "Insert Pinecone": {
+      "main": [
+        [{"node": "Success Response", "type": "main", "index": 0}],
+        [{"node": "Mark Failed", "type": "main", "index": 0}]
+      ]
+    },
+    "Mark Failed": {
+      "main": [
+        [{"node": "Error Response", "type": "main", "index": 0}]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "timax-upload-direct-client-fixed"
+  }
+}
