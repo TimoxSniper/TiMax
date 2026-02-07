@@ -44,7 +44,8 @@ npm run test             # Run all tests (Vitest in watch mode)
 npm run test:ui          # Run Vitest UI for interactive testing
 npm run test:coverage    # Run all tests with coverage report
 npm run test:ci          # Run all tests in CI mode (no watch)
-npm run test:single      # Run a single test file (e.g., npm run test src/__tests__/utils.test.ts)
+npm run test:single src/__tests__/utils.test.ts  # Run a single test file (CI mode)
+npm run test src/__tests__/utils.test.ts  # Run a single test file (watch mode)
 ```
 
 ### Validation
