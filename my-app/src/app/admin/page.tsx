@@ -46,25 +46,13 @@ export default function AdminDashboardPage() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [statsRes, chatsRes, uploadsRes] = await Promise.all([
-        fetch("/api/admin/stats"),
-        fetch("/api/admin/chats?limit=5"),
-        fetch("/api/admin/uploads?limit=5"),
-      ]);
+      const dashboardRes = await fetch("/api/admin/dashboard");
 
-      if (statsRes.ok) {
-        const statsData = await statsRes.json();
-        setStats(statsData.stats);
-      }
-
-      if (chatsRes.ok) {
-        const chatsData = await chatsRes.json();
-        setRecentChats(chatsData.chats || []);
-      }
-
-      if (uploadsRes.ok) {
-        const uploadsData = await uploadsRes.json();
-        setRecentUploads(uploadsData.uploads || []);
+      if (dashboardRes.ok) {
+        const dashboardData = await dashboardRes.json();
+        setStats(dashboardData.stats);
+        setRecentChats(dashboardData.recentChats || []);
+        setRecentUploads(dashboardData.recentUploads || []);
       }
     } catch (error) {
       logger.error("Fehler beim Laden der Dashboard-Daten:", error);
