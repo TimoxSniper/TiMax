@@ -49,7 +49,7 @@ export async function GET() {
   }
 }
 
-async function fetchStats(supabase: any) {
+async function fetchStats(supabase: ReturnType<typeof createAdminClient>) {
   // Optimierte Stats-Abfrage
   const [chatsCount, messagesCount, uploadsCount, statusCounts, totalUsersCount] =
     await Promise.all([
@@ -100,7 +100,7 @@ async function fetchStats(supabase: any) {
   };
 }
 
-async function fetchRecentChats(supabase: any) {
+async function fetchRecentChats(supabase: ReturnType<typeof createAdminClient>) {
   const { data: chats } = await supabase
     .from("chats")
     .select("*")
@@ -109,24 +109,24 @@ async function fetchRecentChats(supabase: any) {
 
   if (!chats || chats.length === 0) return [];
 
-  const chatIds = chats.map((c: any) => c.id);
+  const chatIds = chats.map((c) => c.id);
   const { data: messageCounts } = await supabase
     .from("messages")
     .select("chat_id")
     .in("chat_id", chatIds);
 
   const countMap = new Map<string, number>();
-  messageCounts?.forEach((m: any) => {
+  messageCounts?.forEach((m) => {
     countMap.set(m.chat_id, (countMap.get(m.chat_id) || 0) + 1);
   });
 
-  return chats.map((c: any) => ({
+  return chats.map((c) => ({
     ...c,
     messageCount: countMap.get(c.id) || 0,
   }));
 }
 
-async function fetchRecentUploads(supabase: any) {
+async function fetchRecentUploads(supabase: ReturnType<typeof createAdminClient>) {
   const { data: uploads } = await supabase
     .from("uploads")
     .select("*")

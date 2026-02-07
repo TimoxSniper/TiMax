@@ -4,25 +4,15 @@ import { useState, useEffect, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { CHAT_UI_TEXTS, CHAT_ERROR_TEXTS } from "@/lib/constants";
-import { logger } from "@/lib/logger";
-import { useMessages, Message } from "./useMessages";
+
+import { useMessages } from "./useMessages";
+import { Message } from "@/lib/types";
 import { useSession } from "./useSession";
 import { handleError } from "@/lib/error-handler";
+import { RawMessage, UseChatOptions } from "@/lib/types";
 
 // Exportiere Message-Typ für andere Komponenten
 export type { Message };
-
-interface RawMessage {
-  id: string;
-  role: "user" | "assistant" | "system";
-  content: string;
-  created_at?: string;
-  timestamp?: string;
-}
-
-interface UseChatOptions {
-  initialSessionId?: string;
-}
 
 export function useChat({ initialSessionId }: UseChatOptions = {}) {
   const { messages, addMessage, setMessages } = useMessages();
@@ -202,15 +192,15 @@ export function useChat({ initialSessionId }: UseChatOptions = {}) {
 
       if (currentRequestId === requestIdRef.current) {
         // Verwende das zentrale Error-Handling
-        const handledError = handleError(err, { 
-          action: "sendMessage", 
+        const handledError = handleError(err, {
+          action: "sendMessage",
           sessionId,
           chatId,
           messageCount: messages.length,
           requestId: currentRequestId,
-          component: "useChat"
+          component: "useChat",
         });
-        
+
         setError(handledError.userMessage || CHAT_ERROR_TEXTS.UNKNOWN_ERROR);
       }
     } finally {

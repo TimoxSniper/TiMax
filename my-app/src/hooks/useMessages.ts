@@ -1,16 +1,8 @@
 import { useState, useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { Message, UseMessagesOptions } from "@/lib/types";
 
-export interface Message {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  timestamp: Date;
-}
-
-interface UseMessagesOptions {
-  initialMessages?: Message[];
-}
+export type { Message }; // Exportiere Message-Typ für andere Module
 
 export function useMessages({ initialMessages = [] }: UseMessagesOptions = {}) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);

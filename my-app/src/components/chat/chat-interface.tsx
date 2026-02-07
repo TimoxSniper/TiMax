@@ -14,7 +14,6 @@ import { ChatSidebar } from "./chat-sidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ErrorBoundary from "@/components/error-boundary";
 
 export type { Message };
 

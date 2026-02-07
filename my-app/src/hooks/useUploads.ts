@@ -1,16 +1,5 @@
 import { useState, useCallback } from "react";
-
-interface UseUploadsOptions {
-  maxConcurrentUploads?: number;
-}
-
-export interface UploadProgress {
-  id: string;
-  fileName: string;
-  progress: number;
-  status: 'pending' | 'uploading' | 'processing' | 'completed' | 'failed';
-  error?: string;
-}
+import { UseUploadsOptions, UploadProgress } from "@/lib/types";
 
 export function useUploads({ maxConcurrentUploads = 3 }: UseUploadsOptions = {}) {
   const [uploads, setUploads] = useState<UploadProgress[]>([]);

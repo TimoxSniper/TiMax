@@ -8,14 +8,6 @@ export interface Message {
   timestamp: Date;
 }
 
-interface RawMessage {
-  id: string;
-  role: "user" | "assistant" | "system";
-  content: string;
-  created_at?: string;
-  timestamp?: string;
-}
-
 export interface ChatState {
   messages: Message[];
   sessionId: string;

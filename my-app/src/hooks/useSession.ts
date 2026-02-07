@@ -1,9 +1,6 @@
 import { useState, useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
-
-interface UseSessionOptions {
-  initialSessionId?: string;
-}
+import { UseSessionOptions } from "@/lib/types";
 
 export function useSession({ initialSessionId }: UseSessionOptions = {}) {
   const [sessionId, setSessionId] = useState<string>(initialSessionId || `chat-${uuidv4()}`);
