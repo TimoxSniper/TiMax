@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -66,11 +66,7 @@ export default function AdminUserDetailPage() {
   const [uploads, setUploads] = useState<Upload[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchUserData();
-  }, [userId]);
-
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     setIsLoading(true);
     try {
       const res = await fetch(`/api/admin/users/${userId}`);
@@ -92,7 +88,11 @@ export default function AdminUserDetailPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userId, showToast, router]);
+
+  useEffect(() => {
+    fetchUserData();
+  }, [fetchUserData]);
 
   if (isLoading) {
     return (

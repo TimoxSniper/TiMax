@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { UploadsTable } from "@/components/admin/uploads-table";
 import { useToast } from "@/components/ui/toast";
@@ -48,7 +48,7 @@ export default function AdminUploadsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const { showToast } = useToast();
 
-  const fetchUploads = async (page: number, status: string) => {
+  const fetchUploads = useCallback(async (page: number, status: string) => {
     setIsLoading(true);
     try {
       let url = `/api/admin/uploads?page=${page}&limit=20`;
@@ -75,13 +75,13 @@ export default function AdminUploadsPage() {
       setIsLoading(false);
       setIsInitialLoad(false);
     }
-  };
+  }, [userIdFilter, showToast]);
 
   useEffect(() => {
     setCurrentPage(1);
     setIsInitialLoad(true);
     fetchUploads(1, statusFilter);
-  }, [userIdFilter, statusFilter]);
+  }, [statusFilter, fetchUploads]);
 
   // Search filter
   useEffect(() => {
@@ -106,7 +106,7 @@ export default function AdminUploadsPage() {
     if (currentPage > 1) {
       fetchUploads(currentPage, statusFilter);
     }
-  }, [currentPage]);
+  }, [currentPage, statusFilter, fetchUploads]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

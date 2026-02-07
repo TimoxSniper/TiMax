@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChatsTable } from "@/components/admin/chats-table";
 import { useToast } from "@/components/ui/toast";
@@ -47,7 +47,7 @@ export default function AdminChatsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const { showToast } = useToast();
 
-  const fetchChats = async (page: number) => {
+  const fetchChats = useCallback(async (page: number) => {
     setIsLoading(true);
     try {
       let url = `/api/admin/chats?page=${page}&limit=20`;
@@ -74,13 +74,13 @@ export default function AdminChatsPage() {
       setIsLoading(false);
       setIsInitialLoad(false);
     }
-  };
+  }, [userIdFilter, timeFilter, showToast]);
 
   useEffect(() => {
     setCurrentPage(1);
     setIsInitialLoad(true);
     fetchChats(1);
-  }, [userIdFilter, timeFilter]);
+  }, [fetchChats]);
 
   // Search filter
   useEffect(() => {
@@ -104,7 +104,7 @@ export default function AdminChatsPage() {
     if (currentPage > 1) {
       fetchChats(currentPage);
     }
-  }, [currentPage]);
+  }, [currentPage, fetchChats]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

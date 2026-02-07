@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { StatsCards } from "@/components/admin/stats-cards";
 import { ChatsTable } from "@/components/admin/chats-table";
 import { UploadsTable } from "@/components/admin/uploads-table";
@@ -43,7 +43,7 @@ export default function AdminDashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const { showToast } = useToast();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
       const [statsRes, chatsRes, uploadsRes] = await Promise.all([
@@ -72,11 +72,11 @@ export default function AdminDashboardPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [showToast]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleDeleteChat = async (chatId: string) => {
     const res = await fetch(`/api/admin/chats/${chatId}`, { method: "DELETE" });

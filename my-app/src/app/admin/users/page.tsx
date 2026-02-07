@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { UsersTable } from "@/components/admin/users-table";
 import { useToast } from "@/components/ui/toast";
 import { logger } from "@/lib/logger";
@@ -43,7 +43,7 @@ export default function AdminUsersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const { showToast } = useToast();
 
-  const fetchUsers = async (page: number) => {
+  const fetchUsers = useCallback(async (page: number) => {
     setIsLoading(true);
     try {
       const res = await fetch(`/api/admin/users?page=${page}&limit=25`);
@@ -62,11 +62,11 @@ export default function AdminUsersPage() {
       setIsLoading(false);
       setIsInitialLoad(false);
     }
-  };
+  }, [showToast]);
 
   useEffect(() => {
     fetchUsers(currentPage);
-  }, [currentPage]);
+  }, [currentPage, fetchUsers]);
 
   // Search filter
   useEffect(() => {
