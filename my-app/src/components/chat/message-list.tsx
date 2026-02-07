@@ -11,7 +11,11 @@ interface MessageListProps {
 
 export const MessageList = memo(({ messages, isMobile = false }: MessageListProps) => {
   return (
-    <div className={isMobile ? "space-y-3" : "space-y-4"}>
+    <div 
+      className={isMobile ? "space-y-3" : "space-y-4"} 
+      role="list" 
+      aria-label={isMobile ? "Chatverlauf (Mobile Ansicht)" : "Chatverlauf (Desktop Ansicht)"}
+    >
       {messages.map((message) => (
         <MessageBubble key={message.id} message={message} isMobile={isMobile} />
       ))}

@@ -46,7 +46,7 @@ export const ChatInput = memo(({ onSendMessage, disabled, isMobile = false }: Ch
   // ========== MOBILE LAYOUT ==========
   if (isMobile) {
     return (
-      <div className="bg-card/95 safe-area-bottom border-t px-3 py-3 backdrop-blur-sm">
+      <div className="bg-card/95 safe-area-bottom border-t px-3 py-3 backdrop-blur-sm" role="region" aria-label="Mobiler Chat-Eingabebereich">
         <div className="flex items-end gap-2">
           <textarea
             ref={textareaRef}
@@ -68,6 +68,11 @@ export const ChatInput = memo(({ onSendMessage, disabled, isMobile = false }: Ch
               "max-h-[120px] min-h-[48px]"
             )}
             style={{ fontSize: "16px" }} // Verhindert iOS Zoom
+            aria-label="Nachricht eingeben"
+            aria-describedby="mobile-send-hint"
+            aria-disabled={disabled}
+            role="textbox"
+            aria-multiline="true"
           />
           <Button
             onClick={handleSend}
@@ -78,14 +83,22 @@ export const ChatInput = memo(({ onSendMessage, disabled, isMobile = false }: Ch
               "bg-primary hover:bg-primary/90",
               "disabled:opacity-40"
             )}
-            aria-label="Nachricht senden"
+            aria-label={disabled ? "Senden deaktiviert, bitte warten" : "Nachricht senden"}
+            aria-disabled={disabled}
           >
-            {disabled ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+            {disabled ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+                <span className="sr-only">Wird gesendet...</span>
+              </>
+            ) : (
+              <Send className="h-5 w-5" aria-hidden="true" />
+            )}
           </Button>
         </div>
 
         {/* Hinweis für Mobile */}
-        <p className="text-muted-foreground/50 mt-2 text-center text-[10px]">
+        <p id="mobile-send-hint" className="text-muted-foreground/50 mt-2 text-center text-[10px]">
           Tippe auf den Senden-Button zum Absenden
         </p>
       </div>
@@ -94,7 +107,7 @@ export const ChatInput = memo(({ onSendMessage, disabled, isMobile = false }: Ch
 
   // ========== DESKTOP LAYOUT ==========
   return (
-    <div className="border-t p-4">
+    <div className="border-t p-4" role="region" aria-label="Chat-Eingabebereich">
       <div className="flex items-end gap-2">
         <textarea
           ref={textareaRef}
@@ -105,6 +118,7 @@ export const ChatInput = memo(({ onSendMessage, disabled, isMobile = false }: Ch
           }}
           onKeyDown={handleKeyDown}
           aria-label="Nachricht eingeben"
+          aria-describedby="desktop-send-info"
           placeholder="Nachricht eingeben... (Enter zum Senden, Shift+Enter für neue Zeile)"
           disabled={disabled}
           rows={1}
@@ -115,17 +129,31 @@ export const ChatInput = memo(({ onSendMessage, disabled, isMobile = false }: Ch
             "disabled:cursor-not-allowed disabled:opacity-50",
             "placeholder:text-muted-foreground/70"
           )}
+          aria-disabled={disabled}
+          role="textbox"
+          aria-multiline="true"
         />
         <Button
           onClick={handleSend}
           disabled={disabled || !input.trim()}
           size="icon"
           className="h-11 w-11 shrink-0"
-          aria-label="Nachricht senden"
+          aria-label={disabled ? "Senden deaktiviert, bitte warten" : "Nachricht senden"}
+          aria-disabled={disabled}
         >
-          {disabled ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+          {disabled ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              <span className="sr-only">Wird gesendet...</span>
+            </>
+          ) : (
+            <Send className="h-4 w-4" aria-hidden="true" />
+          )}
         </Button>
       </div>
+      <p id="desktop-send-info" className="sr-only">
+        Drücken Sie Enter zum Senden, Umschalt+Enter für eine neue Zeile
+      </p>
     </div>
   );
 });
