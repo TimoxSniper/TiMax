@@ -65,7 +65,8 @@ export const ChatInput = memo(({ onSendMessage, disabled, isMobile = false }: Ch
               "placeholder:text-muted-foreground/60",
               "focus:ring-accent/30 focus:border-accent/50 focus:ring-2 focus:outline-none",
               "disabled:cursor-not-allowed disabled:opacity-50",
-              "max-h-[120px] min-h-[48px]"
+              "max-h-[120px] min-h-[48px]",
+              "touch-manipulation"
             )}
             style={{ fontSize: "16px" }} // Verhindert iOS Zoom
             aria-label="Nachricht eingeben"
@@ -127,7 +128,8 @@ export const ChatInput = memo(({ onSendMessage, disabled, isMobile = false }: Ch
             "resize-none overflow-y-auto",
             "focus-visible:ring-accent/30 focus-visible:border-accent/50 focus-visible:ring-2 focus-visible:outline-none",
             "disabled:cursor-not-allowed disabled:opacity-50",
-            "placeholder:text-muted-foreground/70"
+            "placeholder:text-muted-foreground/70",
+            "touch-manipulation"
           )}
           aria-disabled={disabled}
           role="textbox"

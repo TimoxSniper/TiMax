@@ -72,7 +72,7 @@ export const MessageBubble = memo(({ message, isMobile = false }: MessageBubbleP
             )}
             role="paragraph"
           >
-            <p className="text-[15px] leading-relaxed break-words whitespace-pre-wrap">
+            <p className="text-[15px] leading-relaxed break-words whitespace-pre-wrap touch-callout select-text">
               {message.content}
             </p>
           </div>
@@ -96,7 +96,7 @@ export const MessageBubble = memo(({ message, isMobile = false }: MessageBubbleP
             {!isUser && (
               <button
                 onClick={handleCopy}
-                className="hover:bg-muted active:bg-muted/80 rounded-full p-1.5 transition-colors"
+                className="hover:bg-muted active:bg-muted/80 rounded-full p-1.5 transition-colors touch-manipulation"
                 aria-label={copied ? "Text wurde kopiert" : "Nachricht in Zwischenablage kopieren"}
                 title={copied ? "Kopiert!" : "Kopieren"}
               >
@@ -154,7 +154,7 @@ export const MessageBubble = memo(({ message, isMobile = false }: MessageBubbleP
         )}
       >
         <div className="p-4">
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          <p className="text-sm leading-relaxed whitespace-pre-wrap touch-callout select-text">{message.content}</p>
           <div className="mt-2 flex items-center justify-between gap-2">
             <time 
               dateTime={message.timestamp.toISOString()}

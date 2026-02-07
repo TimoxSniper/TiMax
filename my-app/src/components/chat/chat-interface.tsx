@@ -111,7 +111,7 @@ export const ChatInterface = memo(({ initialSessionId }: ChatInterfaceProps) => 
         </header>
 
         {/* Message Area - nimmt den restlichen Platz ein */}
-        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overscroll-contain">
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overscroll-contain touch-pan-y">
           {messages.length === 0 ? (
             // Welcome Screen für Mobile
             <div className="flex min-h-full flex-col items-center justify-center px-6 py-8">
@@ -134,7 +134,7 @@ export const ChatInterface = memo(({ initialSessionId }: ChatInterfaceProps) => 
                   <button
                     key={index}
                     onClick={() => handleSendMessage(req.replace(/^[•\s"]+|["]+$/g, ""))}
-                    className="bg-card border-border w-full rounded-xl border px-4 py-4 text-left text-sm transition-transform active:scale-[0.98]"
+                    className="bg-card border-border w-full rounded-xl border px-4 py-4 text-left text-sm transition-transform active:scale-[0.98] touch-manipulation"
                   >
                     {req}
                   </button>

@@ -22,15 +22,18 @@ describe("Environment Validation", () => {
     it("should pass when all required env vars are set", () => {
       process.env.N8N_CHAT_WEBHOOK_URL = "https://n8n.example.com/chat";
       process.env.N8N_UPLOAD_WEBHOOK_URL = "https://n8n.example.com/upload";
+      process.env.NEXT_PUBLIC_N8N_UPLOAD_WEBHOOK_URL = "https://n8n.example.com/upload";
 
       const result = validateRequiredEnv();
       expect(result.N8N_CHAT_WEBHOOK_URL).toBe("https://n8n.example.com/chat");
       expect(result.N8N_UPLOAD_WEBHOOK_URL).toBe("https://n8n.example.com/upload");
+      expect(result.NEXT_PUBLIC_N8N_UPLOAD_WEBHOOK_URL).toBe("https://n8n.example.com/upload");
     });
 
     it("should throw error when N8N_CHAT_WEBHOOK_URL is missing", () => {
       process.env.N8N_CHAT_WEBHOOK_URL = "";
       process.env.N8N_UPLOAD_WEBHOOK_URL = "https://n8n.example.com/upload";
+      process.env.NEXT_PUBLIC_N8N_UPLOAD_WEBHOOK_URL = "https://n8n.example.com/upload";
 
       expect(() => validateRequiredEnv()).toThrow("N8N_CHAT_WEBHOOK_URL ist erforderlich");
     });
@@ -38,6 +41,7 @@ describe("Environment Validation", () => {
     it("should throw error when N8N_UPLOAD_WEBHOOK_URL is missing", () => {
       process.env.N8N_CHAT_WEBHOOK_URL = "https://n8n.example.com/chat";
       process.env.N8N_UPLOAD_WEBHOOK_URL = "";
+      process.env.NEXT_PUBLIC_N8N_UPLOAD_WEBHOOK_URL = "https://n8n.example.com/upload";
 
       expect(() => validateRequiredEnv()).toThrow("N8N_UPLOAD_WEBHOOK_URL ist erforderlich");
     });
@@ -45,6 +49,7 @@ describe("Environment Validation", () => {
     it("should throw error when both required env vars are missing", () => {
       process.env.N8N_CHAT_WEBHOOK_URL = "";
       process.env.N8N_UPLOAD_WEBHOOK_URL = "";
+      process.env.NEXT_PUBLIC_N8N_UPLOAD_WEBHOOK_URL = "";
 
       expect(() => validateRequiredEnv()).toThrow("Fehlende Environment-Variablen");
     });
@@ -52,6 +57,7 @@ describe("Environment Validation", () => {
     it("should provide default values for optional vars", () => {
       process.env.N8N_CHAT_WEBHOOK_URL = "https://n8n.example.com/chat";
       process.env.N8N_UPLOAD_WEBHOOK_URL = "https://n8n.example.com/upload";
+      process.env.NEXT_PUBLIC_N8N_UPLOAD_WEBHOOK_URL = "https://n8n.example.com/upload";
       // N8N_API_URL not set, should default to localhost
 
       const result = validateRequiredEnv();
@@ -61,6 +67,7 @@ describe("Environment Validation", () => {
     it("should use provided N8N_API_URL", () => {
       process.env.N8N_CHAT_WEBHOOK_URL = "https://n8n.example.com/chat";
       process.env.N8N_UPLOAD_WEBHOOK_URL = "https://n8n.example.com/upload";
+      process.env.NEXT_PUBLIC_N8N_UPLOAD_WEBHOOK_URL = "https://n8n.example.com/upload";
       process.env.N8N_API_URL = "https://custom.n8n.com";
 
       const result = validateRequiredEnv();
@@ -70,6 +77,7 @@ describe("Environment Validation", () => {
     it("should fallback N8N_TRANSCRIPTION_WEBHOOK_URL to UPLOAD_WEBHOOK_URL", () => {
       process.env.N8N_CHAT_WEBHOOK_URL = "https://n8n.example.com/chat";
       process.env.N8N_UPLOAD_WEBHOOK_URL = "https://n8n.example.com/upload";
+      process.env.NEXT_PUBLIC_N8N_UPLOAD_WEBHOOK_URL = "https://n8n.example.com/upload";
       // N8N_TRANSCRIPTION_WEBHOOK_URL not set
 
       const result = validateRequiredEnv();
@@ -88,6 +96,7 @@ describe("Environment Validation", () => {
       validUrls.forEach((url) => {
         process.env.N8N_CHAT_WEBHOOK_URL = url;
         process.env.N8N_UPLOAD_WEBHOOK_URL = url;
+        process.env.NEXT_PUBLIC_N8N_UPLOAD_WEBHOOK_URL = url;
 
         expect(() => validateRequiredEnv()).not.toThrow();
         const result = validateRequiredEnv();
