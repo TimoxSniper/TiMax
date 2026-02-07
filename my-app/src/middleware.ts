@@ -109,6 +109,13 @@ export default clerkMiddleware(async (auth, req) => {
     }
 
     const response = NextResponse.next();
+
+    // CSP Header für n8n Direct Upload setzen
+    response.headers.set(
+      "Content-Security-Policy",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' https://clerk.timax.xyz https://*.clerk.accounts.dev https://challenges.cloudflare.com; connect-src 'self' https://clerk.timax.xyz https://*.clerk.accounts.dev https://*.sentry.io https://*.supabase.co https://clerk-telemetry.com https://*.n8n.cloud https://zapkothimofej.app.n8n.cloud; img-src 'self' data: https://img.clerk.com; style-src 'self' 'unsafe-inline'; font-src 'self'; frame-src 'self' https://challenges.cloudflare.com; worker-src 'self' blob:;"
+    );
+
     if (rateLimit.remaining !== undefined) {
       response.headers.set(
         "X-RateLimit-Remaining",
