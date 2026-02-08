@@ -1,8 +1,9 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
+import withBundleAnalyzer from "@next/bundle-analyzer";
 
 // Bundle analyzer configuration
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
+const withBundleAnalyzerConfig = withBundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 
@@ -145,6 +146,8 @@ const sentryOptions =
     : undefined;
 
 // Apply bundle analyzer if ANALYZE=true environment variable is set
-const configWithAnalyzer = withBundleAnalyzer(nextConfig);
+const configWithAnalyzer = withBundleAnalyzerConfig(nextConfig);
 
-export default sentryOptions ? withSentryConfig(configWithAnalyzer, sentryOptions) : configWithAnalyzer;
+export default sentryOptions
+  ? withSentryConfig(configWithAnalyzer, sentryOptions)
+  : configWithAnalyzer;

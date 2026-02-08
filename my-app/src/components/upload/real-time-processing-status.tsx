@@ -24,11 +24,11 @@ interface RealTimeProcessingStatusProps {
   onError?: (error: string) => void;
 }
 
-export function RealTimeProcessingStatus({ 
-  isProcessing, 
-  uploadId, 
-  onComplete, 
-  onError 
+export function RealTimeProcessingStatus({
+  isProcessing,
+  uploadId,
+  onComplete,
+  onError,
 }: RealTimeProcessingStatusProps) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
@@ -39,57 +39,55 @@ export function RealTimeProcessingStatus({
   useEffect(() => {
     if (!uploadId || !isProcessing) return;
 
-    let eventSource: EventSource | null = null;
-    
     // Try to establish a connection to a real-time updates endpoint
     try {
       // This would connect to a server-sent events endpoint if available
       // For now, we'll simulate real-time updates based on the uploadId
       setRealTimeUpdates(true);
-      
+
       // Simulate polling for status updates if SSE is not available
       const interval = setInterval(async () => {
         try {
           const response = await fetch(`/api/uploads/${uploadId}`);
           const data = await response.json();
-          
+
           if (data.success && data.upload) {
             const { status, error_message } = data.upload;
-            
+
             if (error_message) {
               setError(error_message);
               if (onError) onError(error_message);
               return;
             }
-            
+
             // Map the actual status to our step progression
             switch (status) {
-              case 'completed':
+              case "completed":
                 // Mark all steps as completed
-                setCompletedSteps(STEPS.map(step => step.id));
+                setCompletedSteps(STEPS.map((step) => step.id));
                 setCurrentStepIndex(STEPS.length - 1);
                 if (onComplete) onComplete();
                 clearInterval(interval);
                 break;
-              case 'processing':
+              case "processing":
                 // Determine which step we're on based on timing
                 // In a real implementation, the backend would provide more specific status info
                 break;
-              case 'failed':
-                setError('Upload failed');
-                if (onError) onError('Upload failed');
+              case "failed":
+                setError("Upload failed");
+                if (onError) onError("Upload failed");
                 clearInterval(interval);
                 break;
             }
           }
         } catch (err) {
-          console.error('Error fetching upload status:', err);
+          console.error("Error fetching upload status:", err);
         }
       }, 2000); // Poll every 2 seconds
-      
+
       return () => clearInterval(interval);
     } catch (err) {
-      console.error('Could not establish real-time connection:', err);
+      console.error("Could not establish real-time connection:", err);
       // Fall back to timer-based approach
       setRealTimeUpdates(false);
     }
@@ -126,7 +124,7 @@ export function RealTimeProcessingStatus({
       </h4>
       <div className="mx-auto max-w-xs space-y-4">
         {error ? (
-          <div className="flex items-center gap-3 text-destructive">
+          <div className="text-destructive flex items-center gap-3">
             <AlertCircle className="h-5 w-5 flex-shrink-0" />
             <span className="text-sm">{error}</span>
           </div>
@@ -169,7 +167,7 @@ export function RealTimeProcessingStatus({
       </div>
       {realTimeUpdates && (
         <div className="text-center">
-          <span className="text-xs text-muted-foreground italic">
+          <span className="text-muted-foreground text-xs italic">
             Echtzeit-Statusaktualisierungen aktiv
           </span>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { MessageSquare, Plus, Trash2, Clock, Edit2, Check, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -82,7 +82,7 @@ export function ChatSidebar({
       }
     },
     {
-      rootMargin: '100px', // Load when 100px from the bottom
+      rootMargin: "100px", // Load when 100px from the bottom
     }
   );
 
@@ -192,7 +192,11 @@ export function ChatSidebar({
 
       <CardContent className="flex-1 space-y-2 overflow-y-auto p-4" aria-label="Chat-Verlauf">
         {loading ? (
-          <div className="text-muted-foreground py-4 text-center text-sm" role="status" aria-live="polite">
+          <div
+            className="text-muted-foreground py-4 text-center text-sm"
+            role="status"
+            aria-live="polite"
+          >
             Chats werden geladen...
           </div>
         ) : chats.length === 0 ? (
@@ -211,13 +215,16 @@ export function ChatSidebar({
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
+                    if (e.key === "Enter" || e.key === " ") {
                       onSelectChat(chat.id);
                     }
                   }}
                   aria-label={`Chat öffnen: ${chat.title || "Unbenannter Chat"}`}
                 >
-                  <div className="bg-primary/10 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full" aria-hidden="true">
+                  <div
+                    className="bg-primary/10 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full"
+                    aria-hidden="true"
+                  >
                     <MessageSquare className="text-primary h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -234,7 +241,8 @@ export function ChatSidebar({
                             className="bg-background focus:ring-primary flex-1 rounded border px-1.5 py-0.5 text-sm focus:ring-1 focus:outline-none"
                             aria-label="Chat-Titel bearbeiten"
                             onKeyDown={(e) => {
-                              if (e.key === "Enter") handleSaveEdit(e as React.KeyboardEvent, chat.id);
+                              if (e.key === "Enter")
+                                handleSaveEdit(e as React.KeyboardEvent, chat.id);
                               if (e.key === "Escape") handleCancelEdit(e as React.KeyboardEvent);
                             }}
                           />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   FileAudio,
   FileVideo,
@@ -96,7 +96,7 @@ export function UploadList() {
       }
     },
     {
-      rootMargin: '100px', // Load when 100px from the bottom
+      rootMargin: "100px", // Load when 100px from the bottom
     }
   );
 
@@ -229,11 +229,11 @@ export function UploadList() {
         {filteredUploads.map((upload) => (
           <div key={upload.id} className="relative">
             <Link href={`/uploads/${upload.id}`}>
-              <div 
+              <div
                 className="group bg-card border-border hover:border-accent/50 relative flex cursor-pointer flex-col items-start gap-4 overflow-hidden rounded-[4px] border p-6 shadow-sm transition-all duration-500 hover:shadow-md sm:flex-row sm:items-center"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
+                  if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
                     // Navigate to the same URL as the Link component
                     router.push(`/uploads/${upload.id}`);
@@ -461,7 +461,7 @@ export function UploadList() {
           </Button>
         </div>
       )}
-      
+
       {/* Sentinel element for Intersection Observer */}
       <div ref={sentinelRef} className="h-1" />
     </div>
