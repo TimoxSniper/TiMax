@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Save, User, Mail, Calendar } from "lucide-react";
 import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 export default function ProfileSettingsPage() {
   const { user, isLoaded } = useUser();
@@ -75,9 +76,11 @@ export default function ProfileSettingsPage() {
         <CardContent>
           <div className="flex items-center gap-4">
             {user.imageUrl ? (
-              <img
+              <Image
                 src={user.imageUrl}
                 alt="Profilbild"
+                width={80}
+                height={80}
                 className="border-border h-20 w-20 rounded-full border-2 object-cover"
               />
             ) : (

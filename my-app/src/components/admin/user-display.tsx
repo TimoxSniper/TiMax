@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { User, Copy, Check } from "lucide-react";
+import Image from "next/image";
 
 interface UserDisplayProps {
   userId: string;
@@ -86,9 +87,11 @@ export function UserDisplay({
     <div className={cn("flex min-w-0 items-center gap-2", className)}>
       {/* Avatar */}
       {imageUrl ? (
-        <img
+        <Image
           src={imageUrl}
           alt={displayName || "User"}
+          width={32}
+          height={32}
           className="h-8 w-8 shrink-0 rounded-full object-cover"
         />
       ) : (

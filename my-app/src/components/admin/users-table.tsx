@@ -33,22 +33,22 @@ interface UsersTableProps {
 export function UsersTable({ users, isLoading, pagination, onPageChange }: UsersTableProps) {
   if (isLoading) {
     return (
-      <Card className="hover:shadow-editorial-md hover:translate-y-0">
+      <Card className="border-muted/20 border-2 shadow-lg">
         <CardHeader>
-          <CardTitle>Benutzer</CardTitle>
+          <CardTitle className="font-serif text-xl">Benutzer</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {[...Array(5)].map((_, i) => (
               <div
                 key={i}
-                className="border-border flex items-center justify-between rounded-md border p-3"
+                className="border-muted/10 flex items-center justify-between rounded-lg border-2 p-4"
               >
-                <Skeleton className="h-4 w-32" />
-                <div className="flex gap-4">
-                  <Skeleton className="h-4 w-16" />
-                  <Skeleton className="h-4 w-16" />
-                  <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-5 w-40" />
+                <div className="flex gap-6">
+                  <Skeleton className="h-5 w-20" />
+                  <Skeleton className="h-5 w-20" />
+                  <Skeleton className="h-5 w-32" />
                 </div>
               </div>
             ))}
@@ -59,18 +59,18 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
   }
 
   return (
-    <Card className="hover:shadow-editorial-md hover:translate-y-0">
+    <Card className="border-2 border-blue-500/10 shadow-lg">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-base md:text-lg">Benutzer</CardTitle>
+        <CardTitle className="font-serif text-xl">Benutzer</CardTitle>
         {pagination && (
-          <span className="text-muted-foreground text-xs md:text-sm">
+          <span className="text-muted-foreground text-sm font-medium">
             {pagination.total} gesamt
           </span>
         )}
       </CardHeader>
       <CardContent>
         {/* Table Header - Desktop only */}
-        <div className="text-muted-foreground border-border hidden grid-cols-[1fr_80px_80px_140px] gap-4 border-b px-4 py-2 text-sm font-medium md:grid">
+        <div className="text-muted-foreground hidden grid-cols-[1fr_100px_100px_160px] gap-6 border-b border-blue-500/10 px-6 py-3 text-sm font-semibold md:grid">
           <div>Benutzer</div>
           <div className="text-center">Chats</div>
           <div className="text-center">Uploads</div>
@@ -78,9 +78,9 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
         </div>
 
         {/* Table Body */}
-        <div className="divide-border md:divide-border divide-y md:divide-y md:divide-y-0">
+        <div className="divide-y divide-blue-500/5 md:divide-y md:divide-y-0 md:divide-blue-500/5">
           {users.length === 0 ? (
-            <div className="text-muted-foreground py-8 text-center text-sm">
+            <div className="text-muted-foreground py-12 text-center text-sm">
               Keine Benutzer gefunden
             </div>
           ) : (
@@ -88,10 +88,10 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
               <Link
                 key={user.userId}
                 href={`/admin/users/${user.userId}`}
-                className="hover:bg-muted/50 block cursor-pointer transition-colors"
+                className="block cursor-pointer transition-colors hover:bg-blue-500/5"
               >
                 {/* Mobile Card Layout */}
-                <div className="space-y-2 p-3 md:hidden">
+                <div className="space-y-3 p-4 md:hidden">
                   <UserDisplay
                     userId={user.userId}
                     firstName={user.firstName}
@@ -100,15 +100,15 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
                     imageUrl={user.imageUrl}
                     showEmail
                   />
-                  <div className="flex items-center justify-between pt-2 text-sm">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1.5">
-                        <MessageSquare className="text-muted-foreground h-3.5 w-3.5" />
-                        <span className="text-accent font-medium">{user.chatCount}</span>
+                  <div className="flex items-center justify-between pt-3 text-sm">
+                    <div className="flex items-center gap-6">
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4 text-blue-500" />
+                        <span className="font-semibold text-blue-600">{user.chatCount}</span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <FileAudio className="text-muted-foreground h-3.5 w-3.5" />
-                        <span className="text-accent font-medium">{user.uploadCount}</span>
+                      <div className="flex items-center gap-2">
+                        <FileAudio className="h-4 w-4 text-green-500" />
+                        <span className="font-semibold text-green-600">{user.uploadCount}</span>
                       </div>
                     </div>
                     <div className="text-muted-foreground text-xs">
@@ -118,7 +118,7 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
                 </div>
 
                 {/* Desktop Grid Layout */}
-                <div className="hidden grid-cols-[1fr_80px_80px_140px] items-center gap-4 px-4 py-3 md:grid">
+                <div className="hidden grid-cols-[1fr_100px_100px_160px] items-center gap-6 px-6 py-4 md:grid">
                   <UserDisplay
                     userId={user.userId}
                     firstName={user.firstName}
@@ -127,13 +127,13 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
                     imageUrl={user.imageUrl}
                     showEmail
                   />
-                  <div className="flex items-center justify-center gap-1.5">
-                    <MessageSquare className="text-muted-foreground h-4 w-4" />
-                    <span className="text-accent">{user.chatCount}</span>
+                  <div className="flex items-center justify-center gap-2">
+                    <MessageSquare className="h-5 w-5 text-blue-500" />
+                    <span className="font-semibold text-blue-600">{user.chatCount}</span>
                   </div>
-                  <div className="flex items-center justify-center gap-1.5">
-                    <FileAudio className="text-muted-foreground h-4 w-4" />
-                    <span className="text-accent">{user.uploadCount}</span>
+                  <div className="flex items-center justify-center gap-2">
+                    <FileAudio className="h-5 w-5 text-green-500" />
+                    <span className="font-semibold text-green-600">{user.uploadCount}</span>
                   </div>
                   <div className="text-muted-foreground text-right text-sm">
                     {formatDate(user.lastActivity)}
@@ -146,8 +146,8 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
 
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
-          <div className="border-border mt-4 flex flex-col gap-2 border-t pt-4 md:flex-row md:items-center md:justify-between">
-            <span className="text-muted-foreground text-center text-xs md:text-left md:text-sm">
+          <div className="mt-6 flex flex-col gap-3 border-t border-blue-500/10 pt-6 md:flex-row md:items-center md:justify-between">
+            <span className="text-muted-foreground text-center text-sm md:text-left">
               Seite {pagination.page} von {pagination.totalPages}
             </span>
             <div className="flex justify-center gap-2 md:justify-end">
@@ -156,7 +156,7 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
                 size="sm"
                 onClick={() => onPageChange?.(pagination.page - 1)}
                 disabled={pagination.page <= 1}
-                className="flex-1 md:flex-none"
+                className="h-10 flex-1 px-4 font-medium md:flex-none"
                 aria-label="Vorherige Seite"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -167,7 +167,7 @@ export function UsersTable({ users, isLoading, pagination, onPageChange }: Users
                 size="sm"
                 onClick={() => onPageChange?.(pagination.page + 1)}
                 disabled={pagination.page >= pagination.totalPages}
-                className="flex-1 md:flex-none"
+                className="h-10 flex-1 px-4 font-medium md:flex-none"
                 aria-label="Nächste Seite"
               >
                 <span className="md:inline">Weiter</span>

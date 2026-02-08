@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   FileAudio,
   FileVideo,
@@ -21,6 +21,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { logger } from "@/lib/logger";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 
 interface Upload {
   id: string;
@@ -78,12 +79,26 @@ export function UploadList() {
   };
 
   const loadMoreUploads = () => {
-    fetchUploads(page + 1, true);
+    if (!loadingMore && hasMore) {
+      fetchUploads(page + 1, true);
+    }
   };
 
   useEffect(() => {
     fetchUploads();
   }, []);
+
+  // Set up intersection observer to automatically load more uploads when user scrolls near the bottom
+  const sentinelRef = useIntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting && hasMore && !loadingMore) {
+        loadMoreUploads();
+      }
+    },
+    {
+      rootMargin: '100px', // Load when 100px from the bottom
+    }
+  );
 
   const handleDelete = async (id: string) => {
     if (!confirm("Möchtest du dieses Transkript wirklich löschen?")) return;
@@ -214,7 +229,19 @@ export function UploadList() {
         {filteredUploads.map((upload) => (
           <div key={upload.id} className="relative">
             <Link href={`/uploads/${upload.id}`}>
-              <div className="group bg-card border-border hover:border-accent/50 relative flex cursor-pointer flex-col items-start gap-4 overflow-hidden rounded-[4px] border p-6 shadow-sm transition-all duration-500 hover:shadow-md sm:flex-row sm:items-center">
+              <div 
+                className="group bg-card border-border hover:border-accent/50 relative flex cursor-pointer flex-col items-start gap-4 overflow-hidden rounded-[4px] border p-6 shadow-sm transition-all duration-500 hover:shadow-md sm:flex-row sm:items-center"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    // Navigate to the same URL as the Link component
+                    router.push(`/uploads/${upload.id}`);
+                  }
+                }}
+                role="link"
+                aria-label={`Upload öffnen: ${upload.file_name}`}
+              >
                 {/* Decorative Accent Line */}
                 <div className="bg-accent absolute top-0 bottom-0 left-0 w-1 -translate-x-full transform transition-transform duration-500 group-hover:translate-x-0" />
 
@@ -309,6 +336,7 @@ export function UploadList() {
                         }}
                         disabled={retryingId === upload.id}
                         className="text-primary hover:bg-primary/10"
+                        aria-label={`Upload ${upload.file_name} erneut versuchen`}
                       >
                         <RefreshCw
                           className={`h-4 w-4 ${retryingId === upload.id ? "animate-spin" : ""}`}
@@ -324,6 +352,7 @@ export function UploadList() {
                             size="icon"
                             className="group-hover:text-accent transition-colors"
                             onClick={(e) => e.stopPropagation()}
+                            aria-label={`Transkript für ${upload.file_name} anzeigen`}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -366,6 +395,7 @@ export function UploadList() {
                                   handleCopyToClipboard(upload.transcript || "");
                                 }}
                                 className="border-foreground hover:bg-foreground hover:text-background rounded-none transition-all"
+                                aria-label="Transkript in Zwischenablage kopieren"
                               >
                                 {isCopying ? (
                                   <Check className="mr-2 h-4 w-4" />
@@ -380,6 +410,7 @@ export function UploadList() {
                                   startChatFromTranscript(upload.transcript || "");
                                 }}
                                 className="bg-accent hover:bg-accent/90 rounded-none px-8 py-6 font-bold tracking-widest text-white transition-all"
+                                aria-label="KI-Chat mit diesem Transkript starten"
                               >
                                 <MessageSquare className="mr-2 h-4 w-4" />
                                 KI-CHAT STARTEN
@@ -399,6 +430,7 @@ export function UploadList() {
                         e.stopPropagation();
                         handleDelete(upload.id);
                       }}
+                      aria-label={`Upload ${upload.file_name} löschen`}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -429,6 +461,9 @@ export function UploadList() {
           </Button>
         </div>
       )}
+      
+      {/* Sentinel element for Intersection Observer */}
+      <div ref={sentinelRef} className="h-1" />
     </div>
   );
 }

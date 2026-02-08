@@ -1,10 +1,10 @@
 "use client";
 
-import { ChatInterface } from "@/components/chat/chat-interface";
 import { MainNavigation } from "@/components/layout/main-navigation";
 import { Footer } from "@/components/layout/footer";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { useMobileDevice } from "@/hooks/useMobileDevice";
+import { DynamicChatInterface } from "@/lib/dynamic-import";
 
 export default function ChatPage() {
   const isMobileDevice = useMobileDevice();
@@ -13,7 +13,7 @@ export default function ChatPage() {
   if (isMobileDevice) {
     return (
       <div className="bg-background flex h-[100dvh] flex-col overflow-hidden">
-        <ChatInterface />
+        <DynamicChatInterface />
       </div>
     );
   }
@@ -37,7 +37,7 @@ export default function ChatPage() {
           <Breadcrumbs items={[{ label: "Chat" }]} className="mb-2" />
 
           {/* Chat Interface */}
-          <ChatInterface />
+          <DynamicChatInterface />
         </div>
       </main>
       <Footer />

@@ -27,7 +27,6 @@ function UsersContent() {
     setUsersCurrentPage,
     setUsersSearchQuery,
   } = useAdmin();
-  const { showToast } = useToast();
 
   useEffect(() => {
     fetchUsers(usersCurrentPage);

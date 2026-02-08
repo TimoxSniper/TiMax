@@ -79,20 +79,20 @@ export function UploadsTable({
 
   if (isLoading) {
     return (
-      <Card className="hover:shadow-editorial-md hover:translate-y-0">
+      <Card className="border-muted/20 border-2 shadow-lg">
         <CardHeader>
-          <CardTitle>Uploads</CardTitle>
+          <CardTitle className="font-serif text-xl">Uploads</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {[...Array(5)].map((_, i) => (
               <div
                 key={i}
-                className="border-border flex items-center justify-between rounded-md border p-3"
+                className="border-muted/10 flex items-center justify-between rounded-lg border-2 p-4"
               >
-                <Skeleton className="h-4 w-48" />
-                <div className="flex gap-4">
-                  <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-5 w-60" />
+                <div className="flex gap-6">
+                  <Skeleton className="h-5 w-32" />
                   <Skeleton className="h-8 w-8" />
                 </div>
               </div>
@@ -105,18 +105,18 @@ export function UploadsTable({
 
   return (
     <>
-      <Card className="hover:shadow-editorial-md hover:translate-y-0">
+      <Card className="border-2 border-orange-500/10 shadow-lg">
         <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
-            <CardTitle className="text-base md:text-lg">Uploads</CardTitle>
+            <CardTitle className="font-serif text-xl">Uploads</CardTitle>
             {/* Status Filter */}
             {onStatusFilterChange && (
-              <div className="flex gap-1 overflow-x-auto pb-1 md:pb-0">
+              <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
                 <Button
                   variant={!statusFilter ? "default" : "outline"}
-                  size="xs"
+                  size="sm"
                   onClick={() => onStatusFilterChange("")}
-                  className="shrink-0"
+                  className="h-9 shrink-0 px-4"
                 >
                   Alle
                 </Button>
@@ -124,9 +124,9 @@ export function UploadsTable({
                   <Button
                     key={key}
                     variant={statusFilter === key ? "default" : "outline"}
-                    size="xs"
+                    size="sm"
                     onClick={() => onStatusFilterChange(key)}
-                    className="shrink-0"
+                    className="h-9 shrink-0 px-4"
                   >
                     {label}
                   </Button>
@@ -135,14 +135,14 @@ export function UploadsTable({
             )}
           </div>
           {pagination && (
-            <span className="text-muted-foreground text-xs md:text-sm">
+            <span className="text-muted-foreground text-sm font-medium">
               {pagination.total} gesamt
             </span>
           )}
         </CardHeader>
         <CardContent>
           {/* Table Header - Desktop only */}
-          <div className="text-muted-foreground border-border hidden grid-cols-[1fr_120px_80px_80px_100px_140px_60px] gap-4 border-b px-4 py-2 text-sm font-medium md:grid">
+          <div className="text-muted-foreground hidden grid-cols-[1fr_140px_100px_100px_120px_160px_80px] gap-6 border-b border-orange-500/10 px-6 py-3 text-sm font-semibold md:grid">
             <div>Dateiname</div>
             <div>User ID</div>
             <div className="text-right">Größe</div>
@@ -153,23 +153,26 @@ export function UploadsTable({
           </div>
 
           {/* Table Body */}
-          <div className="divide-border divide-y">
+          <div className="divide-y divide-orange-500/5 md:divide-y md:divide-y-0 md:divide-orange-500/5">
             {uploads.length === 0 ? (
-              <div className="text-muted-foreground py-8 text-center text-sm">
+              <div className="text-muted-foreground py-12 text-center text-sm">
                 Keine Uploads gefunden
               </div>
             ) : (
               uploads.map((upload) => {
                 const FileIcon = getFileIcon(upload.file_type);
                 return (
-                  <div key={upload.id} className="group hover:bg-muted/50 transition-colors">
+                  <div key={upload.id} className="group transition-colors hover:bg-orange-500/5">
                     {/* Mobile Card Layout */}
-                    <div className="space-y-2 p-3 md:hidden">
+                    <div className="space-y-3 p-4 md:hidden">
                       <div className="flex items-start justify-between gap-2">
-                        <div className="flex min-w-0 flex-1 items-start gap-2">
-                          <FileIcon className="text-muted-foreground mt-0.5 h-4 w-4 shrink-0" />
+                        <div className="flex min-w-0 flex-1 items-start gap-3">
+                          <FileIcon className="mt-0.5 h-5 w-5 shrink-0 text-orange-500" />
                           <div className="min-w-0 flex-1">
-                            <div className="truncate text-sm font-medium" title={upload.file_name}>
+                            <div
+                              className="truncate text-sm font-semibold"
+                              title={upload.file_name}
+                            >
                               {upload.file_name}
                             </div>
                             <div className="mt-1">
@@ -178,12 +181,12 @@ export function UploadsTable({
                           </div>
                         </div>
                         <Button
-                          variant="ghost"
-                          size="icon-xs"
+                          variant="outline"
+                          size="sm"
                           onClick={() => setDeleteUpload(upload)}
                           title="Löschen"
                           aria-label={`Upload ${upload.file_name} löschen`}
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8 shrink-0 p-0"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -195,7 +198,7 @@ export function UploadsTable({
                           </span>
                           <Badge
                             variant="outline"
-                            className={`${uploadStatusColors[upload.status] || uploadStatusColors.pending} text-xs`}
+                            className={`${uploadStatusColors[upload.status] || uploadStatusColors.pending} text-xs font-medium`}
                           >
                             {uploadStatusLabels[upload.status] || upload.status}
                           </Badge>
@@ -207,10 +210,10 @@ export function UploadsTable({
                     </div>
 
                     {/* Desktop Grid Layout */}
-                    <div className="hidden grid-cols-[1fr_120px_80px_80px_100px_140px_60px] items-center gap-4 px-4 py-3 md:grid">
-                      <div className="flex min-w-0 items-center gap-2">
-                        <FileIcon className="text-muted-foreground h-4 w-4 shrink-0" />
-                        <span className="truncate font-medium" title={upload.file_name}>
+                    <div className="hidden grid-cols-[1fr_140px_100px_100px_120px_160px_80px] items-center gap-6 px-6 py-4 md:grid">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <FileIcon className="h-5 w-5 shrink-0 text-orange-500" />
+                        <span className="truncate font-semibold" title={upload.file_name}>
                           {upload.file_name}
                         </span>
                       </div>
@@ -219,7 +222,7 @@ export function UploadsTable({
                         {formatFileSize(upload.file_size)}
                       </div>
                       <div
-                        className="text-muted-foreground truncate text-xs"
+                        className="text-muted-foreground truncate text-xs font-medium"
                         title={upload.file_type || "-"}
                       >
                         {upload.file_type?.split("/")[1] || "-"}
@@ -239,12 +242,12 @@ export function UploadsTable({
                       </div>
                       <div className="flex justify-center">
                         <Button
-                          variant="ghost"
-                          size="icon-xs"
+                          variant="outline"
+                          size="sm"
                           onClick={() => setDeleteUpload(upload)}
                           title="Löschen"
                           aria-label={`Upload ${upload.file_name} löschen`}
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10 h-9 px-3"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -258,8 +261,8 @@ export function UploadsTable({
 
           {/* Pagination */}
           {pagination && pagination.totalPages > 1 && (
-            <div className="border-border mt-4 flex flex-col gap-2 border-t pt-4 md:flex-row md:items-center md:justify-between">
-              <span className="text-muted-foreground text-center text-xs md:text-left md:text-sm">
+            <div className="mt-6 flex flex-col gap-3 border-t border-orange-500/10 pt-6 md:flex-row md:items-center md:justify-between">
+              <span className="text-muted-foreground text-center text-sm md:text-left">
                 Seite {pagination.page} von {pagination.totalPages}
               </span>
               <div className="flex justify-center gap-2 md:justify-end">
@@ -268,7 +271,7 @@ export function UploadsTable({
                   size="sm"
                   onClick={() => onPageChange?.(pagination.page - 1)}
                   disabled={pagination.page <= 1}
-                  className="flex-1 md:flex-none"
+                  className="h-10 flex-1 px-4 font-medium md:flex-none"
                   aria-label="Vorherige Seite"
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -279,7 +282,7 @@ export function UploadsTable({
                   size="sm"
                   onClick={() => onPageChange?.(pagination.page + 1)}
                   disabled={pagination.page >= pagination.totalPages}
-                  className="flex-1 md:flex-none"
+                  className="h-10 flex-1 px-4 font-medium md:flex-none"
                   aria-label="Nächste Seite"
                 >
                   <span className="md:inline">Weiter</span>
@@ -293,9 +296,9 @@ export function UploadsTable({
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!deleteUpload} onOpenChange={() => setDeleteUpload(null)}>
-        <DialogContent>
+        <DialogContent className="border-2 border-orange-500/20">
           <DialogHeader>
-            <DialogTitle>Upload löschen</DialogTitle>
+            <DialogTitle className="font-serif text-xl">Upload löschen</DialogTitle>
             <DialogDescription>
               Bist du sicher, dass du &quot;{deleteUpload?.file_name}&quot; löschen möchtest? Die
               Datei wird auch aus dem Storage entfernt. Diese Aktion kann nicht rückgängig gemacht

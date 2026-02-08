@@ -7,6 +7,7 @@ import { Upload, X, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { TIMEOUTS, UPLOAD_CONFIG } from "@/lib/constants";
 import { logger } from "@/lib/logger";
 import { ProcessingStatus } from "./processing-status";
+import { UploadProgressBar } from "./upload-progress-bar";
 
 const MAX_FILE_SIZE = UPLOAD_CONFIG.MAX_FILE_SIZE;
 const ALLOWED_TYPES: string[] = [...UPLOAD_CONFIG.ALLOWED_TYPES];
@@ -294,17 +295,11 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
               </div>
 
               {isUploading && (
-                <div className="space-y-2">
-                  <div className="bg-muted w-full overflow-hidden rounded-full">
-                    <div
-                      className="bg-primary h-2 transition-all duration-300 ease-out"
-                      style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
-                    />
-                  </div>
-                  <p className="text-muted-foreground text-center text-xs">
-                    {progress}% hochgeladen...
-                  </p>
-                </div>
+                <UploadProgressBar 
+                  progress={progress} 
+                  fileName={file.name}
+                  status={progress < 100 ? "uploading" : "processing"}
+                />
               )}
 
               <ProcessingStatus

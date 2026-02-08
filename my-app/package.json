@@ -22,7 +22,7 @@
     "test:coverage": "vitest run --coverage",
     "test:ci": "vitest run --coverage --reporter=verbose",
     "test:single": "vitest run",
-    "analyze": "cross-env ANALYZE=true next build",
+    "analyze": "cross-env ANALYZE=true next build --webpack",
     "prepare": "husky || true",
     "precommit": "lint-staged",
     "validate": "npm run typecheck && npm run lint && npm run test:ci"

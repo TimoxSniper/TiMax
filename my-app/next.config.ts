@@ -1,6 +1,11 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
+// Bundle analyzer configuration
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
+
 const nextConfig: NextConfig = {
   // Workspace-Root für Vercel/CI (vermeidet Warnung bei mehreren Lockfiles)
   outputFileTracingRoot: process.cwd(),
@@ -139,4 +144,7 @@ const sentryOptions =
       }
     : undefined;
 
-export default sentryOptions ? withSentryConfig(nextConfig, sentryOptions) : nextConfig;
+// Apply bundle analyzer if ANALYZE=true environment variable is set
+const configWithAnalyzer = withBundleAnalyzer(nextConfig);
+
+export default sentryOptions ? withSentryConfig(configWithAnalyzer, sentryOptions) : configWithAnalyzer;

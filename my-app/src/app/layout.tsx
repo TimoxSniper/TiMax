@@ -167,7 +167,17 @@ export default function RootLayout({
           <JsonLd data={getHomePageSchema()} />
           <ErrorBoundary>
             <ToastProvider>
-              {children}
+              {/* Skip Navigation Link for Screen Readers */}
+              <a 
+                href="#main-content" 
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                Zum Hauptinhalt springen
+              </a>
+              
+              <main id="main-content" tabIndex={-1} className="focus:outline-none">
+                {children}
+              </main>
               <CookieConsent />
               <ScrollToTop />
             </ToastProvider>

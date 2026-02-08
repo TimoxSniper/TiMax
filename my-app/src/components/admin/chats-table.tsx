@@ -61,20 +61,20 @@ export function ChatsTable({
 
   if (isLoading) {
     return (
-      <Card className="hover:shadow-editorial-md hover:translate-y-0">
+      <Card className="border-muted/20 border-2 shadow-lg">
         <CardHeader>
-          <CardTitle>Chats</CardTitle>
+          <CardTitle className="font-serif text-xl">Chats</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {[...Array(5)].map((_, i) => (
               <div
                 key={i}
-                className="border-border flex items-center justify-between rounded-md border p-3"
+                className="border-muted/10 flex items-center justify-between rounded-lg border-2 p-4"
               >
-                <Skeleton className="h-4 w-48" />
-                <div className="flex gap-4">
-                  <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-5 w-60" />
+                <div className="flex gap-6">
+                  <Skeleton className="h-5 w-32" />
                   <Skeleton className="h-8 w-8" />
                 </div>
               </div>
@@ -87,18 +87,18 @@ export function ChatsTable({
 
   return (
     <>
-      <Card className="hover:shadow-editorial-md hover:translate-y-0">
+      <Card className="border-2 border-purple-500/10 shadow-lg">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base md:text-lg">Chats</CardTitle>
+          <CardTitle className="font-serif text-xl">Chats</CardTitle>
           {pagination && (
-            <span className="text-muted-foreground text-xs md:text-sm">
+            <span className="text-muted-foreground text-sm font-medium">
               {pagination.total} gesamt
             </span>
           )}
         </CardHeader>
         <CardContent>
           {/* Table Header - Desktop only */}
-          <div className="text-muted-foreground border-border hidden grid-cols-[1fr_120px_80px_140px_80px] gap-4 border-b px-4 py-2 text-sm font-medium md:grid">
+          <div className="text-muted-foreground hidden grid-cols-[1fr_140px_100px_160px_100px] gap-6 border-b border-purple-500/10 px-6 py-3 text-sm font-semibold md:grid">
             <div>Titel</div>
             <div>User ID</div>
             <div className="text-center">Nachrichten</div>
@@ -107,52 +107,53 @@ export function ChatsTable({
           </div>
 
           {/* Table Body */}
-          <div className="divide-border divide-y">
+          <div className="divide-y divide-purple-500/5 md:divide-y md:divide-y-0 md:divide-purple-500/5">
             {chats.length === 0 ? (
-              <div className="text-muted-foreground py-8 text-center text-sm">
+              <div className="text-muted-foreground py-12 text-center text-sm">
                 Keine Chats gefunden
               </div>
             ) : (
               chats.map((chat) => (
-                <div key={chat.id} className="group hover:bg-muted/50 transition-colors">
+                <div key={chat.id} className="group transition-colors hover:bg-purple-500/5">
                   {/* Mobile Card Layout */}
-                  <div className="space-y-2 p-3 md:hidden">
+                  <div className="space-y-3 p-4 md:hidden">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
-                        <div className="truncate text-sm font-medium" title={chat.title}>
+                        <div className="truncate text-sm font-semibold" title={chat.title}>
                           {chat.title}
                         </div>
                         <div className="mt-1">
                           <UserIdDisplay userId={chat.user_id} />
                         </div>
                       </div>
-                      <div className="flex shrink-0 gap-1">
+                      <div className="flex shrink-0 gap-2">
                         <Button
-                          variant="ghost"
-                          size="icon-xs"
+                          variant="outline"
+                          size="sm"
                           asChild
                           title="Ansehen"
                           aria-label={`Chat ${chat.title} ansehen`}
+                          className="h-8 w-8 p-0"
                         >
                           <Link href={`/admin/chats/${chat.id}`}>
                             <Eye className="h-4 w-4" />
                           </Link>
                         </Button>
                         <Button
-                          variant="ghost"
-                          size="icon-xs"
+                          variant="outline"
+                          size="sm"
                           onClick={() => setDeleteChat(chat)}
                           title="Löschen"
                           aria-label={`Chat ${chat.title} löschen`}
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8 p-0"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
                     <div className="text-muted-foreground flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-1.5">
-                        <MessageSquare className="h-3.5 w-3.5" />
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4 text-purple-500" />
                         <span>{chat.messageCount} Nachrichten</span>
                       </div>
                       <span>{formatDate(chat.created_at)}</span>
@@ -160,37 +161,38 @@ export function ChatsTable({
                   </div>
 
                   {/* Desktop Grid Layout */}
-                  <div className="hidden grid-cols-[1fr_120px_80px_140px_80px] items-center gap-4 px-4 py-3 md:grid">
-                    <div className="truncate font-medium" title={chat.title}>
+                  <div className="hidden grid-cols-[1fr_140px_100px_160px_100px] items-center gap-6 px-6 py-4 md:grid">
+                    <div className="truncate font-semibold" title={chat.title}>
                       {chat.title}
                     </div>
                     <UserIdDisplay userId={chat.user_id} />
-                    <div className="flex items-center justify-center gap-1.5">
-                      <MessageSquare className="text-muted-foreground h-4 w-4" />
-                      <span>{chat.messageCount}</span>
+                    <div className="flex items-center justify-center gap-2">
+                      <MessageSquare className="h-5 w-5 text-purple-500" />
+                      <span className="font-semibold text-purple-600">{chat.messageCount}</span>
                     </div>
                     <div className="text-muted-foreground text-sm">
                       {formatDate(chat.created_at)}
                     </div>
-                    <div className="flex items-center justify-center gap-1">
+                    <div className="flex items-center justify-center gap-2">
                       <Button
-                        variant="ghost"
-                        size="icon-xs"
+                        variant="outline"
+                        size="sm"
                         asChild
                         title="Ansehen"
                         aria-label={`Chat ${chat.title} ansehen`}
+                        className="h-9 px-3"
                       >
                         <Link href={`/admin/chats/${chat.id}`}>
                           <Eye className="h-4 w-4" />
                         </Link>
                       </Button>
                       <Button
-                        variant="ghost"
-                        size="icon-xs"
+                        variant="outline"
+                        size="sm"
                         onClick={() => setDeleteChat(chat)}
                         title="Löschen"
                         aria-label={`Chat ${chat.title} löschen`}
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10 h-9 px-3"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -203,8 +205,8 @@ export function ChatsTable({
 
           {/* Pagination */}
           {pagination && pagination.totalPages > 1 && (
-            <div className="border-border mt-4 flex flex-col gap-2 border-t pt-4 md:flex-row md:items-center md:justify-between">
-              <span className="text-muted-foreground text-center text-xs md:text-left md:text-sm">
+            <div className="mt-6 flex flex-col gap-3 border-t border-purple-500/10 pt-6 md:flex-row md:items-center md:justify-between">
+              <span className="text-muted-foreground text-center text-sm md:text-left">
                 Seite {pagination.page} von {pagination.totalPages}
               </span>
               <div className="flex justify-center gap-2 md:justify-end">
@@ -213,7 +215,7 @@ export function ChatsTable({
                   size="sm"
                   onClick={() => onPageChange?.(pagination.page - 1)}
                   disabled={pagination.page <= 1}
-                  className="flex-1 md:flex-none"
+                  className="h-10 flex-1 px-4 font-medium md:flex-none"
                   aria-label="Vorherige Seite"
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -224,7 +226,7 @@ export function ChatsTable({
                   size="sm"
                   onClick={() => onPageChange?.(pagination.page + 1)}
                   disabled={pagination.page >= pagination.totalPages}
-                  className="flex-1 md:flex-none"
+                  className="h-10 flex-1 px-4 font-medium md:flex-none"
                   aria-label="Nächste Seite"
                 >
                   <span className="md:inline">Weiter</span>
@@ -238,9 +240,9 @@ export function ChatsTable({
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!deleteChat} onOpenChange={() => setDeleteChat(null)}>
-        <DialogContent>
+        <DialogContent className="border-2 border-purple-500/20">
           <DialogHeader>
-            <DialogTitle>Chat löschen</DialogTitle>
+            <DialogTitle className="font-serif text-xl">Chat löschen</DialogTitle>
             <DialogDescription>
               Bist du sicher, dass du den Chat &quot;{deleteChat?.title}&quot; löschen möchtest?
               Alle Nachrichten werden ebenfalls gelöscht. Diese Aktion kann nicht rückgängig gemacht

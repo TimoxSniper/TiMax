@@ -34,7 +34,6 @@ function ChatsContent() {
     setChatsSearchQuery,
     deleteChat,
   } = useAdmin();
-  const { showToast } = useToast();
 
   useEffect(() => {
     setChatsCurrentPage(1);

@@ -34,7 +34,6 @@ function UploadsContent() {
     setUploadsSearchQuery,
     deleteUpload,
   } = useAdmin();
-  const { showToast } = useToast();
 
   useEffect(() => {
     setUploadsCurrentPage(1);

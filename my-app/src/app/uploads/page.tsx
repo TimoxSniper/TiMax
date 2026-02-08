@@ -1,8 +1,8 @@
 "use client";
 
 import { MainNavigation } from "@/components/layout/main-navigation";
-import { UploadList } from "@/components/upload/upload-list";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { DynamicUploadList } from "@/lib/dynamic-import";
 
 export default function UploadsPage() {
   return (
@@ -31,7 +31,7 @@ export default function UploadsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <UploadList />
+              <DynamicUploadList />
             </CardContent>
           </Card>
         </div>
