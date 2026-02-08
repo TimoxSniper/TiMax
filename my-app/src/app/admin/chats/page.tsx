@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChatsTable } from "@/components/admin/chats-table";
 import { useToast } from "@/components/ui/toast";
-import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X, Calendar, Search, RefreshCw, Download } from "lucide-react";
@@ -15,118 +14,38 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { exportToCSV, exportToJSON } from "@/lib/admin/export";
+import { AdminProvider, useAdmin } from "@/contexts/admin-context";
 
-interface Chat {
-  id: string;
-  user_id: string;
-  title: string;
-  created_at: string;
-  updated_at: string;
-  messageCount: number;
-}
-
-interface Pagination {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-}
-
-export default function AdminChatsPage() {
+function ChatsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const userIdFilter = searchParams.get("userId");
   const timeFilter = searchParams.get("timeFilter");
 
-  const [chats, setChats] = useState<Chat[]>([]);
-  const [filteredChats, setFilteredChats] = useState<Chat[]>([]);
-  const [pagination, setPagination] = useState<Pagination | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
+  const {
+    filteredChats,
+    chatsPagination,
+    isChatsLoading,
+    isChatsInitialLoad,
+    chatsCurrentPage,
+    chatsSearchQuery,
+    fetchChats,
+    setChatsCurrentPage,
+    setChatsSearchQuery,
+    deleteChat,
+  } = useAdmin();
   const { showToast } = useToast();
 
-  const fetchChats = useCallback(
-    async (page: number) => {
-      setIsLoading(true);
-      try {
-        let url = `/api/admin/chats?page=${page}&limit=20`;
-        if (userIdFilter) {
-          url += `&userId=${encodeURIComponent(userIdFilter)}`;
-        }
-        if (timeFilter) {
-          url += `&timeFilter=${encodeURIComponent(timeFilter)}`;
-        }
-
-        const res = await fetch(url);
-        if (res.ok) {
-          const data = await res.json();
-          setChats(data.chats || []);
-          setFilteredChats(data.chats || []);
-          setPagination(data.pagination);
-        } else {
-          throw new Error("Fehler beim Laden");
-        }
-      } catch (error) {
-        logger.error("Fehler beim Laden der Chats:", error);
-        showToast("Chats konnten nicht geladen werden", "error");
-      } finally {
-        setIsLoading(false);
-        setIsInitialLoad(false);
-      }
-    },
-    [userIdFilter, timeFilter, showToast]
-  );
+  useEffect(() => {
+    setChatsCurrentPage(1);
+    fetchChats(1, userIdFilter || undefined, timeFilter || undefined);
+  }, [userIdFilter, timeFilter]);
 
   useEffect(() => {
-    setCurrentPage(1);
-    setIsInitialLoad(true);
-    fetchChats(1);
-  }, [fetchChats]);
-
-  // Search filter
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      setFilteredChats(chats);
-      return;
+    if (chatsCurrentPage > 1) {
+      fetchChats(chatsCurrentPage, userIdFilter || undefined, timeFilter || undefined);
     }
-
-    const query = searchQuery.toLowerCase();
-    const filtered = chats.filter((chat) => {
-      const title = chat.title.toLowerCase();
-      const userId = chat.user_id.toLowerCase();
-
-      return title.includes(query) || userId.includes(query);
-    });
-
-    setFilteredChats(filtered);
-  }, [searchQuery, chats]);
-
-  useEffect(() => {
-    if (currentPage > 1) {
-      fetchChats(currentPage);
-    }
-  }, [currentPage, fetchChats]);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const handleDelete = async (chatId: string) => {
-    const csrfResponse = await fetch("/api/csrf");
-    const { csrfToken } = await csrfResponse.json();
-    const res = await fetch(`/api/admin/chats/${chatId}`, {
-      method: "DELETE",
-      headers: { "x-csrf-token": csrfToken },
-    });
-    if (res.ok) {
-      showToast("Chat wurde gelöscht", "success");
-      fetchChats(currentPage);
-    } else {
-      showToast("Chat konnte nicht gelöscht werden", "error");
-    }
-  };
+  }, [chatsCurrentPage]);
 
   const clearUserFilter = () => {
     const params = new URLSearchParams(searchParams.toString());
@@ -211,20 +130,22 @@ export default function AdminChatsPage() {
             <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <Input
               placeholder="Chats suchen (Titel, User ID)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={chatsSearchQuery}
+              onChange={(e) => setChatsSearchQuery(e.target.value)}
               className="pl-9"
               aria-label="Chats suchen"
             />
           </div>
           <Button
             variant="outline"
-            onClick={() => fetchChats(currentPage)}
-            disabled={isLoading}
+            onClick={() =>
+              fetchChats(chatsCurrentPage, userIdFilter || undefined, timeFilter || undefined)
+            }
+            disabled={isChatsLoading}
             className="gap-2"
             aria-label="Daten aktualisieren"
           >
-            <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-4 w-4 ${isChatsLoading ? "animate-spin" : ""}`} />
             <span className="hidden sm:inline">Aktualisieren</span>
           </Button>
           <DropdownMenu>
@@ -264,11 +185,21 @@ export default function AdminChatsPage() {
       {/* Chats Table */}
       <ChatsTable
         chats={filteredChats}
-        isLoading={isInitialLoad}
-        pagination={pagination || undefined}
-        onPageChange={handlePageChange}
-        onDelete={handleDelete}
+        isLoading={isChatsInitialLoad}
+        pagination={chatsPagination || undefined}
+        onPageChange={setChatsCurrentPage}
+        onDelete={deleteChat}
       />
     </div>
+  );
+}
+
+export default function AdminChatsPage() {
+  const { showToast } = useToast();
+
+  return (
+    <AdminProvider onToast={showToast}>
+      <ChatsContent />
+    </AdminProvider>
   );
 }

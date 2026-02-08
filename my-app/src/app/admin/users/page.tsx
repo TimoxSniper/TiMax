@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect } from "react";
 import { UsersTable } from "@/components/admin/users-table";
 import { useToast } from "@/components/ui/toast";
-import { logger } from "@/lib/logger";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, RefreshCw, Download } from "lucide-react";
@@ -14,85 +13,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { exportToCSV, exportToJSON } from "@/lib/admin/export";
+import { AdminProvider, useAdmin } from "@/contexts/admin-context";
 
-interface User {
-  userId: string;
-  chatCount: number;
-  uploadCount: number;
-  lastActivity: string | null;
-  firstName?: string | null;
-  lastName?: string | null;
-  email?: string | null;
-  imageUrl?: string | null;
-}
-
-interface Pagination {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-}
-
-export default function AdminUsersPage() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-  const [pagination, setPagination] = useState<Pagination | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
+function UsersContent() {
+  const {
+    filteredUsers,
+    usersPagination,
+    isUsersLoading,
+    isUsersInitialLoad,
+    usersCurrentPage,
+    usersSearchQuery,
+    fetchUsers,
+    setUsersCurrentPage,
+    setUsersSearchQuery,
+  } = useAdmin();
   const { showToast } = useToast();
 
-  const fetchUsers = useCallback(
-    async (page: number) => {
-      setIsLoading(true);
-      try {
-        const res = await fetch(`/api/admin/users?page=${page}&limit=25`);
-        if (res.ok) {
-          const data = await res.json();
-          setUsers(data.users || []);
-          setFilteredUsers(data.users || []);
-          setPagination(data.pagination);
-        } else {
-          throw new Error("Fehler beim Laden");
-        }
-      } catch (error) {
-        logger.error("Fehler beim Laden der Benutzer:", error);
-        showToast("Benutzer konnten nicht geladen werden", "error");
-      } finally {
-        setIsLoading(false);
-        setIsInitialLoad(false);
-      }
-    },
-    [showToast]
-  );
-
   useEffect(() => {
-    fetchUsers(currentPage);
-  }, [currentPage, fetchUsers]);
-
-  // Search filter
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      setFilteredUsers(users);
-      return;
-    }
-
-    const query = searchQuery.toLowerCase();
-    const filtered = users.filter((user) => {
-      const fullName = `${user.firstName || ""} ${user.lastName || ""}`.toLowerCase();
-      const email = (user.email || "").toLowerCase();
-      const userId = user.userId.toLowerCase();
-
-      return fullName.includes(query) || email.includes(query) || userId.includes(query);
-    });
-
-    setFilteredUsers(filtered);
-  }, [searchQuery, users]);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
+    fetchUsers(usersCurrentPage);
+  }, [usersCurrentPage, fetchUsers]);
 
   const handleExportCSV = () => {
     exportToCSV(filteredUsers, `users-${new Date().toISOString().split("T")[0]}`, [
@@ -126,20 +65,20 @@ export default function AdminUsersPage() {
           <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
             placeholder="Benutzer suchen (Name, Email, ID)..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={usersSearchQuery}
+            onChange={(e) => setUsersSearchQuery(e.target.value)}
             className="pl-9"
             aria-label="Benutzer suchen"
           />
         </div>
         <Button
           variant="outline"
-          onClick={() => fetchUsers(currentPage)}
-          disabled={isLoading}
+          onClick={() => fetchUsers(usersCurrentPage)}
+          disabled={isUsersLoading}
           className="gap-2"
           aria-label="Daten aktualisieren"
         >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+          <RefreshCw className={`h-4 w-4 ${isUsersLoading ? "animate-spin" : ""}`} />
           <span className="hidden sm:inline">Aktualisieren</span>
         </Button>
         <DropdownMenu>
@@ -159,10 +98,20 @@ export default function AdminUsersPage() {
       {/* Users Table */}
       <UsersTable
         users={filteredUsers}
-        isLoading={isInitialLoad}
-        pagination={pagination || undefined}
-        onPageChange={handlePageChange}
+        isLoading={isUsersInitialLoad}
+        pagination={usersPagination || undefined}
+        onPageChange={setUsersCurrentPage}
       />
     </div>
+  );
+}
+
+export default function AdminUsersPage() {
+  const { showToast } = useToast();
+
+  return (
+    <AdminProvider onToast={showToast}>
+      <UsersContent />
+    </AdminProvider>
   );
 }

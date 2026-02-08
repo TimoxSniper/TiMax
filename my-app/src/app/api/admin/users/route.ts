@@ -6,6 +6,9 @@ import { isAdmin } from "@/lib/auth/admin";
 import { logger } from "@/lib/logger";
 import { parsePaginationParams, buildPaginationResponse } from "@/lib/pagination";
 
+// Cache-Control Header for fast loading
+const CACHE_CONTROL = "public, s-maxage=30, stale-while-revalidate=60";
+
 interface UserStats {
   userId: string;
   chatCount: number;
@@ -42,18 +45,16 @@ export async function GET(request: NextRequest) {
 
     const clerk = await clerkClient();
 
-    // Alle Clerk-Benutzer laden
-    const clerkUsersResponse = await clerk.users.getUserList({
-      limit: 500, // Clerk's default limit
-    });
-
-    const allClerkUsers = clerkUsersResponse.data;
-
-    // Alle User-IDs aus Chats und Uploads sammeln
-    const [chatsResult, uploadsResult] = await Promise.all([
+    // Parallelize data fetching for speed
+    const [clerkUsersResponse, chatsResult, uploadsResult] = await Promise.all([
+      clerk.users.getUserList({
+        limit: 500, // Clerk's default limit
+      }),
       supabase.from("chats").select("user_id, updated_at"),
       supabase.from("uploads").select("user_id, updated_at"),
     ]);
+
+    const allClerkUsers = clerkUsersResponse.data;
 
     // Map für User-Statistiken erstellen
     const userStatsMap = new Map<
@@ -131,11 +132,18 @@ export async function GET(request: NextRequest) {
     const total = allUsers.length;
     const usersWithClerkData = allUsers.slice(offset, offset + limit);
 
-    return NextResponse.json({
-      success: true,
-      users: usersWithClerkData,
-      pagination: buildPaginationResponse(page, limit, total),
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        users: usersWithClerkData,
+        pagination: buildPaginationResponse(page, limit, total),
+      },
+      {
+        headers: {
+          "Cache-Control": CACHE_CONTROL,
+        },
+      }
+    );
   } catch (error) {
     logger.error("[Admin Users API] Fehler:", error);
     Sentry.captureException(error, {

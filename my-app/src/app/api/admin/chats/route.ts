@@ -6,6 +6,9 @@ import { isAdmin } from "@/lib/auth/admin";
 import { logger } from "@/lib/logger";
 import { parsePaginationParams, buildPaginationResponse } from "@/lib/pagination";
 
+// Cache-Control Header for fast loading
+const CACHE_CONTROL = "public, s-maxage=15, stale-while-revalidate=60";
+
 // GET: Alle Chats laden (für Admin)
 export async function GET(request: NextRequest) {
   try {
@@ -51,69 +54,65 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Gesamtanzahl für Pagination
-    let countQuery = supabase.from("chats").select("*", { count: "exact", head: true });
+    // Parallelize count and data fetching
+    const [countResult, queryResult] = await Promise.all([
+      (async () => {
+        let countQuery = supabase.from("chats").select("*", { count: "exact", head: true });
+        if (filterUserId) countQuery = countQuery.eq("user_id", filterUserId);
+        if (startDate) countQuery = countQuery.gte("created_at", startDate.toISOString());
+        return countQuery;
+      })(),
+      (async () => {
+        let query = supabase
+          .from("chats")
+          .select(
+            `
+            id,
+            user_id,
+            title,
+            created_at,
+            updated_at,
+            messages:messages(count)
+          `
+          )
+          .order("updated_at", { ascending: false })
+          .range(offset, offset + limit - 1);
+        if (filterUserId) query = query.eq("user_id", filterUserId);
+        if (startDate) query = query.gte("created_at", startDate.toISOString());
+        return query;
+      })(),
+    ]);
 
-    if (filterUserId) {
-      countQuery = countQuery.eq("user_id", filterUserId);
-    }
-
-    if (startDate) {
-      countQuery = countQuery.gte("created_at", startDate.toISOString());
-    }
-
-    const { count: total } = await countQuery;
-
-    // Chats laden
-    let query = supabase
-      .from("chats")
-      .select("*")
-      .order("updated_at", { ascending: false })
-      .range(offset, offset + limit - 1);
-
-    if (filterUserId) {
-      query = query.eq("user_id", filterUserId);
-    }
-
-    if (startDate) {
-      query = query.gte("created_at", startDate.toISOString());
-    }
-
-    const { data: chats, error } = await query;
+    const { count: total } = countResult;
+    const { data: chats, error } = queryResult;
 
     if (error) {
       logger.error("[Admin Chats API] Fehler beim Laden:", error);
       throw error;
     }
 
-    // Message-Counts für alle Chats auf einmal laden (verhindert N+1 Problem)
-    const chatIds = (chats || []).map((chat) => chat.id);
+    // Transform data with message count
+    const chatsWithMessageCount = (chats || []).map((chat) => ({
+      id: chat.id,
+      user_id: chat.user_id,
+      title: chat.title,
+      created_at: chat.created_at,
+      updated_at: chat.updated_at,
+      messageCount: chat.messages[0]?.count || 0,
+    }));
 
-    let chatsWithMessageCount = chats || [];
-
-    if (chatIds.length > 0) {
-      const { data: messageCounts } = await supabase
-        .from("messages")
-        .select("chat_id")
-        .in("chat_id", chatIds);
-
-      // Message-Counts gruppieren
-      const messageCountMap = new Map<string, number>();
-      messageCounts?.forEach((msg) => {
-        messageCountMap.set(msg.chat_id, (messageCountMap.get(msg.chat_id) || 0) + 1);
-      });
-
-      chatsWithMessageCount = chats.map((chat) => ({
-        ...chat,
-        messageCount: messageCountMap.get(chat.id) || 0,
-      }));
-    }
-
-    return NextResponse.json({
-      success: true,
-      chats: chatsWithMessageCount,
-      pagination: buildPaginationResponse(page, limit, total || 0),
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        chats: chatsWithMessageCount,
+        pagination: buildPaginationResponse(page, limit, total || 0),
+      },
+      {
+        headers: {
+          "Cache-Control": CACHE_CONTROL,
+        },
+      }
+    );
   } catch (error) {
     logger.error("[Admin Chats API] Fehler:", error);
     Sentry.captureException(error, {

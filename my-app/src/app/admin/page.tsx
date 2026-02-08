@@ -6,115 +6,80 @@ import { ChatsTable } from "@/components/admin/chats-table";
 import { UploadsTable } from "@/components/admin/uploads-table";
 import { useToast } from "@/components/ui/toast";
 import { logger } from "@/lib/logger";
+import { AdminProvider, useAdmin } from "@/contexts/admin-context";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
 
-interface Stats {
-  totalUsers: number;
-  totalChats: number;
-  totalMessages: number;
-  totalUploads: number;
-  uploadsByStatus: Record<string, number>;
-  uploadsByType: Record<string, number>;
-}
-
-interface Chat {
-  id: string;
-  user_id: string;
-  title: string;
-  created_at: string;
-  updated_at: string;
-  messageCount: number;
-}
-
-interface Upload {
-  id: string;
-  user_id: string;
-  file_name: string;
-  file_size: number | null;
-  file_type: string | null;
-  status: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export default function AdminDashboardPage() {
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [recentChats, setRecentChats] = useState<Chat[]>([]);
-  const [recentUploads, setRecentUploads] = useState<Upload[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+function DashboardContent() {
+  const {
+    stats,
+    isStatsLoading,
+    fetchStats,
+    filteredChats,
+    isChatsLoading,
+    fetchChats,
+    deleteChat,
+    filteredUploads,
+    isUploadsLoading,
+    fetchUploads,
+    deleteUpload,
+  } = useAdmin();
   const { showToast } = useToast();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const fetchData = useCallback(async () => {
-    setIsLoading(true);
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
     try {
-      const dashboardRes = await fetch("/api/admin/dashboard");
-
-      if (dashboardRes.ok) {
-        const dashboardData = await dashboardRes.json();
-        setStats(dashboardData.stats);
-        setRecentChats(dashboardData.recentChats || []);
-        setRecentUploads(dashboardData.recentUploads || []);
-      }
+      await Promise.all([fetchStats(), fetchChats(1), fetchUploads(1)]);
+      showToast("Dashboard aktualisiert", "success");
     } catch (error) {
-      logger.error("Fehler beim Laden der Dashboard-Daten:", error);
-      showToast("Dashboard-Daten konnten nicht geladen werden", "error");
+      logger.error("Fehler beim Aktualisieren:", error);
+      showToast("Fehler beim Aktualisieren", "error");
     } finally {
-      setIsLoading(false);
+      setIsRefreshing(false);
     }
-  }, [showToast]);
+  }, [fetchStats, fetchChats, fetchUploads, showToast]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const handleDeleteChat = async (chatId: string) => {
-    const csrfResponse = await fetch("/api/csrf");
-    const { csrfToken } = await csrfResponse.json();
-    const res = await fetch(`/api/admin/chats/${chatId}`, {
-      method: "DELETE",
-      headers: { "x-csrf-token": csrfToken },
-    });
-    if (res.ok) {
-      showToast("Chat wurde gelöscht", "success");
-      fetchData();
-    } else {
-      showToast("Chat konnte nicht gelöscht werden", "error");
-    }
-  };
-
-  const handleDeleteUpload = async (uploadId: string) => {
-    const csrfResponse = await fetch("/api/csrf");
-    const { csrfToken } = await csrfResponse.json();
-    const res = await fetch(`/api/admin/uploads/${uploadId}`, {
-      method: "DELETE",
-      headers: { "x-csrf-token": csrfToken },
-    });
-    if (res.ok) {
-      showToast("Upload wurde gelöscht", "success");
-      fetchData();
-    } else {
-      showToast("Upload konnte nicht gelöscht werden", "error");
-    }
-  };
+    fetchStats();
+    fetchChats(1);
+    fetchUploads(1);
+  }, [fetchStats, fetchChats, fetchUploads]);
 
   return (
     <div className="space-y-6 md:space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="font-serif text-2xl font-bold md:text-3xl">Dashboard</h1>
-        <p className="text-muted-foreground mt-1 text-sm md:text-base">
-          Übersicht über alle Aktivitäten auf TiMax
-        </p>
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="font-serif text-2xl font-bold md:text-3xl">Dashboard</h1>
+          <p className="text-muted-foreground mt-1 text-sm md:text-base">
+            Übersicht über alle Aktivitäten auf TiMax
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          onClick={handleRefresh}
+          disabled={isRefreshing || isStatsLoading || isChatsLoading || isUploadsLoading}
+          className="gap-2"
+        >
+          <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
+          <span className="hidden sm:inline">Aktualisieren</span>
+        </Button>
       </div>
 
       {/* Stats Cards */}
-      <StatsCards stats={stats} isLoading={isLoading} />
+      <StatsCards stats={stats} isLoading={isStatsLoading} />
 
       {/* Recent Activity */}
       <div className="grid gap-6 md:gap-8 lg:grid-cols-2">
         {/* Recent Chats */}
         <div>
           <h2 className="mb-3 font-serif text-lg font-semibold md:mb-4 md:text-xl">Letzte Chats</h2>
-          <ChatsTable chats={recentChats} isLoading={isLoading} onDelete={handleDeleteChat} />
+          <ChatsTable
+            chats={filteredChats.slice(0, 5)}
+            isLoading={isChatsLoading}
+            onDelete={deleteChat}
+          />
         </div>
 
         {/* Recent Uploads */}
@@ -123,12 +88,22 @@ export default function AdminDashboardPage() {
             Letzte Uploads
           </h2>
           <UploadsTable
-            uploads={recentUploads}
-            isLoading={isLoading}
-            onDelete={handleDeleteUpload}
+            uploads={filteredUploads.slice(0, 5)}
+            isLoading={isUploadsLoading}
+            onDelete={deleteUpload}
           />
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminDashboardPage() {
+  const { showToast } = useToast();
+
+  return (
+    <AdminProvider onToast={showToast}>
+      <DashboardContent />
+    </AdminProvider>
   );
 }

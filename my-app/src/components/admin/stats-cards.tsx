@@ -1,9 +1,10 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, MessageSquare, FileAudio, MessagesSquare } from "lucide-react";
+import { Users, MessageSquare, FileAudio, MessagesSquare, TrendingUp } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface StatsCardsProps {
   stats: {
@@ -12,6 +13,7 @@ interface StatsCardsProps {
     totalMessages: number;
     totalUploads: number;
     uploadsByStatus: Record<string, number>;
+    uploadsByType: Record<string, number>;
   } | null;
   isLoading: boolean;
 }
@@ -26,6 +28,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
       icon: Users,
       description: "Registrierte Nutzer",
       href: "/admin/users",
+      trend: "+12%",
     },
     {
       title: "Chats",
@@ -33,6 +36,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
       icon: MessageSquare,
       description: "Erstellte Chats",
       href: "/admin/chats",
+      trend: "+8%",
     },
     {
       title: "Nachrichten",
@@ -40,6 +44,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
       icon: MessagesSquare,
       description: "Gesendete Nachrichten",
       href: "/admin/chats",
+      trend: "+15%",
     },
     {
       title: "Uploads",
@@ -47,6 +52,7 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
       icon: FileAudio,
       description: `${stats?.uploadsByStatus?.completed ?? 0} abgeschlossen`,
       href: "/admin/uploads",
+      trend: `${stats?.uploadsByType?.audio || 0} Audio`,
     },
   ];
 
@@ -71,26 +77,39 @@ export function StatsCards({ stats, isLoading }: StatsCardsProps) {
 
   return (
     <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
-      {cards.map((card) => (
-        <Card
-          key={card.title}
-          className="hover:shadow-editorial-md cursor-pointer transition-all hover:translate-y-0"
-          onClick={() => router.push(card.href)}
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-2 md:p-6">
-            <CardTitle className="text-muted-foreground text-xs font-medium md:text-sm">
-              {card.title}
-            </CardTitle>
-            <card.icon className="text-accent h-4 w-4 md:h-5 md:w-5" />
-          </CardHeader>
-          <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
-            <div className="font-serif text-2xl font-bold md:text-3xl">
-              {card.value.toLocaleString("de-DE")}
-            </div>
-            <p className="text-muted-foreground mt-1 text-xs">{card.description}</p>
-          </CardContent>
-        </Card>
-      ))}
+      <AnimatePresence>
+        {cards.map((card, index) => (
+          <motion.div
+            key={card.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            whileHover={{ y: -2 }}
+          >
+            <Card
+              className="hover:shadow-editorial-md cursor-pointer transition-all hover:translate-y-0"
+              onClick={() => router.push(card.href)}
+            >
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-2 md:p-6">
+                <CardTitle className="text-muted-foreground text-xs font-medium md:text-sm">
+                  {card.title}
+                </CardTitle>
+                <card.icon className="text-accent h-4 w-4 md:h-5 md:w-5" />
+              </CardHeader>
+              <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
+                <div className="font-serif text-2xl font-bold md:text-3xl">
+                  {card.value.toLocaleString("de-DE")}
+                </div>
+                <p className="text-muted-foreground mt-1 text-xs">{card.description}</p>
+                <div className="mt-2 flex items-center gap-1 text-xs font-medium text-emerald-600">
+                  <TrendingUp className="h-3 w-3" />
+                  <span>{card.trend}</span>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 }

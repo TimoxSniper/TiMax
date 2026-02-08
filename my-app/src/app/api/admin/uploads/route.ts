@@ -7,6 +7,9 @@ import { logger } from "@/lib/logger";
 import { parsePaginationParams, buildPaginationResponse } from "@/lib/pagination";
 import type { UploadStatus } from "@/lib/supabase/database.types";
 
+// Cache-Control Header for fast loading
+const CACHE_CONTROL = "public, s-maxage=15, stale-while-revalidate=60";
+
 const VALID_UPLOAD_STATUSES: UploadStatus[] = [
   "pending",
   "processing",
@@ -46,44 +49,46 @@ export async function GET(request: NextRequest) {
         ? (filterStatusParam as UploadStatus)
         : null;
 
-    // Gesamtanzahl für Pagination
-    let countQuery = supabase.from("uploads").select("*", { count: "exact", head: true });
+    // Parallelize count and data fetching for speed
+    const [countResult, queryResult] = await Promise.all([
+      (async () => {
+        let countQuery = supabase.from("uploads").select("*", { count: "exact", head: true });
+        if (filterUserId) countQuery = countQuery.eq("user_id", filterUserId);
+        if (filterStatus) countQuery = countQuery.eq("status", filterStatus);
+        return countQuery;
+      })(),
+      (async () => {
+        let query = supabase
+          .from("uploads")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .range(offset, offset + limit - 1);
+        if (filterUserId) query = query.eq("user_id", filterUserId);
+        if (filterStatus) query = query.eq("status", filterStatus);
+        return query;
+      })(),
+    ]);
 
-    if (filterUserId) {
-      countQuery = countQuery.eq("user_id", filterUserId);
-    }
-    if (filterStatus) {
-      countQuery = countQuery.eq("status", filterStatus);
-    }
-
-    const { count: total } = await countQuery;
-
-    // Uploads laden
-    let query = supabase
-      .from("uploads")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .range(offset, offset + limit - 1);
-
-    if (filterUserId) {
-      query = query.eq("user_id", filterUserId);
-    }
-    if (filterStatus) {
-      query = query.eq("status", filterStatus);
-    }
-
-    const { data: uploads, error } = await query;
+    const { count: total } = countResult;
+    const { data: uploads, error } = queryResult;
 
     if (error) {
       logger.error("[Admin Uploads API] Fehler beim Laden:", error);
       throw error;
     }
 
-    return NextResponse.json({
-      success: true,
-      uploads: uploads || [],
-      pagination: buildPaginationResponse(page, limit, total || 0),
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        uploads: uploads || [],
+        pagination: buildPaginationResponse(page, limit, total || 0),
+      },
+      {
+        headers: {
+          "Cache-Control": CACHE_CONTROL,
+        },
+      }
+    );
   } catch (error) {
     logger.error("[Admin Uploads API] Fehler:", error);
     Sentry.captureException(error, {
