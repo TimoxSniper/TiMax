@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from "react";
 
 interface UseIntersectionObserverOptions {
   root?: Element | null;
@@ -6,11 +6,11 @@ interface UseIntersectionObserverOptions {
   threshold?: number | number[];
 }
 
-export const useIntersectionObserver = (
+export const useIntersectionObserver = <T extends Element = HTMLDivElement>(
   callback: (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => void,
   options: UseIntersectionObserverOptions = {}
 ) => {
-  const elementRef = useRef<Element | null>(null);
+  const elementRef = useRef<T | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export const useIntersectionObserver = (
     if (!observerRef.current) {
       observerRef.current = new IntersectionObserver(callback, {
         root: options.root,
-        rootMargin: options.rootMargin || '0px',
+        rootMargin: options.rootMargin || "0px",
         threshold: options.threshold || 0,
       });
     }
