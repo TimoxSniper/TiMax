@@ -36,7 +36,10 @@ const landingPageNavigation: Array<{
   name: string;
   href: string;
   icon: typeof Sparkles;
-}> = [{ name: "Preise", href: "/pricing", icon: CreditCard }];
+}> = [
+  { name: "Funktionen", href: "/functions", icon: Sparkles },
+  { name: "Preise", href: "/pricing", icon: CreditCard },
+];
 
 export function MainNavigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
