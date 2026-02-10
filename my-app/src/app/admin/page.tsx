@@ -1,180 +1,202 @@
-/**
- * Admin Dashboard Page
- *
- * Overview page with stats, recent activity, and quick actions
- */
+"use client";
 
-import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card } from "@/components/ui/card";
-import { StatsCards } from "@/components/admin/dashboard/stats-cards";
-import { ActivityTimeline } from "@/components/admin/dashboard/activity-timeline";
-import { getAllClerkUsers } from "@/lib/admin/clerk-helpers";
-import type { DashboardStats } from "@/types/admin";
+import { useEffect, useState } from "react";
+import { AdminLayout } from "@/components/admin/admin-layout";
+import { StatCard } from "@/components/admin/stat-card";
+import { AdminStats } from "@/contexts/admin-context";
+import { useAdmin } from "@/contexts/admin-context";
+import {
+  Users,
+  MessageSquare,
+  Upload,
+  Database,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  Loader2,
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
-async function getDashboardStats(): Promise<DashboardStats> {
-  try {
-    // Fetch from API
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/admin/dashboard`, {
-      cache: "no-store",
-    });
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
+}
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch dashboard stats");
-    }
+export default function AdminDashboard() {
+  const { stats, isStatsLoading, fetchStats } = useAdmin();
+  const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(null);
 
-    const { data } = await res.json();
-
-    // Fetch total users from Clerk
-    const { totalCount } = await getAllClerkUsers({ limit: 1 });
-    data.totalUsers = totalCount;
-
-    return data;
-  } catch (error) {
-    console.error("Error fetching dashboard stats:", error);
-    // Return empty stats on error
-    return {
-      totalUsers: 0,
-      activeUsers: 0,
-      totalChats: 0,
-      totalMessages: 0,
-      totalUploads: 0,
-      uploadsByStatus: {
-        pending: 0,
-        processing: 0,
-        completed: 0,
-        failed: 0,
-        cancelled: 0,
-      },
-      recentActivity: [],
-      systemHealth: {
-        status: "down",
-        databaseConnected: false,
-        storageConnected: false,
-        apiResponseTime: 0,
-        activeUsers: 0,
-        uptime: 0,
-      },
+  useEffect(() => {
+    fetchStats();
+    const interval = setInterval(() => fetchStats(), 30000);
+    setRefreshInterval(interval);
+    return () => {
+      if (interval) clearInterval(interval);
     };
-  }
-}
+  }, [fetchStats]);
 
-async function DashboardContent() {
-  const stats = await getDashboardStats();
+  const handleRefresh = () => {
+    fetchStats();
+    if (refreshInterval) {
+      clearInterval(refreshInterval);
+      const newInterval = setInterval(() => fetchStats(), 30000);
+      setRefreshInterval(newInterval);
+    }
+  };
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="font-serif text-4xl font-bold mb-2">Dashboard</h1>
-        <p className="text-muted-foreground font-sans">
-          Übersicht über alle System-Metriken und Aktivitäten
-        </p>
-      </div>
-
-      {/* Stats Cards */}
-      <StatsCards stats={stats} />
-
-      {/* Activity and System Health */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Activity */}
-        <ActivityTimeline activities={stats.recentActivity} />
-
-        {/* System Health */}
-        <Card className="p-6 shadow-editorial-md">
-          <h3 className="font-serif text-lg font-bold mb-4">System Health</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-sans text-muted-foreground">Status</span>
-              <span
-                className={`text-sm font-semibold ${
-                  stats.systemHealth.status === "healthy"
-                    ? "text-accent"
-                    : stats.systemHealth.status === "degraded"
-                      ? "text-yellow-600"
-                      : "text-destructive"
-                }`}
-              >
-                {stats.systemHealth.status === "healthy"
-                  ? "Healthy"
-                  : stats.systemHealth.status === "degraded"
-                    ? "Degraded"
-                    : "Down"}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-sans text-muted-foreground">Database</span>
-              <span
-                className={`text-sm font-semibold ${
-                  stats.systemHealth.databaseConnected ? "text-accent" : "text-destructive"
-                }`}
-              >
-                {stats.systemHealth.databaseConnected ? "Connected" : "Disconnected"}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-sans text-muted-foreground">Storage</span>
-              <span
-                className={`text-sm font-semibold ${
-                  stats.systemHealth.storageConnected ? "text-accent" : "text-destructive"
-                }`}
-              >
-                {stats.systemHealth.storageConnected ? "Connected" : "Disconnected"}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-sans text-muted-foreground">API Response</span>
-              <span className="text-sm font-semibold font-mono">
-                {stats.systemHealth.apiResponseTime}ms
-              </span>
-            </div>
+    <AdminLayout>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="font-serif text-3xl font-bold">Dashboard</h1>
+            <p className="text-muted-foreground mt-1">
+              Übersicht aller wichtigen Metriken und Statistiken
+            </p>
           </div>
-        </Card>
-      </div>
-
-      {/* Upload Status Distribution */}
-      <Card className="p-6 shadow-editorial-md">
-        <h3 className="font-serif text-lg font-bold mb-4">Upload Status Distribution</h3>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {Object.entries(stats.uploadsByStatus).map(([status, count]) => (
-            <div key={status} className="text-center">
-              <p className="text-2xl font-serif font-bold">{count}</p>
-              <p className="text-xs text-muted-foreground font-sans uppercase tracking-wide mt-1">
-                {status}
-              </p>
-            </div>
-          ))}
+          <Button variant="outline" onClick={handleRefresh} disabled={isStatsLoading}>
+            {isStatsLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Clock className="mr-2 h-4 w-4" />
+            )}
+            Aktualisieren
+          </Button>
         </div>
-      </Card>
-    </div>
-  );
-}
 
-function DashboardSkeleton() {
-  return (
-    <div className="space-y-8">
-      <div>
-        <Skeleton className="h-10 w-64 mb-2" />
-        <Skeleton className="h-5 w-96" />
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[...Array(4)].map((_, i) => (
-          <Skeleton key={i} className="h-32" />
-        ))}
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Skeleton className="h-96" />
-        <Skeleton className="h-96" />
-      </div>
-    </div>
-  );
-}
+        {isStatsLoading && !stats ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="text-primary h-8 w-8 animate-spin" />
+          </div>
+        ) : (
+          <div className="space-y-8">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <StatCard
+                title="Gesamte Benutzer"
+                value={stats?.totalUsers || 0}
+                icon={Users}
+                iconColor="text-blue-600"
+              />
+              <StatCard
+                title="Aktive Benutzer (7 Tage)"
+                value={stats?.activeUsers || 0}
+                icon={CheckCircle2}
+                iconColor="text-green-600"
+              />
+              <StatCard
+                title="Gesamte Chats"
+                value={stats?.totalChats || 0}
+                icon={MessageSquare}
+                iconColor="text-purple-600"
+              />
+              <StatCard
+                title="Gesamte Uploads"
+                value={stats?.totalUploads || 0}
+                icon={Upload}
+                iconColor="text-orange-600"
+              />
+            </div>
 
-export default function AdminDashboardPage() {
-  return (
-    <Suspense fallback={<DashboardSkeleton />}>
-      <DashboardContent />
-    </Suspense>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Upload Status</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Ausstehend</span>
+                      <Badge variant="secondary">{stats?.uploadsByStatus?.pending || 0}</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">In Bearbeitung</span>
+                      <Badge variant="secondary">{stats?.uploadsByStatus?.processing || 0}</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Abgeschlossen</span>
+                      <Badge variant="default">{stats?.uploadsByStatus?.completed || 0}</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Fehlgeschlagen</span>
+                      <Badge variant="destructive">{stats?.uploadsByStatus?.failed || 0}</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Abgebrochen</span>
+                      <Badge variant="outline">{stats?.uploadsByStatus?.cancelled || 0}</Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Speichernutzung</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="text-center">
+                      <div className="text-primary font-serif text-4xl font-bold">
+                        {formatBytes(stats?.totalStorageBytes || 0)}
+                      </div>
+                      <p className="text-muted-foreground mt-2">Gesamter Speicherplatz</p>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium">Nach Dateityp:</p>
+                      {Object.entries(stats?.uploadsByType || {}).map(([type, count]) => (
+                        <div key={type} className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground capitalize">{type}</span>
+                          <Badge variant="outline">{count}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  <Button variant="outline" asChild className="justify-start">
+                    <Link href="/admin/users">
+                      <Users className="mr-2 h-4 w-4" />
+                      Benutzer verwalten
+                    </Link>
+                  </Button>
+                  <Button variant="outline" asChild className="justify-start">
+                    <Link href="/admin/chats">
+                      <MessageSquare className="mr-2 h-4 w-4" />
+                      Chats moderieren
+                    </Link>
+                  </Button>
+                  <Button variant="outline" asChild className="justify-start">
+                    <Link href="/admin/uploads">
+                      <Upload className="mr-2 h-4 w-4" />
+                      Uploads prüfen
+                    </Link>
+                  </Button>
+                  <Button variant="outline" asChild className="justify-start">
+                    <Link href="/admin/health">
+                      <Database className="mr-2 h-4 w-4" />
+                      System Status
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </div>
+    </AdminLayout>
   );
 }
