@@ -4,11 +4,14 @@ import { requireAdmin } from "@/lib/auth/admin";
 import { withCsrfProtection } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
-async function patchUserHandler(request: NextRequest, { params }: { params: { id: string } }) {
+async function patchUserHandler(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     await requireAdmin();
 
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     const { role } = body;
 
@@ -16,10 +19,10 @@ async function patchUserHandler(request: NextRequest, { params }: { params: { id
       return NextResponse.json({ success: false, error: "Ungültige Rolle" }, { status: 400 });
     }
 
-    const clerk = (await import("@clerk/nextjs/server")).clerkClient();
-    const clerkClient = await clerk();
+    const { clerkClient } = await import("@clerk/nextjs/server");
+    const clerk = await clerkClient();
 
-    await clerkClient.users.updateUser(id, {
+    await clerk.users.updateUser(id, {
       publicMetadata: { role },
     });
 

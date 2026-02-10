@@ -8,8 +8,10 @@ export interface AdminStats {
   totalChats: number;
   totalMessages: number;
   totalUploads: number;
+  activeUsers: number;
   uploadsByStatus: Record<string, number>;
   uploadsByType: Record<string, number>;
+  totalStorageBytes: number;
 }
 
 export interface AdminUser {
@@ -21,6 +23,9 @@ export interface AdminUser {
   lastName?: string | null;
   email?: string | null;
   imageUrl?: string | null;
+  createdAt?: Date;
+  lastSignInAt?: Date | null;
+  role?: string;
 }
 
 export interface AdminChat {

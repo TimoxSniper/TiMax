@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await requireAdmin();
 
-    const { id } = params;
+    const { id } = await params;
     const supabase = createAdminClient();
 
     const { data: chat, error: chatError } = await supabase
@@ -32,10 +31,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     if (messagesError) throw messagesError;
 
-    const clerk = (await import("@clerk/nextjs/server")).clerkClient();
-    const clerkClient = await clerk();
+    const { clerkClient } = await import("@clerk/nextjs/server");
+    const clerk = await clerkClient();
 
-    const user = await clerkClient.users.getUser(chat.user_id).catch(() => null);
+    const user = await clerk.users.getUser(chat.user_id).catch(() => null);
 
     return NextResponse.json({
       success: true,

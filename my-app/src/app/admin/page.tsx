@@ -3,23 +3,12 @@
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/admin-layout";
 import { StatCard } from "@/components/admin/stat-card";
-import { AdminStats } from "@/contexts/admin-context";
 import { useAdmin } from "@/contexts/admin-context";
-import {
-  Users,
-  MessageSquare,
-  Upload,
-  Database,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  Loader2,
-} from "lucide-react";
+import { Users, MessageSquare, Upload, Database, Clock, CheckCircle2, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 
 function formatBytes(bytes: number): string {
   if (bytes === 0) return "0 Bytes";

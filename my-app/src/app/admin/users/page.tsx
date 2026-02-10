@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAdmin } from "@/contexts/admin-context";
 import { AdminLayout } from "@/components/admin/admin-layout";
 import { Badge } from "@/components/ui/badge";
@@ -18,21 +18,17 @@ import {
 import {
   Loader2,
   Search,
-  Shield,
-  User,
   ChevronLeft,
   ChevronRight,
-  ShieldCheck,
-  Mail,
+  Shield,
+  User,
   Calendar,
   MessageSquare,
-  Upload,
 } from "lucide-react";
 import { formatDateTime } from "@/lib/date-utils";
 
 export default function AdminUsers() {
   const {
-    users,
     filteredUsers,
     usersPagination,
     isUsersLoading,
@@ -177,7 +173,7 @@ export default function AdminUsers() {
                           <TableCell>
                             <div className="flex items-center gap-2 text-sm">
                               <Calendar className="text-muted-foreground h-4 w-4" />
-                              {formatDateTime(user.createdAt)}
+                              {user.createdAt ? formatDateTime(user.createdAt) : "-"}
                             </div>
                           </TableCell>
                           <TableCell>

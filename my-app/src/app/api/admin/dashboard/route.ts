@@ -27,9 +27,8 @@ export async function GET(request: NextRequest) {
       supabase.from("uploads").select("file_type").not("file_type", "is", null),
       supabase
         .from("chats")
-        .select("user_id")
-        .gte("updated_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
-        .select("user_id", { count: "exact", head: true }),
+        .select("user_id", { count: "exact", head: true })
+        .gte("updated_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
     ]);
 
     const statusCounts: Record<string, number> = {};

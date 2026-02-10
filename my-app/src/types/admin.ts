@@ -10,12 +10,6 @@ import type { Database } from "@/lib/supabase/database.types";
 // DATABASE TABLE TYPES
 // ============================================
 
-export type AdminLog = Database["public"]["Tables"]["admin_logs"]["Row"];
-export type AdminLogInsert = Database["public"]["Tables"]["admin_logs"]["Insert"];
-
-export type UserBan = Database["public"]["Tables"]["user_bans"]["Row"];
-export type UserBanInsert = Database["public"]["Tables"]["user_bans"]["Insert"];
-
 export type Chat = Database["public"]["Tables"]["chats"]["Row"];
 export type Message = Database["public"]["Tables"]["messages"]["Row"];
 export type Upload = Database["public"]["Tables"]["uploads"]["Row"];

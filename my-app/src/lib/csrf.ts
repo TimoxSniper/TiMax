@@ -106,11 +106,12 @@ export async function validateCsrfToken(request: NextRequest): Promise<NextRespo
 
 /**
  * Higher-order function to wrap API routes with CSRF protection
+ * Supports both simple handlers and dynamic route handlers with params
  */
-export function withCsrfProtection(
-  handler: (request: NextRequest) => Promise<NextResponse>
-): (request: NextRequest) => Promise<NextResponse> {
-  return async (request: NextRequest): Promise<NextResponse> => {
+export function withCsrfProtection<T extends Record<string, unknown> = Record<string, never>>(
+  handler: (request: NextRequest, params?: T) => Promise<NextResponse>
+): (request: NextRequest, params?: T) => Promise<NextResponse> {
+  return async (request: NextRequest, params?: T): Promise<NextResponse> => {
     // Validate CSRF token
     const csrfError = await validateCsrfToken(request);
     if (csrfError) {
@@ -118,6 +119,6 @@ export function withCsrfProtection(
     }
 
     // Call the actual handler
-    return handler(request);
+    return handler(request, params);
   };
 }

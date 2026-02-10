@@ -36,6 +36,9 @@ const isProtectedRoute = createRouteMatcher([
   "/api/admin(.*)",
 ]);
 
+// Admin-only Routen (erfordern admin Role in Clerk metadata)
+const isAdminRoute = createRouteMatcher(["/admin(.*)", "/api/admin(.*)"]);
+
 // Hinweis: Öffentliche Routen werden implizit behandelt (alles was nicht protected ist)
 
 function getClientIP(request: NextRequest): string {
@@ -129,6 +132,31 @@ export default clerkMiddleware(async (auth, req) => {
   // Geschützte Seiten erfordern Auth
   if (isProtectedRoute(req)) {
     await auth.protect();
+  }
+
+  // Admin-Routen erfordern zusätzlich Admin-Role
+  if (isAdminRoute(req)) {
+    const { userId } = await auth();
+    if (userId) {
+      const { clerkClient } = await import("@clerk/nextjs/server");
+      const clerk = await clerkClient();
+      const user = await clerk.users.getUser(userId);
+
+      // In development mode, automatically assign admin role if not already set
+      if (process.env.NODE_ENV === 'development' && user.publicMetadata?.role !== "admin") {
+        await clerk.users.updateUser(userId, {
+          publicMetadata: {
+            ...user.publicMetadata,
+            role: "admin",
+          },
+        });
+        console.log(`Auto-assigned admin role to user: ${userId} in development mode`);
+      }
+
+      if (user.publicMetadata?.role !== "admin") {
+        return NextResponse.redirect(new URL("/unauthorized", req.url));
+      }
+    }
   }
 
   const response = NextResponse.next();

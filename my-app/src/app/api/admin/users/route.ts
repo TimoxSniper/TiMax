@@ -20,9 +20,9 @@ export async function GET(request: NextRequest) {
     let dataQuery = supabase.from("chats").select("user_id");
 
     if (search) {
-      const clerk = (await import("@clerk/nextjs/server")).clerkClient();
-      const clerkClient = await clerk();
-      const { data: clerkUsers } = await clerkClient.users.getUserList({
+      const { clerkClient } = await import("@clerk/nextjs/server");
+      const clerk = await clerkClient();
+      const { data: clerkUsers } = await clerk.users.getUserList({
         query: search,
         limit: 100,
       });
@@ -48,11 +48,11 @@ export async function GET(request: NextRequest) {
 
     const uniqueUserIds = [...new Set(userChats?.map((c: any) => c.user_id) || [])];
 
-    const clerk = (await import("@clerk/nextjs/server")).clerkClient();
-    const clerkClient = await clerk();
+    const { clerkClient } = await import("@clerk/nextjs/server");
+    const clerk = await clerkClient();
 
     const clerkUsers = await Promise.all(
-      uniqueUserIds.map((userId) => clerkClient.users.getUser(userId).catch(() => null))
+      uniqueUserIds.map((userId) => clerk.users.getUser(userId).catch(() => null))
     );
 
     const chatCounts = userChats?.reduce((acc: Record<string, number>, c: any) => {

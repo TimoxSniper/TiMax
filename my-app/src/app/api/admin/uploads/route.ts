@@ -4,6 +4,15 @@ import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { withCsrfProtection } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
+import type { UploadStatus } from "@/lib/supabase/database.types";
+
+const VALID_UPLOAD_STATUSES: UploadStatus[] = [
+  "pending",
+  "processing",
+  "completed",
+  "failed",
+  "cancelled",
+];
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,7 +22,7 @@ export async function GET(request: NextRequest) {
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20")));
     const search = searchParams.get("search") || "";
-    const status = searchParams.get("status") || "";
+    const statusParam = searchParams.get("status") || "";
     const userId = searchParams.get("userId") || "";
     const offset = (page - 1) * limit;
 
@@ -31,9 +40,9 @@ export async function GET(request: NextRequest) {
       dataQuery = dataQuery.eq("user_id", userId);
     }
 
-    if (status) {
-      countQuery = countQuery.eq("status", status);
-      dataQuery = dataQuery.eq("status", status);
+    if (statusParam && VALID_UPLOAD_STATUSES.includes(statusParam as UploadStatus)) {
+      countQuery = countQuery.eq("status", statusParam as UploadStatus);
+      dataQuery = dataQuery.eq("status", statusParam as UploadStatus);
     }
 
     const { count: totalCount, error: countError } = await countQuery;
@@ -76,11 +85,14 @@ export async function GET(request: NextRequest) {
   }
 }
 
-async function deleteUploadHandler(request: NextRequest, { params }: { params: { id: string } }) {
+async function deleteUploadHandler(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     await requireAdmin();
 
-    const { id } = params;
+    const { id } = await params;
     const supabase = createAdminClient();
 
     const { data: upload, error: fetchError } = await supabase
