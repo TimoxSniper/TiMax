@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { withCsrfProtection } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -60,3 +61,35 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     );
   }
 }
+
+async function deleteChatHandler(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    await requireAdmin();
+
+    const { id } = await params;
+    const supabase = createAdminClient();
+
+    const { error: messagesError } = await supabase.from("messages").delete().eq("chat_id", id);
+
+    if (messagesError) throw messagesError;
+
+    const { error: chatError } = await supabase.from("chats").delete().eq("id", id);
+
+    if (chatError) throw chatError;
+
+    logger.info(`[Admin Chats API] Chat ${id} deleted`);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    logger.error("[Admin Chats API] Error:", error);
+    return NextResponse.json(
+      { success: false, error: "Fehler beim Löschen des Chats" },
+      { status: 500 }
+    );
+  }
+}
+
+export const DELETE = withCsrfProtection(deleteChatHandler);

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { requireAdmin } from "@/lib/auth/admin";
 import { withCsrfProtection } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
