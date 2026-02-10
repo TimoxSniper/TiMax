@@ -49,6 +49,30 @@ export interface EnrichedUpload extends Upload {
   user: ClerkUserInfo;
 }
 
+// Define missing types
+export interface AdminLog {
+  id: string;
+  admin_user_id: string;
+  action: string;
+  target_type: string;
+  target_id: string;
+  metadata: Record<string, unknown> | null;
+  created_at: string;
+}
+
+export interface UserBan {
+  id: string;
+  user_id: string;
+  admin_user_id: string;
+  reason: string;
+  type: "temporary" | "permanent";
+  expires_at: string | null;
+  created_at: string;
+  revoked_at: string | null;
+  revoked_by: string | null;
+  revoked_reason: string | null;
+}
+
 export interface EnrichedAdminLog extends AdminLog {
   adminUser?: ClerkUserInfo;
 }

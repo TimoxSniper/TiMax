@@ -154,7 +154,10 @@ async function chatHandler(request: NextRequest) {
 export const POST = withCsrfProtection(chatHandler);
 
 // GET Handler mit CSRF-Schutz
-async function getChatsHandler(request: NextRequest) {
+async function getChatsHandler(
+  request: NextRequest,
+  _context?: { params: Promise<Record<string, never>> }
+) {
   try {
     const { userId } = await auth();
 

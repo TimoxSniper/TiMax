@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin";
-import { withCsrfProtection } from "@/lib/csrf";
+import { withCsrfProtectionWithParams } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
 async function patchUserHandler(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { params } = context;
   try {
     await requireAdmin();
 
@@ -37,4 +38,4 @@ async function patchUserHandler(
   }
 }
 
-export const PATCH = withCsrfProtection(patchUserHandler);
+export const PATCH = withCsrfProtectionWithParams(patchUserHandler);

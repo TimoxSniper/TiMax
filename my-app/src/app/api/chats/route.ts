@@ -6,7 +6,10 @@ import { withCsrfProtection } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
 // GET Handler
-async function getChatsHandler(request: NextRequest) {
+async function getChatsHandler(
+  request: NextRequest,
+  _context?: { params: Promise<Record<string, never>> }
+) {
   try {
     const { userId } = await auth();
 

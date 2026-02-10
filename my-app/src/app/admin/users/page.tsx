@@ -24,6 +24,8 @@ import {
   User,
   Calendar,
   MessageSquare,
+  Mail,
+  ShieldCheck,
 } from "lucide-react";
 import { formatDateTime } from "@/lib/date-utils";
 

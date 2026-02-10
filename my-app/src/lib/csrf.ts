@@ -106,17 +106,54 @@ export async function validateCsrfToken(request: NextRequest): Promise<NextRespo
 
 /**
  * Higher-order function to wrap API routes with CSRF protection
- * Supports both simple handlers and dynamic route handlers with params
+ * For simple routes without params (or GET/HEAD/OPTIONS with context)
  */
-export function withCsrfProtection<T extends Record<string, unknown> = Record<string, never>>(
-  handler: (request: NextRequest, params?: T) => Promise<NextResponse>
-): (request: NextRequest, params?: T) => Promise<NextResponse> {
-  return async (request: NextRequest, params?: T): Promise<NextResponse> => {
+export function withCsrfProtection(
+  handler: (
+    request: NextRequest,
+    context?: { params: Promise<Record<string, never>> }
+  ) => Promise<NextResponse>
+): (
+  request: NextRequest,
+  context?: { params: Promise<Record<string, never>> }
+) => Promise<NextResponse> {
+  return async (
+    request: NextRequest,
+    context?: { params: Promise<Record<string, never>> }
+  ): Promise<NextResponse> => {
     // Validate CSRF token
     const csrfError = await validateCsrfToken(request);
     if (csrfError) {
       return csrfError;
     }
+
+    // Call the actual handler - only pass context if it exists to maintain compatibility
+    if (context !== undefined) {
+      return handler(request, context);
+    } else {
+      return handler(request);
+    }
+  };
+}
+
+/**
+ * Higher-order function to wrap API routes with dynamic params and CSRF protection
+ * For routes like /api/admin/chats/[id]
+ */
+export function withCsrfProtectionWithParams<
+  T extends Record<string, unknown> = Record<string, never>,
+>(
+  handler: (request: NextRequest, params: T) => Promise<NextResponse>
+): (request: NextRequest, context: { params: Promise<T> }) => Promise<NextResponse> {
+  return async (request: NextRequest, context: { params: Promise<T> }): Promise<NextResponse> => {
+    // Validate CSRF token
+    const csrfError = await validateCsrfToken(request);
+    if (csrfError) {
+      return csrfError;
+    }
+
+    // Extract params
+    const params = await context.params;
 
     // Call the actual handler
     return handler(request, params);

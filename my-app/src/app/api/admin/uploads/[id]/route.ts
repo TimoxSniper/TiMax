@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { withCsrfProtection } from "@/lib/csrf";
+import { withCsrfProtectionWithParams } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
 async function deleteUploadHandler(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { params } = context;
   try {
     await requireAdmin();
 
@@ -46,4 +47,4 @@ async function deleteUploadHandler(
   }
 }
 
-export const DELETE = withCsrfProtection(deleteUploadHandler);
+export const DELETE = withCsrfProtectionWithParams(deleteUploadHandler);

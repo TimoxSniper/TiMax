@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { withCsrfProtection } from "@/lib/csrf";
+import { withCsrfProtectionWithParams } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { params } = context;
   try {
     await requireAdmin();
 
@@ -64,8 +65,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
 async function deleteChatHandler(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { params } = context;
   try {
     await requireAdmin();
 
@@ -92,4 +94,4 @@ async function deleteChatHandler(
   }
 }
 
-export const DELETE = withCsrfProtection(deleteChatHandler);
+export const DELETE = withCsrfProtectionWithParams(deleteChatHandler);
