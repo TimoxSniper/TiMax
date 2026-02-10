@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { withCsrfProtectionWithParams } from "@/lib/csrf";
+import { validateCsrfToken } from "@/lib/csrf";
 import { logger } from "@/lib/logger";
 
-async function deleteUploadHandler(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const { params } = context;
+  
+  // Validate CSRF token for DELETE request
+  const csrfError = await validateCsrfToken(request);
+  if (csrfError) {
+    return csrfError;
+  }
+
   try {
     await requireAdmin();
 
@@ -46,5 +50,3 @@ async function deleteUploadHandler(
     );
   }
 }
-
-export const DELETE = withCsrfProtectionWithParams(deleteUploadHandler);
