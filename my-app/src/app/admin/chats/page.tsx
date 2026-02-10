@@ -1,204 +1,168 @@
+/**
+ * Admin Chats Page
+ *
+ * Chat moderation with tabs: All, Recent
+ */
+
 "use client";
 
-import { useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { ChatsTable } from "@/components/admin/chats-table";
-import { useToast } from "@/components/ui/toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { X, Calendar, Search, RefreshCw, Download } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { exportToCSV, exportToJSON } from "@/lib/admin/export";
-import { AdminProvider, useAdmin } from "@/contexts/admin-context";
-
-function ChatsContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const userIdFilter = searchParams.get("userId");
-  const timeFilter = searchParams.get("timeFilter");
-
-  const {
-    filteredChats,
-    chatsPagination,
-    isChatsLoading,
-    isChatsInitialLoad,
-    chatsCurrentPage,
-    chatsSearchQuery,
-    fetchChats,
-    setChatsCurrentPage,
-    setChatsSearchQuery,
-    deleteChat,
-  } = useAdmin();
-
-  useEffect(() => {
-    setChatsCurrentPage(1);
-    fetchChats(1, userIdFilter || undefined, timeFilter || undefined);
-  }, [userIdFilter, timeFilter]);
-
-  useEffect(() => {
-    if (chatsCurrentPage > 1) {
-      fetchChats(chatsCurrentPage, userIdFilter || undefined, timeFilter || undefined);
-    }
-  }, [chatsCurrentPage]);
-
-  const clearUserFilter = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete("userId");
-    router.push(`/admin/chats${params.toString() ? `?${params.toString()}` : ""}`);
-  };
-
-  const setTimeFilterValue = (filter: string | null) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (filter) {
-      params.set("timeFilter", filter);
-    } else {
-      params.delete("timeFilter");
-    }
-    router.push(`/admin/chats${params.toString() ? `?${params.toString()}` : ""}`);
-  };
-
-  const getTimeFilterLabel = () => {
-    switch (timeFilter) {
-      case "today":
-        return "Heute";
-      case "week":
-        return "Diese Woche";
-      case "month":
-        return "Dieser Monat";
-      default:
-        return "Alle Zeit";
-    }
-  };
-
-  const handleExportCSV = () => {
-    exportToCSV(filteredChats, `chats-${new Date().toISOString().split("T")[0]}`, [
-      { key: "id", label: "Chat ID" },
-      { key: "title", label: "Titel" },
-      { key: "user_id", label: "User ID" },
-      { key: "messageCount", label: "Nachrichten" },
-      { key: "created_at", label: "Erstellt" },
-      { key: "updated_at", label: "Aktualisiert" },
-    ]);
-  };
-
-  const handleExportJSON = () => {
-    exportToJSON(filteredChats, `chats-${new Date().toISOString().split("T")[0]}`);
-  };
-
-  return (
-    <div className="space-y-6 md:space-y-8">
-      {/* Header */}
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="font-serif text-2xl font-bold md:text-3xl">Chats</h1>
-          <p className="text-muted-foreground mt-1 text-sm md:text-base">
-            Alle Chat-Verläufe der Benutzer
-          </p>
-        </div>
-
-        {/* Zeit-Filter Dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="w-full gap-2 md:w-auto">
-              <Calendar className="h-4 w-4" />
-              <span className="md:inline">{getTimeFilterLabel()}</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setTimeFilterValue(null)}>Alle Zeit</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTimeFilterValue("today")}>Heute</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTimeFilterValue("week")}>
-              Diese Woche
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTimeFilterValue("month")}>
-              Dieser Monat
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
-      {/* Search and Filter Badges */}
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <div className="relative flex-1">
-            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
-            <Input
-              placeholder="Chats suchen (Titel, User ID)..."
-              value={chatsSearchQuery}
-              onChange={(e) => setChatsSearchQuery(e.target.value)}
-              className="pl-9"
-              aria-label="Chats suchen"
-            />
-          </div>
-          <Button
-            variant="outline"
-            onClick={() =>
-              fetchChats(chatsCurrentPage, userIdFilter || undefined, timeFilter || undefined)
-            }
-            disabled={isChatsLoading}
-            className="gap-2"
-            aria-label="Daten aktualisieren"
-          >
-            <RefreshCw className={`h-4 w-4 ${isChatsLoading ? "animate-spin" : ""}`} />
-            <span className="hidden sm:inline">Aktualisieren</span>
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2" aria-label="Daten exportieren">
-                <Download className="h-4 w-4" />
-                <span className="hidden sm:inline">Export</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleExportCSV}>Als CSV exportieren</DropdownMenuItem>
-              <DropdownMenuItem onClick={handleExportJSON}>Als JSON exportieren</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
-        {userIdFilter && (
-          <div className="bg-muted flex w-fit items-center gap-2 rounded-md px-3 py-1.5 text-sm">
-            <span>
-              User:{" "}
-              <code className="bg-background rounded px-1.5 py-0.5 font-mono text-xs">
-                {userIdFilter}
-              </code>
-            </span>
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              onClick={clearUserFilter}
-              aria-label="Filter entfernen"
-            >
-              <X className="h-3 w-3" />
-            </Button>
-          </div>
-        )}
-      </div>
-
-      {/* Chats Table */}
-      <ChatsTable
-        chats={filteredChats}
-        isLoading={isChatsInitialLoad}
-        pagination={chatsPagination || undefined}
-        onPageChange={setChatsCurrentPage}
-        onDelete={deleteChat}
-      />
-    </div>
-  );
-}
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChatsTable } from "@/components/admin/chats/chats-table";
+import { SearchFilterBar } from "@/components/admin/shared/search-filter-bar";
+import { PaginationControls } from "@/components/admin/shared/pagination-controls";
+import { ConfirmationDialog } from "@/components/admin/shared/confirmation-dialog";
+import { useToast } from "@/hooks/use-toast";
+import type { EnrichedChat } from "@/types/admin";
 
 export default function AdminChatsPage() {
-  const { showToast } = useToast();
+  const router = useRouter();
+  const [chats, setChats] = useState<EnrichedChat[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [activeTab, setActiveTab] = useState<"all" | "recent">("all");
+  const [search, setSearch] = useState("");
+  const [selectedChat, setSelectedChat] = useState<EnrichedChat | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
+
+  // Fetch chats
+  const fetchChats = async () => {
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: "50",
+        filter: activeTab,
+        search,
+      });
+
+      const res = await fetch(`/api/admin/chats?${params}`);
+      const { data } = await res.json();
+
+      setChats(data.data);
+      setTotalPages(data.meta.totalPages);
+    } catch (error) {
+      console.error("Failed to fetch chats:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch chats",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchChats();
+  }, [currentPage, activeTab, search]);
+
+  // Handle view chat
+  const handleViewChat = (chat: EnrichedChat) => {
+    router.push(`/admin/chats/${chat.id}`);
+  };
+
+  // Handle delete chat
+  const handleDeleteChat = async () => {
+    if (!selectedChat) return;
+
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/admin/chats/${selectedChat.id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reason: "Deleted by admin via dashboard",
+        }),
+      });
+
+      if (res.ok) {
+        toast({
+          title: "Success",
+          description: "Chat deleted successfully",
+        });
+        fetchChats();
+      } else {
+        throw new Error("Failed to delete chat");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete chat",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+      setSelectedChat(null);
+    }
+  };
 
   return (
-    <AdminProvider onToast={showToast}>
-      <ChatsContent />
-    </AdminProvider>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="font-serif text-4xl font-bold mb-2">Chat Moderation</h1>
+        <p className="text-muted-foreground font-sans">
+          Verwalte und moderiere Chat-Konversationen
+        </p>
+      </div>
+
+      {/* Search */}
+      <SearchFilterBar
+        onSearchChange={setSearch}
+        placeholder="Suche nach Titel oder Benutzer..."
+      />
+
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+        <TabsList className="rounded-[6px]">
+          <TabsTrigger value="all" className="rounded-[4px]">
+            All Chats
+          </TabsTrigger>
+          <TabsTrigger value="recent" className="rounded-[4px]">
+            Recent (24h)
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value={activeTab} className="mt-6">
+          <ChatsTable
+            chats={chats}
+            isLoading={isLoading}
+            onViewChat={handleViewChat}
+            onDeleteChat={(chat) => {
+              setSelectedChat(chat);
+              setShowDeleteDialog(true);
+            }}
+          />
+
+          {totalPages > 1 && (
+            <div className="mt-6">
+              <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+
+      {/* Delete Dialog */}
+      <ConfirmationDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={handleDeleteChat}
+        title="Delete Chat"
+        description={`Are you sure you want to delete this chat? This will soft-delete the chat and all its messages. The user will no longer see this conversation.`}
+        confirmLabel="Delete Chat"
+        variant="destructive"
+        isLoading={isDeleting}
+      />
+    </div>
   );
 }

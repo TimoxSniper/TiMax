@@ -1,117 +1,147 @@
+/**
+ * Admin Chat Detail API Route
+ *
+ * GET - Get chat with all messages
+ * DELETE - Soft delete chat
+ */
+
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
-import * as Sentry from "@sentry/nextjs";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { isAdmin } from "@/lib/auth/admin";
-import { logger } from "@/lib/logger";
+import { checkAdminAuth, getAdminSupabaseClient, logAdminAction } from "@/lib/admin/auth";
+import { getClerkUser } from "@/lib/admin/clerk-helpers";
+import type { ChatWithDetails } from "@/types/admin";
 
-interface RouteParams {
-  params: Promise<{ id: string }>;
-}
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const authResult = await checkAdminAuth();
+  if (!authResult.authorized) {
+    return authResult.response;
+  }
 
-// GET: Einzelnen Chat mit Messages laden
-export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
-    }
-
-    // Admin-Check
-    if (!(await isAdmin())) {
-      return NextResponse.json(
-        { success: false, error: "Keine Admin-Berechtigung" },
-        { status: 403 }
-      );
-    }
-
     const { id: chatId } = await params;
-    const supabase = createAdminClient();
+    const supabase = getAdminSupabaseClient();
 
-    // Chat laden
+    // Fetch chat
     const { data: chat, error: chatError } = await supabase
       .from("chats")
       .select("*")
       .eq("id", chatId)
+      .is("deleted_at", null)
       .single();
 
     if (chatError || !chat) {
-      return NextResponse.json({ success: false, error: "Chat nicht gefunden" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, error: "Chat not found" },
+        { status: 404 }
+      );
     }
 
-    // Messages laden
+    // Fetch messages
     const { data: messages, error: messagesError } = await supabase
       .from("messages")
       .select("*")
       .eq("chat_id", chatId)
       .order("created_at", { ascending: true });
 
-    if (messagesError) {
-      logger.error("[Admin Chat API] Fehler beim Laden der Messages:", messagesError);
-      throw messagesError;
-    }
+    if (messagesError) throw messagesError;
+
+    // Fetch user info
+    const user = await getClerkUser(chat.user_id);
+
+    const chatWithDetails: ChatWithDetails = {
+      ...chat,
+      user: user!,
+      messageCount: messages?.length || 0,
+      lastMessageAt: messages?.[messages.length - 1]?.created_at || null,
+      messages: messages || [],
+    };
 
     return NextResponse.json({
       success: true,
-      chat,
-      messages: messages || [],
+      data: chatWithDetails,
     });
   } catch (error) {
-    logger.error("[Admin Chat API] Fehler:", error);
-    Sentry.captureException(error, {
-      tags: { api_route: "/api/admin/chats/[id]" },
-    });
-
+    console.error("Chat detail API error:", error);
     return NextResponse.json(
-      { success: false, error: "Fehler beim Laden des Chats" },
+      {
+        success: false,
+        error: "Internal error",
+        message: "Failed to fetch chat details",
+      },
       { status: 500 }
     );
   }
 }
 
-// DELETE: Chat löschen (kaskadiert zu Messages)
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const authResult = await checkAdminAuth();
+  if (!authResult.authorized) {
+    return authResult.response;
+  }
+
   try {
-    const { userId } = await auth();
+    const { id: chatId } = await params;
+    const body = await request.json();
+    const { reason } = body;
 
-    if (!userId) {
-      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
-    }
+    const supabase = getAdminSupabaseClient();
 
-    // Admin-Check
-    if (!(await isAdmin())) {
+    // Check if chat exists
+    const { data: chat, error: fetchError } = await supabase
+      .from("chats")
+      .select("*")
+      .eq("id", chatId)
+      .is("deleted_at", null)
+      .single();
+
+    if (fetchError || !chat) {
       return NextResponse.json(
-        { success: false, error: "Keine Admin-Berechtigung" },
-        { status: 403 }
+        { success: false, error: "Chat not found" },
+        { status: 404 }
       );
     }
 
-    const { id: chatId } = await params;
-    const supabase = createAdminClient();
+    // Soft delete
+    const { error: deleteError } = await supabase
+      .from("chats")
+      .update({
+        deleted_at: new Date().toISOString(),
+        deleted_by: authResult.userId!,
+      })
+      .eq("id", chatId);
 
-    // Chat löschen (Messages werden durch CASCADE automatisch gelöscht)
-    const { error } = await supabase.from("chats").delete().eq("id", chatId);
+    if (deleteError) throw deleteError;
 
-    if (error) {
-      logger.error("[Admin Chat API] Fehler beim Löschen:", error);
-      throw error;
-    }
-
-    logger.info(`[Admin] Chat ${chatId} gelöscht von Admin ${userId}`);
+    // Log action
+    await logAdminAction(
+      authResult.userId!,
+      authResult.user!.email ?? "Unknown",
+      {
+        actionType: "delete_chat",
+        targetType: "chat",
+        targetId: chatId,
+        details: { reason: reason || "Deleted by admin", userId: chat.user_id },
+      },
+      request
+    );
 
     return NextResponse.json({
       success: true,
-      message: "Chat erfolgreich gelöscht",
+      message: "Chat deleted successfully",
     });
   } catch (error) {
-    logger.error("[Admin Chat API] Fehler beim Löschen:", error);
-    Sentry.captureException(error, {
-      tags: { api_route: "/api/admin/chats/[id]" },
-    });
-
+    console.error("Delete chat error:", error);
     return NextResponse.json(
-      { success: false, error: "Fehler beim Löschen des Chats" },
+      {
+        success: false,
+        error: "Internal error",
+        message: "Failed to delete chat",
+      },
       { status: 500 }
     );
   }

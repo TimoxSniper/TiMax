@@ -1,126 +1,137 @@
+/**
+ * Admin Chats API Route
+ *
+ * GET - List all chats with pagination and filters
+ */
+
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
-import * as Sentry from "@sentry/nextjs";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { isAdmin } from "@/lib/auth/admin";
-import { logger } from "@/lib/logger";
-import { parsePaginationParams, buildPaginationResponse } from "@/lib/pagination";
+import { checkAdminAuth, getAdminSupabaseClient } from "@/lib/admin/auth";
+import { getClerkUsers } from "@/lib/admin/clerk-helpers";
+import type { EnrichedChat, PaginatedResponse } from "@/types/admin";
 
-// Cache-Control Header for fast loading
-const CACHE_CONTROL = "public, s-maxage=15, stale-while-revalidate=60";
-
-// GET: Alle Chats laden (für Admin)
 export async function GET(request: NextRequest) {
-  try {
-    const { userId } = await auth();
+  const authResult = await checkAdminAuth();
+  if (!authResult.authorized) {
+    return authResult.response;
+  }
 
-    if (!userId) {
-      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
+  try {
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "50");
+    const filter = searchParams.get("filter") || "all"; // all, recent
+    const search = searchParams.get("search") || "";
+
+    const supabase = getAdminSupabaseClient();
+
+    // Build query
+    let query = supabase
+      .from("chats")
+      .select("*, messages(count)", { count: "exact" })
+      .is("deleted_at", null)
+      .order("created_at", { ascending: false });
+
+    // Apply filters
+    if (filter === "recent") {
+      const oneDayAgo = new Date();
+      oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+      query = query.gte("created_at", oneDayAgo.toISOString());
     }
 
-    // Admin-Check
-    if (!(await isAdmin())) {
-      return NextResponse.json(
-        { success: false, error: "Keine Admin-Berechtigung" },
-        { status: 403 }
+    // Pagination
+    const offset = (page - 1) * limit;
+    query = query.range(offset, offset + limit - 1);
+
+    const { data: chats, error, count } = await query;
+
+    if (error) throw error;
+
+    if (!chats || chats.length === 0) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          data: [],
+          meta: {
+            page,
+            limit,
+            total: 0,
+            totalPages: 0,
+            hasMore: false,
+          },
+        } as PaginatedResponse<EnrichedChat>,
+      });
+    }
+
+    // Get unique user IDs
+    const userIds = [...new Set(chats.map((chat) => chat.user_id))];
+
+    // Batch fetch Clerk users
+    const clerkUsers = await getClerkUsers(userIds);
+
+    // Get message counts and last message time
+    const chatIds = chats.map((c) => c.id);
+    const { data: messages } = await supabase
+      .from("messages")
+      .select("chat_id, created_at")
+      .in("chat_id", chatIds);
+
+    // Count messages per chat and get last message time
+    const messageCounts = new Map<string, number>();
+    const lastMessageTimes = new Map<string, string>();
+
+    messages?.forEach((msg) => {
+      messageCounts.set(msg.chat_id, (messageCounts.get(msg.chat_id) || 0) + 1);
+      const existing = lastMessageTimes.get(msg.chat_id);
+      if (!existing || msg.created_at > existing) {
+        lastMessageTimes.set(msg.chat_id, msg.created_at);
+      }
+    });
+
+    // Enrich chats with user data
+    const enrichedChats: EnrichedChat[] = chats.map((chat) => ({
+      ...chat,
+      user: clerkUsers.get(chat.user_id)!,
+      messageCount: messageCounts.get(chat.id) || 0,
+      lastMessageAt: lastMessageTimes.get(chat.id) || null,
+    }));
+
+    // Apply search filter (on enriched data)
+    let filteredChats = enrichedChats;
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filteredChats = enrichedChats.filter(
+        (chat) =>
+          chat.title?.toLowerCase().includes(searchLower) ||
+          chat.user.fullName.toLowerCase().includes(searchLower) ||
+          chat.user.email?.toLowerCase().includes(searchLower)
       );
     }
 
-    const supabase = createAdminClient();
-    const { searchParams } = new URL(request.url);
+    const totalPages = Math.ceil((count || 0) / limit);
 
-    // Pagination with validation
-    const { page, limit, offset } = parsePaginationParams(searchParams);
-
-    // Optional: Filter nach User
-    const filterUserId = searchParams.get("userId");
-
-    // Optional: Zeit-Filter
-    const timeFilter = searchParams.get("timeFilter"); // 'today', 'week', 'month'
-
-    let startDate: Date | null = null;
-    if (timeFilter) {
-      if (timeFilter === "today") {
-        const now = new Date();
-        startDate = new Date(now.setHours(0, 0, 0, 0));
-      } else if (timeFilter === "week") {
-        const now = new Date();
-        now.setDate(now.getDate() - 7);
-        startDate = now;
-      } else if (timeFilter === "month") {
-        const now = new Date();
-        now.setMonth(now.getMonth() - 1);
-        startDate = now;
-      }
-    }
-
-    // Parallelize count and data fetching
-    const [countResult, queryResult] = await Promise.all([
-      (async () => {
-        let countQuery = supabase.from("chats").select("*", { count: "exact", head: true });
-        if (filterUserId) countQuery = countQuery.eq("user_id", filterUserId);
-        if (startDate) countQuery = countQuery.gte("created_at", startDate.toISOString());
-        return countQuery;
-      })(),
-      (async () => {
-        let query = supabase
-          .from("chats")
-          .select(
-            `
-            id,
-            user_id,
-            title,
-            created_at,
-            updated_at,
-            messages:messages(count)
-          `
-          )
-          .order("updated_at", { ascending: false })
-          .range(offset, offset + limit - 1);
-        if (filterUserId) query = query.eq("user_id", filterUserId);
-        if (startDate) query = query.gte("created_at", startDate.toISOString());
-        return query;
-      })(),
-    ]);
-
-    const { count: total } = countResult;
-    const { data: chats, error } = queryResult;
-
-    if (error) {
-      logger.error("[Admin Chats API] Fehler beim Laden:", error);
-      throw error;
-    }
-
-    // Transform data with message count
-    const chatsWithMessageCount = (chats || []).map((chat) => ({
-      id: chat.id,
-      user_id: chat.user_id,
-      title: chat.title,
-      created_at: chat.created_at,
-      updated_at: chat.updated_at,
-      messageCount: chat.messages[0]?.count || 0,
-    }));
-
-    return NextResponse.json(
-      {
-        success: true,
-        chats: chatsWithMessageCount,
-        pagination: buildPaginationResponse(page, limit, total || 0),
+    const response: PaginatedResponse<EnrichedChat> = {
+      data: filteredChats,
+      meta: {
+        page,
+        limit,
+        total: count || 0,
+        totalPages,
+        hasMore: page < totalPages,
       },
-      {
-        headers: {
-          "Cache-Control": CACHE_CONTROL,
-        },
-      }
-    );
-  } catch (error) {
-    logger.error("[Admin Chats API] Fehler:", error);
-    Sentry.captureException(error, {
-      tags: { api_route: "/api/admin/chats" },
-    });
+    };
 
+    return NextResponse.json({
+      success: true,
+      data: response,
+    });
+  } catch (error) {
+    console.error("Chats API error:", error);
     return NextResponse.json(
-      { success: false, error: "Fehler beim Laden der Chats" },
+      {
+        success: false,
+        error: "Internal error",
+        message: "Failed to fetch chats",
+      },
       { status: 500 }
     );
   }

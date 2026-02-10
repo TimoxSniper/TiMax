@@ -1,122 +1,159 @@
+/**
+ * Admin Upload Detail API Route
+ *
+ * GET - Get upload details
+ * DELETE - Soft delete upload and remove from storage
+ */
+
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
-import * as Sentry from "@sentry/nextjs";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { isAdmin } from "@/lib/auth/admin";
-import { logger } from "@/lib/logger";
+import { checkAdminAuth, getAdminSupabaseClient, logAdminAction } from "@/lib/admin/auth";
+import { getClerkUser } from "@/lib/admin/clerk-helpers";
+import { createClient } from "@supabase/supabase-js";
+import type { UploadWithDetails } from "@/types/admin";
 
-interface RouteParams {
-  params: Promise<{ id: string }>;
-}
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const authResult = await checkAdminAuth();
+  if (!authResult.authorized) {
+    return authResult.response;
+  }
 
-// GET: Einzelnen Upload laden
-export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
-    }
-
-    // Admin-Check
-    if (!(await isAdmin())) {
-      return NextResponse.json(
-        { success: false, error: "Keine Admin-Berechtigung" },
-        { status: 403 }
-      );
-    }
-
     const { id: uploadId } = await params;
-    const supabase = createAdminClient();
+    const supabase = getAdminSupabaseClient();
 
+    // Fetch upload
     const { data: upload, error } = await supabase
       .from("uploads")
       .select("*")
       .eq("id", uploadId)
+      .is("deleted_at", null)
       .single();
 
     if (error || !upload) {
-      return NextResponse.json({ success: false, error: "Upload nicht gefunden" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, error: "Upload not found" },
+        { status: 404 }
+      );
     }
+
+    // Fetch user info
+    const user = await getClerkUser(upload.user_id);
+
+    const uploadWithDetails: UploadWithDetails = {
+      ...upload,
+      user: user!,
+      transcriptPreview: upload.transcript
+        ? upload.transcript.substring(0, 500) + (upload.transcript.length > 500 ? "..." : "")
+        : undefined,
+      metadataPreview: upload.metadata || undefined,
+    };
 
     return NextResponse.json({
       success: true,
-      upload,
+      data: uploadWithDetails,
     });
   } catch (error) {
-    logger.error("[Admin Upload API] Fehler:", error);
-    Sentry.captureException(error, {
-      tags: { api_route: "/api/admin/uploads/[id]" },
-    });
-
+    console.error("Upload detail API error:", error);
     return NextResponse.json(
-      { success: false, error: "Fehler beim Laden des Uploads" },
+      {
+        success: false,
+        error: "Internal error",
+        message: "Failed to fetch upload details",
+      },
       { status: 500 }
     );
   }
 }
 
-// DELETE: Upload löschen
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const authResult = await checkAdminAuth();
+  if (!authResult.authorized) {
+    return authResult.response;
+  }
+
   try {
-    const { userId } = await auth();
+    const { id: uploadId } = await params;
+    const body = await request.json();
+    const { reason } = body;
 
-    if (!userId) {
-      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
-    }
+    const supabase = getAdminSupabaseClient();
 
-    // Admin-Check
-    if (!(await isAdmin())) {
+    // Check if upload exists
+    const { data: upload, error: fetchError } = await supabase
+      .from("uploads")
+      .select("*")
+      .eq("id", uploadId)
+      .is("deleted_at", null)
+      .single();
+
+    if (fetchError || !upload) {
       return NextResponse.json(
-        { success: false, error: "Keine Admin-Berechtigung" },
-        { status: 403 }
+        { success: false, error: "Upload not found" },
+        { status: 404 }
       );
     }
 
-    const { id: uploadId } = await params;
-    const supabase = createAdminClient();
-
-    // Erst prüfen ob Upload existiert (für Storage-Pfad)
-    const { data: upload } = await supabase
+    // Soft delete in database
+    const { error: deleteError } = await supabase
       .from("uploads")
-      .select("storage_path")
-      .eq("id", uploadId)
-      .single();
+      .update({
+        deleted_at: new Date().toISOString(),
+        deleted_by: authResult.userId!,
+      })
+      .eq("id", uploadId);
 
-    // Falls Datei im Storage existiert, auch dort löschen
-    if (upload?.storage_path) {
-      const { error: storageError } = await supabase.storage
-        .from("timax-uploads")
-        .remove([upload.storage_path]);
+    if (deleteError) throw deleteError;
 
-      if (storageError) {
-        logger.warn("[Admin Upload API] Fehler beim Löschen der Datei aus Storage:", storageError);
-        // Weiter machen, Datenbank-Eintrag trotzdem löschen
+    // Remove from Supabase Storage if storage_path exists
+    if (upload.storage_path) {
+      try {
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+        const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+        const storageClient = createClient(supabaseUrl, supabaseServiceKey);
+
+        await storageClient.storage.from("uploads").remove([upload.storage_path]);
+      } catch (storageError) {
+        console.error("Failed to delete from storage:", storageError);
+        // Continue - soft delete succeeded, storage cleanup failed (non-critical)
       }
     }
 
-    // Upload aus Datenbank löschen
-    const { error } = await supabase.from("uploads").delete().eq("id", uploadId);
-
-    if (error) {
-      logger.error("[Admin Upload API] Fehler beim Löschen:", error);
-      throw error;
-    }
-
-    logger.info(`[Admin] Upload ${uploadId} gelöscht von Admin ${userId}`);
+    // Log action
+    await logAdminAction(
+      authResult.userId!,
+      authResult.user!.email ?? "Unknown",
+      {
+        actionType: "delete_upload",
+        targetType: "upload",
+        targetId: uploadId,
+        details: {
+          reason: reason || "Deleted by admin",
+          userId: upload.user_id,
+          fileName: upload.file_name,
+          fileSize: upload.file_size,
+        },
+      },
+      request
+    );
 
     return NextResponse.json({
       success: true,
-      message: "Upload erfolgreich gelöscht",
+      message: "Upload deleted successfully",
     });
   } catch (error) {
-    logger.error("[Admin Upload API] Fehler beim Löschen:", error);
-    Sentry.captureException(error, {
-      tags: { api_route: "/api/admin/uploads/[id]" },
-    });
-
+    console.error("Delete upload error:", error);
     return NextResponse.json(
-      { success: false, error: "Fehler beim Löschen des Uploads" },
+      {
+        success: false,
+        error: "Internal error",
+        message: "Failed to delete upload",
+      },
       { status: 500 }
     );
   }

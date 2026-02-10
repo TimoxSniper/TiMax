@@ -1,166 +1,201 @@
+/**
+ * Admin Uploads Page
+ *
+ * Upload moderation with tabs: All, Processing, Failed
+ * Real-time updates for Processing tab
+ */
+
 "use client";
 
-import { useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import { UploadsTable } from "@/components/admin/uploads-table";
-import { useToast } from "@/components/ui/toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { X, Search, RefreshCw, Download } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { exportToCSV, exportToJSON } from "@/lib/admin/export";
-import { AdminProvider, useAdmin } from "@/contexts/admin-context";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { UploadsTable } from "@/components/admin/uploads/uploads-table";
+import { SearchFilterBar } from "@/components/admin/shared/search-filter-bar";
+import { PaginationControls } from "@/components/admin/shared/pagination-controls";
+import { ConfirmationDialog } from "@/components/admin/shared/confirmation-dialog";
+import { createClient } from "@/lib/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import type { EnrichedUpload } from "@/types/admin";
 
-function UploadsContent() {
-  const searchParams = useSearchParams();
-  const userIdFilter = searchParams.get("userId");
+export default function AdminUploadsPage() {
+  const router = useRouter();
+  const [uploads, setUploads] = useState<EnrichedUpload[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [activeTab, setActiveTab] = useState<"all" | "processing" | "failed">("all");
+  const [search, setSearch] = useState("");
+  const [selectedUpload, setSelectedUpload] = useState<EnrichedUpload | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
 
-  const {
-    filteredUploads,
-    uploadsPagination,
-    isUploadsLoading,
-    isUploadsInitialLoad,
-    uploadsCurrentPage,
-    uploadsStatusFilter,
-    uploadsSearchQuery,
-    fetchUploads,
-    setUploadsCurrentPage,
-    setUploadsStatusFilter,
-    setUploadsSearchQuery,
-    deleteUpload,
-  } = useAdmin();
+  // Fetch uploads
+  const fetchUploads = async () => {
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: "50",
+        filter: activeTab,
+        search,
+      });
 
-  useEffect(() => {
-    setUploadsCurrentPage(1);
-    fetchUploads(1, uploadsStatusFilter, userIdFilter || undefined);
-  }, [uploadsStatusFilter]);
+      const res = await fetch(`/api/admin/uploads?${params}`);
+      const { data } = await res.json();
 
-  useEffect(() => {
-    if (uploadsCurrentPage > 1) {
-      fetchUploads(uploadsCurrentPage, uploadsStatusFilter, userIdFilter || undefined);
+      setUploads(data.data);
+      setTotalPages(data.meta.totalPages);
+    } catch (error) {
+      console.error("Failed to fetch uploads:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch uploads",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
-  }, [uploadsCurrentPage]);
-
-  const handleStatusFilterChange = (status: string) => {
-    setUploadsStatusFilter(status);
-    setUploadsCurrentPage(1);
   };
 
-  const clearFilter = () => {
-    window.history.pushState({}, "", "/admin/uploads");
-    window.location.reload();
+  useEffect(() => {
+    fetchUploads();
+  }, [currentPage, activeTab, search]);
+
+  // Real-time updates for Processing tab
+  useEffect(() => {
+    if (activeTab !== "processing") return;
+
+    const supabase = createClient();
+    const channel = supabase
+      .channel("uploads-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "uploads",
+          filter: "status=eq.processing",
+        },
+        (payload) => {
+          console.log("Upload status changed:", payload);
+          // Refresh uploads when status changes
+          fetchUploads();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [activeTab]);
+
+  // Handle view upload
+  const handleViewUpload = (upload: EnrichedUpload) => {
+    router.push(`/admin/uploads/${upload.id}`);
   };
 
-  const handleExportCSV = () => {
-    exportToCSV(filteredUploads, `uploads-${new Date().toISOString().split("T")[0]}`, [
-      { key: "id", label: "Upload ID" },
-      { key: "file_name", label: "Dateiname" },
-      { key: "user_id", label: "User ID" },
-      { key: "file_size", label: "Größe (Bytes)" },
-      { key: "file_type", label: "Typ" },
-      { key: "status", label: "Status" },
-      { key: "created_at", label: "Erstellt" },
-    ]);
-  };
+  // Handle delete upload
+  const handleDeleteUpload = async () => {
+    if (!selectedUpload) return;
 
-  const handleExportJSON = () => {
-    exportToJSON(filteredUploads, `uploads-${new Date().toISOString().split("T")[0]}`);
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/admin/uploads/${selectedUpload.id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reason: "Deleted by admin via dashboard",
+        }),
+      });
+
+      if (res.ok) {
+        toast({
+          title: "Success",
+          description: "Upload deleted successfully",
+        });
+        fetchUploads();
+      } else {
+        throw new Error("Failed to delete upload");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete upload",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+      setSelectedUpload(null);
+    }
   };
 
   return (
-    <div className="space-y-6 md:space-y-8">
+    <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="font-serif text-2xl font-bold md:text-3xl">Uploads</h1>
-        <p className="text-muted-foreground mt-1 text-sm md:text-base">
-          Alle hochgeladenen Audio- und Video-Dateien
+        <h1 className="font-serif text-4xl font-bold mb-2">Upload Moderation</h1>
+        <p className="text-muted-foreground font-sans">
+          Verwalte und moderiere hochgeladene Dateien
         </p>
       </div>
 
-      {/* Search and Actions */}
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <div className="relative flex-1">
-            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
-            <Input
-              placeholder="Uploads suchen (Dateiname, Typ, User ID)..."
-              value={uploadsSearchQuery}
-              onChange={(e) => setUploadsSearchQuery(e.target.value)}
-              className="pl-9"
-              aria-label="Uploads suchen"
-            />
-          </div>
-          <Button
-            variant="outline"
-            onClick={() =>
-              fetchUploads(uploadsCurrentPage, uploadsStatusFilter, userIdFilter || undefined)
-            }
-            disabled={isUploadsLoading}
-            className="gap-2"
-            aria-label="Daten aktualisieren"
-          >
-            <RefreshCw className={`h-4 w-4 ${isUploadsLoading ? "animate-spin" : ""}`} />
-            <span className="hidden sm:inline">Aktualisieren</span>
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2" aria-label="Daten exportieren">
-                <Download className="h-4 w-4" />
-                <span className="hidden sm:inline">Export</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleExportCSV}>Als CSV exportieren</DropdownMenuItem>
-              <DropdownMenuItem onClick={handleExportJSON}>Als JSON exportieren</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+      {/* Search */}
+      <SearchFilterBar
+        onSearchChange={setSearch}
+        placeholder="Suche nach Dateiname oder Benutzer..."
+      />
 
-        {userIdFilter && (
-          <div className="bg-muted flex w-fit items-center gap-2 rounded-md p-2 md:p-3">
-            <span className="text-xs md:text-sm">
-              User:{" "}
-              <code className="bg-background rounded px-1.5 py-0.5 font-mono text-xs break-all">
-                {userIdFilter}
-              </code>
-            </span>
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              onClick={clearFilter}
-              aria-label="Filter entfernen"
-            >
-              <X className="h-3 w-3 md:h-4 md:w-4" />
-            </Button>
-          </div>
-        )}
-      </div>
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+        <TabsList className="rounded-[6px]">
+          <TabsTrigger value="all" className="rounded-[4px]">
+            All Uploads
+          </TabsTrigger>
+          <TabsTrigger value="processing" className="rounded-[4px]">
+            Processing
+          </TabsTrigger>
+          <TabsTrigger value="failed" className="rounded-[4px]">
+            Failed
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Uploads Table */}
-      <UploadsTable
-        uploads={filteredUploads}
-        isLoading={isUploadsInitialLoad}
-        pagination={uploadsPagination || undefined}
-        onPageChange={setUploadsCurrentPage}
-        onDelete={deleteUpload}
-        statusFilter={uploadsStatusFilter}
-        onStatusFilterChange={handleStatusFilterChange}
+        <TabsContent value={activeTab} className="mt-6">
+          <UploadsTable
+            uploads={uploads}
+            isLoading={isLoading}
+            onViewUpload={handleViewUpload}
+            onDeleteUpload={(upload) => {
+              setSelectedUpload(upload);
+              setShowDeleteDialog(true);
+            }}
+          />
+
+          {totalPages > 1 && (
+            <div className="mt-6">
+              <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+
+      {/* Delete Dialog */}
+      <ConfirmationDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={handleDeleteUpload}
+        title="Delete Upload"
+        description={`Are you sure you want to delete "${selectedUpload?.file_name}"? This will remove the file from both the database and storage. This action cannot be undone.`}
+        confirmLabel="Delete Upload"
+        variant="destructive"
+        isLoading={isDeleting}
       />
     </div>
-  );
-}
-
-export default function AdminUploadsPage() {
-  const { showToast } = useToast();
-
-  return (
-    <AdminProvider onToast={showToast}>
-      <UploadsContent />
-    </AdminProvider>
   );
 }

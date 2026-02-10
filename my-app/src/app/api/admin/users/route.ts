@@ -1,157 +1,143 @@
+/**
+ * Admin Users API Route
+ *
+ * GET - List all users with pagination and filters
+ */
+
 import { NextRequest, NextResponse } from "next/server";
-import { auth, clerkClient } from "@clerk/nextjs/server";
-import * as Sentry from "@sentry/nextjs";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { isAdmin } from "@/lib/auth/admin";
-import { logger } from "@/lib/logger";
-import { parsePaginationParams, buildPaginationResponse } from "@/lib/pagination";
-
-// Cache-Control Header for fast loading
-const CACHE_CONTROL = "public, s-maxage=30, stale-while-revalidate=60";
-
-interface UserStats {
-  userId: string;
-  chatCount: number;
-  uploadCount: number;
-  lastActivity: string | null;
-  // Clerk user info
-  firstName: string | null;
-  lastName: string | null;
-  email: string | null;
-  imageUrl: string | null;
-}
+import { checkAdminAuth, getAdminSupabaseClient } from "@/lib/admin/auth";
+import { getAllClerkUsers } from "@/lib/admin/clerk-helpers";
+import type { UserWithStats, PaginatedResponse } from "@/types/admin";
 
 export async function GET(request: NextRequest) {
-  try {
-    const { userId } = await auth();
+  const authResult = await checkAdminAuth();
+  if (!authResult.authorized) {
+    return authResult.response;
+  }
 
-    if (!userId) {
-      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
+  try {
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "50");
+    const filter = searchParams.get("filter") || "all"; // all, active, banned
+    const search = searchParams.get("search") || "";
+
+    // Get all Clerk users with pagination
+    const { users: clerkUsers, totalCount } = await getAllClerkUsers({
+      limit,
+      offset: (page - 1) * limit,
+      query: search || undefined,
+    });
+
+    const supabase = getAdminSupabaseClient();
+    const userIds = clerkUsers.map((u) => u.id);
+
+    if (userIds.length === 0) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          data: [],
+          meta: {
+            page,
+            limit,
+            total: 0,
+            totalPages: 0,
+            hasMore: false,
+          },
+        } as PaginatedResponse<UserWithStats>,
+      });
     }
 
-    // Admin-Check
-    if (!(await isAdmin())) {
-      return NextResponse.json(
-        { success: false, error: "Keine Admin-Berechtigung" },
-        { status: 403 }
+    // Fetch Supabase data for users
+    const [chatsResult, uploadsResult, bansResult] = await Promise.all([
+      supabase
+        .from("chats")
+        .select("user_id")
+        .in("user_id", userIds)
+        .is("deleted_at", null),
+      supabase
+        .from("uploads")
+        .select("user_id")
+        .in("user_id", userIds)
+        .is("deleted_at", null),
+      supabase.from("user_bans").select("*").in("user_id", userIds),
+    ]);
+
+    const chats = chatsResult.data || [];
+    const uploads = uploadsResult.data || [];
+    const bans = bansResult.data || [];
+
+    // Count chats and uploads per user
+    const chatCounts = new Map<string, number>();
+    const uploadCounts = new Map<string, number>();
+    const banMap = new Map<string, typeof bans[0]>();
+
+    chats.forEach((chat) => {
+      chatCounts.set(chat.user_id, (chatCounts.get(chat.user_id) || 0) + 1);
+    });
+
+    uploads.forEach((upload) => {
+      uploadCounts.set(upload.user_id, (uploadCounts.get(upload.user_id) || 0) + 1);
+    });
+
+    bans.forEach((ban) => {
+      banMap.set(ban.user_id, ban);
+    });
+
+    // Merge data
+    let usersWithStats: UserWithStats[] = clerkUsers.map((user) => {
+      const ban = banMap.get(user.id);
+      const isBanned = ban !== undefined &&
+        (ban.ban_type === "permanent" ||
+          (ban.expires_at && new Date(ban.expires_at) > new Date()));
+
+      return {
+        ...user,
+        totalUploads: uploadCounts.get(user.id) || 0,
+        totalChats: chatCounts.get(user.id) || 0,
+        lastActive: user.lastSignInAt,
+        isBanned,
+        banInfo: ban,
+      };
+    });
+
+    // Apply filters
+    if (filter === "banned") {
+      usersWithStats = usersWithStats.filter((u) => u.isBanned);
+    } else if (filter === "active") {
+      // Active in last 7 days
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      usersWithStats = usersWithStats.filter(
+        (u) => u.lastActive && u.lastActive > sevenDaysAgo
       );
     }
 
-    const supabase = createAdminClient();
-    const { searchParams } = new URL(request.url);
+    const totalPages = Math.ceil(totalCount / limit);
 
-    // Pagination with validation
-    const { page, limit, offset } = parsePaginationParams(searchParams, 50);
-
-    const clerk = await clerkClient();
-
-    // Parallelize data fetching for speed
-    const [clerkUsersResponse, chatsResult, uploadsResult] = await Promise.all([
-      clerk.users.getUserList({
-        limit: 500, // Clerk's default limit
-      }),
-      supabase.from("chats").select("user_id, updated_at"),
-      supabase.from("uploads").select("user_id, updated_at"),
-    ]);
-
-    const allClerkUsers = clerkUsersResponse.data;
-
-    // Map für User-Statistiken erstellen
-    const userStatsMap = new Map<
-      string,
-      { chatCount: number; uploadCount: number; lastActivity: string | null }
-    >();
-
-    // Chats verarbeiten
-    chatsResult.data?.forEach((chat) => {
-      const existing = userStatsMap.get(chat.user_id);
-      if (existing) {
-        existing.chatCount++;
-        if (
-          chat.updated_at &&
-          (!existing.lastActivity || chat.updated_at > existing.lastActivity)
-        ) {
-          existing.lastActivity = chat.updated_at;
-        }
-      } else {
-        userStatsMap.set(chat.user_id, {
-          chatCount: 1,
-          uploadCount: 0,
-          lastActivity: chat.updated_at,
-        });
-      }
-    });
-
-    // Uploads verarbeiten
-    uploadsResult.data?.forEach((upload) => {
-      const existing = userStatsMap.get(upload.user_id);
-      if (existing) {
-        existing.uploadCount++;
-        if (
-          upload.updated_at &&
-          (!existing.lastActivity || upload.updated_at > existing.lastActivity)
-        ) {
-          existing.lastActivity = upload.updated_at;
-        }
-      } else {
-        userStatsMap.set(upload.user_id, {
-          chatCount: 0,
-          uploadCount: 1,
-          lastActivity: upload.updated_at,
-        });
-      }
-    });
-
-    // Alle Clerk-Benutzer mit ihren Statistiken kombinieren
-    const allUsers: UserStats[] = allClerkUsers.map((clerkUser) => {
-      const stats = userStatsMap.get(clerkUser.id) || {
-        chatCount: 0,
-        uploadCount: 0,
-        lastActivity: null,
-      };
-
-      return {
-        userId: clerkUser.id,
-        chatCount: stats.chatCount,
-        uploadCount: stats.uploadCount,
-        lastActivity: stats.lastActivity,
-        firstName: clerkUser.firstName,
-        lastName: clerkUser.lastName,
-        email: clerkUser.emailAddresses[0]?.emailAddress || null,
-        imageUrl: clerkUser.imageUrl,
-      };
-    });
-
-    // Sortieren nach letzter Aktivität
-    allUsers.sort((a, b) => {
-      if (!a.lastActivity) return 1;
-      if (!b.lastActivity) return -1;
-      return new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime();
-    });
-
-    const total = allUsers.length;
-    const usersWithClerkData = allUsers.slice(offset, offset + limit);
-
-    return NextResponse.json(
-      {
-        success: true,
-        users: usersWithClerkData,
-        pagination: buildPaginationResponse(page, limit, total),
+    const response: PaginatedResponse<UserWithStats> = {
+      data: usersWithStats,
+      meta: {
+        page,
+        limit,
+        total: totalCount,
+        totalPages,
+        hasMore: page < totalPages,
       },
-      {
-        headers: {
-          "Cache-Control": CACHE_CONTROL,
-        },
-      }
-    );
-  } catch (error) {
-    logger.error("[Admin Users API] Fehler:", error);
-    Sentry.captureException(error, {
-      tags: { api_route: "/api/admin/users" },
-    });
+    };
 
+    return NextResponse.json({
+      success: true,
+      data: response,
+    });
+  } catch (error) {
+    console.error("Users API error:", error);
     return NextResponse.json(
-      { success: false, error: "Fehler beim Laden der Benutzer" },
+      {
+        success: false,
+        error: "Internal error",
+        message: "Failed to fetch users",
+      },
       { status: 500 }
     );
   }

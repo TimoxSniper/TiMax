@@ -1,299 +1,180 @@
-"use client";
+/**
+ * Admin Dashboard Page
+ *
+ * Overview page with stats, recent activity, and quick actions
+ */
 
-import { useEffect, useState, useCallback } from "react";
-import { StatsCards } from "@/components/admin/stats-cards";
-import { ActivityTimeline } from "@/components/admin/activity-timeline";
-import { AnalyticsChart } from "@/components/admin/analytics-chart";
-import { QuickActions } from "@/components/admin/quick-actions";
-import { RecentActivity } from "@/components/admin/recent-activity";
-import { SystemHealth } from "@/components/admin/system-health";
-import { useToast } from "@/components/ui/toast";
-import { logger } from "@/lib/logger";
-import { AdminProvider, useAdmin } from "@/contexts/admin-context";
-import { Button } from "@/components/ui/button";
-import { RefreshCw, TrendingUp, Sparkles } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card";
+import { StatsCards } from "@/components/admin/dashboard/stats-cards";
+import { ActivityTimeline } from "@/components/admin/dashboard/activity-timeline";
+import { getAllClerkUsers } from "@/lib/admin/clerk-helpers";
+import type { DashboardStats } from "@/types/admin";
 
-function DashboardContent() {
-  const {
-    stats,
-    isStatsLoading,
-    fetchStats,
-    filteredChats,
-    isChatsLoading,
-    fetchChats,
-    deleteChat,
-    filteredUploads,
-    isUploadsLoading,
-    fetchUploads,
-    deleteUpload,
-    filteredUsers,
-    fetchUsers,
-  } = useAdmin();
-  const { showToast } = useToast();
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [activeTab, setActiveTab] = useState("overview");
+async function getDashboardStats(): Promise<DashboardStats> {
+  try {
+    // Fetch from API
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const res = await fetch(`${baseUrl}/api/admin/dashboard`, {
+      cache: "no-store",
+    });
 
-  const handleRefresh = useCallback(async () => {
-    setIsRefreshing(true);
-    try {
-      await Promise.all([fetchStats(), fetchChats(1), fetchUploads(1), fetchUsers(1)]);
-      showToast("Dashboard erfolgreich aktualisiert", "success");
-    } catch (error) {
-      logger.error("Fehler beim Aktualisieren:", error);
-      showToast("Fehler beim Aktualisieren des Dashboards", "error");
-    } finally {
-      setIsRefreshing(false);
+    if (!res.ok) {
+      throw new Error("Failed to fetch dashboard stats");
     }
-  }, [fetchStats, fetchChats, fetchUploads, fetchUsers, showToast]);
 
-  useEffect(() => {
-    fetchStats();
-    fetchChats(1);
-    fetchUploads(1);
-    fetchUsers(1);
-  }, [fetchStats, fetchChats, fetchUploads, fetchUsers]);
+    const { data } = await res.json();
 
-  // Calculate growth metrics
-  const calculateGrowth = () => {
-    if (!stats) return { users: 0, chats: 0, uploads: 0 };
-    // Mock growth calculations - in production, compare with previous period
+    // Fetch total users from Clerk
+    const { totalCount } = await getAllClerkUsers({ limit: 1 });
+    data.totalUsers = totalCount;
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching dashboard stats:", error);
+    // Return empty stats on error
     return {
-      users: 12.5,
-      chats: 8.3,
-      uploads: 15.7,
+      totalUsers: 0,
+      activeUsers: 0,
+      totalChats: 0,
+      totalMessages: 0,
+      totalUploads: 0,
+      uploadsByStatus: {
+        pending: 0,
+        processing: 0,
+        completed: 0,
+        failed: 0,
+        cancelled: 0,
+      },
+      recentActivity: [],
+      systemHealth: {
+        status: "down",
+        databaseConnected: false,
+        storageConnected: false,
+        apiResponseTime: 0,
+        activeUsers: 0,
+        uptime: 0,
+      },
     };
-  };
+  }
+}
 
-  const growth = calculateGrowth();
+async function DashboardContent() {
+  const stats = await getDashboardStats();
 
   return (
-    <div className="space-y-6 lg:space-y-8">
-      {/* Header Section with Editorial Modernism styling */}
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-        <div className="space-y-3">
-          <div className="flex items-center gap-3">
-            <h1 className="font-serif text-4xl font-bold tracking-tight lg:text-5xl">
-              Dashboard
-            </h1>
-            <Badge variant="secondary" className="h-7 gap-1.5 px-3 text-xs font-medium">
-              <Sparkles className="h-3.5 w-3.5" />
-              Live
-            </Badge>
-          </div>
-          <p className="text-muted-foreground max-w-2xl text-base lg:text-lg">
-            Echtzeit-Übersicht über alle Aktivitäten, Analysen und Systemmetriken auf TiMax
-          </p>
-          <div className="flex items-center gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="bg-accent h-2 w-2 rounded-full" />
-              <span className="text-muted-foreground">
-                Letzte Aktualisierung: {new Date().toLocaleTimeString("de-DE")}
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="font-serif text-4xl font-bold mb-2">Dashboard</h1>
+        <p className="text-muted-foreground font-sans">
+          Übersicht über alle System-Metriken und Aktivitäten
+        </p>
+      </div>
+
+      {/* Stats Cards */}
+      <StatsCards stats={stats} />
+
+      {/* Activity and System Health */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Activity */}
+        <ActivityTimeline activities={stats.recentActivity} />
+
+        {/* System Health */}
+        <Card className="p-6 shadow-editorial-md">
+          <h3 className="font-serif text-lg font-bold mb-4">System Health</h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-sans text-muted-foreground">Status</span>
+              <span
+                className={`text-sm font-semibold ${
+                  stats.systemHealth.status === "healthy"
+                    ? "text-accent"
+                    : stats.systemHealth.status === "degraded"
+                      ? "text-yellow-600"
+                      : "text-destructive"
+                }`}
+              >
+                {stats.systemHealth.status === "healthy"
+                  ? "Healthy"
+                  : stats.systemHealth.status === "degraded"
+                    ? "Degraded"
+                    : "Down"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-sans text-muted-foreground">Database</span>
+              <span
+                className={`text-sm font-semibold ${
+                  stats.systemHealth.databaseConnected ? "text-accent" : "text-destructive"
+                }`}
+              >
+                {stats.systemHealth.databaseConnected ? "Connected" : "Disconnected"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-sans text-muted-foreground">Storage</span>
+              <span
+                className={`text-sm font-semibold ${
+                  stats.systemHealth.storageConnected ? "text-accent" : "text-destructive"
+                }`}
+              >
+                {stats.systemHealth.storageConnected ? "Connected" : "Disconnected"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-sans text-muted-foreground">API Response</span>
+              <span className="text-sm font-semibold font-mono">
+                {stats.systemHealth.apiResponseTime}ms
               </span>
             </div>
           </div>
-        </div>
-        <Button
-          variant="default"
-          onClick={handleRefresh}
-          disabled={isRefreshing || isStatsLoading || isChatsLoading || isUploadsLoading}
-          className="h-12 gap-2 px-6 text-base font-medium shadow-editorial-md hover:shadow-editorial-lg"
-        >
-          <RefreshCw className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`} />
-          <span>Aktualisieren</span>
-        </Button>
+        </Card>
       </div>
 
-      {/* Stats Cards - Enhanced with growth indicators */}
-      <StatsCards stats={stats} isLoading={isStatsLoading} growth={growth} />
-
-      {/* Tabs for different views */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="inline-flex h-12 w-full justify-start gap-2 rounded-lg bg-muted p-1.5 lg:w-auto">
-          <TabsTrigger
-            value="overview"
-            className="rounded-md px-6 py-2.5 text-sm font-semibold transition-all data-[state=active]:shadow-editorial-sm"
-          >
-            Übersicht
-          </TabsTrigger>
-          <TabsTrigger
-            value="analytics"
-            className="rounded-md px-6 py-2.5 text-sm font-semibold transition-all data-[state=active]:shadow-editorial-sm"
-          >
-            Analysen
-          </TabsTrigger>
-          <TabsTrigger
-            value="activity"
-            className="rounded-md px-6 py-2.5 text-sm font-semibold transition-all data-[state=active]:shadow-editorial-sm"
-          >
-            Aktivitäten
-          </TabsTrigger>
-          <TabsTrigger
-            value="system"
-            className="rounded-md px-6 py-2.5 text-sm font-semibold transition-all data-[state=active]:shadow-editorial-sm"
-          >
-            System
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Overview Tab */}
-        <TabsContent value="overview" className="mt-6 space-y-6">
-          {/* Quick Actions */}
-          <QuickActions />
-
-          {/* Main Grid */}
-          <div className="grid gap-6 lg:grid-cols-3">
-            {/* Recent Activity - 2 columns */}
-            <div className="lg:col-span-2">
-              <RecentActivity
-                chats={filteredChats}
-                uploads={filteredUploads}
-                isLoading={isChatsLoading || isUploadsLoading}
-              />
+      {/* Upload Status Distribution */}
+      <Card className="p-6 shadow-editorial-md">
+        <h3 className="font-serif text-lg font-bold mb-4">Upload Status Distribution</h3>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {Object.entries(stats.uploadsByStatus).map(([status, count]) => (
+            <div key={status} className="text-center">
+              <p className="text-2xl font-serif font-bold">{count}</p>
+              <p className="text-xs text-muted-foreground font-sans uppercase tracking-wide mt-1">
+                {status}
+              </p>
             </div>
+          ))}
+        </div>
+      </Card>
+    </div>
+  );
+}
 
-            {/* Activity Timeline - 1 column */}
-            <div className="lg:col-span-1">
-              <ActivityTimeline
-                chats={filteredChats}
-                uploads={filteredUploads}
-                isLoading={isChatsLoading || isUploadsLoading}
-              />
-            </div>
-          </div>
-
-          {/* Performance Metrics */}
-          <div className="grid gap-6 lg:grid-cols-3">
-            <Card className="shadow-editorial-md transition-shadow hover:shadow-editorial-lg">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 font-serif text-xl">
-                  <TrendingUp className="text-accent h-5 w-5" />
-                  Engagement Rate
-                </CardTitle>
-                <CardDescription>Durchschnittliche Nutzeraktivität</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-serif text-4xl font-bold">78.5%</span>
-                    <Badge variant="secondary" className="gap-1 text-xs">
-                      <TrendingUp className="h-3 w-3" />
-                      +5.2%
-                    </Badge>
-                  </div>
-                  <div className="bg-muted h-2 overflow-hidden rounded-full">
-                    <div className="bg-accent h-full rounded-full" style={{ width: "78.5%" }} />
-                  </div>
-                  <p className="text-muted-foreground text-sm">
-                    {stats && stats.totalUsers > 0
-                      ? Math.round((stats.totalChats / stats.totalUsers) * 100)
-                      : 0}
-                    % der Nutzer sind aktiv
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-editorial-md transition-shadow hover:shadow-editorial-lg">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 font-serif text-xl">
-                  Durchschn. Nachrichten
-                </CardTitle>
-                <CardDescription>Pro Chat-Sitzung</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-serif text-4xl font-bold">
-                      {stats && stats.totalChats > 0
-                        ? (stats.totalMessages / stats.totalChats).toFixed(1)
-                        : "0"}
-                    </span>
-                    <span className="text-muted-foreground text-sm">Nachrichten</span>
-                  </div>
-                  <p className="text-muted-foreground text-sm">
-                    Gesamt: {stats?.totalMessages.toLocaleString("de-DE") || 0} Nachrichten
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-editorial-md transition-shadow hover:shadow-editorial-lg">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 font-serif text-xl">
-                  Upload Success Rate
-                </CardTitle>
-                <CardDescription>Erfolgreich abgeschlossen</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-serif text-4xl font-bold">
-                      {stats && stats.totalUploads > 0
-                        ? Math.round(
-                            ((stats.uploadsByStatus?.completed || 0) / stats.totalUploads) * 100
-                          )
-                        : 0}
-                      %
-                    </span>
-                  </div>
-                  <div className="bg-muted h-2 overflow-hidden rounded-full">
-                    <div
-                      className="bg-accent h-full rounded-full"
-                      style={{
-                        width: `${stats && stats.totalUploads > 0 ? Math.round(((stats.uploadsByStatus?.completed || 0) / stats.totalUploads) * 100) : 0}%`,
-                      }}
-                    />
-                  </div>
-                  <p className="text-muted-foreground text-sm">
-                    {stats?.uploadsByStatus?.completed || 0} von {stats?.totalUploads || 0} Uploads
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Analytics Tab */}
-        <TabsContent value="analytics" className="mt-6 space-y-6">
-          <AnalyticsChart stats={stats} isLoading={isStatsLoading} />
-        </TabsContent>
-
-        {/* Activity Tab */}
-        <TabsContent value="activity" className="mt-6 space-y-6">
-          <div className="grid gap-6 lg:grid-cols-2">
-            <RecentActivity
-              chats={filteredChats}
-              uploads={filteredUploads}
-              isLoading={isChatsLoading || isUploadsLoading}
-              showAll
-            />
-            <ActivityTimeline
-              chats={filteredChats}
-              uploads={filteredUploads}
-              isLoading={isChatsLoading || isUploadsLoading}
-              extended
-            />
-          </div>
-        </TabsContent>
-
-        {/* System Tab */}
-        <TabsContent value="system" className="mt-6 space-y-6">
-          <SystemHealth stats={stats} isLoading={isStatsLoading} />
-        </TabsContent>
-      </Tabs>
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-8">
+      <div>
+        <Skeleton className="h-10 w-64 mb-2" />
+        <Skeleton className="h-5 w-96" />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[...Array(4)].map((_, i) => (
+          <Skeleton key={i} className="h-32" />
+        ))}
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Skeleton className="h-96" />
+        <Skeleton className="h-96" />
+      </div>
     </div>
   );
 }
 
 export default function AdminDashboardPage() {
-  const { showToast } = useToast();
-
   return (
-    <AdminProvider onToast={showToast}>
+    <Suspense fallback={<DashboardSkeleton />}>
       <DashboardContent />
-    </AdminProvider>
+    </Suspense>
   );
 }

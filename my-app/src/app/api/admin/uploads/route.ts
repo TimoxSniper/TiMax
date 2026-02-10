@@ -1,102 +1,116 @@
+/**
+ * Admin Uploads API Route
+ *
+ * GET - List all uploads with pagination and filters
+ */
+
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
-import * as Sentry from "@sentry/nextjs";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { isAdmin } from "@/lib/auth/admin";
-import { logger } from "@/lib/logger";
-import { parsePaginationParams, buildPaginationResponse } from "@/lib/pagination";
-import type { UploadStatus } from "@/lib/supabase/database.types";
+import { checkAdminAuth, getAdminSupabaseClient } from "@/lib/admin/auth";
+import { getClerkUsers } from "@/lib/admin/clerk-helpers";
+import type { EnrichedUpload, PaginatedResponse } from "@/types/admin";
 
-// Cache-Control Header for fast loading
-const CACHE_CONTROL = "public, s-maxage=15, stale-while-revalidate=60";
-
-const VALID_UPLOAD_STATUSES: UploadStatus[] = [
-  "pending",
-  "processing",
-  "completed",
-  "failed",
-  "cancelled",
-];
-
-// GET: Alle Uploads laden (für Admin)
 export async function GET(request: NextRequest) {
-  try {
-    const { userId } = await auth();
+  const authResult = await checkAdminAuth();
+  if (!authResult.authorized) {
+    return authResult.response;
+  }
 
-    if (!userId) {
-      return NextResponse.json({ success: false, error: "Nicht authentifiziert" }, { status: 401 });
+  try {
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "50");
+    const filter = searchParams.get("filter") || "all"; // all, processing, failed
+    const search = searchParams.get("search") || "";
+
+    const supabase = getAdminSupabaseClient();
+
+    // Build query
+    let query = supabase
+      .from("uploads")
+      .select("*", { count: "exact" })
+      .is("deleted_at", null)
+      .order("created_at", { ascending: false });
+
+    // Apply status filters
+    if (filter === "processing") {
+      query = query.eq("status", "processing");
+    } else if (filter === "failed") {
+      query = query.eq("status", "failed");
     }
 
-    // Admin-Check
-    if (!(await isAdmin())) {
-      return NextResponse.json(
-        { success: false, error: "Keine Admin-Berechtigung" },
-        { status: 403 }
+    // Pagination
+    const offset = (page - 1) * limit;
+    query = query.range(offset, offset + limit - 1);
+
+    const { data: uploads, error, count } = await query;
+
+    if (error) throw error;
+
+    if (!uploads || uploads.length === 0) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          data: [],
+          meta: {
+            page,
+            limit,
+            total: 0,
+            totalPages: 0,
+            hasMore: false,
+          },
+        } as PaginatedResponse<EnrichedUpload>,
+      });
+    }
+
+    // Get unique user IDs
+    const userIds = [...new Set(uploads.map((upload) => upload.user_id))];
+
+    // Batch fetch Clerk users
+    const clerkUsers = await getClerkUsers(userIds);
+
+    // Enrich uploads with user data
+    const enrichedUploads: EnrichedUpload[] = uploads.map((upload) => ({
+      ...upload,
+      user: clerkUsers.get(upload.user_id)!,
+    }));
+
+    // Apply search filter
+    let filteredUploads = enrichedUploads;
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filteredUploads = enrichedUploads.filter(
+        (upload) =>
+          upload.file_name.toLowerCase().includes(searchLower) ||
+          upload.user.fullName.toLowerCase().includes(searchLower) ||
+          upload.user.email?.toLowerCase().includes(searchLower)
       );
     }
 
-    const supabase = createAdminClient();
-    const { searchParams } = new URL(request.url);
+    const totalPages = Math.ceil((count || 0) / limit);
 
-    // Pagination with validation
-    const { page, limit, offset } = parsePaginationParams(searchParams);
-
-    // Optional: Filter
-    const filterUserId = searchParams.get("userId");
-    const filterStatusParam = searchParams.get("status");
-    const filterStatus =
-      filterStatusParam && VALID_UPLOAD_STATUSES.includes(filterStatusParam as UploadStatus)
-        ? (filterStatusParam as UploadStatus)
-        : null;
-
-    // Parallelize count and data fetching for speed
-    const [countResult, queryResult] = await Promise.all([
-      (async () => {
-        let countQuery = supabase.from("uploads").select("*", { count: "exact", head: true });
-        if (filterUserId) countQuery = countQuery.eq("user_id", filterUserId);
-        if (filterStatus) countQuery = countQuery.eq("status", filterStatus);
-        return countQuery;
-      })(),
-      (async () => {
-        let query = supabase
-          .from("uploads")
-          .select("*")
-          .order("created_at", { ascending: false })
-          .range(offset, offset + limit - 1);
-        if (filterUserId) query = query.eq("user_id", filterUserId);
-        if (filterStatus) query = query.eq("status", filterStatus);
-        return query;
-      })(),
-    ]);
-
-    const { count: total } = countResult;
-    const { data: uploads, error } = queryResult;
-
-    if (error) {
-      logger.error("[Admin Uploads API] Fehler beim Laden:", error);
-      throw error;
-    }
-
-    return NextResponse.json(
-      {
-        success: true,
-        uploads: uploads || [],
-        pagination: buildPaginationResponse(page, limit, total || 0),
+    const response: PaginatedResponse<EnrichedUpload> = {
+      data: filteredUploads,
+      meta: {
+        page,
+        limit,
+        total: count || 0,
+        totalPages,
+        hasMore: page < totalPages,
       },
-      {
-        headers: {
-          "Cache-Control": CACHE_CONTROL,
-        },
-      }
-    );
-  } catch (error) {
-    logger.error("[Admin Uploads API] Fehler:", error);
-    Sentry.captureException(error, {
-      tags: { api_route: "/api/admin/uploads" },
-    });
+    };
 
+    return NextResponse.json({
+      success: true,
+      data: response,
+    });
+  } catch (error) {
+    console.error("Uploads API error:", error);
     return NextResponse.json(
-      { success: false, error: "Fehler beim Laden der Uploads" },
+      {
+        success: false,
+        error: "Internal error",
+        message: "Failed to fetch uploads",
+      },
       { status: 500 }
     );
   }
