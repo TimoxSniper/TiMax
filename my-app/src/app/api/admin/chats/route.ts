@@ -1,138 +1,141 @@
-/**
- * Admin Chats API Route
- *
- * GET - List all chats with pagination and filters
- */
-
 import { NextRequest, NextResponse } from "next/server";
-import { checkAdminAuth, getAdminSupabaseClient } from "@/lib/admin/auth";
-import { getClerkUsers } from "@/lib/admin/clerk-helpers";
-import type { EnrichedChat, PaginatedResponse } from "@/types/admin";
+import { auth } from "@clerk/nextjs/server";
+import { requireAdmin } from "@/lib/auth/admin";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { withCsrfProtection } from "@/lib/csrf";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
-  const authResult = await checkAdminAuth();
-  if (!authResult.authorized) {
-    return authResult.response;
-  }
-
   try {
+    await requireAdmin();
+
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "50");
-    const filter = searchParams.get("filter") || "all"; // all, recent
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20")));
     const search = searchParams.get("search") || "";
+    const userId = searchParams.get("userId") || "";
+    const timeFilter = searchParams.get("timeFilter") || "";
+    const offset = (page - 1) * limit;
 
-    const supabase = getAdminSupabaseClient();
+    const supabase = createAdminClient();
 
-    // Build query
-    let query = supabase
+    let countQuery = supabase.from("chats").select("*", { count: "exact", head: true });
+    let dataQuery = supabase
       .from("chats")
-      .select("*, messages(count)", { count: "exact" })
-      .is("deleted_at", null)
-      .order("created_at", { ascending: false });
+      .select("*")
+      .order("updated_at", { ascending: false })
+      .range(offset, offset + limit - 1);
 
-    // Apply filters
-    if (filter === "recent") {
-      const oneDayAgo = new Date();
-      oneDayAgo.setDate(oneDayAgo.getDate() - 1);
-      query = query.gte("created_at", oneDayAgo.toISOString());
+    if (userId) {
+      countQuery = countQuery.eq("user_id", userId);
+      dataQuery = dataQuery.eq("user_id", userId);
     }
 
-    // Pagination
-    const offset = (page - 1) * limit;
-    query = query.range(offset, offset + limit - 1);
+    if (timeFilter) {
+      const now = new Date();
+      let startDate: Date;
 
-    const { data: chats, error, count } = await query;
+      switch (timeFilter) {
+        case "today":
+          startDate = new Date(now.setHours(0, 0, 0, 0));
+          break;
+        case "week":
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case "month":
+          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          break;
+        default:
+          startDate = new Date(0);
+      }
 
+      countQuery = countQuery.gte("created_at", startDate.toISOString());
+      dataQuery = dataQuery.gte("created_at", startDate.toISOString());
+    }
+
+    const { count: totalCount, error: countError } = await countQuery;
+    if (countError) throw countError;
+
+    const { data: chats, error } = await dataQuery;
     if (error) throw error;
 
-    if (!chats || chats.length === 0) {
-      return NextResponse.json({
-        success: true,
-        data: {
-          data: [],
-          meta: {
-            page,
-            limit,
-            total: 0,
-            totalPages: 0,
-            hasMore: false,
-          },
-        } as PaginatedResponse<EnrichedChat>,
-      });
-    }
+    let filteredChats = chats || [];
 
-    // Get unique user IDs
-    const userIds = [...new Set(chats.map((chat) => chat.user_id))];
-
-    // Batch fetch Clerk users
-    const clerkUsers = await getClerkUsers(userIds);
-
-    // Get message counts and last message time
-    const chatIds = chats.map((c) => c.id);
-    const { data: messages } = await supabase
-      .from("messages")
-      .select("chat_id, created_at")
-      .in("chat_id", chatIds);
-
-    // Count messages per chat and get last message time
-    const messageCounts = new Map<string, number>();
-    const lastMessageTimes = new Map<string, string>();
-
-    messages?.forEach((msg) => {
-      messageCounts.set(msg.chat_id, (messageCounts.get(msg.chat_id) || 0) + 1);
-      const existing = lastMessageTimes.get(msg.chat_id);
-      if (!existing || msg.created_at > existing) {
-        lastMessageTimes.set(msg.chat_id, msg.created_at);
-      }
-    });
-
-    // Enrich chats with user data
-    const enrichedChats: EnrichedChat[] = chats.map((chat) => ({
-      ...chat,
-      user: clerkUsers.get(chat.user_id)!,
-      messageCount: messageCounts.get(chat.id) || 0,
-      lastMessageAt: lastMessageTimes.get(chat.id) || null,
-    }));
-
-    // Apply search filter (on enriched data)
-    let filteredChats = enrichedChats;
     if (search) {
-      const searchLower = search.toLowerCase();
-      filteredChats = enrichedChats.filter(
-        (chat) =>
-          chat.title?.toLowerCase().includes(searchLower) ||
-          chat.user.fullName.toLowerCase().includes(searchLower) ||
-          chat.user.email?.toLowerCase().includes(searchLower)
+      const lowerSearch = search.toLowerCase();
+      filteredChats = filteredChats.filter(
+        (chat: any) =>
+          chat.title?.toLowerCase().includes(lowerSearch) ||
+          chat.user_id?.toLowerCase().includes(lowerSearch)
       );
     }
 
-    const totalPages = Math.ceil((count || 0) / limit);
+    const chatIds = filteredChats.map((c: any) => c.id);
 
-    const response: PaginatedResponse<EnrichedChat> = {
-      data: filteredChats,
-      meta: {
-        page,
-        limit,
-        total: count || 0,
-        totalPages,
-        hasMore: page < totalPages,
-      },
-    };
+    const { data: messagesData, error: messagesError } = await supabase
+      .from("messages")
+      .select("chat_id")
+      .in("chat_id", chatIds);
+
+    if (!messagesError && messagesData) {
+      const messageCounts = messagesData.reduce((acc: Record<string, number>, m: any) => {
+        acc[m.chat_id] = (acc[m.chat_id] || 0) + 1;
+        return acc;
+      }, {});
+
+      filteredChats = filteredChats.map((chat: any) => ({
+        ...chat,
+        messageCount: messageCounts[chat.id] || 0,
+      }));
+    }
+
+    const total = totalCount || 0;
+    const totalPages = Math.ceil(total / limit);
 
     return NextResponse.json({
       success: true,
-      data: response,
+      chats: filteredChats,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
     });
   } catch (error) {
-    console.error("Chats API error:", error);
+    logger.error("[Admin Chats API] Error:", error);
     return NextResponse.json(
-      {
-        success: false,
-        error: "Internal error",
-        message: "Failed to fetch chats",
-      },
+      { success: false, error: "Fehler beim Laden der Chats" },
       { status: 500 }
     );
   }
 }
+
+async function deleteChatHandler(request: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    await requireAdmin();
+
+    const { id } = params;
+    const supabase = createAdminClient();
+
+    const { error: messagesError } = await supabase.from("messages").delete().eq("chat_id", id);
+
+    if (messagesError) throw messagesError;
+
+    const { error: chatError } = await supabase.from("chats").delete().eq("id", id);
+
+    if (chatError) throw chatError;
+
+    logger.info(`[Admin Chats API] Chat ${id} deleted`);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    logger.error("[Admin Chats API] Error:", error);
+    return NextResponse.json(
+      { success: false, error: "Fehler beim Löschen des Chats" },
+      { status: 500 }
+    );
+  }
+}
+
+export const DELETE = withCsrfProtection(deleteChatHandler);

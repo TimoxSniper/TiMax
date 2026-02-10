@@ -1,143 +1,96 @@
-/**
- * Admin Users API Route
- *
- * GET - List all users with pagination and filters
- */
-
 import { NextRequest, NextResponse } from "next/server";
-import { checkAdminAuth, getAdminSupabaseClient } from "@/lib/admin/auth";
-import { getAllClerkUsers } from "@/lib/admin/clerk-helpers";
-import type { UserWithStats, PaginatedResponse } from "@/types/admin";
+import { auth } from "@clerk/nextjs/server";
+import { requireAdmin } from "@/lib/auth/admin";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
-  const authResult = await checkAdminAuth();
-  if (!authResult.authorized) {
-    return authResult.response;
-  }
-
   try {
+    await requireAdmin();
+
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "50");
-    const filter = searchParams.get("filter") || "all"; // all, active, banned
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "25")));
     const search = searchParams.get("search") || "";
+    const offset = (page - 1) * limit;
 
-    // Get all Clerk users with pagination
-    const { users: clerkUsers, totalCount } = await getAllClerkUsers({
-      limit,
-      offset: (page - 1) * limit,
-      query: search || undefined,
-    });
+    const supabase = createAdminClient();
 
-    const supabase = getAdminSupabaseClient();
-    const userIds = clerkUsers.map((u) => u.id);
+    let baseQuery = supabase.from("chats").select("user_id", { count: "exact", head: true });
+    let dataQuery = supabase.from("chats").select("user_id");
 
-    if (userIds.length === 0) {
-      return NextResponse.json({
-        success: true,
-        data: {
-          data: [],
-          meta: {
-            page,
-            limit,
-            total: 0,
-            totalPages: 0,
-            hasMore: false,
-          },
-        } as PaginatedResponse<UserWithStats>,
+    if (search) {
+      const clerk = (await import("@clerk/nextjs/server")).clerkClient();
+      const clerkClient = await clerk();
+      const { data: clerkUsers } = await clerkClient.users.getUserList({
+        query: search,
+        limit: 100,
       });
+
+      const userIds = clerkUsers.map((u) => u.id);
+      if (userIds.length === 0) {
+        return NextResponse.json({
+          success: true,
+          users: [],
+          pagination: { page, limit, total: 0, totalPages: 0 },
+        });
+      }
+
+      baseQuery = baseQuery.in("user_id", userIds);
+      dataQuery = dataQuery.in("user_id", userIds);
     }
 
-    // Fetch Supabase data for users
-    const [chatsResult, uploadsResult, bansResult] = await Promise.all([
-      supabase
-        .from("chats")
-        .select("user_id")
-        .in("user_id", userIds)
-        .is("deleted_at", null),
-      supabase
-        .from("uploads")
-        .select("user_id")
-        .in("user_id", userIds)
-        .is("deleted_at", null),
-      supabase.from("user_bans").select("*").in("user_id", userIds),
-    ]);
+    const { count: totalCount, error: countError } = await baseQuery;
+    if (countError) throw countError;
 
-    const chats = chatsResult.data || [];
-    const uploads = uploadsResult.data || [];
-    const bans = bansResult.data || [];
+    const { data: userChats, error: chatsError } = await dataQuery;
+    if (chatsError) throw chatsError;
 
-    // Count chats and uploads per user
-    const chatCounts = new Map<string, number>();
-    const uploadCounts = new Map<string, number>();
-    const banMap = new Map<string, typeof bans[0]>();
+    const uniqueUserIds = [...new Set(userChats?.map((c: any) => c.user_id) || [])];
 
-    chats.forEach((chat) => {
-      chatCounts.set(chat.user_id, (chatCounts.get(chat.user_id) || 0) + 1);
-    });
+    const clerk = (await import("@clerk/nextjs/server")).clerkClient();
+    const clerkClient = await clerk();
 
-    uploads.forEach((upload) => {
-      uploadCounts.set(upload.user_id, (uploadCounts.get(upload.user_id) || 0) + 1);
-    });
+    const clerkUsers = await Promise.all(
+      uniqueUserIds.map((userId) => clerkClient.users.getUser(userId).catch(() => null))
+    );
 
-    bans.forEach((ban) => {
-      banMap.set(ban.user_id, ban);
-    });
+    const chatCounts = userChats?.reduce((acc: Record<string, number>, c: any) => {
+      acc[c.user_id] = (acc[c.user_id] || 0) + 1;
+      return acc;
+    }, {});
 
-    // Merge data
-    let usersWithStats: UserWithStats[] = clerkUsers.map((user) => {
-      const ban = banMap.get(user.id);
-      const isBanned = ban !== undefined &&
-        (ban.ban_type === "permanent" ||
-          (ban.expires_at && new Date(ban.expires_at) > new Date()));
+    const users = clerkUsers
+      .filter((u) => u !== null)
+      .map((user: any) => ({
+        userId: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.emailAddresses[0]?.emailAddress,
+        imageUrl: user.imageUrl,
+        createdAt: user.createdAt,
+        lastSignInAt: user.lastSignInAt,
+        role: user.publicMetadata?.role || "user",
+        chatCount: chatCounts[user.id] || 0,
+      }));
 
-      return {
-        ...user,
-        totalUploads: uploadCounts.get(user.id) || 0,
-        totalChats: chatCounts.get(user.id) || 0,
-        lastActive: user.lastSignInAt,
-        isBanned,
-        banInfo: ban,
-      };
-    });
-
-    // Apply filters
-    if (filter === "banned") {
-      usersWithStats = usersWithStats.filter((u) => u.isBanned);
-    } else if (filter === "active") {
-      // Active in last 7 days
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      usersWithStats = usersWithStats.filter(
-        (u) => u.lastActive && u.lastActive > sevenDaysAgo
-      );
-    }
-
-    const totalPages = Math.ceil(totalCount / limit);
-
-    const response: PaginatedResponse<UserWithStats> = {
-      data: usersWithStats,
-      meta: {
-        page,
-        limit,
-        total: totalCount,
-        totalPages,
-        hasMore: page < totalPages,
-      },
-    };
+    const total = totalCount || 0;
+    const totalPages = Math.ceil(total / limit);
 
     return NextResponse.json({
       success: true,
-      data: response,
+      users,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
     });
   } catch (error) {
-    console.error("Users API error:", error);
+    logger.error("[Admin Users API] Error:", error);
     return NextResponse.json(
-      {
-        success: false,
-        error: "Internal error",
-        message: "Failed to fetch users",
-      },
+      { success: false, error: "Fehler beim Laden der Benutzer" },
       { status: 500 }
     );
   }

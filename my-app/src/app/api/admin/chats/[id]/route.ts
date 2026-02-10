@@ -1,147 +1,62 @@
-/**
- * Admin Chat Detail API Route
- *
- * GET - Get chat with all messages
- * DELETE - Soft delete chat
- */
-
 import { NextRequest, NextResponse } from "next/server";
-import { checkAdminAuth, getAdminSupabaseClient, logAdminAction } from "@/lib/admin/auth";
-import { getClerkUser } from "@/lib/admin/clerk-helpers";
-import type { ChatWithDetails } from "@/types/admin";
+import { auth } from "@clerk/nextjs/server";
+import { requireAdmin } from "@/lib/auth/admin";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { logger } from "@/lib/logger";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const authResult = await checkAdminAuth();
-  if (!authResult.authorized) {
-    return authResult.response;
-  }
-
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { id: chatId } = await params;
-    const supabase = getAdminSupabaseClient();
+    await requireAdmin();
 
-    // Fetch chat
+    const { id } = params;
+    const supabase = createAdminClient();
+
     const { data: chat, error: chatError } = await supabase
       .from("chats")
       .select("*")
-      .eq("id", chatId)
-      .is("deleted_at", null)
+      .eq("id", id)
       .single();
 
-    if (chatError || !chat) {
-      return NextResponse.json(
-        { success: false, error: "Chat not found" },
-        { status: 404 }
-      );
+    if (chatError) {
+      if (chatError.code === "PGRST116") {
+        return NextResponse.json({ success: false, error: "Chat nicht gefunden" }, { status: 404 });
+      }
+      throw chatError;
     }
 
-    // Fetch messages
     const { data: messages, error: messagesError } = await supabase
       .from("messages")
       .select("*")
-      .eq("chat_id", chatId)
+      .eq("chat_id", id)
       .order("created_at", { ascending: true });
 
     if (messagesError) throw messagesError;
 
-    // Fetch user info
-    const user = await getClerkUser(chat.user_id);
+    const clerk = (await import("@clerk/nextjs/server")).clerkClient();
+    const clerkClient = await clerk();
 
-    const chatWithDetails: ChatWithDetails = {
-      ...chat,
-      user: user!,
-      messageCount: messages?.length || 0,
-      lastMessageAt: messages?.[messages.length - 1]?.created_at || null,
+    const user = await clerkClient.users.getUser(chat.user_id).catch(() => null);
+
+    return NextResponse.json({
+      success: true,
+      chat: {
+        ...chat,
+        user: user
+          ? {
+              userId: user.id,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              email: user.emailAddresses[0]?.emailAddress,
+              imageUrl: user.imageUrl,
+            }
+          : null,
+      },
       messages: messages || [],
-    };
-
-    return NextResponse.json({
-      success: true,
-      data: chatWithDetails,
     });
   } catch (error) {
-    console.error("Chat detail API error:", error);
+    logger.error("[Admin Chat Detail API] Error:", error);
     return NextResponse.json(
-      {
-        success: false,
-        error: "Internal error",
-        message: "Failed to fetch chat details",
-      },
-      { status: 500 }
-    );
-  }
-}
-
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const authResult = await checkAdminAuth();
-  if (!authResult.authorized) {
-    return authResult.response;
-  }
-
-  try {
-    const { id: chatId } = await params;
-    const body = await request.json();
-    const { reason } = body;
-
-    const supabase = getAdminSupabaseClient();
-
-    // Check if chat exists
-    const { data: chat, error: fetchError } = await supabase
-      .from("chats")
-      .select("*")
-      .eq("id", chatId)
-      .is("deleted_at", null)
-      .single();
-
-    if (fetchError || !chat) {
-      return NextResponse.json(
-        { success: false, error: "Chat not found" },
-        { status: 404 }
-      );
-    }
-
-    // Soft delete
-    const { error: deleteError } = await supabase
-      .from("chats")
-      .update({
-        deleted_at: new Date().toISOString(),
-        deleted_by: authResult.userId!,
-      })
-      .eq("id", chatId);
-
-    if (deleteError) throw deleteError;
-
-    // Log action
-    await logAdminAction(
-      authResult.userId!,
-      authResult.user!.email ?? "Unknown",
-      {
-        actionType: "delete_chat",
-        targetType: "chat",
-        targetId: chatId,
-        details: { reason: reason || "Deleted by admin", userId: chat.user_id },
-      },
-      request
-    );
-
-    return NextResponse.json({
-      success: true,
-      message: "Chat deleted successfully",
-    });
-  } catch (error) {
-    console.error("Delete chat error:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Internal error",
-        message: "Failed to delete chat",
-      },
+      { success: false, error: "Fehler beim Laden des Chats" },
       { status: 500 }
     );
   }
