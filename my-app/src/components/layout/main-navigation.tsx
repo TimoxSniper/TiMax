@@ -18,10 +18,11 @@ import {
   FolderOpen,
   CreditCard,
   Search,
+  Shield,
 } from "lucide-react";
 import { SearchModal } from "@/components/search/search-modal";
 import { cn } from "@/lib/utils";
-import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton, SignInButton, useAuth } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMobileDevice } from "@/hooks/useMobileDevice";
 
@@ -31,6 +32,8 @@ const protectedNavigation = [
   { name: "Chat", href: "/chat", icon: MessageSquare },
   { name: "Meine Dateien", href: "/uploads", icon: FolderOpen },
 ];
+
+const adminNavigation = [{ name: "Admin Dashboard", href: "/admin", icon: Shield }];
 
 const landingPageNavigation: Array<{
   name: string;
@@ -47,6 +50,26 @@ export function MainNavigation() {
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
   const isMobileDevice = useMobileDevice();
+  const { userId } = useAuth();
+
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    async function checkAdmin() {
+      if (userId) {
+        try {
+          const response = await fetch("/api/auth/admin/check");
+          if (response.ok) {
+            const data = await response.json();
+            setIsAdmin(data.isAdmin);
+          }
+        } catch (error) {
+          console.error("Failed to check admin status:", error);
+        }
+      }
+    }
+    checkAdmin();
+  }, [userId]);
 
   // Schließe Mobile Menu bei Click außerhalb
   useEffect(() => {
@@ -141,6 +164,31 @@ export function MainNavigation() {
                   </Link>
                 );
               })}
+              {isAdmin && (
+                <>
+                  <div className="bg-border mx-2 h-6 w-px" aria-hidden="true" />
+                  {adminNavigation.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = pathname === item.href;
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        aria-current={isActive ? "page" : undefined}
+                        className={cn(
+                          "group relative gap-2 px-3 py-2 text-sm font-medium tracking-wide uppercase transition-all duration-300",
+                          "text-primary hover:text-accent",
+                          "after:bg-accent after:absolute after:bottom-0 after:left-0 after:h-[2px] after:transition-all after:duration-300",
+                          isActive ? "after:w-full" : "after:w-0 group-hover:after:w-full"
+                        )}
+                      >
+                        <Icon className="mr-1 inline h-4 w-4" aria-hidden="true" />
+                        {item.name}
+                      </Link>
+                    );
+                  })}
+                </>
+              )}
             </SignedIn>
           </div>
 
@@ -277,6 +325,32 @@ export function MainNavigation() {
                       </Button>
                     );
                   })}
+                  {isAdmin && (
+                    <>
+                      <div className="border-border/50 my-2 border-t" />
+                      {adminNavigation.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = pathname === item.href;
+                        return (
+                          <Button
+                            key={item.name}
+                            variant={isActive ? "default" : "ghost"}
+                            asChild
+                            className={cn(
+                              "w-full justify-start gap-2",
+                              isActive ? "bg-primary text-primary-foreground" : "text-primary"
+                            )}
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            <Link href={item.href} aria-current={isActive ? "page" : undefined}>
+                              <Icon className="h-4 w-4" aria-hidden="true" />
+                              {item.name}
+                            </Link>
+                          </Button>
+                        );
+                      })}
+                    </>
+                  )}
                 </SignedIn>
 
                 {/* Search Button - Mobile */}
