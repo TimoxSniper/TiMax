@@ -22,10 +22,18 @@ export async function GET(request: NextRequest) {
     if (search) {
       const { clerkClient } = await import("@clerk/nextjs/server");
       const clerk = await clerkClient();
-      const { data: clerkUsers } = await clerk.users.getUserList({
-        query: search,
-        limit: 100,
-      });
+      
+      let clerkUsers: any[] = [];
+      try {
+        const result: any = await clerk.users.getUserList({
+          query: search,
+          limit: 100,
+        });
+        clerkUsers = result.data || [];
+      } catch (error) {
+        logger.warn("[Admin Users API] Error searching Clerk users:", error);
+        // If Clerk search fails, continue with DB search only
+      }
 
       const userIds = clerkUsers.map((u) => u.id);
       if (userIds.length === 0) {

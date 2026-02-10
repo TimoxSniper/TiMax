@@ -44,7 +44,11 @@ export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
           <nav className="flex-1 space-y-1 px-3 py-4">
             {adminNavigation.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              // Improved active state logic to prevent false matches
+              // For the dashboard, only match exact path
+              const isActive = item.href === '/admin' 
+                ? pathname === '/admin'
+                : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
               return (
                 <Link

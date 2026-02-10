@@ -36,7 +36,13 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
     const { clerkClient } = await import("@clerk/nextjs/server");
     const clerk = await clerkClient();
 
-    const user = await clerk.users.getUser(chat.user_id).catch(() => null);
+    let user = null;
+    try {
+      user = await clerk.users.getUser(chat.user_id);
+    } catch (error) {
+      logger.warn(`[Admin Chat Detail API] User not found in Clerk: ${chat.user_id}`, error);
+      // Continue without user info rather than throwing an error
+    }
 
     return NextResponse.json({
       success: true,

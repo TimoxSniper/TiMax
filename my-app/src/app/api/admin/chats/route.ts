@@ -75,7 +75,10 @@ export async function GET(request: NextRequest) {
       .select("chat_id")
       .in("chat_id", chatIds);
 
-    if (!messagesError && messagesData) {
+    if (messagesError) {
+      logger.warn("[Admin Chats API] Error fetching message counts:", messagesError);
+      // Continue without message counts rather than throwing an error
+    } else if (messagesData) {
       const messageCounts = messagesData.reduce((acc: Record<string, number>, m: any) => {
         acc[m.chat_id] = (acc[m.chat_id] || 0) + 1;
         return acc;
