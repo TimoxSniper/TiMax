@@ -33,3 +33,11 @@ export function formatRelativeTime(date: string | Date): string {
   if (diffDays < 7) return `vor ${diffDays} Tagen`;
   return formatDate(d);
 }
+
+export function formatBytes(bytes: number): string {
+  if (bytes === 0) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
+}
