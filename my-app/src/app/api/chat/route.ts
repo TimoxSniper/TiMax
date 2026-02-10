@@ -30,7 +30,19 @@ async function chatHandler(request: NextRequest) {
     const supabase = createAdminClient();
 
     // Validiere erforderliche Environment-Variablen
-    const env = validateRequiredEnv();
+    let env;
+    try {
+      env = validateRequiredEnv();
+    } catch (error) {
+      logger.error("[Chat API] Missing environment variables:", error);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: "Server configuration error. Please contact support." 
+        }, 
+        { status: 500 }
+      );
+    }
 
     const body = await request.json();
 
@@ -82,25 +94,32 @@ async function chatHandler(request: NextRequest) {
     }
 
     // 5. REQUEST AN N8N SENDEN
-    const response = await fetch(env.N8N_CHAT_WEBHOOK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_id: userId,
-        chat_id: currentChatId, // WICHTIG: chat_id für n8n
-        message: sanitizedMessage,
-        sessionId,
-        chatHistory: chatHistory.map((msg) => ({
-          ...msg,
-          content: sanitizeString(msg.content),
-        })),
-      }),
-    });
+    let response;
+    try {
+      response = await fetch(env.N8N_CHAT_WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          chat_id: currentChatId, // WICHTIG: chat_id für n8n
+          message: sanitizedMessage,
+          sessionId,
+          chatHistory: chatHistory.map((msg) => ({
+            ...msg,
+            content: sanitizeString(msg.content),
+          })),
+        }),
+      });
+    } catch (error) {
+      logger.error("[Chat API] Network error calling n8n webhook:", error);
+      throw new Error("Verbindung zum KI-Service fehlgeschlagen");
+    }
 
     if (!response.ok) {
-      const errorText = await response.text();
+      const errorText = await response.text().catch(() => 'Unknown error');
+      logger.error(`[Chat API] n8n Webhook responded with error: ${response.status} - ${errorText}`);
       throw new Error(`n8n Webhook Fehler: ${response.status} - ${errorText}`);
     }
 
@@ -108,6 +127,7 @@ async function chatHandler(request: NextRequest) {
     try {
       data = await response.json();
     } catch {
+      logger.error("[Chat API] Invalid JSON response from n8n webhook");
       throw new Error("Ungültige JSON-Antwort von n8n Webhook");
     }
 
