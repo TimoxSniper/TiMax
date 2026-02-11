@@ -1,5 +1,15 @@
 "use client";
 
+/**
+ * Editorial Modernism Admin Layout
+ *
+ * Features:
+ * - Fixed sidebar with bronze accent navigation
+ * - Responsive mobile menu
+ * - Warm editorial backgrounds
+ * - Dark mode support
+ */
+
 import { useState } from "react";
 import { AdminSidebar } from "./admin-sidebar";
 import { Button } from "@/components/ui/button";
@@ -10,27 +20,37 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="bg-background flex min-h-screen">
+      {/* Sidebar - Editorial Modernism design */}
       <AdminSidebar
         mobileOpen={mobileSidebarOpen}
         onMobileClose={() => setMobileSidebarOpen(false)}
       />
 
+      {/* Main Content Area */}
       <div className="flex flex-1 flex-col lg:ml-0">
-        <header className="border-border bg-background/80 sticky top-0 z-30 border-b backdrop-blur">
-          <div className="container flex h-16 items-center px-4">
+        {/* Header - Minimal, editorial style */}
+        <header className="border-border bg-background sticky top-0 z-30 h-16 border-b">
+          <div className="flex h-full items-center justify-between px-6">
+            {/* Mobile menu button */}
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setMobileSidebarOpen(true)}
               className="lg:hidden"
+              aria-label="Toggle sidebar"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-6 w-6" />
             </Button>
-            <h1 className="ml-4 text-lg font-semibold lg:ml-0">Admin Dashboard</h1>
+
+            {/* Last updated timestamp */}
+            <div className="text-uppercase-tracked ml-auto text-xs text-muted-foreground">
+              Last updated: {new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
+            </div>
           </div>
         </header>
 
-        <main className="flex-1">{children}</main>
+        {/* Main content with padding */}
+        <main className="flex-1 p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );
