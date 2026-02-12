@@ -1,0 +1,12 @@
+=== Ralph Progress Log ===
+Project: TiMax - Fix API Routes and Rebuild Admin Dashboard
+Branch: ralph/fix-api-and-rebuild-admin-dashboard
+Started: 2026-02-11
+
+Total Stories: 22
+Completed: 0
+Remaining: 22
+
+---
+
+Story execution log will appear below as Ralph processes each user story.

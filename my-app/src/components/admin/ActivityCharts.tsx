@@ -75,11 +75,42 @@ export function ActivityCharts() {
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="line" className="space-y-4">
+        <Tabs defaultValue="bar" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="line">Linienchart</TabsTrigger>
             <TabsTrigger value="bar">Balkenchart</TabsTrigger>
+            <TabsTrigger value="line">Linienchart</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="bar" className="space-y-4">
+            <ResponsiveContainer width="100%" height={350}>
+              <BarChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis
+                  dataKey="date"
+                  className="text-xs"
+                  tickFormatter={(value) => {
+                    const date = new Date(value);
+                    return `${date.getDate()}.${date.getMonth() + 1}`;
+                  }}
+                />
+                <YAxis className="text-xs" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--card))",
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: "8px",
+                  }}
+                  labelFormatter={(value) => {
+                    const date = new Date(value);
+                    return date.toLocaleDateString("de-DE");
+                  }}
+                />
+                <Legend />
+                <Bar dataKey="uploads" fill="hsl(var(--primary))" name="Uploads" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="chats" fill="hsl(var(--chart-2))" name="Chats" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </TabsContent>
 
           <TabsContent value="line" className="space-y-4">
             <ResponsiveContainer width="100%" height={350}>
@@ -123,37 +154,6 @@ export function ActivityCharts() {
                   dot={{ fill: "hsl(var(--chart-2))" }}
                 />
               </LineChart>
-            </ResponsiveContainer>
-          </TabsContent>
-
-          <TabsContent value="bar" className="space-y-4">
-            <ResponsiveContainer width="100%" height={350}>
-              <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis
-                  dataKey="date"
-                  className="text-xs"
-                  tickFormatter={(value) => {
-                    const date = new Date(value);
-                    return `${date.getDate()}.${date.getMonth() + 1}`;
-                  }}
-                />
-                <YAxis className="text-xs" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px",
-                  }}
-                  labelFormatter={(value) => {
-                    const date = new Date(value);
-                    return date.toLocaleDateString("de-DE");
-                  }}
-                />
-                <Legend />
-                <Bar dataKey="uploads" fill="hsl(var(--primary))" name="Uploads" />
-                <Bar dataKey="chats" fill="hsl(var(--chart-2))" name="Chats" />
-              </BarChart>
             </ResponsiveContainer>
           </TabsContent>
         </Tabs>

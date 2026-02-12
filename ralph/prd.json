@@ -1,0 +1,384 @@
+{
+  "project": "TiMax",
+  "branchName": "ralph/fix-api-and-rebuild-admin-dashboard",
+  "description": "Fix API Routes and Rebuild Admin Dashboard - Complete overhaul of API infrastructure and admin dashboard with Editorial Modernism design",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Fix chat creation API route",
+      "description": "As a developer, I need to fix the chat creation API route so users can create new chat sessions.",
+      "acceptanceCriteria": [
+        "Await params properly (Next.js 15+ compliance)",
+        "Validate CSRF token for chat creation",
+        "Filter by user_id for multi-user isolation",
+        "Return proper error responses with status codes",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Fix chat messages API route",
+      "description": "As a developer, I need to fix the chat messages API route so users can send/receive messages.",
+      "acceptanceCriteria": [
+        "Await params properly (Next.js 15+ compliance)",
+        "Validate CSRF token for message sending",
+        "Properly delegate to N8N_CHAT_WEBHOOK_URL",
+        "Filter by user_id for multi-user isolation",
+        "Implement rate limiting (30 requests/minute)",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Fix upload file API route",
+      "description": "As a developer, I need to fix the upload file API route so users can upload files.",
+      "acceptanceCriteria": [
+        "Await params properly (Next.js 15+ compliance)",
+        "Validate file size (max 100MB) and type (MP4, WebM, MP3, WAV, M4A)",
+        "Validate CSRF token",
+        "Properly delegate to N8N_UPLOAD_WEBHOOK_URL",
+        "Filter by user_id for multi-user isolation",
+        "Implement rate limiting (5 requests/hour)",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Fix upload status API route",
+      "description": "As a developer, I need to fix the upload status API route so users can check upload processing status.",
+      "acceptanceCriteria": [
+        "Await params properly (Next.js 15+ compliance)",
+        "Filter by user_id for multi-user isolation",
+        "Return upload status: processing, completed, failed",
+        "Return proper error responses",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Fix admin users API route",
+      "description": "As a developer, I need to fix the admin users API route so admins can view/manage all users.",
+      "acceptanceCriteria": [
+        "Await params properly (Next.js 15+ compliance)",
+        "Verify publicMetadata.role === 'admin' on every request",
+        "Return all users (no user_id filter for admin)",
+        "Support role assignment and user suspension",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Fix admin chats API route",
+      "description": "As a developer, I need to fix the admin chats API route so admins can view all user chats.",
+      "acceptanceCriteria": [
+        "Await params properly (Next.js 15+ compliance)",
+        "Verify publicMetadata.role === 'admin' on every request",
+        "Return all chats across platform (no user_id filter)",
+        "Support chat deletion with proper cascade",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Fix admin uploads API route",
+      "description": "As a developer, I need to fix the admin uploads API route so admins can view all user uploads.",
+      "acceptanceCriteria": [
+        "Await params properly (Next.js 15+ compliance)",
+        "Verify publicMetadata.role === 'admin' on every request",
+        "Return all uploads across platform (no user_id filter)",
+        "Support upload deletion",
+        "Typecheck passes"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Fix admin stats API route",
+      "description": "As a developer, I need to fix the admin stats API route so admins can view platform statistics.",
+      "acceptanceCriteria": [
+        "Await params properly (Next.js 15+ compliance)",
+        "Verify publicMetadata.role === 'admin' on every request",
+        "Return stats: total users, total chats, total uploads, active sessions",
+        "Return trend data (% change from previous period)",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Design admin dashboard layout with Editorial Modernism",
+      "description": "As a designer, I need to create the admin dashboard layout using Editorial Modernism design system.",
+      "acceptanceCriteria": [
+        "Use /frontend-design skill to design dashboard layout",
+        "Apply Bronze (#9A6F4F) accents, Crimson headlines, DM Sans body",
+        "Implement brutalist shadows (shadow-editorial-*)",
+        "Use warm editorial background (#F8F7F4 light, #0F0F0F dark)",
+        "Design responsive sidebar navigation",
+        "Design card-based stats overview",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Build admin layout shell and sidebar navigation",
+      "description": "As a developer, I need to build the admin dashboard shell with sidebar navigation.",
+      "acceptanceCriteria": [
+        "Delete existing admin dashboard components in src/app/admin",
+        "Create new AdminLayout component",
+        "Create AdminSidebar with nav items: Dashboard, Users, Chats, Uploads, Analytics",
+        "Implement active state highlighting with Bronze accent",
+        "Make sidebar responsive (mobile hamburger menu)",
+        "Support dark mode",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "Implement real-time data hook infrastructure",
+      "description": "As a developer, I need to create a reusable hook for real-time data fetching.",
+      "acceptanceCriteria": [
+        "Create useRealTimeData hook with configurable refresh intervals",
+        "Implement smart polling (pause when tab inactive using Page Visibility API)",
+        "Add error retry with exponential backoff",
+        "Add connection status indicator",
+        "Hook accepts: fetchFn, refreshInterval, enabled flag",
+        "Typecheck passes",
+        "Hook unit tests pass"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "Build admin stats cards (overview page)",
+      "description": "As an admin, I want to see key platform metrics on the dashboard overview.",
+      "acceptanceCriteria": [
+        "Create StatsCards component",
+        "Display: Total Users, Total Chats, Total Uploads, Active Sessions",
+        "Use Editorial Modernism card design with brutalist shadows",
+        "Implement auto-refresh every 30 seconds using useRealTimeData hook",
+        "Show trend indicators (up/down % from previous period)",
+        "Loading states with skeletons",
+        "Error handling with retry",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-013",
+      "title": "Build admin users table",
+      "description": "As an admin, I want to view and manage all platform users.",
+      "acceptanceCriteria": [
+        "Create UsersTable component",
+        "Display columns: User ID, Email, Name, Role, Created Date, Last Active",
+        "Implement search/filter by email or name (debounced 300ms)",
+        "Implement pagination (20 users per page)",
+        "Add role assignment dropdown (user/admin)",
+        "Add user suspension toggle",
+        "Implement auto-refresh every 60 seconds",
+        "Loading states and error handling",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 13,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-014",
+      "title": "Build admin chats table",
+      "description": "As an admin, I want to view all user chats for moderation and support.",
+      "acceptanceCriteria": [
+        "Create ChatsTable component",
+        "Display columns: Chat ID, User, Title, Message Count, Created Date, Last Activity",
+        "Implement search/filter by user or title (debounced 300ms)",
+        "Implement pagination (20 chats per page)",
+        "Add 'View Messages' action (opens dialog with message list)",
+        "Add delete chat action with confirmation dialog",
+        "Implement auto-refresh every 60 seconds",
+        "Loading states and error handling",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 14,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-015",
+      "title": "Build admin uploads table",
+      "description": "As an admin, I want to view all user uploads and their processing status.",
+      "acceptanceCriteria": [
+        "Create UploadsTable component",
+        "Display columns: Upload ID, User, Filename, File Size, Status, Created Date",
+        "Implement search/filter by filename or user (debounced 300ms)",
+        "Implement pagination (20 uploads per page)",
+        "Add status badge: Processing (yellow), Completed (green), Failed (red)",
+        "Add 'View Transcript' action for completed uploads",
+        "Add delete upload action with confirmation dialog",
+        "Implement auto-refresh every 30 seconds",
+        "Loading states and error handling",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 15,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-016",
+      "title": "Build analytics - new users chart",
+      "description": "As an admin, I want to see a chart of new user signups over time.",
+      "acceptanceCriteria": [
+        "Create NewUsersChart component",
+        "Show new users over last 30 days (line or bar chart)",
+        "Use Editorial Modernism styling (Bronze accents)",
+        "Fetch data from admin analytics API",
+        "Loading states and error handling",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 16,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-017",
+      "title": "Build analytics - chats created chart",
+      "description": "As an admin, I want to see a chart of chats created over time.",
+      "acceptanceCriteria": [
+        "Create ChatsCreatedChart component",
+        "Show chats created over last 30 days (line or bar chart)",
+        "Use Editorial Modernism styling (Bronze accents)",
+        "Fetch data from admin analytics API",
+        "Loading states and error handling",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 17,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-018",
+      "title": "Build analytics - uploads chart",
+      "description": "As an admin, I want to see a chart of uploads over time.",
+      "acceptanceCriteria": [
+        "Create UploadsChart component",
+        "Show uploads over last 30 days (line or bar chart)",
+        "Use Editorial Modernism styling (Bronze accents)",
+        "Fetch data from admin analytics API",
+        "Loading states and error handling",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 18,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-019",
+      "title": "Build analytics - top users chart",
+      "description": "As an admin, I want to see the top 10 most active users.",
+      "acceptanceCriteria": [
+        "Create TopUsersChart component",
+        "Show top 10 users by activity (chats + uploads count)",
+        "Use Editorial Modernism styling (Bronze accents)",
+        "Display as horizontal bar chart or table",
+        "Fetch data from admin analytics API",
+        "Loading states and error handling",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 19,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-020",
+      "title": "Add CSV export to analytics dashboard",
+      "description": "As an admin, I want to export analytics data as CSV.",
+      "acceptanceCriteria": [
+        "Add 'Export CSV' button to analytics page",
+        "Export all charts data into single CSV file",
+        "CSV includes: date, new_users, chats_created, uploads, top_users",
+        "File named: timax-analytics-YYYY-MM-DD.csv",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 20,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-021",
+      "title": "Verify user-facing chat interface works",
+      "description": "As a regular user, I want the chat interface to work correctly after API fixes.",
+      "acceptanceCriteria": [
+        "Verify chat creation works",
+        "Verify message sending works",
+        "Verify chat history loads correctly",
+        "Verify only user's own chats are visible",
+        "Test with multiple user accounts for isolation",
+        "No console errors",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 21,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-022",
+      "title": "Verify user-facing upload interface works",
+      "description": "As a regular user, I want the upload interface to work correctly after API fixes.",
+      "acceptanceCriteria": [
+        "Verify file upload works",
+        "Verify file validation (size, type) works",
+        "Verify upload status updates correctly",
+        "Verify transcript retrieval works for completed uploads",
+        "Verify only user's own uploads are visible",
+        "Test with multiple user accounts for isolation",
+        "No console errors",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 22,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}
