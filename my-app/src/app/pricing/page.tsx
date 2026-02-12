@@ -9,16 +9,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Check,
-  Zap,
   ArrowRight,
-  Sparkles,
-  Upload,
-  MessageSquare,
+  Zap,
+  Crown,
+  Building,
   Clock,
-  Shield,
+  ShieldCheck,
   Headphones,
-  Star,
-  Building2,
+  MessageSquare,
+  Upload,
   User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -32,47 +31,50 @@ const PRICING_TIERS = [
   {
     name: "Starter",
     icon: User,
-    description: "Perfekt für den Einstieg in Content Repurposing",
+    description: "Perfekt für den Einstieg",
     monthlyPrice: 29,
     yearlyPrice: 290,
+    regularMonthlyPrice: 39,
+    regularYearlyPrice: 390,
     popular: false,
     features: [
       { text: "10 Uploads pro Monat", highlight: false },
       { text: "2 Stunden Transkription", highlight: false },
       { text: "100 KI-Chat Anfragen", highlight: false },
-      { text: "Alle Textformate", highlight: false },
       { text: "E-Mail Support", highlight: false },
     ],
     cta: "Starter wählen",
   },
   {
     name: "Pro",
-    icon: Star,
-    description: "Für aktive Creator und Experten",
+    icon: Crown,
+    description: "Für aktive Creator",
     monthlyPrice: 49,
     yearlyPrice: 490,
+    regularMonthlyPrice: 59,
+    regularYearlyPrice: 590,
     popular: true,
     features: [
       { text: "50 Uploads pro Monat", highlight: true },
       { text: "10 Stunden Transkription", highlight: true },
       { text: "500 KI-Chat Anfragen", highlight: true },
-      { text: "Alle Textformate", highlight: false },
       { text: "Prioritäts-Support", highlight: true },
     ],
     cta: "Pro wählen",
   },
   {
     name: "Business",
-    icon: Building2,
-    description: "Für Creator mit hohem Content-Output",
+    icon: Building,
+    description: "Für Profis",
     monthlyPrice: 79,
     yearlyPrice: 790,
+    regularMonthlyPrice: 89,
+    regularYearlyPrice: 890,
     popular: false,
     features: [
       { text: "Unbegrenzte Uploads", highlight: true },
       { text: "30 Stunden Transkription", highlight: true },
       { text: "Unbegrenzte KI-Chat Anfragen", highlight: true },
-      { text: "Alle Textformate", highlight: false },
       { text: "Persönlicher Support", highlight: true },
     ],
     cta: "Business wählen",
@@ -171,9 +173,7 @@ export default function PricingPage() {
               {PRICING_TIERS.map((tier, index) => {
                 const Icon = tier.icon;
                 const price = isYearly ? tier.yearlyPrice : tier.monthlyPrice;
-                const monthlyEquivalent = isYearly
-                  ? Math.round(tier.yearlyPrice / 12)
-                  : tier.monthlyPrice;
+                const regularPrice = isYearly ? tier.regularYearlyPrice : tier.regularMonthlyPrice;
                 const billingPeriod = isYearly ? "Jahr" : "Monat";
 
                 return (
@@ -183,7 +183,7 @@ export default function PricingPage() {
                       hover={false}
                       overflow={tier.popular ? "visible" : "hidden"}
                       className={cn(
-                        "relative flex h-full flex-col p-6 sm:p-8",
+                        "relative flex h-[600px] flex-col p-6 sm:p-8",
                         tier.popular && "ring-accent ring-2"
                       )}
                     >
@@ -197,46 +197,28 @@ export default function PricingPage() {
                       )}
 
                       {/* Header */}
-                      <div className="mb-6 text-center">
-                        <div className="bg-secondary mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-[6px]">
-                          <Icon className="text-accent h-6 w-6" />
+                      <div className="mb-5 flex-shrink-0 text-center">
+                        <div className="bg-secondary mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-[6px]">
+                          <Icon className="text-accent h-7 w-7" />
                         </div>
-                        <h3 className="text-foreground mb-2 font-serif text-2xl font-bold">
+                        <h3 className="text-foreground mb-1 font-serif text-2xl font-bold">
                           {tier.name}
                         </h3>
-                        <p className="text-muted-foreground text-sm">{tier.description}</p>
+                        <p className="text-muted-foreground h-5 text-sm">{tier.description}</p>
                       </div>
 
                       {/* Price */}
-                      <div className="mb-6 text-center">
-                        <div className="flex items-baseline justify-center gap-1">
-                          <span className="text-foreground font-serif text-5xl font-bold">
+                      <div className="mb-5 flex-shrink-0 text-center">
+                        <div className="flex items-baseline justify-center gap-2">
+                          <span className="text-muted-foreground text-xl line-through">
+                            {regularPrice}€
+                          </span>
+                          <span className="text-foreground font-serif text-4xl font-bold">
                             {price}€
                           </span>
-                          <span className="text-muted-foreground">/{billingPeriod}</span>
                         </div>
-                        {isYearly && (
-                          <p className="text-muted-foreground mt-1 text-sm">
-                            entspricht{" "}
-                            <span className="text-accent font-medium">
-                              {monthlyEquivalent}€/Monat
-                            </span>
-                          </p>
-                        )}
+                        <span className="text-muted-foreground text-sm">/{billingPeriod}</span>
                       </div>
-
-                      {/* CTA */}
-                      <Button
-                        size="lg"
-                        variant={tier.popular ? "default" : "outline"}
-                        className="group mb-6 w-full"
-                      >
-                        {tier.cta}
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </Button>
-
-                      {/* Divider */}
-                      <div className="bg-border mb-6 h-px w-full" />
 
                       {/* Features */}
                       <ul className="flex-grow space-y-3">
@@ -268,6 +250,16 @@ export default function PricingPage() {
                           </li>
                         ))}
                       </ul>
+
+                      {/* CTA */}
+                      <Button
+                        size="lg"
+                        variant={tier.popular ? "default" : "outline"}
+                        className="h-14 w-full flex-shrink-0"
+                      >
+                        {tier.cta}
+                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </Button>
                     </Card>
                   </AnimatedSection>
                 );
@@ -341,15 +333,7 @@ export default function PricingPage() {
                       </tr>
                       <tr>
                         <td className="text-muted-foreground flex items-center gap-2 p-4">
-                          <Sparkles className="h-4 w-4" /> Textformate
-                        </td>
-                        <td className="text-foreground p-4 text-center">Alle</td>
-                        <td className="text-accent p-4 text-center font-medium">Alle</td>
-                        <td className="text-foreground p-4 text-center">Alle</td>
-                      </tr>
-                      <tr>
-                        <td className="text-muted-foreground flex items-center gap-2 p-4">
-                          <Shield className="h-4 w-4" /> Datenspeicherung
+                          <ShieldCheck className="h-4 w-4" /> Datenspeicherung
                         </td>
                         <td className="text-foreground p-4 text-center">90 Tage</td>
                         <td className="text-accent p-4 text-center font-medium">1 Jahr</td>

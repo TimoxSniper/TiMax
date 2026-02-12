@@ -13,7 +13,6 @@ import {
   Home,
   LogIn,
   User,
-  Sparkles,
   Upload,
   FolderOpen,
   CreditCard,
@@ -38,9 +37,8 @@ const adminNavigation = [{ name: "Admin Dashboard", href: "/admin", icon: Shield
 const landingPageNavigation: Array<{
   name: string;
   href: string;
-  icon: typeof Sparkles;
+  icon: typeof CreditCard;
 }> = [
-  { name: "Funktionen", href: "/functions", icon: Sparkles },
   { name: "Preise", href: "/pricing", icon: CreditCard },
 ];
 
