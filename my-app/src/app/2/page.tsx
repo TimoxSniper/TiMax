@@ -5,7 +5,6 @@ import { MainNavigation } from "@/components/layout/main-navigation";
 import { Footer } from "@/components/layout/footer";
 import { AnimatedSection } from "@/components/magic-ui/animated-section";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { EmailSignup } from "@/components/home/email-signup";
 import {
   Upload,
@@ -27,16 +26,13 @@ const SECTION_PADDING = "px-4 sm:px-6 lg:px-8";
 // Split-Screen Hero - Asymmetrisch
 const HeroSectionV3 = memo(function HeroSectionV3() {
   return (
-    <section className={`relative ${SECTION_PADDING} pt-24 pb-16 sm:pt-36 sm:pb-24 lg:pt-48 lg:pb-32 z-10`}>
+    <section className={`relative ${SECTION_PADDING} pt-28 pb-20 sm:pt-40 sm:pb-28 lg:pt-52 lg:pb-36 z-10`}>
       <div className="container mx-auto max-w-7xl">
-        <div className="grid grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-20 xl:gap-24">
+        <div className="grid grid-cols-1 gap-20 lg:grid-cols-2 lg:gap-24 xl:gap-28">
           {/* Left: Headline + CTA */}
           <AnimatedSection direction="up">
             <div className="flex flex-col justify-center space-y-10 lg:space-y-12">
-              <div className="space-y-6">
-                <Badge variant="default" className="w-fit px-4 py-2 text-sm">
-                  BETA — KOSTENLOS
-                </Badge>
+              <div className="space-y-8">
                 <h1 className="text-foreground font-serif text-4xl font-bold leading-tight sm:text-6xl lg:text-7xl xl:text-8xl">
                   Dein Content verstaubt
                 </h1>
@@ -115,9 +111,9 @@ const ProblemAgitationSection = memo(function ProblemAgitationSection() {
   );
 
   return (
-    <section className={`relative ${SECTION_PADDING} py-16 sm:py-24 lg:py-32 border-border z-10 border-t`}>
+    <section className={`relative ${SECTION_PADDING} py-20 sm:py-28 lg:py-36 border-border z-10 border-t`}>
       <div className="container mx-auto max-w-5xl">
-        <div className="space-y-12 text-center sm:space-y-16">
+        <div className="space-y-16 text-center sm:space-y-20">
           <AnimatedSection direction="up">
             <div className="space-y-4">
               <h2 className="text-foreground font-serif text-4xl font-bold sm:text-6xl lg:text-7xl">
@@ -127,10 +123,10 @@ const ProblemAgitationSection = memo(function ProblemAgitationSection() {
             </div>
           </AnimatedSection>
 
-          <div className="space-y-6 text-left sm:space-y-8">
+          <div className="space-y-8 text-left sm:space-y-10">
             {painPoints.map((point, index) => (
               <AnimatedSection key={index} delay={index * 100} direction="up">
-                <div className="flex items-start gap-6 sm:gap-8">
+                <div className="flex items-start gap-8 sm:gap-10">
                   <div className="bg-destructive/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-[4px] sm:h-14 sm:w-14">
                     <X className="text-destructive h-6 w-6 sm:h-7 sm:w-7" aria-hidden="true" />
                   </div>
@@ -171,10 +167,10 @@ const SolutionSection = memo(function SolutionSection() {
   );
 
   return (
-    <section className={`relative ${SECTION_PADDING} py-16 sm:py-24 lg:py-32 z-10`}>
+    <section className={`relative ${SECTION_PADDING} py-20 sm:py-28 lg:py-36 z-10`}>
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
-          <div className="mb-16 text-center sm:mb-20">
+          <div className="mb-20 text-center sm:mb-24">
             <h2 className="text-foreground mb-6 font-serif text-4xl font-bold sm:text-6xl lg:text-7xl">
               Das ändert sich
             </h2>
@@ -182,14 +178,14 @@ const SolutionSection = memo(function SolutionSection() {
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 lg:gap-10">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 lg:gap-12">
           {benefits.map((benefit, index) => {
             const Icon = benefit.icon;
             return (
               <AnimatedSection key={index} delay={index * 100} direction="up">
-                <div className="bg-secondary/50 h-full rounded-[6px] border-border border p-8 shadow-editorial-sm transition-all hover:shadow-editorial-md sm:p-10">
+                <div className="bg-secondary/50 h-full rounded-[6px] border-border border p-10 shadow-editorial-sm transition-all hover:shadow-editorial-md sm:p-12">
                   <Icon
-                    className="text-accent mb-8 h-12 w-12"
+                    className="text-accent mb-10 h-14 w-14"
                     aria-hidden="true"
                   />
                   <div className="space-y-6">
@@ -270,12 +266,12 @@ const HowItWorksSection = memo(function HowItWorksSection() {
           </div>
         </AnimatedSection>
 
-        <div className="space-y-6 sm:space-y-8">
+        <div className="space-y-8 sm:space-y-10">
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
               <AnimatedSection key={step.number} delay={index * 100} direction="up">
-                <div className="bg-card rounded-[6px] border-border border p-6 shadow-editorial-md transition-all hover:shadow-editorial-lg sm:p-8 lg:p-10">
+                <div className="bg-card rounded-[6px] border-border border p-8 shadow-editorial-md transition-all hover:shadow-editorial-lg sm:p-10 lg:p-12">
                   <div className="flex flex-col items-start gap-6 sm:flex-row sm:gap-8">
                     {/* Number + Icon */}
                     <div className="flex flex-shrink-0 items-center gap-4 sm:gap-6">
@@ -321,7 +317,7 @@ const SocialProofSection = memo(function SocialProofSection() {
   return (
     <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`}>
       <div className="container mx-auto max-w-6xl">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-6 lg:gap-12">
+        <div className="grid grid-cols-1 gap-12 sm:grid-cols-3 sm:gap-10 lg:gap-16">
           {stats.map((stat, index) => (
             <AnimatedSection key={stat.label} delay={index * 100} direction="up">
               <div className="text-center">
@@ -392,11 +388,8 @@ const FinalCTASection = memo(function FinalCTASection() {
       <div className="container mx-auto max-w-5xl">
         <AnimatedSection direction="up">
           <div className="bg-accent/10 rounded-[6px] border-accent border-l-4 p-8 shadow-editorial-lg sm:p-12 lg:p-16">
-            <div className="space-y-8 text-center">
-              <div className="space-y-4">
-                <Badge variant="default" className="px-4 py-2 text-sm">
-                  BETA — JETZT KOSTENLOS
-                </Badge>
+            <div className="space-y-10 text-center">
+              <div className="space-y-6">
                 <h2 className="text-foreground font-serif text-4xl font-bold sm:text-6xl lg:text-7xl">
                   Bereit?
                 </h2>
