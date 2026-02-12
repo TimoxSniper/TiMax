@@ -7,7 +7,6 @@
  */
 
 import { StatsCards } from "@/components/admin/StatsCards";
-import { ActivityCharts } from "@/components/admin/ActivityCharts";
 import { RecentActivity } from "@/components/admin/RecentActivity";
 import { SystemHealthWidget } from "@/components/admin/SystemHealthWidget";
 import { AlertCenter } from "@/components/admin/AlertCenter";
@@ -39,9 +38,6 @@ export default function AdminDashboard() {
           <QuickActions />
           <StorageWidget />
         </div>
-
-        {/* Activity Charts */}
-        <ActivityCharts />
 
         {/* Recent Activity and System Health in Grid */}
         <div className="grid gap-6 lg:grid-cols-2">
