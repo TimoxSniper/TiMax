@@ -25,7 +25,7 @@ export function createDynamicImport(
 
 // Specific dynamic imports for commonly used heavy components
 export const DynamicUploadList = createDynamicImport(
-  () => import("@/components/upload/upload-list"),
+  () => import("@/components/upload/upload-list").then(mod => ({ default: mod.UploadList })),
   {
     loading: () => (
       <div className="space-y-4">
@@ -46,7 +46,7 @@ export const DynamicUploadList = createDynamicImport(
 );
 
 export const DynamicChatInterface = createDynamicImport(
-  () => import("@/components/chat/chat-interface"),
+  () => import("@/components/chat/chat-interface").then(mod => ({ default: mod.ChatInterface })),
   {
     loading: () => (
       <div className="flex h-[calc(100vh-16rem)] max-h-[800px] w-full flex-row gap-4">
@@ -81,7 +81,7 @@ export const DynamicChatInterface = createDynamicImport(
 );
 
 export const DynamicMessageList = createDynamicImport(
-  () => import("@/components/chat/message-list"),
+  () => import("@/components/chat/message-list").then(mod => ({ default: mod.MessageList })),
   {
     ssr: false,
   }
