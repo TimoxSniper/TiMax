@@ -51,6 +51,12 @@ export function MainNavigation() {
   const { userId } = useAuth();
 
   const [isAdmin, setIsAdmin] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch with usePathname
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     async function checkAdmin() {
@@ -144,12 +150,13 @@ export function MainNavigation() {
               <div className="bg-border mx-2 h-6 w-px" aria-hidden="true" />
               {protectedNavigation.map((item) => {
                 const Icon = item.icon;
-                const isActive = pathname === item.href;
+                const isActive = mounted && pathname === item.href;
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
                     aria-current={isActive ? "page" : undefined}
+                    suppressHydrationWarning
                     className={cn(
                       "group relative gap-2 px-3 py-2 text-sm font-medium tracking-wide uppercase transition-all duration-300",
                       "text-foreground hover:text-accent",
@@ -167,12 +174,13 @@ export function MainNavigation() {
                   <div className="bg-border mx-2 h-6 w-px" aria-hidden="true" />
                   {adminNavigation.map((item) => {
                     const Icon = item.icon;
-                    const isActive = pathname === item.href;
+                    const isActive = mounted && pathname === item.href;
                     return (
                       <Link
                         key={item.name}
                         href={item.href}
                         aria-current={isActive ? "page" : undefined}
+                        suppressHydrationWarning
                         className={cn(
                           "group relative gap-2 px-3 py-2 text-sm font-medium tracking-wide uppercase transition-all duration-300",
                           "text-primary hover:text-accent",
@@ -304,7 +312,7 @@ export function MainNavigation() {
                 <SignedIn>
                   {protectedNavigation.map((item) => {
                     const Icon = item.icon;
-                    const isActive = pathname === item.href;
+                    const isActive = mounted && pathname === item.href;
                     return (
                       <Button
                         key={item.name}
@@ -316,7 +324,7 @@ export function MainNavigation() {
                         )}
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        <Link href={item.href} aria-current={isActive ? "page" : undefined}>
+                        <Link href={item.href} aria-current={isActive ? "page" : undefined} suppressHydrationWarning>
                           <Icon className="h-4 w-4" aria-hidden="true" />
                           {item.name}
                         </Link>
@@ -328,7 +336,7 @@ export function MainNavigation() {
                       <div className="border-border/50 my-2 border-t" />
                       {adminNavigation.map((item) => {
                         const Icon = item.icon;
-                        const isActive = pathname === item.href;
+                        const isActive = mounted && pathname === item.href;
                         return (
                           <Button
                             key={item.name}
@@ -340,7 +348,7 @@ export function MainNavigation() {
                             )}
                             onClick={() => setMobileMenuOpen(false)}
                           >
-                            <Link href={item.href} aria-current={isActive ? "page" : undefined}>
+                            <Link href={item.href} aria-current={isActive ? "page" : undefined} suppressHydrationWarning>
                               <Icon className="h-4 w-4" aria-hidden="true" />
                               {item.name}
                             </Link>
