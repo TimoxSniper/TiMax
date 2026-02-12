@@ -147,7 +147,7 @@ export function AdminProvider({ children, onToast }: AdminProviderProps) {
   const [isUploadsLoading, setIsUploadsLoading] = useState(false);
   const [isUploadsInitialLoad, setIsUploadsInitialLoad] = useState(true);
   const [uploadsCurrentPage, setUploadsCurrentPage] = useState(1);
-  const [uploadsStatusFilter, setUploadsStatusFilter] = useState("");
+  const [uploadsStatusFilter, setUploadsStatusFilter] = useState("all");
   const [uploadsSearchQuery, setUploadsSearchQuery] = useState("");
 
   // Helper function for API calls

@@ -14,10 +14,10 @@ export default function AdminDashboard() {
       {/* Page Header - Editorial style */}
       <div className="mb-8">
         <h1 className="font-serif text-4xl font-semibold text-foreground mb-2">
-          Dashboard Overview
+          Dashboard-Übersicht
         </h1>
         <p className="text-base text-muted-foreground">
-          Monitor platform activity and user metrics in real-time
+          Plattform-Aktivität und Benutzermetriken in Echtzeit überwachen
         </p>
       </div>
 

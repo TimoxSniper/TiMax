@@ -104,7 +104,7 @@ export function StatsCards() {
           <AlertCircle className="h-5 w-5 text-destructive" />
           <div className="flex-1">
             <h3 className="font-serif text-lg font-semibold text-foreground">
-              Failed to Load Statistics
+              Fehler beim Laden der Statistiken
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
               {error.message}
@@ -115,7 +115,7 @@ export function StatsCards() {
               size="sm"
               className="mt-4"
             >
-              Retry
+              Erneut versuchen
             </Button>
           </div>
         </div>
@@ -130,28 +130,28 @@ export function StatsCards() {
 
   const statCards = [
     {
-      label: "Total Users",
+      label: "Benutzer gesamt",
       value: stats.totalUsers,
       icon: Users,
       trend: null, // No trend data for users yet
       color: "text-primary",
     },
     {
-      label: "Total Chats",
+      label: "Chats gesamt",
       value: stats.totalChats,
       icon: MessageSquare,
       trend: stats.trends.chats.percentageChange,
       color: "text-primary",
     },
     {
-      label: "Total Uploads",
+      label: "Uploads gesamt",
       value: stats.totalUploads,
       icon: Upload,
       trend: stats.trends.uploads.percentageChange,
       color: "text-primary",
     },
     {
-      label: "Active Sessions",
+      label: "Aktive Sitzungen",
       value: stats.activeUsers,
       icon: BarChart3,
       trend: null, // Could add trend for active users
@@ -208,13 +208,13 @@ export function StatsCards() {
                       {card.trend.toFixed(1)}%
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      vs last month
+                      vs. letzten Monat
                     </span>
                   </>
                 )}
                 {card.trend === null && (
                   <span className="text-xs text-muted-foreground">
-                    Last 7 days
+                    Letzte 7 Tage
                   </span>
                 )}
               </div>
@@ -230,8 +230,8 @@ export function StatsCards() {
       {status === "connected" && (
         <div className="col-span-full">
           <p className="text-center text-xs text-muted-foreground">
-            Last updated: {new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-            {" • Auto-refresh: 30s"}
+            Zuletzt aktualisiert: {new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+            {" • Auto-Aktualisierung: 30s"}
           </p>
         </div>
       )}

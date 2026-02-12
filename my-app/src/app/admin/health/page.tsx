@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AdminLayout } from "@/components/admin/admin-layout";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -99,22 +98,19 @@ export default function AdminHealth() {
 
   if (isLoading && !healthData) {
     return (
-      <AdminLayout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="text-primary h-8 w-8 animate-spin" />
-          </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="text-primary h-8 w-8 animate-spin" />
         </div>
-      </AdminLayout>
+      </div>
     );
   }
 
   return (
-    <AdminLayout>
-      <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="font-serif text-3xl font-bold">System Health Check</h1>
+            <h1 className="font-serif text-3xl font-bold">System-Statusprüfung</h1>
             <p className="text-muted-foreground mt-1">Systemstatus und Service-Verfügbarkeit</p>
           </div>
           <Button variant="outline" onClick={handleRefresh} disabled={isRefreshing}>
@@ -134,7 +130,7 @@ export default function AdminHealth() {
                       <StatusIcon className={getOverallStatusColor(healthData.overallStatus)} />
                     );
                   })()}
-                  System Status
+                  Systemstatus
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -233,6 +229,5 @@ export default function AdminHealth() {
           </div>
         )}
       </div>
-    </AdminLayout>
   );
 }

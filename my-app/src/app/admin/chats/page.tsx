@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useAdmin } from "@/contexts/admin-context";
-import { AdminLayout } from "@/components/admin/admin-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -46,7 +45,7 @@ import {
 } from "@/components/ui/dialog";
 
 const TIME_FILTERS = [
-  { value: "", label: "Alle Zeit" },
+  { value: "all", label: "Alle Zeit" },
   { value: "today", label: "Heute" },
   { value: "week", label: "Letzte 7 Tage" },
   { value: "month", label: "Letzte 30 Tage" },
@@ -66,13 +65,13 @@ export default function AdminChats() {
     deleteChat,
   } = useAdmin();
 
-  const [timeFilter, setTimeFilter] = useState("");
+  const [timeFilter, setTimeFilter] = useState("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [chatToDelete, setChatToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     if (isChatsInitialLoad) {
-      fetchChats(1, undefined, timeFilter || undefined);
+      fetchChats(1, undefined, timeFilter === "all" ? undefined : timeFilter || undefined);
     }
   }, [fetchChats, isChatsInitialLoad, timeFilter]);
 
@@ -83,12 +82,12 @@ export default function AdminChats() {
   const handleTimeFilter = (value: string) => {
     setTimeFilter(value);
     setChatsCurrentPage(1);
-    fetchChats(1, undefined, value || undefined);
+    fetchChats(1, undefined, value === "all" ? undefined : value || undefined);
   };
 
   const handlePageChange = (page: number) => {
     setChatsCurrentPage(page);
-    fetchChats(page, undefined, timeFilter || undefined);
+    fetchChats(page, undefined, timeFilter === "all" ? undefined : timeFilter || undefined);
   };
 
   const handleDeleteClick = (chatId: string) => {
@@ -105,10 +104,10 @@ export default function AdminChats() {
   };
 
   return (
-    <AdminLayout>
+    <>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="font-serif text-3xl font-bold">Chat Management</h1>
+          <h1 className="font-serif text-3xl font-bold">Chat-Verwaltung</h1>
           <p className="text-muted-foreground mt-1">
             Verwalten Sie alle Chats und moderieren Sie Inhalte
           </p>
@@ -282,6 +281,6 @@ export default function AdminChats() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </AdminLayout>
+    </>
   );
 }

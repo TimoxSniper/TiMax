@@ -70,23 +70,32 @@ export async function GET(request: NextRequest) {
 
     const chatIds = filteredChats.map((c) => c.id);
 
-    const { data: messagesData, error: messagesError } = await supabase
-      .from("messages")
-      .select("chat_id")
-      .in("chat_id", chatIds);
+    // Only fetch message counts if there are chats
+    if (chatIds.length > 0) {
+      const { data: messagesData, error: messagesError } = await supabase
+        .from("messages")
+        .select("chat_id")
+        .in("chat_id", chatIds);
 
-    if (messagesError) {
-      logger.warn("[Admin Chats API] Error fetching message counts:", messagesError);
-      // Continue without message counts rather than throwing an error
-    } else if (messagesData) {
-      const messageCounts = messagesData.reduce((acc: Record<string, number>, m) => {
-        acc[m.chat_id] = (acc[m.chat_id] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
+      if (messagesError) {
+        logger.warn("[Admin Chats API] Error fetching message counts:", messagesError);
+        // Continue without message counts rather than throwing an error
+      } else if (messagesData) {
+        const messageCounts = messagesData.reduce((acc: Record<string, number>, m) => {
+          acc[m.chat_id] = (acc[m.chat_id] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
 
+        filteredChats = filteredChats.map((chat) => ({
+          ...chat,
+          messageCount: messageCounts[chat.id] || 0,
+        }));
+      }
+    } else {
+      // No chats, set empty message counts
       filteredChats = filteredChats.map((chat) => ({
         ...chat,
-        messageCount: messageCounts[chat.id] || 0,
+        messageCount: 0,
       }));
     }
 

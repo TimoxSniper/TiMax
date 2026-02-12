@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useAdmin } from "@/contexts/admin-context";
-import { AdminLayout } from "@/components/admin/admin-layout";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,7 +45,7 @@ import {
 } from "@/components/ui/dialog";
 
 const UPLOAD_STATUS_FILTERS = [
-  { value: "", label: "Alle Status" },
+  { value: "all", label: "Alle Status" },
   { value: "pending", label: "Ausstehend" },
   { value: "processing", label: "In Bearbeitung" },
   { value: "completed", label: "Abgeschlossen" },
@@ -76,7 +75,7 @@ export default function AdminUploads() {
 
   useEffect(() => {
     if (isUploadsInitialLoad) {
-      fetchUploads(1, uploadsStatusFilter || undefined);
+      fetchUploads(1, uploadsStatusFilter === "all" ? undefined : uploadsStatusFilter || undefined);
     }
   }, [fetchUploads, isUploadsInitialLoad, uploadsStatusFilter]);
 
@@ -87,12 +86,12 @@ export default function AdminUploads() {
   const handleStatusFilter = (value: string) => {
     setUploadsStatusFilter(value);
     setUploadsCurrentPage(1);
-    fetchUploads(1, value || undefined);
+    fetchUploads(1, value === "all" ? undefined : value || undefined);
   };
 
   const handlePageChange = (page: number) => {
     setUploadsCurrentPage(page);
-    fetchUploads(page, uploadsStatusFilter || undefined);
+    fetchUploads(page, uploadsStatusFilter === "all" ? undefined : uploadsStatusFilter || undefined);
   };
 
   const handleDeleteClick = (uploadId: string) => {
@@ -120,10 +119,10 @@ export default function AdminUploads() {
   );
 
   return (
-    <AdminLayout>
+    <>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="font-serif text-3xl font-bold">Upload Management</h1>
+          <h1 className="font-serif text-3xl font-bold">Upload-Verwaltung</h1>
           <p className="text-muted-foreground mt-1">Verwalten Sie Datei-Uploads und deren Status</p>
         </div>
 
@@ -326,6 +325,6 @@ export default function AdminUploads() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </AdminLayout>
+    </>
   );
 }

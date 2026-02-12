@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useAdmin } from "@/contexts/admin-context";
-import { AdminLayout } from "@/components/admin/admin-layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,10 +80,9 @@ export default function AdminUsers() {
   };
 
   return (
-    <AdminLayout>
-      <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="font-serif text-3xl font-bold">User Management</h1>
+          <h1 className="font-serif text-3xl font-bold">Benutzerverwaltung</h1>
           <p className="text-muted-foreground mt-1">Verwalten Sie Benutzer und deren Rollen</p>
         </div>
 
@@ -247,6 +245,5 @@ export default function AdminUsers() {
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
   );
 }

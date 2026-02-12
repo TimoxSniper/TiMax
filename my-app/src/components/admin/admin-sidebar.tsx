@@ -5,18 +5,13 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, MessageSquare, Upload, BarChart3, Settings, X } from "lucide-react";
+import { LayoutDashboard, Users, MessageSquare, Upload, X } from "lucide-react";
 
 const adminNavigation = [
-  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "Users", href: "/admin/users", icon: Users },
+  { name: "Übersicht", href: "/admin", icon: LayoutDashboard },
+  { name: "Benutzer", href: "/admin/users", icon: Users },
   { name: "Chats", href: "/admin/chats", icon: MessageSquare },
   { name: "Uploads", href: "/admin/uploads", icon: Upload },
-  { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
-];
-
-const adminSecondaryNav = [
-  { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 interface AdminSidebarProps {
@@ -67,33 +62,6 @@ export function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
                   ? pathname === '/admin'
                   : pathname === item.href || pathname.startsWith(`${item.href}/`)
               );
-
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={onMobileClose}
-                  suppressHydrationWarning
-                  className={cn(
-                    "group flex items-center gap-3 border-l-4 px-4 py-3 font-sans text-sm font-medium transition-all",
-                    isActive
-                      ? "bg-accent/10 border-primary text-primary"
-                      : "text-sidebar-foreground border-transparent hover:border-primary hover:bg-accent/5"
-                  )}
-                >
-                  <Icon className={cn("h-5 w-5 shrink-0", isActive && "text-primary")} />
-                  {item.name}
-                </Link>
-              );
-            })}
-
-            {/* Divider */}
-            <div className="bg-border my-4 h-px" />
-
-            {/* Secondary Navigation */}
-            {adminSecondaryNav.map((item) => {
-              const Icon = item.icon;
-              const isActive = mounted && pathname.startsWith(item.href);
 
               return (
                 <Link
