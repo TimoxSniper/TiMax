@@ -1,5 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
@@ -92,7 +91,7 @@ async function checkRedisRateLimiting(): Promise<HealthStatus> {
     const { checkRateLimit } = await import("@/lib/rate-limit");
 
     const testKey = `health-check-${Date.now()}`;
-    const result = await checkRateLimit(testKey, {
+    await checkRateLimit(testKey, {
       maxRequests: 1,
       windowMs: 1000,
     });
@@ -113,7 +112,7 @@ async function checkRedisRateLimiting(): Promise<HealthStatus> {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     await requireAdmin();
 

@@ -54,7 +54,6 @@ const TIME_FILTERS = [
 
 export default function AdminChats() {
   const {
-    chats,
     filteredChats,
     chatsPagination,
     isChatsLoading,

@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
     if (search) {
       const lowerSearch = search.toLowerCase();
       filteredUploads = filteredUploads.filter(
-        (upload: any) =>
+        (upload) =>
           upload.file_name?.toLowerCase().includes(lowerSearch) ||
           upload.user_id?.toLowerCase().includes(lowerSearch) ||
           upload.file_type?.toLowerCase().includes(lowerSearch)

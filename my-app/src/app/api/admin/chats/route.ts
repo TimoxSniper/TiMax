@@ -62,13 +62,13 @@ export async function GET(request: NextRequest) {
     if (search) {
       const lowerSearch = search.toLowerCase();
       filteredChats = filteredChats.filter(
-        (chat: any) =>
+        (chat) =>
           chat.title?.toLowerCase().includes(lowerSearch) ||
           chat.user_id?.toLowerCase().includes(lowerSearch)
       );
     }
 
-    const chatIds = filteredChats.map((c: any) => c.id);
+    const chatIds = filteredChats.map((c) => c.id);
 
     const { data: messagesData, error: messagesError } = await supabase
       .from("messages")
@@ -79,12 +79,12 @@ export async function GET(request: NextRequest) {
       logger.warn("[Admin Chats API] Error fetching message counts:", messagesError);
       // Continue without message counts rather than throwing an error
     } else if (messagesData) {
-      const messageCounts = messagesData.reduce((acc: Record<string, number>, m: any) => {
+      const messageCounts = messagesData.reduce((acc: Record<string, number>, m) => {
         acc[m.chat_id] = (acc[m.chat_id] || 0) + 1;
         return acc;
-      }, {});
+      }, {} as Record<string, number>);
 
-      filteredChats = filteredChats.map((chat: any) => ({
+      filteredChats = filteredChats.map((chat) => ({
         ...chat,
         messageCount: messageCounts[chat.id] || 0,
       }));

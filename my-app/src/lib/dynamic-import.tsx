@@ -8,6 +8,7 @@ import type { ReactElement } from "react";
 
 // Create a dynamic import helper
 export function createDynamicImport(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   importFunction: () => Promise<any>,
   options: {
     loading?: () => ReactElement;

@@ -24,7 +24,6 @@ import {
   TrendingDown,
   LayoutDashboard,
   Settings,
-  FileText,
   BarChart3,
   Menu,
   X,

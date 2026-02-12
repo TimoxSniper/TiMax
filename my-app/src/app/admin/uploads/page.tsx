@@ -247,7 +247,7 @@ export default function AdminUploads() {
                             </span>
                           </TableCell>
                           <TableCell>
-                            <StatusBadge status={upload.status as any} />
+                            <StatusBadge status={upload.status as "completed" | "processing" | "failed" | "pending" | "cancelled"} />
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2 text-sm">

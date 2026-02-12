@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
@@ -12,7 +11,6 @@ export async function GET(request: NextRequest) {
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "25")));
     const search = searchParams.get("search") || "";
-    const offset = (page - 1) * limit;
 
     const supabase = createAdminClient();
 
@@ -22,10 +20,10 @@ export async function GET(request: NextRequest) {
     if (search) {
       const { clerkClient } = await import("@clerk/nextjs/server");
       const clerk = await clerkClient();
-      
-      let clerkUsers: any[] = [];
+
+      let clerkUsers: Array<{ id: string }> = [];
       try {
-        const result: any = await clerk.users.getUserList({
+        const result = await clerk.users.getUserList({
           query: search,
           limit: 100,
         });
@@ -54,7 +52,7 @@ export async function GET(request: NextRequest) {
     const { data: userChats, error: chatsError } = await dataQuery;
     if (chatsError) throw chatsError;
 
-    const uniqueUserIds = [...new Set(userChats?.map((c: any) => c.user_id) || [])];
+    const uniqueUserIds = [...new Set(userChats?.map((c) => c.user_id) || [])];
 
     const { clerkClient } = await import("@clerk/nextjs/server");
     const clerk = await clerkClient();
@@ -63,14 +61,14 @@ export async function GET(request: NextRequest) {
       uniqueUserIds.map((userId) => clerk.users.getUser(userId).catch(() => null))
     );
 
-    const chatCounts = userChats?.reduce((acc: Record<string, number>, c: any) => {
+    const chatCounts = userChats?.reduce((acc: Record<string, number>, c) => {
       acc[c.user_id] = (acc[c.user_id] || 0) + 1;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
 
     const users = clerkUsers
       .filter((u) => u !== null)
-      .map((user: any) => ({
+      .map((user) => ({
         userId: user.id,
         firstName: user.firstName,
         lastName: user.lastName,

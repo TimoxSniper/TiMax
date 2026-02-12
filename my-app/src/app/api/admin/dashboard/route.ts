@@ -1,10 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     await requireAdmin();
 
@@ -63,13 +62,13 @@ export async function GET(request: NextRequest) {
     ]);
 
     const statusCounts: Record<string, number> = {};
-    uploadsByStatus?.forEach((u: any) => {
+    uploadsByStatus?.forEach((u) => {
       const status = u.status || "unknown";
       statusCounts[status] = (statusCounts[status] || 0) + 1;
     });
 
     const typeCounts: Record<string, number> = {};
-    uploadsByType?.forEach((u: any) => {
+    uploadsByType?.forEach((u) => {
       const type = u.file_type?.split("/")[0] || "unknown";
       typeCounts[type] = (typeCounts[type] || 0) + 1;
     });
@@ -81,7 +80,7 @@ export async function GET(request: NextRequest) {
       .not("file_size", "is", null);
 
     const totalStorageBytes =
-      storageData?.reduce((sum: number, u: any) => sum + (u.file_size || 0), 0) || 0;
+      storageData?.reduce((sum: number, u) => sum + (u.file_size || 0), 0) || 0;
 
     // Calculate trend percentages
     const calculateTrend = (current: number, previous: number): number => {
