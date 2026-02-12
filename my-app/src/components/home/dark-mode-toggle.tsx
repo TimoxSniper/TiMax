@@ -12,6 +12,12 @@ interface DarkModeToggleProps {
 
 export function DarkModeToggle({ variant = "fixed", className }: DarkModeToggleProps) {
   const [isDark, setIsDark] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Dark Mode mit Persistenz und System-Präferenz
   useEffect(() => {
@@ -51,6 +57,25 @@ export function DarkModeToggle({ variant = "fixed", className }: DarkModeToggleP
     // Speichere Präferenz
     localStorage.setItem("theme", newIsDark ? "dark" : "light");
   };
+
+  // Don't render until mounted to prevent hydration mismatch
+  if (!mounted) {
+    return variant === "inline" ? (
+      <Button variant="ghost" size="icon" className={cn("h-9 w-9", className)} disabled>
+        <Moon className="h-4 w-4" aria-hidden="true" />
+      </Button>
+    ) : (
+      <button
+        className={cn(
+          "bg-card border-border shadow-editorial-sm fixed top-4 right-4 z-50 rounded-[6px] border p-3 transition-all duration-300 sm:top-6 sm:right-6",
+          className
+        )}
+        disabled
+      >
+        <Moon className="text-foreground h-5 w-5" aria-hidden="true" />
+      </button>
+    );
+  }
 
   if (variant === "inline") {
     return (
