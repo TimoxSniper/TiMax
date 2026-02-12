@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { clerkClient } from "@clerk/nextjs/server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,76 +13,58 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "25")));
     const search = searchParams.get("search") || "";
 
-    const supabase = createAdminClient();
-
-    let baseQuery = supabase.from("chats").select("user_id", { count: "exact", head: true });
-    let dataQuery = supabase.from("chats").select("user_id");
-
-    if (search) {
-      const { clerkClient } = await import("@clerk/nextjs/server");
-      const clerk = await clerkClient();
-
-      let clerkUsers: Array<{ id: string }> = [];
-      try {
-        const result = await clerk.users.getUserList({
-          query: search,
-          limit: 100,
-        });
-        clerkUsers = result.data || [];
-      } catch (error) {
-        logger.warn("[Admin Users API] Error searching Clerk users:", error);
-        // If Clerk search fails, continue with DB search only
-      }
-
-      const userIds = clerkUsers.map((u) => u.id);
-      if (userIds.length === 0) {
-        return NextResponse.json({
-          success: true,
-          users: [],
-          pagination: { page, limit, total: 0, totalPages: 0 },
-        });
-      }
-
-      baseQuery = baseQuery.in("user_id", userIds);
-      dataQuery = dataQuery.in("user_id", userIds);
-    }
-
-    const { count: totalCount, error: countError } = await baseQuery;
-    if (countError) throw countError;
-
-    const { data: userChats, error: chatsError } = await dataQuery;
-    if (chatsError) throw chatsError;
-
-    const uniqueUserIds = [...new Set(userChats?.map((c) => c.user_id) || [])];
-
-    const { clerkClient } = await import("@clerk/nextjs/server");
     const clerk = await clerkClient();
 
-    const clerkUsers = await Promise.all(
-      uniqueUserIds.map((userId) => clerk.users.getUser(userId).catch(() => null))
-    );
+    // Get ALL users from Clerk with pagination
+    const offset = (page - 1) * limit;
 
-    const chatCounts = userChats?.reduce((acc: Record<string, number>, c) => {
-      acc[c.user_id] = (acc[c.user_id] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const clerkResult = await clerk.users.getUserList({
+      limit,
+      offset,
+      orderBy: "-created_at",
+      ...(search && { query: search }),
+    });
 
-    const users = clerkUsers
-      .filter((u) => u !== null)
-      .map((user) => ({
-        userId: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.emailAddresses[0]?.emailAddress,
-        imageUrl: user.imageUrl,
-        createdAt: user.createdAt,
-        lastSignInAt: user.lastSignInAt,
-        role: user.publicMetadata?.role || "user",
-        chatCount: chatCounts[user.id] || 0,
-      }));
+    const clerkUsers = clerkResult.data;
+    const totalCount = clerkResult.totalCount;
 
-    const total = totalCount || 0;
-    const totalPages = Math.ceil(total / limit);
+    // Get chat counts for all users from Supabase
+    const supabase = createAdminClient();
+    const userIds = clerkUsers.map((u) => u.id);
+
+    let chatCounts: Record<string, number> = {};
+
+    if (userIds.length > 0) {
+      const { data: chatsData, error: chatsError } = await supabase
+        .from("chats")
+        .select("user_id")
+        .in("user_id", userIds);
+
+      if (chatsError) {
+        logger.warn("[Admin Users API] Error fetching chat counts:", chatsError);
+        // Continue without chat counts
+      } else {
+        chatCounts = (chatsData || []).reduce((acc: Record<string, number>, chat) => {
+          acc[chat.user_id] = (acc[chat.user_id] || 0) + 1;
+          return acc;
+        }, {});
+      }
+    }
+
+    // Map Clerk users to our format
+    const users = clerkUsers.map((user) => ({
+      userId: user.id,
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      email: user.emailAddresses[0]?.emailAddress || "",
+      imageUrl: user.imageUrl || "",
+      createdAt: new Date(user.createdAt).toISOString(),
+      lastSignInAt: user.lastSignInAt ? new Date(user.lastSignInAt).toISOString() : null,
+      role: (user.publicMetadata?.role as string) || "user",
+      chatCount: chatCounts[user.id] || 0,
+    }));
+
+    const totalPages = Math.ceil(totalCount / limit);
 
     return NextResponse.json({
       success: true,
@@ -89,7 +72,7 @@ export async function GET(request: NextRequest) {
       pagination: {
         page,
         limit,
-        total,
+        total: totalCount,
         totalPages,
       },
     });
