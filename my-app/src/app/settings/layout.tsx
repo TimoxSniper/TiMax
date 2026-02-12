@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { User, Shield, Laptop } from "lucide-react";
@@ -30,6 +31,12 @@ const settingsNavigation = [
 
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch with usePathname
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <>
@@ -52,12 +59,13 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
                 <ul className="space-y-1">
                   {settingsNavigation.map((item) => {
                     const Icon = item.icon;
-                    const isActive = pathname === item.href;
+                    const isActive = mounted && pathname === item.href;
 
                     return (
                       <li key={item.name}>
                         <Link
                           href={item.href}
+                          suppressHydrationWarning
                           className={cn(
                             "flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors",
                             isActive
