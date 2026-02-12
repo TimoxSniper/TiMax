@@ -7,6 +7,9 @@
  */
 
 import { StatsCards } from "@/components/admin/StatsCards";
+import { ActivityCharts } from "@/components/admin/ActivityCharts";
+import { RecentActivity } from "@/components/admin/RecentActivity";
+import { SystemHealthWidget } from "@/components/admin/SystemHealthWidget";
 
 export default function AdminDashboard() {
   return (
@@ -21,8 +24,19 @@ export default function AdminDashboard() {
         </p>
       </div>
 
-      {/* Stats Cards with auto-refresh */}
-      <StatsCards />
+      <div className="space-y-6">
+        {/* Stats Cards with auto-refresh */}
+        <StatsCards />
+
+        {/* Activity Charts */}
+        <ActivityCharts />
+
+        {/* Recent Activity and System Health in Grid */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <RecentActivity />
+          <SystemHealthWidget />
+        </div>
+      </div>
     </>
   );
 }
