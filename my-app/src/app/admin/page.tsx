@@ -10,6 +10,9 @@ import { StatsCards } from "@/components/admin/StatsCards";
 import { ActivityCharts } from "@/components/admin/ActivityCharts";
 import { RecentActivity } from "@/components/admin/RecentActivity";
 import { SystemHealthWidget } from "@/components/admin/SystemHealthWidget";
+import { AlertCenter } from "@/components/admin/AlertCenter";
+import { StorageWidget } from "@/components/admin/StorageWidget";
+import { QuickActions } from "@/components/admin/QuickActions";
 
 export default function AdminDashboard() {
   return (
@@ -25,8 +28,17 @@ export default function AdminDashboard() {
       </div>
 
       <div className="space-y-6">
+        {/* Alert Center - Priority notifications */}
+        <AlertCenter />
+
         {/* Stats Cards with auto-refresh */}
         <StatsCards />
+
+        {/* Quick Actions and Storage in Grid */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <QuickActions />
+          <StorageWidget />
+        </div>
 
         {/* Activity Charts */}
         <ActivityCharts />
