@@ -533,10 +533,10 @@ const StatsSectionV2 = memo(function StatsSectionV2() {
   }, [statsVisible]);
 
   const stats = [
-    { value: `${countedStats.accuracy}%`, label: "Transkriptions-Genauigkeit" },
-    { value: `< ${countedStats.time} Min`, label: "Durchschn. Bearbeitungszeit" },
-    { value: `${countedStats.formats}+`, label: "Text-Formate möglich" },
-    { value: `${countedStats.workflow}`, label: "Workflow für alles" },
+    { value: `${countedStats.accuracy}%`, label: "Transkriptions-Genauigkeit", isTime: false },
+    { value: `< ${countedStats.time}`, label: "Durchschn. Bearbeitungszeit", isTime: true },
+    { value: `${countedStats.formats}+`, label: "Text-Formate möglich", isTime: false },
+    { value: `${countedStats.workflow}`, label: "Workflow für alles", isTime: false },
   ];
 
   return (
@@ -550,8 +550,15 @@ const StatsSectionV2 = memo(function StatsSectionV2() {
             {stats.map((stat, index) => (
               <AnimatedSection key={stat.label} delay={index * 50} direction="up">
                 <div className="flex flex-col items-center px-2 py-3 text-center sm:px-8 sm:py-6 md:py-0 lg:px-16">
-                  <div className="text-accent mb-1 font-serif text-3xl font-bold leading-none sm:mb-3 sm:text-5xl lg:text-7xl">
-                    {stat.value}
+                  <div className="mb-1 sm:mb-3">
+                    <span className="text-accent font-serif text-3xl font-bold leading-none sm:text-5xl lg:text-7xl">
+                      {stat.value}
+                    </span>
+                    {stat.isTime && (
+                      <span className="text-muted-foreground ml-1 text-xs font-medium uppercase tracking-wider sm:ml-2 sm:text-sm lg:text-base">
+                        Min
+                      </span>
+                    )}
                   </div>
                   <div className="text-muted-foreground text-[10px] font-medium uppercase tracking-wider sm:text-xs sm:tracking-widest lg:text-sm">
                     {stat.label}
