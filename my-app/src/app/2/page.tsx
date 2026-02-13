@@ -1,248 +1,341 @@
 "use client";
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState, useEffect } from "react";
 import { MainNavigation } from "@/components/layout/main-navigation";
 import { Footer } from "@/components/layout/footer";
+import { Card } from "@/components/magic-ui/glass-card";
 import { AnimatedSection } from "@/components/magic-ui/animated-section";
 import { Button } from "@/components/ui/button";
+import { Hero } from "@/components/magic-ui/hero";
 import { EmailSignup } from "@/components/home/email-signup";
 import {
   Upload,
   FileText,
   MessageSquare,
   Sparkles,
+  Brain,
+  Zap,
+  Network,
+  Clock,
+  TrendingUp,
+  Users,
   ArrowRight,
   CheckCircle2,
-  X,
-  Clock,
-  Zap,
 } from "lucide-react";
 import Link from "next/link";
 
-// Konstanten
+// Konstanten - Editorial Modernism Spacing (mobile-optimized)
 const SECTION_SPACING = "py-12 sm:py-20 lg:py-28";
 const SECTION_PADDING = "px-4 sm:px-6 lg:px-8";
 
-// Split-Screen Hero - Asymmetrisch
-const HeroSectionV3 = memo(function HeroSectionV3() {
+// Hero Section Component - Pain-First Approach (von /1)
+const HeroSectionV2 = memo(function HeroSectionV2() {
   return (
-    <section className={`relative ${SECTION_PADDING} pt-28 pb-20 sm:pt-40 sm:pb-28 lg:pt-52 lg:pb-36 z-10`}>
-      <div className="container mx-auto max-w-7xl">
-        <div className="grid grid-cols-1 gap-20 lg:grid-cols-2 lg:gap-24 xl:gap-28">
-          {/* Left: Headline + CTA */}
-          <AnimatedSection direction="up">
-            <div className="flex flex-col justify-center space-y-10 lg:space-y-12">
-              <div className="space-y-8">
-                <h1 className="text-foreground font-serif text-4xl font-bold leading-tight sm:text-6xl lg:text-7xl xl:text-8xl">
-                  Dein Content verstaubt
-                </h1>
-                <div className="bg-accent h-1 w-24 sm:w-32" />
-                <p className="text-muted-foreground max-w-xl text-lg leading-relaxed sm:text-xl lg:text-2xl">
-                  Podcasts, Videos, Workshops — alles da. Aber keine LinkedIn-Posts, keine
-                  Newsletter. Warum? Zu viel Arbeit.
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
-                <Button
-                  size="lg"
-                  className="group min-h-14 w-full px-10 sm:w-auto"
-                  asChild
-                >
-                  <Link href="/upload">
-                    Erste Datei hochladen
-                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="min-h-14 w-full px-10 sm:w-auto"
-                  asChild
-                >
-                  <a href="#how">Wie funktioniert's?</a>
-                </Button>
-              </div>
+    <section className={`relative ${SECTION_PADDING} pt-20 pb-12 sm:pt-32 sm:pb-20 lg:pt-40 lg:pb-28 z-10`}>
+      <div className="container mx-auto max-w-5xl">
+        <AnimatedSection direction="up">
+          <div className="flex flex-col items-center space-y-6 text-center sm:space-y-8">
+            {/* Hero Content */}
+            <div className="w-full">
+              <Hero
+                heading="Von Audio zu Text. Fertig."
+                subheading="Lade Videos oder Audios hoch. Wir transkribieren, du chattest mit der KI und generierst Texte. Ein Tool, ein Workflow."
+                align="center"
+              />
             </div>
-          </AnimatedSection>
 
-          {/* Right: Impact Stats */}
-          <AnimatedSection delay={200} direction="up">
-            <div className="flex flex-col justify-center space-y-8 sm:space-y-10 lg:space-y-12">
-              <div className="space-y-8 sm:space-y-10">
-                <div className="space-y-3">
-                  <div className="text-accent font-serif text-6xl font-bold leading-none sm:text-7xl lg:text-8xl">
-                    7,5h
-                  </div>
-                  <p className="text-foreground max-w-md text-base leading-relaxed sm:text-lg lg:text-xl">
-                    durchschnittliche Zeit für manuelles Transkribieren + Texterstellung
-                  </p>
-                </div>
-
-                <div className="border-border border-t pt-8 sm:pt-10">
-                  <div className="space-y-3">
-                    <div className="text-accent font-serif text-6xl font-bold leading-none sm:text-7xl lg:text-8xl">
-                      25min
-                    </div>
-                    <p className="text-foreground max-w-md text-base leading-relaxed sm:text-lg lg:text-xl">
-                      mit TiMax — Upload, Transkript, KI-Chat, fertig
-                    </p>
-                  </div>
-                </div>
-              </div>
+            {/* CTAs */}
+            <div className="flex w-full flex-col items-center justify-center gap-4 pt-4 sm:flex-row sm:gap-6 sm:pt-8">
+              <Button
+                size="lg"
+                className="group min-h-12 w-full max-w-xs px-8 sm:min-h-14 sm:w-auto sm:px-10"
+                asChild
+              >
+                <Link href="/upload">
+                  Datei hochladen
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 sm:h-5 sm:w-5" />
+                </Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="min-h-12 w-full max-w-xs px-8 sm:min-h-14 sm:w-auto sm:px-10"
+                asChild
+              >
+                <a href="#workflow">Wie funktioniert's?</a>
+              </Button>
             </div>
-          </AnimatedSection>
-        </div>
+          </div>
+        </AnimatedSection>
       </div>
     </section>
   );
 });
 
-// Problem Agitation - Sehr direkt
-const ProblemAgitationSection = memo(function ProblemAgitationSection() {
-  const painPoints = useMemo(
-    () => [
-      "Transkription dauert Stunden oder kostet viel",
-      "ChatGPT kennt deinen Content nicht",
-      "Copy-Paste zwischen Tools nervt",
-      "Am Ende klingt's generisch",
-    ],
-    []
-  );
+// Custom Stats Section mit Animation (von /1)
+const StatsSectionV2 = memo(function StatsSectionV2() {
+  const [statsVisible, setStatsVisible] = useState(false);
+  const [countedStats, setCountedStats] = useState({
+    accuracy: 0,
+    time: 0,
+    formats: 0,
+    workflow: 0,
+  });
+
+  // Intersection Observer - triggert Animation wenn sichtbar
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setStatsVisible(true);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    const statsElement = document.getElementById("stats-section");
+    if (statsElement) observer.observe(statsElement);
+
+    return () => {
+      if (statsElement) observer.unobserve(statsElement);
+    };
+  }, []);
+
+  // Counter Animation - 1500ms über 50 Steps
+  useEffect(() => {
+    if (!statsVisible) return;
+
+    const ANIMATION_DURATION = 1500;
+    const ANIMATION_STEPS = 50;
+    const interval = ANIMATION_DURATION / ANIMATION_STEPS;
+    let currentStep = 0;
+
+    const timer = setInterval(() => {
+      currentStep++;
+      const progress = Math.min(currentStep / ANIMATION_STEPS, 1);
+
+      setCountedStats({
+        accuracy: Math.floor(98 * progress),
+        time: Math.floor(100 - (85 * progress)), // Von 100 auf 15 runterzählen
+        formats: Math.floor(10 * progress),
+        workflow: 1,
+      });
+
+      if (currentStep >= ANIMATION_STEPS) {
+        clearInterval(timer);
+      }
+    }, interval);
+
+    return () => clearInterval(timer);
+  }, [statsVisible]);
+
+  const stats = [
+    { value: `${countedStats.accuracy}%`, label: "Transkriptions-Genauigkeit", isTime: false },
+    { value: `< ${countedStats.time}`, label: "Durchschn. Bearbeitungszeit", isTime: true },
+    { value: `${countedStats.formats}+`, label: "Text-Formate möglich", isTime: false },
+    { value: `${countedStats.workflow}`, label: "Workflow für alles", isTime: false },
+  ];
 
   return (
-    <section className={`relative ${SECTION_PADDING} py-20 sm:py-28 lg:py-36 border-border z-10 border-t`}>
-      <div className="container mx-auto max-w-5xl">
-        <div className="space-y-16 text-center sm:space-y-20">
-          <AnimatedSection direction="up">
-            <div className="space-y-4">
-              <h2 className="text-foreground font-serif text-4xl font-bold sm:text-6xl lg:text-7xl">
-                Kennst du das?
-              </h2>
-              <div className="bg-accent mx-auto h-1 w-16 sm:w-24" />
-            </div>
-          </AnimatedSection>
-
-          <div className="space-y-8 text-left sm:space-y-10">
-            {painPoints.map((point, index) => (
-              <AnimatedSection key={index} delay={index * 100} direction="up">
-                <div className="flex items-start gap-8 sm:gap-10">
-                  <div className="bg-destructive/10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-[4px] sm:h-14 sm:w-14">
-                    <X className="text-destructive h-6 w-6 sm:h-7 sm:w-7" aria-hidden="true" />
+    <section
+      id="stats-section"
+      className="border-border relative z-10 border-b border-t px-4 py-12 sm:py-20 lg:py-28"
+    >
+      <div className="container mx-auto max-w-6xl">
+        <AnimatedSection direction="up">
+          <div className="divide-border grid grid-cols-2 gap-4 sm:gap-0 md:grid-cols-4 md:divide-x">
+            {stats.map((stat, index) => (
+              <AnimatedSection key={stat.label} delay={index * 50} direction="up">
+                <div className="flex flex-col items-center px-2 py-3 text-center sm:px-8 sm:py-6 md:py-0 lg:px-16">
+                  <div className="mb-1 sm:mb-3">
+                    <span className="text-accent font-serif text-3xl font-bold leading-none sm:text-5xl lg:text-7xl">
+                      {stat.value}
+                    </span>
+                    {stat.isTime && (
+                      <span className="text-muted-foreground ml-1 text-xs font-medium uppercase tracking-wider sm:ml-2 sm:text-sm lg:text-base">
+                        Min
+                      </span>
+                    )}
                   </div>
-                  <p className="text-foreground flex-1 pt-2.5 text-lg leading-relaxed sm:text-xl lg:text-2xl">
-                    {point}
-                  </p>
+                  <div className="text-muted-foreground text-[10px] font-medium uppercase tracking-wider sm:text-xs sm:tracking-widest lg:text-sm">
+                    {stat.label}
+                  </div>
                 </div>
               </AnimatedSection>
             ))}
           </div>
-        </div>
+        </AnimatedSection>
       </div>
     </section>
   );
 });
 
-// Solution - Das ändert sich
-const SolutionSection = memo(function SolutionSection() {
-  const benefits = useMemo(
+// Problem Section (von /1)
+const ProblemSectionV2 = memo(function ProblemSectionV2() {
+  const checkPoints = useMemo(
     () => [
-      {
-        icon: Upload,
-        before: "Mehrere Tools",
-        after: "Ein Workflow",
-      },
-      {
-        icon: Clock,
-        before: "Stunden Arbeit",
-        after: "Minuten Setup",
-      },
-      {
-        icon: Zap,
-        before: "Generische Texte",
-        after: "Deine Stimme",
-      },
+      "Automatische Transkription",
+      "KI kennt deinen Content",
+      "Ein Tool, ein Workflow",
+      "Von Upload zu fertigem Text",
     ],
     []
   );
 
   return (
-    <section className={`relative ${SECTION_PADDING} py-20 sm:py-28 lg:py-36 z-10`}>
-      <div className="container mx-auto max-w-6xl">
+    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="problem">
+      <div className="container mx-auto max-w-4xl">
         <AnimatedSection direction="up">
-          <div className="mb-20 text-center sm:mb-24">
-            <h2 className="text-foreground mb-6 font-serif text-4xl font-bold sm:text-6xl lg:text-7xl">
-              Das ändert sich
-            </h2>
-            <div className="bg-accent mx-auto h-1 w-16 sm:w-24" />
-          </div>
-        </AnimatedSection>
+          <Card variant="accent" className="p-6 sm:p-10 lg:p-12">
+            <div className="space-y-6 sm:space-y-8">
+              <div>
+                <h2 className="text-foreground mb-3 font-serif text-3xl font-bold sm:mb-4 sm:text-5xl lg:text-6xl">
+                  Das Problem
+                </h2>
+                <div className="bg-accent mb-4 h-1 w-16 sm:mb-6 sm:w-24" />
+              </div>
 
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 lg:gap-12">
-          {benefits.map((benefit, index) => {
-            const Icon = benefit.icon;
-            return (
-              <AnimatedSection key={index} delay={index * 100} direction="up">
-                <div className="bg-secondary/50 h-full rounded-[6px] border-border border p-10 shadow-editorial-sm transition-all hover:shadow-editorial-md sm:p-12">
-                  <Icon
-                    className="text-accent mb-10 h-14 w-14"
-                    aria-hidden="true"
-                  />
-                  <div className="space-y-6">
-                    <div>
-                      <div className="text-muted-foreground mb-2 text-xs font-medium uppercase tracking-widest">
-                        Vorher
-                      </div>
-                      <p className="text-foreground/60 text-lg line-through sm:text-xl">
-                        {benefit.before}
-                      </p>
-                    </div>
-                    <div className="border-border border-t pt-6">
-                      <div className="text-accent mb-2 text-xs font-medium uppercase tracking-widest">
-                        Nachher
-                      </div>
-                      <p className="text-foreground text-lg font-semibold sm:text-xl">
-                        {benefit.after}
-                      </p>
-                    </div>
+              <div className="space-y-4 sm:space-y-6">
+                <p className="text-foreground text-base leading-relaxed sm:text-lg lg:text-xl">
+                  Du hast Content. Podcasts, Videos, Workshops. Aber keine Zeit, daraus Posts oder
+                  Artikel zu machen.
+                </p>
+                <p className="text-muted-foreground text-sm leading-relaxed sm:text-base lg:text-lg">
+                  Transkription dauert lang. KI-Tools sind generisch. Du brauchst mehrere Tools. Am
+                  Ende machst du's nicht.
+                </p>
+
+                {/* Check Points */}
+                <ul className="text-foreground space-y-3 pt-2 sm:space-y-4 sm:pt-4">
+                  {checkPoints.map((point, index) => (
+                    <li key={index} className="flex items-start gap-3 sm:gap-4">
+                      <CheckCircle2
+                        className="text-accent mt-0.5 h-4 w-4 flex-shrink-0 sm:mt-1 sm:h-5 sm:w-5"
+                        aria-hidden="true"
+                      />
+                      <span className="text-sm sm:text-base lg:text-lg">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </Card>
+        </AnimatedSection>
+      </div>
+    </section>
+  );
+});
+
+// Workflow Comparison Section (von /1)
+const WorkflowComparisonSection = memo(function WorkflowComparisonSection() {
+  const beforeSteps = useMemo(
+    () => [
+      "Transkription (manuell oder teuer)",
+      "ChatGPT Copy-Paste",
+      "Überarbeiten (klingt generisch)",
+      "Mehrere Tools",
+    ],
+    []
+  );
+
+  const afterSteps = useMemo(
+    () => ["Upload → Transkript ✓", "KI-Chat → Dein Ton ✓", "Fertig ✓", "Ein Workflow ✓"],
+    []
+  );
+
+  return (
+    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`}>
+      <div className="container mx-auto max-w-6xl">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
+          {/* VORHER */}
+          <AnimatedSection direction="up" delay={0}>
+            <Card variant="subtle" className="h-full p-6 sm:p-8 lg:p-10">
+              <div className="space-y-4 sm:space-y-6">
+                <div>
+                  <div className="text-muted-foreground mb-2 text-xs font-medium uppercase tracking-widest sm:mb-3">
+                    Vorher
                   </div>
+                  <h3 className="text-foreground font-serif text-2xl font-bold sm:text-3xl lg:text-4xl">
+                    Der alte Weg
+                  </h3>
                 </div>
-              </AnimatedSection>
-            );
-          })}
+                <ul className="text-muted-foreground space-y-3">
+                  {beforeSteps.map((step, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <span className="text-destructive mt-0.5 text-base">✗</span>
+                      <span className="text-sm leading-relaxed sm:text-base">{step}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Card>
+          </AnimatedSection>
+
+          {/* NACHHER */}
+          <AnimatedSection direction="up" delay={100}>
+            <Card variant="default" className="h-full p-6 sm:p-8 lg:p-10">
+              <div className="space-y-4 sm:space-y-6">
+                <div>
+                  <div className="text-accent mb-2 text-xs font-medium uppercase tracking-widest sm:mb-3">
+                    Nachher
+                  </div>
+                  <h3 className="text-foreground font-serif text-2xl font-bold sm:text-3xl lg:text-4xl">
+                    Mit TiMax
+                  </h3>
+                </div>
+                <ul className="text-foreground space-y-3">
+                  {afterSteps.map((step, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <CheckCircle2
+                        className="text-accent mt-0.5 h-4 w-4 flex-shrink-0 sm:h-5 sm:w-5"
+                        aria-hidden="true"
+                      />
+                      <span className="text-sm leading-relaxed sm:text-base">{step}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Card>
+          </AnimatedSection>
         </div>
       </div>
     </section>
   );
 });
 
-// How it Works - Simple List
-const HowItWorksSection = memo(function HowItWorksSection() {
+// Workflow Steps Section - KLICKBAR (kombiniert: Design von /1, Links von /)
+const WorkflowStepsSection = memo(function WorkflowStepsSection() {
   const steps = useMemo(
     () => [
       {
         number: "01",
-        icon: Upload,
-        title: "Hochladen",
-        description: "Datei hochladen. MP4, MP3, M4A — egal.",
+        title: "UPLOAD",
+        description: "Datei hochladen. MP4, MP3, M4A.",
+        href: "/upload",
+        action: "Upload starten",
       },
       {
         number: "02",
-        icon: FileText,
-        title: "Transkribieren",
-        description: "Automatisch. Kein Warten, kein Tippen.",
+        title: "TRANSKRIPT",
+        description: "Automatisch transkribiert. In Minuten.",
+        href: "/upload",
+        action: "Transkript ansehen",
       },
       {
         number: "03",
-        icon: MessageSquare,
-        title: "KI fragen",
-        description: "Sie kennt deinen Content. Stell Fragen.",
+        title: "KI-CHAT",
+        description: "Frag die KI. Sie kennt deinen Content.",
+        href: "/chat",
+        action: "Chat starten",
       },
       {
         number: "04",
-        icon: Sparkles,
-        title: "Text generieren",
-        description: "Post, Newsletter, Blog — was du willst.",
+        title: "TEXT GENERIEREN",
+        description: "LinkedIn-Post? Newsletter? Blog? Fertig.",
+        href: "/chat",
+        action: "Text generieren",
       },
     ],
     []
@@ -251,49 +344,112 @@ const HowItWorksSection = memo(function HowItWorksSection() {
   return (
     <section
       className={`relative ${SECTION_PADDING} ${SECTION_SPACING} border-border z-10 border-t`}
-      id="how"
+      id="workflow"
     >
-      <div className="container mx-auto max-w-5xl">
+      <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
-          <div className="mb-12 text-center sm:mb-16 lg:mb-20">
-            <h2 className="text-foreground mb-4 font-serif text-4xl font-bold sm:mb-6 sm:text-6xl lg:text-7xl">
-              So geht's
+          <div className="mb-10 text-center sm:mb-16 lg:mb-20">
+            <h2 className="text-foreground mb-4 font-serif text-3xl font-bold sm:mb-6 sm:text-5xl md:text-6xl lg:text-7xl">
+              So funktioniert's
             </h2>
             <div className="bg-accent mx-auto mb-4 h-1 w-16 sm:mb-6 sm:w-24" />
-            <p className="text-muted-foreground mx-auto max-w-2xl text-base sm:text-lg lg:text-xl">
-              Vier Schritte. Ein Workflow. Fertig.
+            <p className="text-muted-foreground mx-auto max-w-2xl px-2 text-base sm:text-lg lg:text-xl">
+              Vier einfache Schritte von Upload zu fertigem Text
             </p>
           </div>
         </AnimatedSection>
 
-        <div className="space-y-8 sm:space-y-10">
-          {steps.map((step, index) => {
-            const Icon = step.icon;
-            return (
-              <AnimatedSection key={step.number} delay={index * 100} direction="up">
-                <div className="bg-card rounded-[6px] border-border border p-8 shadow-editorial-md transition-all hover:shadow-editorial-lg sm:p-10 lg:p-12">
-                  <div className="flex flex-col items-start gap-6 sm:flex-row sm:gap-8">
-                    {/* Number + Icon */}
-                    <div className="flex flex-shrink-0 items-center gap-4 sm:gap-6">
-                      <div className="text-accent font-serif text-5xl font-bold sm:text-6xl lg:text-7xl">
-                        {step.number}
-                      </div>
-                      <div className="bg-secondary flex h-14 w-14 items-center justify-center rounded-[6px] sm:h-16 sm:w-16">
-                        <Icon className="text-accent h-7 w-7 sm:h-8 sm:w-8" aria-hidden="true" />
-                      </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-1 space-y-2">
-                      <h3 className="text-foreground font-serif text-2xl font-bold sm:text-3xl lg:text-4xl">
-                        {step.title}
-                      </h3>
-                      <p className="text-muted-foreground text-base leading-relaxed sm:text-lg lg:text-xl">
-                        {step.description}
-                      </p>
-                    </div>
+        <div className="grid grid-cols-2 gap-4 sm:gap-8 md:grid-cols-4 lg:gap-12">
+          {steps.map((step, index) => (
+            <AnimatedSection key={step.number} delay={index * 100} direction="up">
+              <Link href={step.href} className="group block h-full">
+                <div className="flex h-full flex-col text-center">
+                  {/* Bronze step number */}
+                  <div className="text-accent mb-2 font-serif text-4xl font-bold sm:mb-4 sm:text-5xl lg:text-7xl">
+                    {step.number}
+                  </div>
+                  <h3 className="text-foreground group-hover:text-accent mb-2 font-sans text-sm font-medium uppercase tracking-wide transition-colors sm:mb-3 sm:text-base lg:text-lg">
+                    {step.title}
+                  </h3>
+                  <p className="text-muted-foreground mb-2 hidden flex-grow text-xs leading-relaxed sm:mb-4 sm:block sm:text-sm">
+                    {step.description}
+                  </p>
+                  <div className="mt-auto">
+                    <span className="text-muted-foreground group-hover:text-accent text-[10px] font-medium tracking-wide uppercase transition-colors sm:text-xs">
+                      {step.action} →
+                    </span>
                   </div>
                 </div>
+              </Link>
+            </AnimatedSection>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
+
+// Features Section - 4 FEATURES (kombiniert: Upload von /, Rest von /1)
+const FeaturesSection = memo(function FeaturesSection() {
+  const features = useMemo(
+    () => [
+      {
+        icon: Upload,
+        title: "Nahtloser Upload",
+        description: "Lade Videos und Audios einfach hoch – ohne Umwege",
+      },
+      {
+        icon: Network,
+        title: "Intelligente Strukturierung",
+        description: "Deine Inhalte werden automatisch organisiert und durchsuchbar",
+      },
+      {
+        icon: MessageSquare,
+        title: "KI-Dialog",
+        description: "Generiere Texte im Dialog mit der KI – schnell und präzise",
+      },
+      {
+        icon: Zap,
+        title: "Alles in einem",
+        description: "Ein Workflow für alles – keine Tool-Wechsel mehr",
+      },
+    ],
+    []
+  );
+
+  return (
+    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="features">
+      <div className="container mx-auto max-w-6xl">
+        <AnimatedSection direction="up">
+          <div className="mb-10 text-center sm:mb-16 lg:mb-20">
+            <h2 className="text-foreground mb-4 font-serif text-3xl font-bold sm:mb-6 sm:text-5xl md:text-6xl lg:text-7xl">
+              Alles was du brauchst
+            </h2>
+            <div className="bg-accent mx-auto mb-4 h-1 w-16 sm:mb-6 sm:w-24" />
+            <p className="text-muted-foreground mx-auto max-w-2xl px-2 text-base sm:text-lg lg:text-xl">
+              Eine Plattform, die den gesamten Prozess nahtlos verbindet
+            </p>
+          </div>
+        </AnimatedSection>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 lg:gap-8">
+          {features.map((feature, index) => {
+            const Icon = feature.icon;
+            return (
+              <AnimatedSection key={feature.title} delay={index * 100} direction="up">
+                <Card variant="default" className="h-full p-6 sm:p-8 lg:p-10">
+                  <div className="flex h-full flex-col">
+                    <div className="bg-secondary mb-4 flex h-12 w-12 items-center justify-center rounded-[6px] sm:mb-6 sm:h-14 sm:w-14">
+                      <Icon className="text-accent h-6 w-6 sm:h-7 sm:w-7" aria-hidden="true" />
+                    </div>
+                    <h3 className="text-foreground mb-2 font-serif text-xl font-semibold sm:mb-4 sm:text-2xl lg:text-3xl">
+                      {feature.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed sm:text-base lg:text-lg">
+                      {feature.description}
+                    </p>
+                  </div>
+                </Card>
               </AnimatedSection>
             );
           })}
@@ -303,60 +459,38 @@ const HowItWorksSection = memo(function HowItWorksSection() {
   );
 });
 
-// Social Proof - Simple
-const SocialProofSection = memo(function SocialProofSection() {
-  const stats = useMemo(
-    () => [
-      { value: "98%", label: "Genauigkeit", sublabel: "bei deutscher Sprache" },
-      { value: "<15min", label: "Bearbeitung", sublabel: "durchschnittlich" },
-      { value: "∞", label: "Formate", sublabel: "Post, Newsletter, Blog..." },
-    ],
-    []
-  );
-
-  return (
-    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`}>
-      <div className="container mx-auto max-w-6xl">
-        <div className="grid grid-cols-1 gap-12 sm:grid-cols-3 sm:gap-10 lg:gap-16">
-          {stats.map((stat, index) => (
-            <AnimatedSection key={stat.label} delay={index * 100} direction="up">
-              <div className="text-center">
-                <div className="text-accent mb-2 font-serif text-6xl font-bold sm:mb-4 sm:text-7xl lg:text-8xl">
-                  {stat.value}
-                </div>
-                <div className="text-foreground mb-1 text-base font-medium uppercase tracking-wide sm:text-lg">
-                  {stat.label}
-                </div>
-                <div className="text-muted-foreground text-sm sm:text-base">{stat.sublabel}</div>
-              </div>
-            </AnimatedSection>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-});
-
-// Who is this for - Direct
-const WhoSection = memo(function WhoSection() {
+// Use Cases Section (von /1)
+const UseCasesSection = memo(function UseCasesSection() {
   const personas = useMemo(
     () => [
-      "Du machst Podcasts",
-      "Du hältst Workshops",
-      "Du drehst Videos",
-      "Du willst mehr Content",
+      {
+        text: "Du machst Podcasts",
+        description: "Transkribiere Episoden und erstelle Show Notes automatisch"
+      },
+      {
+        text: "Du hältst Workshops",
+        description: "Verwandle Aufnahmen in Blogposts und Handouts"
+      },
+      {
+        text: "Du drehst Videos",
+        description: "Generiere Beschreibungen und Social Media Posts aus deinen Videos"
+      },
+      {
+        text: "Du erstellst Content",
+        description: "Nutze Audio/Video als Basis für mehrere Text-Formate"
+      },
     ],
     []
   );
 
   return (
-    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} border-border z-10 border-t`}>
+    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="use-cases">
       <div className="container mx-auto max-w-4xl">
         <AnimatedSection direction="up">
           <div className="space-y-8 text-center">
             <div>
-              <h2 className="text-foreground mb-4 font-serif text-4xl font-bold sm:mb-6 sm:text-6xl lg:text-7xl">
-                Für wen ist das?
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-bold sm:mb-6 sm:text-5xl lg:text-6xl">
+                Für wen?
               </h2>
               <div className="bg-accent mx-auto h-1 w-16 sm:w-24" />
             </div>
@@ -364,12 +498,19 @@ const WhoSection = memo(function WhoSection() {
             <div className="grid grid-cols-1 gap-4 text-left sm:grid-cols-2 sm:gap-6">
               {personas.map((persona, index) => (
                 <AnimatedSection key={index} delay={index * 100} direction="up">
-                  <div className="bg-secondary/30 flex items-center gap-4 rounded-[6px] border-border border p-4 sm:p-6">
+                  <div className="bg-secondary/30 border-border flex items-start gap-4 rounded-[6px] border p-6">
                     <CheckCircle2
                       className="text-accent h-6 w-6 flex-shrink-0 sm:h-7 sm:w-7"
                       aria-hidden="true"
                     />
-                    <p className="text-foreground text-base sm:text-lg lg:text-xl">{persona}</p>
+                    <div>
+                      <p className="text-foreground text-base font-medium sm:text-lg">
+                        {persona.text}
+                      </p>
+                      <p className="text-muted-foreground mt-1 text-sm">
+                        {persona.description}
+                      </p>
+                    </div>
                   </div>
                 </AnimatedSection>
               ))}
@@ -381,45 +522,139 @@ const WhoSection = memo(function WhoSection() {
   );
 });
 
-// Final CTA - Big and Bold
-const FinalCTASection = memo(function FinalCTASection() {
+// Benefits Section - NEU von / hinzugefügt!
+const BenefitsSection = memo(function BenefitsSection() {
+  const benefits = useMemo(
+    () => [
+      {
+        icon: Clock,
+        title: "Zeit sparen",
+        description:
+          "Keine Tool-Wechsel mehr. Alles in einem Workflow – von Upload bis fertigem Text.",
+      },
+      {
+        icon: TrendingUp,
+        title: "Wissen skalieren",
+        description:
+          "Nutze deine bestehenden Inhalte effizient und generiere neues Material im Handumdrehen.",
+      },
+      {
+        icon: Users,
+        title: "Für alle Formate",
+        description:
+          "Social Media Posts, Blog-Artikel, Newsletter – generiere alles aus einem Transkript.",
+      },
+    ],
+    []
+  );
+
   return (
-    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`}>
-      <div className="container mx-auto max-w-5xl">
+    <section
+      className={`relative ${SECTION_PADDING} ${SECTION_SPACING} border-border z-10 border-t`}
+    >
+      <div className="container mx-auto max-w-6xl">
         <AnimatedSection direction="up">
-          <div className="bg-accent/10 rounded-[6px] border-accent border-l-4 p-8 shadow-editorial-lg sm:p-12 lg:p-16">
-            <div className="space-y-10 text-center">
-              <div className="space-y-6">
-                <h2 className="text-foreground font-serif text-4xl font-bold sm:text-6xl lg:text-7xl">
-                  Bereit?
+          <div className="mb-10 text-center sm:mb-16 lg:mb-20">
+            <h2 className="text-foreground mb-4 font-serif text-3xl font-bold sm:mb-6 sm:text-5xl md:text-6xl lg:text-7xl">
+              Warum timax?
+            </h2>
+            <div className="bg-accent mx-auto mb-4 h-1 w-16 sm:mb-6 sm:w-24" />
+            <p className="text-muted-foreground mx-auto max-w-2xl px-2 text-base sm:text-lg lg:text-xl">
+              Die Vorteile auf einen Blick
+            </p>
+          </div>
+        </AnimatedSection>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6 lg:gap-12">
+          {benefits.map((benefit, index) => {
+            const Icon = benefit.icon;
+            return (
+              <AnimatedSection key={benefit.title} delay={index * 100} direction="up">
+                <Card variant="default" className="h-full p-5 sm:p-8 lg:p-10">
+                  <Icon
+                    className="text-accent mb-4 h-8 w-8 sm:mb-6 sm:h-10 sm:w-10"
+                    aria-hidden="true"
+                  />
+                  <h3 className="text-foreground mb-2 font-serif text-xl font-semibold sm:mb-4 sm:text-2xl lg:text-3xl">
+                    {benefit.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed sm:text-base lg:text-lg">
+                    {benefit.description}
+                  </p>
+                </Card>
+              </AnimatedSection>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+});
+
+// Beta Notice Section (von /1)
+const BetaNoticeSection = memo(function BetaNoticeSection() {
+  return (
+    <section
+      className={`relative ${SECTION_PADDING} ${SECTION_SPACING} border-border z-10 border-t`}
+    >
+      <div className="container mx-auto max-w-4xl">
+        <AnimatedSection direction="up">
+          <Card variant="accent" className="p-6 sm:p-10 lg:p-12">
+            <div className="space-y-6 text-center sm:space-y-8">
+              <div className="space-y-4 sm:space-y-6">
+                <h2 className="text-foreground font-serif text-3xl font-bold sm:text-5xl lg:text-6xl">
+                  TiMax ist in der Beta
                 </h2>
-                <div className="bg-accent mx-auto h-1 w-16 sm:w-24" />
                 <p className="text-muted-foreground mx-auto max-w-2xl text-base leading-relaxed sm:text-lg lg:text-xl">
-                  Erste Datei hochladen. In Minuten zum Transkript. Kostenlos testen.
+                  Aktuell kostenlos. Features werden noch entwickelt.
                 </p>
               </div>
 
-              <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-6">
-                <Button
-                  size="lg"
-                  className="group min-h-14 w-full max-w-xs px-10 sm:w-auto"
-                  asChild
-                >
-                  <Link href="/upload">
-                    Jetzt starten
-                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="min-h-14 w-full max-w-xs px-10 sm:w-auto"
-                  asChild
-                >
-                  <Link href="/chat">Zum Chat</Link>
-                </Button>
-              </div>
+              <Button
+                size="lg"
+                className="group min-h-12 w-full px-8 sm:min-h-14 sm:w-auto sm:px-10"
+                asChild
+              >
+                <Link href="/upload">
+                  Jetzt testen
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 sm:h-5 sm:w-5" />
+                </Link>
+              </Button>
             </div>
+          </Card>
+        </AnimatedSection>
+      </div>
+    </section>
+  );
+});
+
+// Final CTA Section (von /1)
+const FinalCTASection = memo(function FinalCTASection() {
+  return (
+    <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`}>
+      <div className="container mx-auto max-w-4xl">
+        <AnimatedSection direction="up">
+          <div className="space-y-8 text-center sm:space-y-12">
+            <div className="space-y-4 sm:space-y-6">
+              <h2 className="text-foreground font-serif text-3xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
+                Bereit?
+              </h2>
+              <div className="bg-accent mx-auto h-1 w-16 sm:w-24" />
+              <p className="text-muted-foreground mx-auto max-w-2xl px-4 text-base leading-relaxed sm:text-lg lg:text-xl">
+                Erste Datei hochladen. Transkript in Minuten. Kostenlos in der Beta.
+              </p>
+            </div>
+
+            <Button
+              size="lg"
+              className="group min-h-12 w-full px-8 sm:min-h-14 sm:w-auto sm:px-10"
+              asChild
+            >
+              <Link href="/upload">
+                Datei hochladen
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 sm:h-5 sm:w-5" />
+              </Link>
+            </Button>
           </div>
         </AnimatedSection>
       </div>
@@ -428,7 +663,7 @@ const FinalCTASection = memo(function FinalCTASection() {
 });
 
 // Main Page Component
-export default function LandingPageV3() {
+export default function LandingPageOptimal() {
   return (
     <div className="bg-background relative flex min-h-screen flex-col">
       {/* Skip to Content Link */}
@@ -442,28 +677,35 @@ export default function LandingPageV3() {
       <MainNavigation />
 
       <main id="main-content" role="main">
-        {/* Hero - Split Screen Asymmetrisch */}
-        <HeroSectionV3 />
+        {/* 1. Hero - Direkt auf den Punkt (von /1) */}
+        <HeroSectionV2 />
 
-        {/* Problem Agitation - Direkt */}
-        <ProblemAgitationSection />
+        {/* 2. Stats - Countdown Animation (von /1) */}
+        <StatsSectionV2 />
 
-        {/* Solution - Vorher/Nachher */}
-        <SolutionSection />
+        {/* 3. Problem - Fokussiert (von /1) */}
+        <ProblemSectionV2 />
 
-        {/* How it Works - Simple List */}
-        <HowItWorksSection />
+        {/* 4. Workflow Comparison - Killer Feature (von /1) */}
+        <WorkflowComparisonSection />
 
-        {/* Social Proof - Zahlen */}
-        <SocialProofSection />
+        {/* 5. Workflow Steps - KLICKBAR (kombiniert) */}
+        <WorkflowStepsSection />
 
-        {/* Who - Personas */}
-        <WhoSection />
+        {/* 6. Features - 4 Features (kombiniert) */}
+        <FeaturesSection />
 
-        {/* Final CTA - Big */}
+        {/* 7. Use Cases - "Für wen?" Grid (von /1) */}
+        <UseCasesSection />
+
+        {/* 8. Benefits - "Warum timax?" (NEU von /) */}
+        <BenefitsSection />
+
+        {/* 9. Beta Notice - Transparenz (von /1) */}
+        <BetaNoticeSection />
+
+        {/* 10. Final CTA + Email Signup */}
         <FinalCTASection />
-
-        {/* Email Signup */}
         <EmailSignup />
       </main>
 
