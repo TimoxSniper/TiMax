@@ -52,26 +52,26 @@ export function TourDialog({ isActive }: TourDialogProps) {
             className="fixed inset-0 z-[101] bg-black/50"
           />
 
-          {/* Dialog - Fixed at bottom of screen */}
+          {/* Dialog - Fixed at right side, compact size */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-8 left-1/2 z-[102] w-full max-w-md -translate-x-1/2 px-4"
+            className="fixed bottom-8 right-8 z-[102] w-full max-w-sm"
           >
             <div className="rounded-md border border-border bg-background shadow-editorial-lg">
               {/* Header */}
-              <div className="border-b border-border p-6">
+              <div className="border-b border-border p-4">
                 <div className="mb-2 flex items-start justify-between">
                   <div className="flex-1">
                     {/* Title */}
-                    <h2 className="font-serif text-2xl font-semibold">
+                    <h2 className="font-serif text-lg font-semibold">
                       {stepConfig.title}
                     </h2>
 
                     {/* Bronze Accent Line */}
-                    <div className="mt-2 h-1 w-16 bg-accent" />
+                    <div className="mt-1.5 h-0.5 w-12 bg-accent" />
                   </div>
 
                   {/* Close Button */}
@@ -93,23 +93,23 @@ export function TourDialog({ isActive }: TourDialogProps) {
               </div>
 
               {/* Content */}
-              <div className="p-6">
-                <p className="text-muted-foreground leading-relaxed">
+              <div className="p-4">
+                <p className="text-muted-foreground text-sm leading-relaxed">
                   {stepConfig.description}
                 </p>
               </div>
 
               {/* Footer - Navigation */}
-              <div className="flex items-center justify-between border-t border-border p-6">
+              <div className="flex items-center justify-between border-t border-border p-4">
                 {/* Back/Skip Button */}
                 <div>
                   {isFirstStep ? (
-                    <Button variant="ghost" onClick={skipTour}>
+                    <Button size="sm" variant="ghost" onClick={skipTour}>
                       Überspringen
                     </Button>
                   ) : (
-                    <Button variant="ghost" onClick={previousStep}>
-                      <ArrowLeft className="mr-2 h-4 w-4" />
+                    <Button size="sm" variant="ghost" onClick={previousStep}>
+                      <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
                       Zurück
                     </Button>
                   )}
@@ -118,14 +118,14 @@ export function TourDialog({ isActive }: TourDialogProps) {
                 {/* Next/Finish Button */}
                 <div>
                   {isLastStep ? (
-                    <Button onClick={completeTour}>
-                      <Check className="mr-2 h-4 w-4" />
+                    <Button size="sm" onClick={completeTour}>
+                      <Check className="mr-1.5 h-3.5 w-3.5" />
                       Fertig
                     </Button>
                   ) : (
-                    <Button onClick={nextStep}>
+                    <Button size="sm" onClick={nextStep}>
                       Weiter
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
                     </Button>
                   )}
                 </div>
