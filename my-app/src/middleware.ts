@@ -4,6 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 // Redis Rate Limiting Import
 import { checkRateLimit } from "./lib/rate-limit";
 
+// Onboarding Utilities
+import { shouldShowOnboarding } from "./lib/onboarding/utils";
+
 // Rate Limit Konfiguration aus Environment Variables
 // SICHERHEIT: Strikte Limits pro User UND IP
 const RATE_LIMITS = {
@@ -30,6 +33,7 @@ const isProtectedRoute = createRouteMatcher([
   "/chat(.*)",
   "/upload(.*)",
   "/uploads(.*)",
+  "/welcome(.*)",
   "/admin(.*)",
   "/api/upload(.*)",
   "/api/chat(.*)",
@@ -156,6 +160,29 @@ export default clerkMiddleware(async (auth, req) => {
       if (user.publicMetadata?.role !== "admin") {
         return NextResponse.redirect(new URL("/unauthorized", req.url));
       }
+    }
+  }
+
+  // Onboarding-Redirect für neue User
+  // Nur bei /chat ohne tour Parameter
+  const searchParams = req.nextUrl.searchParams;
+  if (pathname === "/chat" && !searchParams.has("tour")) {
+    try {
+      const { userId } = await auth();
+      if (userId) {
+        const { clerkClient } = await import("@clerk/nextjs/server");
+        const clerk = await clerkClient();
+        const user = await clerk.users.getUser(userId);
+
+        // Check if user should see onboarding
+        if (shouldShowOnboarding(user)) {
+          return NextResponse.redirect(new URL("/welcome", req.url));
+        }
+      }
+    } catch (error) {
+      // If onboarding check fails, continue to chat
+      // This prevents blocking users if Clerk API is down
+      console.error("Onboarding check failed:", error);
     }
   }
 

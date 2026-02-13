@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Upload,
   FileAudio,
@@ -18,13 +19,24 @@ import { Footer } from "@/components/layout/footer";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import Link from "next/link";
 import { logger } from "@/lib/logger";
+import { OnboardingTourProvider } from "@/components/onboarding/onboarding-tour-provider";
+import { TourSpotlight } from "@/components/onboarding/tour-spotlight";
+import { TourDialog } from "@/components/onboarding/tour-dialog";
+import { TOUR_STEPS } from "@/lib/onboarding/constants";
 
 export default function UploadPage() {
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [isUploaded, setIsUploaded] = useState(false);
+  const searchParams = useSearchParams();
+
+  // Check if tour is active
+  const tourParam = searchParams.get("tour");
+  const isTourActive = tourParam === "1" || tourParam === "2";
+  const currentTourStep = isTourActive ? TOUR_STEPS.find(step => step.tourParam === tourParam) : null;
 
   return (
-    <div className="bg-background min-h-screen">
+    <OnboardingTourProvider>
+      <div className="bg-background min-h-screen">
       {/* Skip to Content Link */}
       <a
         href="#main-content"
@@ -59,8 +71,9 @@ export default function UploadPage() {
 
         {/* Upload-Bereich */}
         <div className="mx-auto max-w-2xl space-y-8">
-          <FileUpload
-            onUploadSuccess={(fileName) => {
+          <div data-tour="upload-dropzone">
+            <FileUpload
+              onUploadSuccess={(fileName) => {
               setUploadedFileName(fileName);
               setIsUploaded(true);
               logger.info("Upload erfolgreich:", fileName);
@@ -71,6 +84,7 @@ export default function UploadPage() {
               }
             }}
           />
+          </div>
 
           {/* Erfolgs-Hinweis nach Upload */}
           {isUploaded && (
@@ -120,6 +134,7 @@ export default function UploadPage() {
         <section
           className="border-border mt-24 border-t pt-16 lg:mt-32"
           aria-labelledby="how-it-works-heading"
+          data-tour="workflow-section"
         >
           <div className="mb-16 text-center">
             <h2
@@ -198,6 +213,18 @@ export default function UploadPage() {
 
       {/* Footer */}
       <Footer />
+
+      {/* Tour Components */}
+      {isTourActive && currentTourStep && (
+        <>
+          <TourSpotlight
+            targetSelector={currentTourStep.targetSelector}
+            isActive={true}
+          />
+          <TourDialog isActive={true} />
+        </>
+      )}
     </div>
+    </OnboardingTourProvider>
   );
 }
