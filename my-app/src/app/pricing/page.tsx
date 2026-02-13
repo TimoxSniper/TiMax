@@ -106,7 +106,7 @@ const FAQ_ITEMS = [
 ] as const;
 
 export default function PricingPage() {
-  const [isYearly, setIsYearly] = useState(true);
+  const [isYearly, setIsYearly] = useState(false);
 
   return (
     <div className="bg-background relative flex min-h-screen flex-col">
@@ -156,9 +156,6 @@ export default function PricingPage() {
                     )}
                   >
                     Jährlich
-                    <Badge variant="secondary" className="bg-background/50 px-2 py-0.5 text-xs">
-                      2 Monate gratis
-                    </Badge>
                   </button>
                 </div>
               </div>

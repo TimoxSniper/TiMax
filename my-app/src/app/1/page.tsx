@@ -1,16 +1,12 @@
 "use client";
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState, useEffect } from "react";
 import { MainNavigation } from "@/components/layout/main-navigation";
 import { Footer } from "@/components/layout/footer";
 import { Card } from "@/components/magic-ui/glass-card";
 import { AnimatedSection } from "@/components/magic-ui/animated-section";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Hero } from "@/components/magic-ui/hero";
-import { StatsSection } from "@/components/home/stats-section";
-import { DemoVideoSection } from "@/components/home/demo-video-section";
-import { TestimonialsSection } from "@/components/home/testimonials-section";
 import { EmailSignup } from "@/components/home/email-signup";
 import {
   Upload,
@@ -19,7 +15,6 @@ import {
   Sparkles,
   Brain,
   Zap,
-  User,
   ArrowRight,
   CheckCircle2,
 } from "lucide-react";
@@ -36,11 +31,6 @@ const HeroSectionV2 = memo(function HeroSectionV2() {
       <div className="container mx-auto max-w-5xl">
         <AnimatedSection direction="up">
           <div className="flex flex-col items-center space-y-6 text-center sm:space-y-8">
-            {/* Beta Badge */}
-            <Badge variant="secondary" className="px-4 py-2 text-sm">
-              BETA
-            </Badge>
-
             {/* Hero Content */}
             <div className="w-full">
               <Hero
@@ -264,11 +254,9 @@ const WorkflowStepsSection = memo(function WorkflowStepsSection() {
         </AnimatedSection>
 
         <div className="grid grid-cols-2 gap-4 sm:gap-8 md:grid-cols-4 lg:gap-12">
-          {steps.map((step, index) => {
-            const Icon = step.icon;
-            return (
-              <AnimatedSection key={step.number} delay={index * 100} direction="up">
-                <div className="flex h-full flex-col text-center">
+          {steps.map((step, index) => (
+            <AnimatedSection key={step.number} delay={index * 100} direction="up">
+              <div className="flex h-full flex-col text-center">
                   {/* Bronze step number */}
                   <div className="text-accent mb-2 font-serif text-4xl font-bold sm:mb-4 sm:text-5xl lg:text-7xl">
                     {step.number}
@@ -280,9 +268,8 @@ const WorkflowStepsSection = memo(function WorkflowStepsSection() {
                     {step.description}
                   </p>
                 </div>
-              </AnimatedSection>
-            );
-          })}
+            </AnimatedSection>
+          ))}
         </div>
       </div>
     </section>
@@ -352,40 +339,64 @@ const FeaturesSectionV2 = memo(function FeaturesSectionV2() {
   );
 });
 
-// Use Cases Section - "Für wen?"
+// Use Cases Section - "Für wen?" (VERBESSERT)
 const UseCasesSection = memo(function UseCasesSection() {
   const personas = useMemo(
-    () => ["Podcaster", "Workshop-Leiter", "Video-Creator", "Content-Ersteller"],
+    () => [
+      {
+        text: "Du machst Podcasts",
+        description: "Transkribiere Episoden und erstelle Show Notes automatisch"
+      },
+      {
+        text: "Du hältst Workshops",
+        description: "Verwandle Aufnahmen in Blogposts und Handouts"
+      },
+      {
+        text: "Du drehst Videos",
+        description: "Generiere Beschreibungen und Social Media Posts aus deinen Videos"
+      },
+      {
+        text: "Du erstellst Content",
+        description: "Nutze Audio/Video als Basis für mehrere Text-Formate"
+      },
+    ],
     []
   );
 
   return (
     <section className={`relative ${SECTION_PADDING} ${SECTION_SPACING} z-10`} id="use-cases">
       <div className="container mx-auto max-w-4xl">
-        <div className="space-y-6 text-center sm:space-y-8">
-          <AnimatedSection direction="up">
-            <h2 className="text-foreground mb-4 font-serif text-3xl font-bold sm:mb-6 sm:text-5xl md:text-6xl lg:text-7xl">
-              Für wen?
-            </h2>
-            <div className="bg-accent mx-auto mb-4 h-1 w-16 sm:mb-6 sm:w-24" />
-          </AnimatedSection>
+        <AnimatedSection direction="up">
+          <div className="space-y-8 text-center">
+            <div>
+              <h2 className="text-foreground mb-4 font-serif text-3xl font-bold sm:mb-6 sm:text-5xl lg:text-6xl">
+                Für wen?
+              </h2>
+              <div className="bg-accent mx-auto h-1 w-16 sm:w-24" />
+            </div>
 
-          <AnimatedSection delay={100} direction="up">
-            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-              {personas.map((persona) => (
-                <Badge key={persona} variant="secondary" className="px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base">
-                  {persona}
-                </Badge>
+            <div className="grid grid-cols-1 gap-4 text-left sm:grid-cols-2 sm:gap-6">
+              {personas.map((persona, index) => (
+                <AnimatedSection key={index} delay={index * 100} direction="up">
+                  <div className="bg-secondary/30 border-border flex items-start gap-4 rounded-[6px] border p-6">
+                    <CheckCircle2
+                      className="text-accent h-6 w-6 flex-shrink-0 sm:h-7 sm:w-7"
+                      aria-hidden="true"
+                    />
+                    <div>
+                      <p className="text-foreground text-base font-medium sm:text-lg">
+                        {persona.text}
+                      </p>
+                      <p className="text-muted-foreground mt-1 text-sm">
+                        {persona.description}
+                      </p>
+                    </div>
+                  </div>
+                </AnimatedSection>
               ))}
             </div>
-          </AnimatedSection>
-
-          <AnimatedSection delay={200} direction="up">
-            <p className="text-muted-foreground mx-auto max-w-2xl px-4 text-base leading-relaxed sm:text-lg lg:text-xl">
-              Du erstellst Audio oder Video Content. Du willst daraus Texte machen. Ohne viel Zeit.
-            </p>
-          </AnimatedSection>
-        </div>
+          </div>
+        </AnimatedSection>
       </div>
     </section>
   );
@@ -401,12 +412,6 @@ const BetaNoticeSection = memo(function BetaNoticeSection() {
         <AnimatedSection direction="up">
           <Card variant="accent" className="p-6 sm:p-10 lg:p-12">
             <div className="space-y-6 text-center sm:space-y-8">
-              <div className="flex justify-center">
-                <Badge variant="default" className="px-4 py-2 text-sm">
-                  BETA
-                </Badge>
-              </div>
-
               <div className="space-y-4 sm:space-y-6">
                 <h2 className="text-foreground font-serif text-3xl font-bold sm:text-5xl lg:text-6xl">
                   TiMax ist in der Beta
@@ -468,16 +473,70 @@ const FinalCTASection = memo(function FinalCTASection() {
   );
 });
 
-// Custom Stats Section with new copy
+// Custom Stats Section mit Animation (angepasst für /1 Stats)
 const StatsSectionV2 = memo(function StatsSectionV2() {
-  // Using the existing StatsSection component but note: we'd need to update copy
-  // For now we'll inline a custom version matching the plan
+  const [statsVisible, setStatsVisible] = useState(false);
+  const [countedStats, setCountedStats] = useState({
+    accuracy: 0,
+    time: 0,
+    formats: 0,
+    workflow: 0,
+  });
+
+  // Intersection Observer - triggert Animation wenn sichtbar
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setStatsVisible(true);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    const statsElement = document.getElementById("stats-section");
+    if (statsElement) observer.observe(statsElement);
+
+    return () => {
+      if (statsElement) observer.unobserve(statsElement);
+    };
+  }, []);
+
+  // Counter Animation - 1500ms über 50 Steps
+  useEffect(() => {
+    if (!statsVisible) return;
+
+    const ANIMATION_DURATION = 1500;
+    const ANIMATION_STEPS = 50;
+    const interval = ANIMATION_DURATION / ANIMATION_STEPS;
+    let currentStep = 0;
+
+    const timer = setInterval(() => {
+      currentStep++;
+      const progress = Math.min(currentStep / ANIMATION_STEPS, 1);
+
+      setCountedStats({
+        accuracy: Math.floor(98 * progress),
+        time: Math.floor(100 - (85 * progress)), // Von 100 auf 15 runterzählen
+        formats: Math.floor(10 * progress),
+        workflow: 1,
+      });
+
+      if (currentStep >= ANIMATION_STEPS) {
+        clearInterval(timer);
+      }
+    }, interval);
+
+    return () => clearInterval(timer);
+  }, [statsVisible]);
 
   const stats = [
-    { value: "98%", label: "Transkriptions-Genauigkeit" },
-    { value: "< 15 Min", label: "Durchschn. Bearbeitungszeit" },
-    { value: "10+", label: "Text-Formate möglich" },
-    { value: "1", label: "Workflow für alles" },
+    { value: `${countedStats.accuracy}%`, label: "Transkriptions-Genauigkeit" },
+    { value: `< ${countedStats.time} Min`, label: "Durchschn. Bearbeitungszeit" },
+    { value: `${countedStats.formats}+`, label: "Text-Formate möglich" },
+    { value: `${countedStats.workflow}`, label: "Workflow für alles" },
   ];
 
   return (
@@ -540,16 +599,10 @@ export default function LandingPageV2() {
         {/* 6. Features */}
         <FeaturesSectionV2 />
 
-        {/* 7. Demo Video */}
-        <DemoVideoSection />
-
-        {/* 8. Use Cases */}
+        {/* 7. Use Cases */}
         <UseCasesSection />
 
-        {/* 9. Testimonials (placeholder) */}
-        <TestimonialsSection />
-
-        {/* 10. Beta Notice */}
+        {/* 8. Beta Notice */}
         <BetaNoticeSection />
 
         {/* 11. Final CTA + Email Signup */}
