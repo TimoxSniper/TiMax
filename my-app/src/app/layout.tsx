@@ -10,6 +10,7 @@ import { CookieConsent } from "@/components/layout/cookie-consent";
 import { ScrollToTop } from "@/components/layout/scroll-to-top";
 import { JsonLd } from "@/components/seo/json-ld";
 import { getHomePageSchema } from "@/lib/schema";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const crimsonPro = Crimson_Pro({
   variable: "--font-crimson",
@@ -158,7 +159,7 @@ export default function RootLayout({
         <head>
           <meta
             httpEquiv="Content-Security-Policy"
-            content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://clerk.timax.xyz https://*.clerk.accounts.dev https://challenges.cloudflare.com https://vercel.live; connect-src 'self' https://clerk.timax.xyz https://*.clerk.accounts.dev https://*.sentry.io https://*.supabase.co https://clerk-telemetry.com https://*.n8n.cloud https://zapkothimofej.app.n8n.cloud; img-src 'self' data: blob: https://img.clerk.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://challenges.cloudflare.com https://vercel.live; worker-src 'self' blob:;"
+            content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://clerk.timax.xyz https://*.clerk.accounts.dev https://challenges.cloudflare.com https://vercel.live https://va.vercel-scripts.com; connect-src 'self' https://clerk.timax.xyz https://*.clerk.accounts.dev https://*.sentry.io https://*.supabase.co https://clerk-telemetry.com https://*.n8n.cloud https://zapkothimofej.app.n8n.cloud https://vitals.vercel-insights.com; img-src 'self' data: blob: https://img.clerk.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://challenges.cloudflare.com https://vercel.live; worker-src 'self' blob:;"
           />
         </head>
         <body
@@ -182,6 +183,7 @@ export default function RootLayout({
               <ScrollToTop />
             </ToastProvider>
           </ErrorBoundary>
+          <SpeedInsights />
         </body>
       </html>
     </ClerkProvider>
