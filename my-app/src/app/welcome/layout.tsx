@@ -1,13 +1,12 @@
 /**
  * Welcome Page Layout
  *
- * Server component that checks if user has completed onboarding.
- * Redirects to /chat if already completed.
+ * Simple layout for welcome page - redirect logic removed for easier testing.
+ * Production: Add redirect logic back or handle in middleware.
  */
 
 import { redirect } from 'next/navigation';
 import { currentUser } from '@clerk/nextjs/server';
-import { hasCompletedOnboarding } from '@/lib/onboarding/utils';
 
 export default async function WelcomeLayout({
   children,
@@ -17,15 +16,13 @@ export default async function WelcomeLayout({
   // Get current user
   const user = await currentUser();
 
-  // Redirect to chat if not authenticated (shouldn't happen with middleware)
+  // Redirect to chat if not authenticated
   if (!user) {
     redirect('/sign-in');
   }
 
-  // Redirect to chat if onboarding already completed
-  if (hasCompletedOnboarding(user)) {
-    redirect('/chat');
-  }
+  // Note: Redirect for completed onboarding removed for testing
+  // You can now access /welcome anytime to preview the page
 
   return <>{children}</>;
 }
