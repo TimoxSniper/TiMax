@@ -52,13 +52,13 @@ export function TourDialog({ isActive }: TourDialogProps) {
             className="fixed inset-0 z-[101] bg-black/50"
           />
 
-          {/* Dialog */}
+          {/* Dialog - Fixed at bottom of screen */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.2 }}
-            className="fixed left-1/2 top-1/2 z-[102] w-full max-w-md -translate-x-1/2 -translate-y-1/2 px-4"
+            className="fixed bottom-8 left-1/2 z-[102] w-full max-w-md -translate-x-1/2 px-4"
           >
             <div className="rounded-md border border-border bg-background shadow-editorial-lg">
               {/* Header */}
