@@ -167,7 +167,7 @@ const StatsSectionV2 = memo(function StatsSectionV2() {
               <AnimatedSection key={stat.label} delay={index * 50} direction="up">
                 <div className="flex flex-col items-center px-2 py-3 text-center sm:px-8 sm:py-6 md:py-0 lg:px-16">
                   <div className="mb-1 flex min-h-[2.5rem] items-center justify-center sm:mb-3 sm:min-h-[3.5rem] lg:min-h-[5rem]">
-                    <span className="text-accent tabular-nums font-serif text-3xl font-bold leading-none sm:text-5xl lg:text-7xl">
+                    <span className="text-accent tabular-nums inline-block min-w-[4.5ch] text-right font-serif text-3xl font-bold leading-none sm:min-w-[4ch] sm:text-5xl lg:min-w-[3.5ch] lg:text-7xl">
                       {stat.value}
                     </span>
                     {stat.isTime && (
