@@ -71,11 +71,27 @@ export function TourFloating({ targetSelector, isActive }: TourFloatingProps) {
 
   const updatePosition = useCallback(() => {
     const targetElement = document.querySelector(`[data-tour="${targetSelector}"]`);
-    if (!targetElement) return;
 
-    // Add animated highlight
+    if (!targetElement) {
+      console.warn(`[Tour] Element not found: [data-tour="${targetSelector}"]`);
+      // Retry after delay (for dynamically loaded components)
+      setTimeout(() => {
+        const retryElement = document.querySelector(`[data-tour="${targetSelector}"]`);
+        if (retryElement) {
+          retryElement.classList.add('tour-floating-highlight');
+          retryElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => {
+            const rect = retryElement.getBoundingClientRect();
+            const position = calculateOptimalPosition(rect);
+            setCardPosition(position);
+          }, 300);
+        }
+      }, 500);
+      return;
+    }
+
+    // Add subtle highlight
     targetElement.classList.add('tour-floating-highlight');
-
     targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
     setTimeout(() => {
@@ -141,28 +157,25 @@ export function TourFloating({ targetSelector, isActive }: TourFloatingProps) {
       <style jsx global>{`
         .tour-floating-highlight {
           position: relative;
-          animation: tour-pulse 2s ease-in-out infinite;
+          box-shadow: 0 0 0 3px rgba(154, 111, 79, 0.15),
+                      0 0 12px rgba(154, 111, 79, 0.08) !important;
+          border-radius: 8px !important;
+          transition: box-shadow 0.3s ease;
         }
-        @keyframes tour-pulse {
-          0%, 100% {
-            box-shadow: 0 0 0 0 rgba(154, 111, 79, 0.4),
-                        0 0 20px rgba(154, 111, 79, 0.1);
-          }
-          50% {
-            box-shadow: 0 0 0 8px rgba(154, 111, 79, 0),
-                        0 0 30px rgba(154, 111, 79, 0.2);
-          }
+        .tour-floating-highlight:hover {
+          box-shadow: 0 0 0 3px rgba(154, 111, 79, 0.25),
+                      0 0 16px rgba(154, 111, 79, 0.12) !important;
         }
       `}</style>
 
-      {/* Backdrop */}
+      {/* Subtle Backdrop */}
       <AnimatePresence>
         {isActive && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[101] bg-black/20 backdrop-blur-[2px]"
+            className="fixed inset-0 z-[101] bg-black/10 backdrop-blur-[1px]"
             onClick={skipTour}
           />
         )}
