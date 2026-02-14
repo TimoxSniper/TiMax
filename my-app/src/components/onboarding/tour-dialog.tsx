@@ -52,13 +52,13 @@ export function TourDialog({ isActive }: TourDialogProps) {
             className="fixed inset-0 z-[101] bg-black/50"
           />
 
-          {/* Dialog - Fixed at right side, compact size */}
+          {/* Dialog - Fixed at top right, compact size, always visible */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-8 right-8 z-[102] w-full max-w-sm"
+            className="fixed right-4 top-20 z-[102] w-full max-w-sm sm:right-8 sm:top-24"
           >
             <div className="rounded-md border border-border bg-background shadow-editorial-lg">
               {/* Header */}
