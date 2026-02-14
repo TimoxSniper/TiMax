@@ -28,7 +28,7 @@ import Link from "next/link";
 const SECTION_SPACING = "py-12 sm:py-20 lg:py-28";
 const SECTION_PADDING = "px-4 sm:px-6 lg:px-8";
 
-// Hero Section Component - Pain-First Approach (von /1)
+// Hero Section Component - Ultra konkret
 const HeroSectionV2 = memo(function HeroSectionV2() {
   return (
     <section className={`relative ${SECTION_PADDING} pt-20 pb-12 sm:pt-32 sm:pb-20 lg:pt-40 lg:pb-28 z-10`}>
@@ -36,12 +36,37 @@ const HeroSectionV2 = memo(function HeroSectionV2() {
         <AnimatedSection direction="up">
           <div className="flex flex-col items-center space-y-6 text-center sm:space-y-8">
             {/* Hero Content */}
-            <div className="w-full">
-              <Hero
-                heading="Von Audio zu Text. Fertig."
-                subheading="Lade Videos oder Audios hoch. Wir transkribieren, du chattest mit der KI und generierst Texte. Ein Tool, ein Workflow."
-                align="center"
-              />
+            <div className="w-full space-y-6 sm:space-y-8">
+              <div>
+                <h1 className="text-foreground mb-4 font-serif text-4xl font-bold sm:mb-6 sm:text-6xl md:text-7xl lg:text-8xl">
+                  Deine Podcasts und Videos → Fertige Texte
+                </h1>
+                <div className="bg-accent mx-auto mb-6 h-1 w-16 sm:mb-8 sm:w-24" />
+              </div>
+
+              {/* Step-by-step konkret */}
+              <div className="text-muted-foreground mx-auto max-w-3xl space-y-3 text-left text-base sm:space-y-4 sm:text-lg lg:text-xl">
+                <p className="flex items-start gap-3 sm:gap-4">
+                  <span className="text-accent font-serif text-xl font-bold sm:text-2xl">1.</span>
+                  <span>Du lädst hoch (MP4, MP3, M4A)</span>
+                </p>
+                <p className="flex items-start gap-3 sm:gap-4">
+                  <span className="text-accent font-serif text-xl font-bold sm:text-2xl">2.</span>
+                  <span>Wir transkribieren automatisch</span>
+                </p>
+                <p className="flex items-start gap-3 sm:gap-4">
+                  <span className="text-accent font-serif text-xl font-bold sm:text-2xl">3.</span>
+                  <span>KI kennt deinen Content (keine generischen Texte)</span>
+                </p>
+                <p className="flex items-start gap-3 sm:gap-4">
+                  <span className="text-accent font-serif text-xl font-bold sm:text-2xl">4.</span>
+                  <span>Generiere Posts, Newsletter, Artikel im Dialog</span>
+                </p>
+              </div>
+
+              <p className="text-foreground mx-auto max-w-2xl text-lg font-medium sm:text-xl lg:text-2xl">
+                Ein Workflow. Keine Tool-Wechsel.
+              </p>
             </div>
 
             {/* CTAs */}
@@ -149,8 +174,8 @@ const StatsSectionV2 = memo(function StatsSectionV2() {
             {stats.map((stat, index) => (
               <AnimatedSection key={stat.label} delay={index * 50} direction="up">
                 <div className="flex flex-col items-center px-2 py-3 text-center sm:px-8 sm:py-6 md:py-0 lg:px-16">
-                  <div className="mb-1 sm:mb-3">
-                    <span className="text-accent font-serif text-3xl font-bold leading-none sm:text-5xl lg:text-7xl">
+                  <div className="mb-1 flex min-h-[2.5rem] items-center justify-center sm:mb-3 sm:min-h-[3.5rem] lg:min-h-[5rem]">
+                    <span className="text-accent tabular-nums font-serif text-3xl font-bold leading-none sm:text-5xl lg:text-7xl">
                       {stat.value}
                     </span>
                     {stat.isTime && (
