@@ -7,9 +7,14 @@ import { useMobileDevice } from "@/hooks/useMobileDevice";
 import { DynamicChatInterface } from "@/lib/dynamic-import";
 import { OnboardingTourProvider } from "@/components/onboarding/onboarding-tour-provider";
 import { TourRenderer } from "@/components/onboarding/tour-renderer";
+import { useSearchParams } from "next/navigation";
 
 export default function ChatPage() {
   const isMobileDevice = useMobileDevice();
+  const searchParams = useSearchParams();
+
+  // Check if tour is active (Step 4)
+  const tourParam = searchParams.get("tour");
 
   // Auf echten Mobilgeräten: Vollbild-Chat ohne Header/Footer
   if (isMobileDevice) {
@@ -21,7 +26,7 @@ export default function ChatPage() {
           </div>
 
           {/* Tour Component */}
-          <TourRenderer targetSelector="chat-interface" />
+          {tourParam === "4" && <TourRenderer targetSelector="chat-interface" />}
         </div>
       </OnboardingTourProvider>
     );
@@ -55,7 +60,7 @@ export default function ChatPage() {
       <Footer />
 
       {/* Tour Component */}
-      <TourRenderer targetSelector="chat-interface" />
+      {tourParam === "4" && <TourRenderer targetSelector="chat-interface" />}
     </div>
     </OnboardingTourProvider>
   );
