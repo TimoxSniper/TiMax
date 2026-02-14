@@ -28,7 +28,7 @@ import Link from "next/link";
 const SECTION_SPACING = "py-12 sm:py-20 lg:py-28";
 const SECTION_PADDING = "px-4 sm:px-6 lg:px-8";
 
-// Hero Section Component - Ultra konkret
+// Hero Section Component - Kristallklar
 const HeroSectionV2 = memo(function HeroSectionV2() {
   return (
     <section className={`relative ${SECTION_PADDING} pt-20 pb-12 sm:pt-32 sm:pb-20 lg:pt-40 lg:pb-28 z-10`}>
@@ -39,33 +39,25 @@ const HeroSectionV2 = memo(function HeroSectionV2() {
             <div className="w-full space-y-6 sm:space-y-8">
               <div>
                 <h1 className="text-foreground mb-4 font-serif text-4xl font-bold sm:mb-6 sm:text-6xl md:text-7xl lg:text-8xl">
-                  Deine Podcasts und Videos → Fertige Texte
+                  Transkription. KI-Chat. Textgenerierung.
                 </h1>
                 <div className="bg-accent mx-auto mb-6 h-1 w-16 sm:mb-8 sm:w-24" />
               </div>
 
-              {/* Step-by-step konkret */}
-              <div className="text-muted-foreground mx-auto max-w-3xl space-y-3 text-left text-base sm:space-y-4 sm:text-lg lg:text-xl">
-                <p className="flex items-start gap-3 sm:gap-4">
-                  <span className="text-accent font-serif text-xl font-bold sm:text-2xl">1.</span>
-                  <span>Du lädst hoch (MP4, MP3, M4A)</span>
-                </p>
-                <p className="flex items-start gap-3 sm:gap-4">
-                  <span className="text-accent font-serif text-xl font-bold sm:text-2xl">2.</span>
-                  <span>Wir transkribieren automatisch</span>
-                </p>
-                <p className="flex items-start gap-3 sm:gap-4">
-                  <span className="text-accent font-serif text-xl font-bold sm:text-2xl">3.</span>
-                  <span>KI kennt deinen Content (keine generischen Texte)</span>
-                </p>
-                <p className="flex items-start gap-3 sm:gap-4">
-                  <span className="text-accent font-serif text-xl font-bold sm:text-2xl">4.</span>
-                  <span>Generiere Posts, Newsletter, Artikel im Dialog</span>
-                </p>
+              <p className="text-muted-foreground mx-auto max-w-3xl text-lg sm:text-xl lg:text-2xl">
+                Lade deine Audios hoch, chatte mit der KI über deinen Content, generiere fertige Texte.
+              </p>
+
+              {/* Workflow-Steps kompakt */}
+              <div className="text-muted-foreground mx-auto max-w-2xl space-y-2 text-base sm:space-y-3 sm:text-lg">
+                <p>• Upload Audio (MP4, MP3, M4A)</p>
+                <p>• Automatisches Transkript</p>
+                <p>• KI kennt deinen Content</p>
+                <p>• Generiere Posts, Newsletter, Artikel</p>
               </div>
 
               <p className="text-foreground mx-auto max-w-2xl text-lg font-medium sm:text-xl lg:text-2xl">
-                Ein Workflow. Keine Tool-Wechsel.
+                Ein Tool. Kein Copy-Paste zwischen 5 Apps.
               </p>
             </div>
 
