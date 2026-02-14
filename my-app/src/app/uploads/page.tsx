@@ -1,12 +1,25 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { MainNavigation } from "@/components/layout/main-navigation";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { DynamicUploadList } from "@/lib/dynamic-import";
+import { OnboardingTourProvider } from "@/components/onboarding/onboarding-tour-provider";
+import { TourSpotlight } from "@/components/onboarding/tour-spotlight";
+import { TourDialog } from "@/components/onboarding/tour-dialog";
+import { TOUR_STEPS } from "@/lib/onboarding/constants";
 
 export default function UploadsPage() {
+  const searchParams = useSearchParams();
+
+  // Check if tour is active (Step 3)
+  const tourParam = searchParams.get("tour");
+  const isTourActive = tourParam === "3";
+  const currentTourStep = isTourActive ? TOUR_STEPS.find(step => step.tourParam === "3") : null;
+
   return (
-    <div className="bg-background flex min-h-screen flex-col">
+    <OnboardingTourProvider>
+      <div className="bg-background flex min-h-screen flex-col">
       <MainNavigation />
 
       <main className="container mx-auto max-w-5xl flex-1 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
@@ -23,7 +36,7 @@ export default function UploadsPage() {
           </header>
 
           {/* Uploads Card */}
-          <Card>
+          <Card data-tour="uploads-list">
             <CardHeader>
               <CardTitle>Gespeicherte Transkripte</CardTitle>
               <CardDescription>
@@ -36,6 +49,18 @@ export default function UploadsPage() {
           </Card>
         </div>
       </main>
+
+      {/* Tour Components */}
+      {isTourActive && currentTourStep && (
+        <>
+          <TourSpotlight
+            targetSelector={currentTourStep.targetSelector}
+            isActive={true}
+          />
+          <TourDialog isActive={true} />
+        </>
+      )}
     </div>
+    </OnboardingTourProvider>
   );
 }

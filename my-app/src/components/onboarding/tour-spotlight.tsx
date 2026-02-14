@@ -45,14 +45,24 @@ export function TourSpotlight({
       return;
     }
 
-    const rect = targetElement.getBoundingClientRect();
-
-    setSpotlightRect({
-      top: rect.top - padding,
-      left: rect.left - padding,
-      width: rect.width + padding * 2,
-      height: rect.height + padding * 2,
+    // Auto-scroll to element with smooth behavior
+    targetElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'center',
     });
+
+    // Wait for scroll to finish before positioning spotlight
+    setTimeout(() => {
+      const rect = targetElement.getBoundingClientRect();
+
+      setSpotlightRect({
+        top: rect.top - padding,
+        left: rect.left - padding,
+        width: rect.width + padding * 2,
+        height: rect.height + padding * 2,
+      });
+    }, 300);
   }, [targetSelector, padding]);
 
   useEffect(() => {

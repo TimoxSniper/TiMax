@@ -1,16 +1,14 @@
 'use client';
 
 /**
- * Welcome Page
- *
- * Onboarding für neue User mit verbessertem Design und Text
+ * Welcome Page - Komplett überarbeitet
+ * Persönlicher, klarer, direkter
  */
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { WelcomeWorkflowSteps } from '@/components/onboarding/welcome-workflow-steps';
-import { Loader2, Sparkles, Zap } from 'lucide-react';
+import { Loader2, Play, ArrowRight } from 'lucide-react';
 
 export default function WelcomePage() {
   const router = useRouter();
@@ -46,90 +44,96 @@ export default function WelcomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-20">
-        {/* Hero Section */}
-        <div className="mb-20 text-center">
-          {/* Sparkle Icon */}
-          <div className="mb-6 flex justify-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent/10">
-              <Sparkles className="h-8 w-8 text-accent" />
-            </div>
-          </div>
-
-          {/* Headline */}
-          <h1 className="mb-4 font-serif text-4xl font-bold sm:text-5xl lg:text-6xl">
-            Los geht's!
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <div className="w-full max-w-2xl space-y-12 py-12 text-center">
+        {/* Headline */}
+        <div className="space-y-4">
+          <h1 className="font-serif text-5xl font-bold sm:text-6xl lg:text-7xl">
+            Hey! 👋
           </h1>
+          <div className="mx-auto h-1 w-24 bg-accent" />
+        </div>
 
-          {/* Bronze Accent Line */}
-          <div className="mx-auto mb-6 h-1 w-20 bg-accent" />
-
-          {/* Subheadline */}
-          <p className="text-muted-foreground mx-auto max-w-2xl text-base leading-relaxed sm:text-lg">
-            Verwandle deine Aufnahmen in wertvolle Insights. <br />
-            TiMax transkribiert automatisch und macht deine Inhalte durchsuchbar.
+        {/* Main Message */}
+        <div className="space-y-6">
+          <p className="text-2xl font-medium sm:text-3xl">
+            Du hast Audio oder Video?
+          </p>
+          <p className="text-muted-foreground mx-auto max-w-xl text-lg leading-relaxed">
+            TiMax wandelt das in durchsuchbaren Text um.
+            <br />
+            <span className="font-medium text-foreground">
+              Hochladen. Transkribieren lassen. Insights extrahieren.
+            </span>
           </p>
         </div>
 
-        {/* Workflow Steps */}
-        <div className="mb-16">
-          <WelcomeWorkflowSteps />
-        </div>
-
-        {/* Value Proposition */}
-        <div className="mb-12 rounded-lg border border-border bg-muted/30 p-8">
-          <div className="flex items-start gap-4">
-            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-accent/10">
-              <Zap className="h-5 w-5 text-accent" />
+        {/* Simple Steps */}
+        <div className="mx-auto grid max-w-md gap-4 text-left">
+          <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
+            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent/10 font-semibold text-accent">
+              1
             </div>
             <div>
-              <h3 className="mb-2 font-serif text-xl font-semibold">
-                Spare Zeit, gewinne Erkenntnisse
-              </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Statt stundenlang Aufnahmen anzuhören: Lade sie hoch, lass die KI transkribieren
-                und stelle gezielte Fragen. Perfekt für Podcasts, Meetings, Interviews oder Vorträge.
-              </p>
+              <p className="font-medium">Upload deine Datei</p>
+              <p className="text-muted-foreground text-sm">MP3, MP4, WAV – egal</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
+            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent/10 font-semibold text-accent">
+              2
+            </div>
+            <div>
+              <p className="font-medium">KI transkribiert</p>
+              <p className="text-muted-foreground text-sm">Automatisch, in Minuten</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
+            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent/10 font-semibold text-accent">
+              3
+            </div>
+            <div>
+              <p className="font-medium">Chatte mit deinen Inhalten</p>
+              <p className="text-muted-foreground text-sm">Fragen stellen, Antworten kriegen</p>
             </div>
           </div>
         </div>
 
-        {/* CTA Section */}
-        <div className="space-y-6">
-          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            {/* Primary CTA */}
+        {/* CTAs */}
+        <div className="space-y-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Button
               size="lg"
               onClick={handleStartTour}
               disabled={isLoading}
-              className="w-full sm:w-auto"
+              className="text-base"
             >
               {isLoading && loadingAction === 'tour' && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               )}
-              <Sparkles className="mr-2 h-4 w-4" />
-              Kurzführung starten
+              {!isLoading && <Play className="mr-2 h-5 w-5" />}
+              30-Sekunden-Tour
             </Button>
 
-            {/* Secondary CTA */}
             <Button
               size="lg"
               variant="outline"
               onClick={handleSkipTour}
               disabled={isLoading}
-              className="w-full sm:w-auto"
+              className="text-base"
             >
               {isLoading && loadingAction === 'skip' && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               )}
-              Sofort loslegen
+              {!isLoading && <ArrowRight className="mr-2 h-5 w-5" />}
+              Direkt starten
             </Button>
           </div>
 
-          {/* Helper Text */}
-          <p className="text-muted-foreground text-center text-xs">
-            Die Kurzführung dauert weniger als 30 Sekunden
+          <p className="text-muted-foreground text-sm">
+            Tour zeigt dir alles in 4 schnellen Schritten
           </p>
         </div>
       </div>

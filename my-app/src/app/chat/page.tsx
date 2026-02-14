@@ -15,10 +15,10 @@ export default function ChatPage() {
   const isMobileDevice = useMobileDevice();
   const searchParams = useSearchParams();
 
-  // Check if tour is active (Step 3)
+  // Check if tour is active (Step 4)
   const tourParam = searchParams.get("tour");
-  const isTourActive = tourParam === "3";
-  const currentTourStep = isTourActive ? TOUR_STEPS.find(step => step.tourParam === "3") : null;
+  const isTourActive = tourParam === "4";
+  const currentTourStep = isTourActive ? TOUR_STEPS.find(step => step.tourParam === "4") : null;
 
   // Auf echten Mobilgeräten: Vollbild-Chat ohne Header/Footer
   if (isMobileDevice) {
