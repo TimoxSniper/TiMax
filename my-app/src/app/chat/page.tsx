@@ -7,9 +7,7 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { useMobileDevice } from "@/hooks/useMobileDevice";
 import { DynamicChatInterface } from "@/lib/dynamic-import";
 import { OnboardingTourProvider } from "@/components/onboarding/onboarding-tour-provider";
-import { TourSpotlight } from "@/components/onboarding/tour-spotlight";
-import { TourDialog } from "@/components/onboarding/tour-dialog";
-import { TOUR_STEPS } from "@/lib/onboarding/constants";
+import { TourRenderer } from "@/components/onboarding/tour-renderer";
 
 export default function ChatPage() {
   const isMobileDevice = useMobileDevice();
@@ -18,7 +16,6 @@ export default function ChatPage() {
   // Check if tour is active (Step 4)
   const tourParam = searchParams.get("tour");
   const isTourActive = tourParam === "4";
-  const currentTourStep = isTourActive ? TOUR_STEPS.find(step => step.tourParam === "4") : null;
 
   // Auf echten Mobilgeräten: Vollbild-Chat ohne Header/Footer
   if (isMobileDevice) {
@@ -29,16 +26,8 @@ export default function ChatPage() {
             <DynamicChatInterface />
           </div>
 
-          {/* Tour Components */}
-          {isTourActive && currentTourStep && (
-            <>
-              <TourSpotlight
-                targetSelector={currentTourStep.targetSelector}
-                isActive={true}
-              />
-              <TourDialog isActive={true} />
-            </>
-          )}
+          {/* Tour Component */}
+          {isTourActive && <TourRenderer targetSelector="chat-interface" />}
         </div>
       </OnboardingTourProvider>
     );
@@ -71,16 +60,8 @@ export default function ChatPage() {
       </main>
       <Footer />
 
-      {/* Tour Components */}
-      {isTourActive && currentTourStep && (
-        <>
-          <TourSpotlight
-            targetSelector={currentTourStep.targetSelector}
-            isActive={true}
-          />
-          <TourDialog isActive={true} />
-        </>
-      )}
+      {/* Tour Component */}
+      {isTourActive && <TourRenderer targetSelector="chat-interface" />}
     </div>
     </OnboardingTourProvider>
   );

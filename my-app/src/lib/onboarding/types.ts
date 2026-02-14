@@ -37,15 +37,29 @@ export interface OnboardingStatus {
 }
 
 /**
+ * Tour style options for A/B testing
+ */
+export type TourStyle =
+  | 'default'        // Original dark overlay + spotlight
+  | 'pointer'        // Minimalist pointer with border
+  | 'floating'       // Floating card (Discord-style)
+  | 'progress'       // Progress bar + highlight
+  | 'badges'         // Inline badges/tooltips
+  | 'video'          // Video tutorial
+  | 'glow';          // Subtle glow (Apple-style)
+
+/**
  * Tour context state
  */
 export interface TourContextState {
-  /** Current step (1-3), null if not in tour */
+  /** Current step (1-4), null if not in tour */
   currentStep: number | null;
   /** Whether tour is active */
   isActive: boolean;
   /** Total number of steps */
   totalSteps: number;
+  /** Current tour style */
+  style: TourStyle;
   /** Navigate to next step */
   nextStep: () => void;
   /** Navigate to previous step */

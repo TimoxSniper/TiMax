@@ -1,29 +1,25 @@
 'use client';
 
-/**
- * Welcome Page - Komplett überarbeitet
- * Persönlicher, klarer, direkter
- */
-
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Loader2, Play, ArrowRight } from 'lucide-react';
+import { Loader2, ArrowRight } from 'lucide-react';
+import { TOUR_STYLES } from '@/lib/onboarding/constants';
+import type { TourStyle } from '@/lib/onboarding/types';
 
 export default function WelcomePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingAction, setLoadingAction] = useState<'tour' | 'skip' | null>(null);
+  const [selectedStyle, setSelectedStyle] = useState<TourStyle>('pointer');
 
-  const handleStartTour = () => {
+  const handleStartTour = (style: TourStyle) => {
     setIsLoading(true);
-    setLoadingAction('tour');
-    router.push('/upload?tour=1');
+    setSelectedStyle(style);
+    router.push(`/upload?tour=1&style=${style}`);
   };
 
   const handleSkipTour = async () => {
     setIsLoading(true);
-    setLoadingAction('skip');
 
     try {
       const response = await fetch('/api/onboarding/complete', {
@@ -39,27 +35,18 @@ export default function WelcomePage() {
       console.error('Error completing onboarding:', error);
       alert('Ein Fehler ist aufgetreten. Bitte versuche es erneut.');
       setIsLoading(false);
-      setLoadingAction(null);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-2xl space-y-12 py-12 text-center">
-        {/* Headline */}
-        <div className="space-y-4">
-          <h1 className="font-serif text-5xl font-bold sm:text-6xl lg:text-7xl">
-            Hey! 👋
-          </h1>
-          <div className="mx-auto h-1 w-24 bg-accent" />
-        </div>
-
-        {/* Main Message */}
-        <div className="space-y-6">
-          <p className="text-2xl font-medium sm:text-3xl">
-            Du hast Audio oder Video?
-          </p>
-          <p className="text-muted-foreground mx-auto max-w-xl text-lg leading-relaxed">
+    <div className="min-h-screen bg-background px-4 py-12">
+      <div className="container mx-auto max-w-4xl">
+        {/* Header */}
+        <div className="mb-12 text-center">
+          <h1 className="font-serif text-4xl font-bold mb-4">Hey! 👋</h1>
+          <div className="mx-auto h-1 w-24 bg-accent mb-6" />
+          <p className="text-2xl font-medium mb-4">Du hast Audio oder Video?</p>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             TiMax wandelt das in durchsuchbaren Text um.
             <br />
             <span className="font-medium text-foreground">
@@ -68,73 +55,54 @@ export default function WelcomePage() {
           </p>
         </div>
 
-        {/* Simple Steps */}
-        <div className="mx-auto grid max-w-md gap-4 text-left">
-          <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent/10 font-semibold text-accent">
-              1
-            </div>
-            <div>
-              <p className="font-medium">Upload deine Datei</p>
-              <p className="text-muted-foreground text-sm">MP3, MP4, WAV – egal</p>
-            </div>
+        {/* Tour Style Selection - Beta Testing */}
+        <div className="mb-12">
+          <div className="bg-accent/5 border border-accent/20 rounded-lg p-6 mb-6">
+            <p className="text-sm font-medium text-accent mb-2">🧪 Beta Testing</p>
+            <p className="text-sm text-muted-foreground">
+              Wähle deinen bevorzugten Tour-Style! Wir testen verschiedene Designs.
+            </p>
           </div>
 
-          <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent/10 font-semibold text-accent">
-              2
-            </div>
-            <div>
-              <p className="font-medium">KI transkribiert</p>
-              <p className="text-muted-foreground text-sm">Automatisch, in Minuten</p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent/10 font-semibold text-accent">
-              3
-            </div>
-            <div>
-              <p className="font-medium">Chatte mit deinen Inhalten</p>
-              <p className="text-muted-foreground text-sm">Fragen stellen, Antworten kriegen</p>
-            </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {TOUR_STYLES.map((style) => (
+              <button
+                key={style.id}
+                onClick={() => handleStartTour(style.id)}
+                disabled={isLoading}
+                className={`group text-left rounded-lg border p-4 transition-all hover:border-accent hover:shadow-lg ${
+                  selectedStyle === style.id && isLoading
+                    ? 'border-accent bg-accent/5'
+                    : 'border-border bg-card'
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">{style.icon}</span>
+                  <div className="flex-1">
+                    <h3 className="font-semibold mb-1 group-hover:text-accent transition-colors">
+                      {style.name}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">{style.description}</p>
+                  </div>
+                  {isLoading && selectedStyle === style.id && (
+                    <Loader2 className="h-5 w-5 animate-spin text-accent" />
+                  )}
+                </div>
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* CTAs */}
-        <div className="space-y-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Button
-              size="lg"
-              onClick={handleStartTour}
-              disabled={isLoading}
-              className="text-base"
-            >
-              {isLoading && loadingAction === 'tour' && (
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              )}
-              {!isLoading && <Play className="mr-2 h-5 w-5" />}
-              30-Sekunden-Tour
-            </Button>
-
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={handleSkipTour}
-              disabled={isLoading}
-              className="text-base"
-            >
-              {isLoading && loadingAction === 'skip' && (
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              )}
-              {!isLoading && <ArrowRight className="mr-2 h-5 w-5" />}
-              Direkt starten
-            </Button>
-          </div>
-
-          <p className="text-muted-foreground text-sm">
-            Tour zeigt dir alles in 4 schnellen Schritten
-          </p>
+        {/* Skip Button */}
+        <div className="text-center">
+          <Button
+            variant="outline"
+            onClick={handleSkipTour}
+            disabled={isLoading}
+          >
+            <ArrowRight className="mr-2 h-4 w-4" />
+            Tour überspringen, direkt starten
+          </Button>
         </div>
       </div>
     </div>

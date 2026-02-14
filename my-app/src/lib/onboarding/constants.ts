@@ -68,6 +68,59 @@ export const NEW_USER_WINDOW_MS = 24 * 60 * 60 * 1000;
 export const TOUR_QUERY_PARAM = 'tour';
 
 /**
+ * Query parameter name for tour style
+ */
+export const TOUR_STYLE_PARAM = 'style';
+
+/**
+ * Tour style descriptions for Welcome Page
+ */
+export const TOUR_STYLES = [
+  {
+    id: 'default' as const,
+    name: 'Original',
+    description: 'Dunkles Overlay mit Spotlight (aktuell)',
+    icon: '🎯',
+  },
+  {
+    id: 'pointer' as const,
+    name: 'Minimalist',
+    description: 'Animierter Border + kleiner Tooltip',
+    icon: '👆',
+  },
+  {
+    id: 'floating' as const,
+    name: 'Floating Card',
+    description: 'Discord-Style schwebende Karte',
+    icon: '💬',
+  },
+  {
+    id: 'progress' as const,
+    name: 'Progress Bar',
+    description: 'Top-Bar mit Schritt-Anzeige',
+    icon: '📊',
+  },
+  {
+    id: 'badges' as const,
+    name: 'Inline Badges',
+    description: 'Kleine "Neu!" Tooltips überall',
+    icon: '🏷️',
+  },
+  {
+    id: 'video' as const,
+    name: 'Video Tutorial',
+    description: '30-Sekunden Walkthrough-Video',
+    icon: '🎥',
+  },
+  {
+    id: 'glow' as const,
+    name: 'Subtle Glow',
+    description: 'Apple-Style sanfter Leuchteffekt',
+    icon: '✨',
+  },
+] as const;
+
+/**
  * Workflow steps for Welcome Page (German text)
  */
 export const WORKFLOW_STEPS = [

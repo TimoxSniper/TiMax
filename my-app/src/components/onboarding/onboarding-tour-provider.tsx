@@ -9,8 +9,8 @@
 
 import React, { createContext, useContext, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import type { TourContextState } from '@/lib/onboarding/types';
-import { TOUR_STEPS, TOTAL_TOUR_STEPS, TOUR_QUERY_PARAM } from '@/lib/onboarding/constants';
+import type { TourContextState, TourStyle } from '@/lib/onboarding/types';
+import { TOUR_STEPS, TOTAL_TOUR_STEPS, TOUR_QUERY_PARAM, TOUR_STYLE_PARAM } from '@/lib/onboarding/constants';
 import { parseTourStep } from '@/lib/onboarding/utils';
 
 const TourContext = createContext<TourContextState | null>(null);
@@ -24,10 +24,12 @@ export function OnboardingTourProvider({ children }: OnboardingTourProviderProps
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Get current step from URL query parameter
+  // Get current step and style from URL query parameters
   const tourParam = searchParams.get(TOUR_QUERY_PARAM);
+  const styleParam = searchParams.get(TOUR_STYLE_PARAM);
   const currentStep = parseTourStep(tourParam);
   const isActive = currentStep !== null;
+  const style: TourStyle = (styleParam as TourStyle) || 'default';
 
   /**
    * Navigate to next tour step
@@ -49,7 +51,8 @@ export function OnboardingTourProvider({ children }: OnboardingTourProviderProps
       return;
     }
 
-    router.push(`${nextStepConfig.route}?${TOUR_QUERY_PARAM}=${nextStepConfig.tourParam}`);
+    const url = `${nextStepConfig.route}?${TOUR_QUERY_PARAM}=${nextStepConfig.tourParam}&${TOUR_STYLE_PARAM}=${style}`;
+    router.push(url);
   }, [currentStep, router]);
 
   /**
@@ -66,7 +69,8 @@ export function OnboardingTourProvider({ children }: OnboardingTourProviderProps
       return;
     }
 
-    router.push(`${prevStepConfig.route}?${TOUR_QUERY_PARAM}=${prevStepConfig.tourParam}`);
+    const url = `${prevStepConfig.route}?${TOUR_QUERY_PARAM}=${prevStepConfig.tourParam}&${TOUR_STYLE_PARAM}=${style}`;
+    router.push(url);
   }, [currentStep, router]);
 
   /**
@@ -105,12 +109,13 @@ export function OnboardingTourProvider({ children }: OnboardingTourProviderProps
       currentStep,
       isActive,
       totalSteps: TOTAL_TOUR_STEPS,
+      style,
       nextStep,
       previousStep,
       skipTour,
       completeTour,
     }),
-    [currentStep, isActive, nextStep, previousStep, skipTour, completeTour]
+    [currentStep, isActive, style, nextStep, previousStep, skipTour, completeTour]
   );
 
   return <TourContext.Provider value={contextValue}>{children}</TourContext.Provider>;
