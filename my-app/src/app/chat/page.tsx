@@ -1,6 +1,5 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { MainNavigation } from "@/components/layout/main-navigation";
 import { Footer } from "@/components/layout/footer";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
@@ -11,11 +10,6 @@ import { TourRenderer } from "@/components/onboarding/tour-renderer";
 
 export default function ChatPage() {
   const isMobileDevice = useMobileDevice();
-  const searchParams = useSearchParams();
-
-  // Check if tour is active (Step 4)
-  const tourParam = searchParams.get("tour");
-  const isTourActive = tourParam === "4";
 
   // Auf echten Mobilgeräten: Vollbild-Chat ohne Header/Footer
   if (isMobileDevice) {
@@ -27,7 +21,7 @@ export default function ChatPage() {
           </div>
 
           {/* Tour Component */}
-          {isTourActive && <TourRenderer targetSelector="chat-interface" />}
+          <TourRenderer targetSelector="chat-interface" />
         </div>
       </OnboardingTourProvider>
     );
@@ -61,7 +55,7 @@ export default function ChatPage() {
       <Footer />
 
       {/* Tour Component */}
-      {isTourActive && <TourRenderer targetSelector="chat-interface" />}
+      <TourRenderer targetSelector="chat-interface" />
     </div>
     </OnboardingTourProvider>
   );
