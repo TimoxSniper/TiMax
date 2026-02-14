@@ -29,43 +29,56 @@ export function TourFloating({ targetSelector, isActive }: TourFloatingProps) {
 
   const calculateOptimalPosition = useCallback((targetRect: DOMRect): Position => {
     const cardWidth = 380;
-    const cardHeight = 280;
+    const cardHeight = 350; // Increased for safety
     const spacing = 24;
+    const margin = 40; // Increased margin from edges
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
+    // Calculate center of target element
+    const targetCenterY = targetRect.top + targetRect.height / 2;
+
     // Try right placement first
-    if (targetRect.right + spacing + cardWidth < viewportWidth) {
+    if (targetRect.right + spacing + cardWidth + margin < viewportWidth) {
       return {
         left: targetRect.right + spacing,
-        top: Math.max(20, Math.min(targetRect.top, viewportHeight - cardHeight - 20)),
+        top: Math.max(margin, Math.min(targetCenterY - cardHeight / 2, viewportHeight - cardHeight - margin)),
         placement: 'right',
       };
     }
 
     // Try left placement
-    if (targetRect.left - spacing - cardWidth > 0) {
+    if (targetRect.left - spacing - cardWidth > margin) {
       return {
         left: targetRect.left - spacing - cardWidth,
-        top: Math.max(20, Math.min(targetRect.top, viewportHeight - cardHeight - 20)),
+        top: Math.max(margin, Math.min(targetCenterY - cardHeight / 2, viewportHeight - cardHeight - margin)),
         placement: 'left',
       };
     }
 
     // Try bottom placement
-    if (targetRect.bottom + spacing + cardHeight < viewportHeight) {
+    if (targetRect.bottom + spacing + cardHeight + margin < viewportHeight) {
       return {
-        left: Math.max(20, Math.min(targetRect.left, viewportWidth - cardWidth - 20)),
+        left: Math.max(margin, Math.min(targetRect.left, viewportWidth - cardWidth - margin)),
         top: targetRect.bottom + spacing,
         placement: 'bottom',
       };
     }
 
-    // Fallback: top placement
+    // Try top placement
+    if (targetRect.top - spacing - cardHeight > margin) {
+      return {
+        left: Math.max(margin, Math.min(targetRect.left, viewportWidth - cardWidth - margin)),
+        top: targetRect.top - spacing - cardHeight,
+        placement: 'top',
+      };
+    }
+
+    // Fallback: center-right of viewport (always visible)
     return {
-      left: Math.max(20, Math.min(targetRect.left, viewportWidth - cardWidth - 20)),
-      top: Math.max(20, targetRect.top - spacing - cardHeight),
-      placement: 'top',
+      left: Math.min(viewportWidth - cardWidth - margin, Math.max(margin, viewportWidth / 2)),
+      top: Math.max(margin, Math.min(viewportHeight / 2 - cardHeight / 2, viewportHeight - cardHeight - margin)),
+      placement: 'right',
     };
   }, []);
 
@@ -79,26 +92,27 @@ export function TourFloating({ targetSelector, isActive }: TourFloatingProps) {
         const retryElement = document.querySelector(`[data-tour="${targetSelector}"]`);
         if (retryElement) {
           retryElement.classList.add('tour-floating-highlight');
-          retryElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          retryElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
           setTimeout(() => {
             const rect = retryElement.getBoundingClientRect();
             const position = calculateOptimalPosition(rect);
             setCardPosition(position);
-          }, 300);
+          }, 700);
         }
-      }, 500);
+      }, 800);
       return;
     }
 
     // Add subtle highlight
     targetElement.classList.add('tour-floating-highlight');
-    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    targetElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
 
+    // Wait for scroll animation to complete
     setTimeout(() => {
       const rect = targetElement.getBoundingClientRect();
       const position = calculateOptimalPosition(rect);
       setCardPosition(position);
-    }, 300);
+    }, 700);
   }, [targetSelector, calculateOptimalPosition]);
 
   useEffect(() => {
