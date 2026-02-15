@@ -6,7 +6,7 @@
 
 import type { User } from '@clerk/nextjs/server';
 import type { ClerkPublicMetadata, OnboardingStatus } from './types';
-import { NEW_USER_WINDOW_MS } from './constants';
+import { NEW_USER_WINDOW_MS, TOTAL_TOUR_STEPS } from './constants';
 
 /**
  * Check if user has completed onboarding
@@ -60,7 +60,7 @@ export function getOnboardingStatus(user: User): OnboardingStatus {
 /**
  * Parse tour step from query parameter
  *
- * @param tourParam - Tour query parameter value (e.g., "1", "2", "3")
+ * @param tourParam - Tour query parameter value (e.g., "1", "2", "3", "4")
  * @returns Step number or null if invalid
  */
 export function parseTourStep(tourParam: string | null): number | null {
@@ -70,7 +70,7 @@ export function parseTourStep(tourParam: string | null): number | null {
 
   const step = parseInt(tourParam, 10);
 
-  if (isNaN(step) || step < 1 || step > 3) {
+  if (isNaN(step) || step < 1 || step > TOTAL_TOUR_STEPS) {
     return null;
   }
 
