@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useClerk, useAuth } from "@clerk/nextjs";
+import { toast } from "react-hot-toast";
 import { MainNavigation } from "@/components/layout/main-navigation";
 import { Footer } from "@/components/layout/footer";
 import { Card } from "@/components/magic-ui/glass-card";
@@ -19,8 +21,17 @@ import {
   MessageSquare,
   Upload,
   User,
+  Loader2,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// Clerk Billing Plan IDs (aus Clerk Dashboard → Billing → Plans)
+const PLAN_IDS: Record<string, string> = {
+  starter: process.env.NEXT_PUBLIC_CLERK_BILLING_STARTER_PLAN_ID ?? "",
+  pro: process.env.NEXT_PUBLIC_CLERK_BILLING_PRO_PLAN_ID ?? "",
+  business: process.env.NEXT_PUBLIC_CLERK_BILLING_BUSINESS_PLAN_ID ?? "",
+};
 
 // Konstanten - Editorial Modernism Spacing
 const SECTION_SPACING = "py-16 sm:py-24 lg:py-32";
@@ -30,6 +41,7 @@ const SECTION_PADDING = "px-4 sm:px-6 lg:px-8";
 const PRICING_TIERS = [
   {
     name: "Starter",
+    planSlug: "starter",
     icon: User,
     description: "Perfekt für den Einstieg",
     monthlyPrice: 29,
@@ -47,6 +59,7 @@ const PRICING_TIERS = [
   },
   {
     name: "Pro",
+    planSlug: "pro",
     icon: Crown,
     description: "Für aktive Creator",
     monthlyPrice: 49,
@@ -64,6 +77,7 @@ const PRICING_TIERS = [
   },
   {
     name: "Business",
+    planSlug: "business",
     icon: Building,
     description: "Für Profis",
     monthlyPrice: 79,
@@ -107,6 +121,45 @@ const FAQ_ITEMS = [
 
 export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false);
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const clerk = useClerk();
+  const { has, isSignedIn } = useAuth();
+
+  // Clerk Billing-Methoden sind bei aktiviertem Billing in der Clerk-Instanz vorhanden,
+  // aber noch nicht in allen @clerk/nextjs TypeScript-Typen definiert.
+  type ClerkWithBilling = typeof clerk & {
+    openCheckout: (params: { planId: string }) => Promise<void>;
+    openBillingPortal: () => Promise<void>;
+  };
+  const billingClerk = clerk as ClerkWithBilling;
+
+  const handlePlanSelect = async (planSlug: string) => {
+    if (!isSignedIn) {
+      clerk.redirectToSignUp();
+      return;
+    }
+    const planId = PLAN_IDS[planSlug];
+    if (!planId) {
+      toast.error("Plan nicht konfiguriert. Bitte versuche es später erneut.");
+      return;
+    }
+    setLoadingPlan(planSlug);
+    try {
+      await billingClerk.openCheckout({ planId });
+    } catch {
+      toast.error("Checkout konnte nicht geöffnet werden. Bitte versuche es erneut.");
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
+  const handleOpenBillingPortal = async () => {
+    try {
+      await billingClerk.openBillingPortal();
+    } catch {
+      toast.error("Billing-Portal konnte nicht geöffnet werden.");
+    }
+  };
 
   return (
     <div className="bg-background relative flex min-h-screen flex-col">
@@ -175,20 +228,34 @@ export default function PricingPage() {
 
                 return (
                   <AnimatedSection key={tier.name} direction="up" delay={index * 100}>
+                    {(() => {
+                      const isCurrentPlan = has?.({ plan: tier.planSlug }) ?? false;
+                      const isLoading = loadingPlan === tier.planSlug;
+                      return (
                     <Card
                       variant="accent"
                       hover={false}
                       overflow={tier.popular ? "visible" : "hidden"}
                       className={cn(
                         "relative flex h-[600px] flex-col p-6 sm:p-8",
-                        tier.popular && "ring-accent ring-2"
+                        tier.popular && "ring-accent ring-2",
+                        isCurrentPlan && "ring-green-500 ring-2"
                       )}
                     >
                       {/* Popular Badge */}
-                      {tier.popular && (
+                      {tier.popular && !isCurrentPlan && (
                         <div className="absolute -top-3.5 left-1/2 z-10 -translate-x-1/2">
                           <Badge className="bg-accent text-accent-foreground px-4 py-1.5 text-xs tracking-wide whitespace-nowrap uppercase shadow-lg">
                             Beliebt
+                          </Badge>
+                        </div>
+                      )}
+
+                      {/* Aktiver Plan Badge */}
+                      {isCurrentPlan && (
+                        <div className="absolute -top-3.5 left-1/2 z-10 -translate-x-1/2">
+                          <Badge className="bg-green-500 text-white px-4 py-1.5 text-xs tracking-wide whitespace-nowrap uppercase shadow-lg">
+                            Aktiver Plan
                           </Badge>
                         </div>
                       )}
@@ -249,15 +316,36 @@ export default function PricingPage() {
                       </ul>
 
                       {/* CTA */}
-                      <Button
-                        size="lg"
-                        variant={tier.popular ? "default" : "outline"}
-                        className="h-14 w-full flex-shrink-0"
-                      >
-                        {tier.cta}
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </Button>
+                      {isCurrentPlan ? (
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className="h-14 w-full flex-shrink-0 border-green-500 text-green-600 hover:bg-green-50 dark:hover:bg-green-950"
+                          onClick={handleOpenBillingPortal}
+                        >
+                          <Settings className="mr-2 h-4 w-4" />
+                          Abo verwalten
+                        </Button>
+                      ) : (
+                        <Button
+                          size="lg"
+                          variant={tier.popular ? "default" : "outline"}
+                          className="h-14 w-full flex-shrink-0"
+                          onClick={() => handlePlanSelect(tier.planSlug)}
+                          disabled={isLoading}
+                        >
+                          {isLoading ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : null}
+                          {tier.cta}
+                          {!isLoading && (
+                            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                          )}
+                        </Button>
+                      )}
                     </Card>
+                      );
+                    })()}
                   </AnimatedSection>
                 );
               })}
@@ -392,9 +480,19 @@ export default function PricingPage() {
                 <p className="text-muted-foreground mx-auto mb-8 max-w-md">
                   Starte mit dem Starter-Plan und upgrade jederzeit, wenn du mehr brauchst.
                 </p>
-                <Button size="lg" className="group min-h-14 px-10 text-base">
+                <Button
+                  size="lg"
+                  className="group min-h-14 px-10 text-base"
+                  onClick={() => handlePlanSelect("starter")}
+                  disabled={loadingPlan === "starter"}
+                >
+                  {loadingPlan === "starter" ? (
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  ) : null}
                   Mit Starter beginnen
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  {loadingPlan !== "starter" && (
+                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  )}
                 </Button>
               </Card>
             </AnimatedSection>

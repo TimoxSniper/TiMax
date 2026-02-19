@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { User, Shield, Laptop } from "lucide-react";
+import { User, Shield, Laptop, CreditCard } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
 
@@ -14,6 +14,12 @@ const settingsNavigation = [
     href: "/settings/profile",
     icon: User,
     description: "Name und Profilbild bearbeiten",
+  },
+  {
+    name: "Abonnement",
+    href: "/settings/billing",
+    icon: CreditCard,
+    description: "Plan und Abrechnung verwalten",
   },
   {
     name: "Sicherheit",
