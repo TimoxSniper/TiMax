@@ -9,11 +9,14 @@
 
 1. [Kompletter User-Flow](#1-kompletter-user-flow)
 2. [Detailanalyse jedes Schritts](#2-detailanalyse-jedes-schritts)
-3. [Gefundene Bugs & Fixes](#3-gefundene-bugs--fixes)
-4. [Edge Cases & Szenarien](#4-edge-cases--szenarien)
-5. [Sicherheitsbeurteilung](#5-sicherheitsbeurteilung)
-6. [Architektur-Übersicht](#6-architektur-übersicht)
-7. [Offene Punkte](#7-offene-punkte)
+3. [Billing & Subscription Flow](#3-billing--subscription-flow)
+4. [Settings & Account Flow](#4-settings--account-flow)
+5. [Gefundene Bugs & Fixes](#5-gefundene-bugs--fixes)
+6. [Edge Cases & Szenarien](#6-edge-cases--szenarien)
+7. [Sicherheitsbeurteilung](#7-sicherheitsbeurteilung)
+8. [Architektur-Übersicht](#8-architektur-übersicht)
+9. [Vollständige Seitenstruktur](#9-vollständige-seitenstruktur)
+10. [Offene Punkte](#10-offene-punkte)
 
 ---
 
@@ -206,7 +209,95 @@ if (pathname === "/chat" && !searchParams.has("tour")) {
 
 ---
 
-## 3. Gefundene Bugs & Fixes
+## 3. Billing & Subscription Flow
+
+### 3.1 Pricing-Seite (`/pricing`)
+- **Datei**: `src/app/pricing/page.tsx`
+- **Zugang**: Öffentlich (kein Auth erforderlich)
+- **Plan-IDs**: Geladen aus `NEXT_PUBLIC_CLERK_BILLING_*_PLAN_ID` Env-Variablen
+
+**Pricing-Tiers**:
+| Plan | Monatlich | Jährlich | Uploads | STT | Chat | Support |
+|------|-----------|----------|---------|-----|------|---------|
+| Starter | €29 | €290 | 10/Monat | 2h | 100 | E-Mail |
+| Pro | €49 | €490 | 50/Monat | 10h | 500 | Priorität |
+| Business | €79 | €790 | ∞ | 30h | ∞ | Persönlich |
+
+**CTA-Logik** (smart, abhängig von Auth-Status):
+```
+Nicht eingeloggt:
+  → <SignUpButton> (Clerk) → /sign-up
+
+Eingeloggt, kein Plan:
+  → <CheckoutButton planId={...}> (Clerk Billing Checkout)
+
+Eingeloggt, hat Plan (z.B. Starter):
+  → <SubscriptionDetailsButton> "Abo verwalten"
+
+Eingeloggt, hat diesen Plan:
+  → Button disabled mit "Aktueller Plan" Badge
+```
+
+**Toggle Monatlich/Jährlich**: State-basiert, wechselt angezeigte Preise und Plan-IDs dynamisch.
+
+### 3.2 Checkout-Flow (Clerk Billing + Stripe)
+```
+User klickt "Plan wählen" (CheckoutButton)
+      │
+      ▼
+Clerk Billing Checkout Modal / Seite
+  (Stripe-Integration via Clerk)
+      │
+      ▼
+Zahlung erfolgreich
+      │
+      ▼
+Clerk: Plan wird user.subscription gesetzt
+      │
+      ▼
+useAuth().has({ plan: 'pro' }) gibt true zurück
+      │
+      ▼
+/settings/billing zeigt Plan mit "Aktiv" Badge
+```
+
+**CSP für Stripe**:
+- `https://js.stripe.com` im `script-src`
+- `https://js.stripe.com https://hooks.stripe.com` im `frame-src`
+- `https://api.stripe.com` im `connect-src`
+
+### 3.3 Billing-Verwaltung (`/settings/billing`)
+- **Datei**: `src/app/settings/billing/page.tsx`
+- **Zustand**: Kein Plan → CTA zu `/pricing`; Plan vorhanden → `SubscriptionDetailsButton` (öffnet Clerk/Stripe Billing-Portal)
+- **Features im Portal**: Zahlungsmethode ändern, Rechnungen herunterladen, Plan upgraden/kündigen
+- **Upgrade-CTA**: Für Starter und Pro User sichtbar (nicht für Business)
+
+---
+
+## 4. Settings & Account Flow
+
+### 4.1 Settings-Layout (`/settings/*`)
+- **Datei**: `src/app/settings/layout.tsx`
+- **Zugang**: Protected, `<SignedOut>` → `<RedirectToSignIn />`
+- **Navigation**: 4 Menüpunkte in Sidebar
+- **Hydration-Safe**: `mounted`-State für aktive Link-Erkennung
+
+**Settings-Seiten**:
+| URL | Seite | Inhalt |
+|-----|-------|--------|
+| `/settings/profile` | Profil | Name, Profilbild (Clerk) |
+| `/settings/billing` | Abonnement | Plan-Status, Billing-Portal |
+| `/settings/security` | Sicherheit | Passwort, 2FA (Clerk) |
+| `/settings/sessions` | Sitzungen | Aktive Geräte, Logout |
+
+### 4.2 Session-Verwaltung
+- **API**: `POST /api/settings/sessions/revoke` (mit CSRF-Schutz)
+- User kann einzelne Sessions widerrufen (Remote Logout)
+- Alle Sessions auf Clerk-Seite verwaltet
+
+---
+
+## 5. Gefundene Bugs & Fixes
 
 ### Bug #1 – KRITISCH: `skipTour()` verursacht Onboarding-Loop ✅ BEHOBEN
 
@@ -251,7 +342,7 @@ Der `onComplete`-Callback in `ProcessingStatus` wurde als Inline-Arrow-Function 
 
 ---
 
-## 4. Edge Cases & Szenarien
+## 6. Edge Cases & Szenarien
 
 ### Szenario A: User sign-up, kein Onboarding innerhalb 24h
 - User registriert sich, schließt Tab sofort
@@ -324,7 +415,7 @@ Der `onComplete`-Callback in `ProcessingStatus` wurde als Inline-Arrow-Function 
 
 ---
 
-## 5. Sicherheitsbeurteilung
+## 7. Sicherheitsbeurteilung
 
 ### Stärken ✅
 - **CSRF-Schutz**: Double Submit Cookie Pattern auf allen POST/PATCH/DELETE APIs
@@ -346,7 +437,7 @@ Der `onComplete`-Callback in `ProcessingStatus` wurde als Inline-Arrow-Function 
 
 ---
 
-## 6. Architektur-Übersicht
+## 8. Architektur-Übersicht
 
 ```
 Browser/Client
@@ -387,7 +478,69 @@ Qdrant (Vektor-DB, via n8n)
 
 ---
 
-## 7. Offene Punkte
+## 9. Vollständige Seitenstruktur
+
+```
+/                          Landing Page (öffentlich)
+/sign-in                   Clerk Sign-In
+/sign-up                   Clerk Sign-Up
+/pricing                   Preisseiten (öffentlich, Clerk Billing CTA)
+/welcome                   Onboarding (protected, neue User < 24h)
+/upload                    Datei hochladen (protected)
+/uploads                   Upload-Liste (protected)
+/uploads/[id]              Upload-Detail (protected)
+/chat                      KI-Chat (protected)
+/settings/profile          Profil-Einstellungen (protected)
+/settings/billing          Abonnement & Billing (protected)
+/settings/security         Sicherheit (protected)
+/settings/sessions         Aktive Sitzungen (protected)
+/admin                     Admin-Dashboard (protected + admin)
+/admin/users               Benutzerverwaltung (protected + admin)
+/admin/chats               Chat-Übersicht (protected + admin)
+/admin/chats/[id]          Chat-Detail (protected + admin)
+/admin/uploads             Upload-Übersicht (protected + admin)
+/admin/health              System-Health (protected + admin)
+/unauthorized              Kein Zugriff (öffentlich, für 403-Fälle)
+/datenschutz               Datenschutzerklärung (öffentlich)
+/agb                       Allgemeine Geschäftsbedingungen (öffentlich)
+/impressum                 Impressum (öffentlich)
+/cookies                   Cookie-Richtlinie (öffentlich)
+/widerruf                  Widerrufsrecht (öffentlich)
+/newsletter                Newsletter-Anmeldung (öffentlich)
+```
+
+**API-Routen** (alle CSRF-geschützt für POST/PATCH/DELETE):
+```
+GET  /api/csrf                          → CSRF-Token generieren
+POST /api/chat                          → Nachricht senden
+GET  /api/chat                          → Chats laden
+GET  /api/chats                         → Chat-Liste
+GET  /api/uploads                       → Upload-Liste
+POST /api/uploads/create                → Upload-Record erstellen
+GET  /api/uploads/[id]                  → Upload-Detail
+POST /api/uploads/[id]/retry            → Upload wiederholen
+POST /api/upload                        → Server-Side Upload (unused by client)
+POST /api/onboarding/complete           → Onboarding abschließen
+GET  /api/onboarding/status             → Onboarding-Status
+POST /api/waitlist                      → Waitlist/Newsletter
+GET  /api/search                        → Suche
+GET  /api/auth/admin/check              → Admin-Check
+GET  /api/settings/sessions/revoke      → Session widerrufen
+GET  /api/admin/dashboard               → Admin-Statistiken
+GET  /api/admin/users                   → User-Liste
+PATCH /api/admin/users/[id]            → User-Rolle ändern
+GET  /api/admin/chats                   → Chat-Übersicht
+GET  /api/admin/uploads                 → Upload-Übersicht
+GET  /api/admin/health                  → System-Health
+GET  /api/admin/alerts                  → Alerts
+GET  /api/admin/storage                 → Storage-Nutzung
+GET  /api/admin/recent-activity         → Letzte Aktivitäten
+POST /api/cron/cleanup                  → Cleanup-Cron (mit CRON_SECRET)
+```
+
+---
+
+## 10. Offene Punkte
 
 | Priorität | Thema | Details |
 |-----------|-------|---------|
