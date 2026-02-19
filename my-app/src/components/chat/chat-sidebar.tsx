@@ -34,6 +34,7 @@ export function ChatSidebar({
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
 
@@ -93,10 +94,19 @@ export function ChatSidebar({
     }
   }, [currentChatId]);
 
+  const handleDeleteClick = (e: React.MouseEvent, chatId: string) => {
+    e.stopPropagation();
+    setPendingDeleteId(chatId);
+  };
+
+  const handleDeleteCancel = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPendingDeleteId(null);
+  };
+
   const handleDeleteChat = async (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();
-    if (!confirm("Diesen Chat wirklich löschen?")) return;
-
+    setPendingDeleteId(null);
     setDeletingId(chatId);
     try {
       // CSRF-Token holen
@@ -266,27 +276,51 @@ export function ChatSidebar({
                           <h3 className="text-foreground flex-1 truncate text-sm font-medium">
                             {chat.title || "Neuer Chat"}
                           </h3>
-                          <div className="flex items-center opacity-0 transition-opacity group-hover:opacity-100">
-                            <button
-                              onClick={(e) => handleStartEdit(e, chat)}
-                              className="hover:bg-muted-foreground/10 hover:text-foreground rounded p-1"
-                              aria-label={`Chat-Titel "${chat.title || "Neuer Chat"}" bearbeiten`}
+                          {pendingDeleteId === chat.id ? (
+                            <div
+                              className="flex items-center gap-1"
+                              onClick={(e) => e.stopPropagation()}
                             >
-                              <Edit2 className="h-3.5 w-3.5" aria-hidden="true" />
-                            </button>
-                            <button
-                              onClick={(e) => handleDeleteChat(e, chat.id)}
-                              disabled={deletingId === chat.id}
-                              className={cn(
-                                "hover:bg-destructive/10 hover:text-destructive rounded p-1",
-                                "disabled:opacity-50"
-                              )}
-                              aria-label={`Chat "${chat.title || "Neuer Chat"}" löschen`}
-                              aria-disabled={deletingId === chat.id}
-                            >
-                              <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-                            </button>
-                          </div>
+                              <span className="text-destructive text-xs font-medium">Löschen?</span>
+                              <button
+                                onClick={(e) => handleDeleteChat(e, chat.id)}
+                                disabled={deletingId === chat.id}
+                                className="hover:bg-destructive/10 text-destructive rounded p-1"
+                                aria-label="Löschen bestätigen"
+                              >
+                                <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                              </button>
+                              <button
+                                onClick={handleDeleteCancel}
+                                className="hover:bg-muted-foreground/10 hover:text-foreground rounded p-1"
+                                aria-label="Löschen abbrechen"
+                              >
+                                <X className="h-3.5 w-3.5" aria-hidden="true" />
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center opacity-0 transition-opacity group-hover:opacity-100">
+                              <button
+                                onClick={(e) => handleStartEdit(e, chat)}
+                                className="hover:bg-muted-foreground/10 hover:text-foreground rounded p-1"
+                                aria-label={`Chat-Titel "${chat.title || "Neuer Chat"}" bearbeiten`}
+                              >
+                                <Edit2 className="h-3.5 w-3.5" aria-hidden="true" />
+                              </button>
+                              <button
+                                onClick={(e) => handleDeleteClick(e, chat.id)}
+                                disabled={deletingId === chat.id}
+                                className={cn(
+                                  "hover:bg-destructive/10 hover:text-destructive rounded p-1",
+                                  "disabled:opacity-50"
+                                )}
+                                aria-label={`Chat "${chat.title || "Neuer Chat"}" löschen`}
+                                aria-disabled={deletingId === chat.id}
+                              >
+                                <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                              </button>
+                            </div>
+                          )}
                         </>
                       )}
                     </div>

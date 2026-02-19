@@ -297,7 +297,7 @@ export function TourFloating({ targetSelector, isActive }: TourFloatingProps) {
               </div>
 
               {/* Keyboard Hints */}
-              <div className="mt-4 flex items-center justify-center gap-3 text-xs text-muted-foreground">
+              <div className="mt-4 flex items-center justify-center gap-3 text-sm text-muted-foreground">
                 <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono">←</kbd>
                 <span>Zurück</span>
                 <span className="text-border">•</span>

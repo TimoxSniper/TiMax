@@ -30,10 +30,10 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
 
   const validateFile = (file: File): string | null => {
     if (file.size > MAX_FILE_SIZE) {
-      return `Datei ist zu groß. Maximum: ${MAX_FILE_SIZE / 1024 / 1024}MB`;
+      return `Datei zu groß (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum: ${MAX_FILE_SIZE / 1024 / 1024} MB`;
     }
     if (!ALLOWED_TYPES.includes(file.type)) {
-      return "Dateityp nicht unterstützt. Erlaubt: MP3, MP4, WAV, M4A, WebM";
+      return `Dateityp „${file.type || file.name.split(".").pop()?.toUpperCase()}" nicht unterstützt. Erlaubt: MP3, MP4, WAV, M4A, WebM`;
     }
     return null;
   };

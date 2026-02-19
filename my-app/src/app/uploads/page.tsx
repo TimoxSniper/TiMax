@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { DynamicUploadList } from "@/lib/dynamic-import";
 import { OnboardingTourProvider } from "@/components/onboarding/onboarding-tour-provider";
 import { TourRenderer } from "@/components/onboarding/tour-renderer";
+import ErrorBoundary from "@/components/error-boundary";
 
 export default function UploadsPage() {
   const searchParams = useSearchParams();
@@ -44,7 +45,9 @@ export default function UploadsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <DynamicUploadList />
+              <ErrorBoundary>
+                <DynamicUploadList />
+              </ErrorBoundary>
             </CardContent>
           </Card>
         </div>

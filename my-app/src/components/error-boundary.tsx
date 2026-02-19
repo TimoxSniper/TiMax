@@ -53,7 +53,7 @@ class ErrorBoundary extends Component<Props, State> {
             <div>
               <h3 className="font-semibold text-lg">Ein Fehler ist aufgetreten</h3>
               <p className="text-muted-foreground text-sm mt-1">
-                Etwas ist schiefgegangen. Bitte versuchen Sie es erneut.
+                Etwas ist schiefgegangen. Bitte versuche es nochmal.
               </p>
             </div>
             <div className="pt-2">

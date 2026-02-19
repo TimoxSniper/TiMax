@@ -31,12 +31,12 @@ export const DynamicUploadList = createDynamicImport(
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
           <div key={i} className="flex items-center gap-4 rounded-xl border p-4">
-            <div className="h-10 w-10 animate-pulse rounded-lg bg-gray-200" />
+            <div className="h-10 w-10 animate-pulse rounded-lg bg-muted" />
             <div className="flex-1 space-y-2">
-              <div className="h-4 w-1/3 animate-pulse bg-gray-200" />
-              <div className="h-3 w-1/4 animate-pulse bg-gray-200" />
+              <div className="h-4 w-1/3 animate-pulse bg-muted" />
+              <div className="h-3 w-1/4 animate-pulse bg-muted" />
             </div>
-            <div className="h-8 w-24 animate-pulse rounded-lg bg-gray-200" />
+            <div className="h-8 w-24 animate-pulse rounded-lg bg-muted" />
           </div>
         ))}
       </div>
@@ -53,17 +53,17 @@ export const DynamicChatInterface = createDynamicImport(
         <div className="bg-card h-full w-72 flex-shrink-0 animate-pulse rounded-xl border" />
         <div className="flex h-full flex-1 flex-col overflow-hidden rounded-xl border">
           <div className="border-b p-4">
-            <div className="h-6 w-1/4 animate-pulse rounded bg-gray-200" />
+            <div className="h-6 w-1/4 animate-pulse rounded bg-muted" />
           </div>
           <div className="flex-1 space-y-4 overflow-y-auto p-4">
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="rounded-lg p-4">
                   <div className="flex gap-3">
-                    <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200" />
+                    <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
                     <div className="flex-1 space-y-2">
-                      <div className="h-4 w-full animate-pulse rounded bg-gray-200" />
-                      <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200" />
+                      <div className="h-4 w-full animate-pulse rounded bg-muted" />
+                      <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
                     </div>
                   </div>
                 </div>
@@ -71,7 +71,7 @@ export const DynamicChatInterface = createDynamicImport(
             </div>
           </div>
           <div className="border-t p-4">
-            <div className="h-12 w-full animate-pulse rounded-lg bg-gray-200" />
+            <div className="h-12 w-full animate-pulse rounded-lg bg-muted" />
           </div>
         </div>
       </div>

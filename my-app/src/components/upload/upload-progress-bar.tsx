@@ -16,13 +16,13 @@ export function UploadProgressBar({
   const getStatusColor = () => {
     switch (status) {
       case "completed":
-        return "bg-green-500";
+        return "bg-emerald-600 dark:bg-emerald-500";
       case "failed":
         return "bg-destructive";
       case "processing":
-        return "bg-blue-500";
+        return "bg-accent";
       default:
-        return "bg-primary";
+        return "bg-accent";
     }
   };
 

@@ -8,6 +8,7 @@ import { DynamicChatInterface } from "@/lib/dynamic-import";
 import { OnboardingTourProvider } from "@/components/onboarding/onboarding-tour-provider";
 import { TourRenderer } from "@/components/onboarding/tour-renderer";
 import { useSearchParams } from "next/navigation";
+import ErrorBoundary from "@/components/error-boundary";
 
 export default function ChatPage() {
   const isMobileDevice = useMobileDevice();
@@ -22,7 +23,9 @@ export default function ChatPage() {
       <OnboardingTourProvider>
         <div className="bg-background flex h-[100dvh] flex-col overflow-hidden">
           <div data-tour="chat-interface">
-            <DynamicChatInterface />
+            <ErrorBoundary>
+              <DynamicChatInterface />
+            </ErrorBoundary>
           </div>
 
           {/* Tour Component */}
@@ -53,7 +56,9 @@ export default function ChatPage() {
 
           {/* Chat Interface */}
           <div data-tour="chat-interface">
-            <DynamicChatInterface />
+            <ErrorBoundary>
+              <DynamicChatInterface />
+            </ErrorBoundary>
           </div>
         </div>
       </main>

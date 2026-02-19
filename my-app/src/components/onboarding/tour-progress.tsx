@@ -31,10 +31,12 @@ export function TourProgress() {
           return (
             <div
               key={stepNumber}
-              className={`h-2 w-2 rounded-full transition-colors ${
-                isActive || isCompleted
-                  ? 'bg-accent'
-                  : 'bg-secondary'
+              className={`rounded-full transition-all duration-300 ${
+                isActive
+                  ? 'h-3 w-3 bg-accent'
+                  : isCompleted
+                  ? 'h-2 w-2 bg-accent'
+                  : 'h-2 w-2 bg-secondary'
               }`}
               aria-label={`Schritt ${stepNumber}${isActive ? ' (aktuell)' : ''}${isCompleted ? ' (abgeschlossen)' : ''}`}
             />
