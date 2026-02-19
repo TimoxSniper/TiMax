@@ -5,7 +5,7 @@ import { MessageList } from "./message-list";
 import { ChatInput } from "./chat-input";
 import { ChatHeader } from "./chat-header";
 import { Card } from "@/components/ui/card";
-import { Loader2, AlertCircle, Sparkles, Plus } from "lucide-react";
+import { AlertCircle, Sparkles, Plus } from "lucide-react";
 import { CHAT_UI_TEXTS } from "@/lib/constants";
 import { useChat, Message } from "@/hooks/useChat";
 import { useMobileDevice } from "@/hooks/useMobileDevice";
@@ -74,16 +74,20 @@ export const ChatInterface = memo(({ initialSessionId }: ChatInterfaceProps) => 
   // ========== MOBILE LAYOUT ==========
   if (isMobileDevice) {
     return (
-      <div ref={chatContainerRef} className="bg-background flex h-full w-full flex-col">
+      <div ref={chatContainerRef} className="bg-background flex h-screen w-full flex-col">
         {/* Mobile Header - kompakt und funktional */}
-        <header className="bg-card/80 safe-area-top flex items-center justify-between border-b px-4 py-3 backdrop-blur-sm">
+        <header className="bg-card/90 safe-area-top flex items-center justify-between border-b px-4 py-3 backdrop-blur-md">
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="-ml-2 h-10 w-10">
-                <Menu className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="-ml-2 h-12 w-12">
+                <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[85vw] max-w-[320px] p-0">
+            <SheetContent
+              side="left"
+              className="w-[90vw] max-w-[340px] p-0"
+              aria-label="Chat-Übersicht"
+            >
               <ChatSidebar
                 currentChatId={chatId}
                 onSelectChat={handleSelectChat}
@@ -94,47 +98,53 @@ export const ChatInterface = memo(({ initialSessionId }: ChatInterfaceProps) => 
           </Sheet>
 
           <div className="flex flex-1 items-center justify-center gap-2">
-            <div className="bg-accent/10 flex h-8 w-8 items-center justify-center rounded-full">
-              <Sparkles className="text-accent h-4 w-4" />
+            <div className="bg-accent/10 flex h-9 w-9 items-center justify-center rounded-full">
+              <Sparkles className="text-accent h-5 w-5" />
             </div>
-            <span className="text-sm font-medium">TiMax</span>
+            <span className="text-base font-medium">TiMax</span>
           </div>
 
           <Button
             variant="ghost"
             size="icon"
-            className="-mr-2 h-10 w-10"
+            className="-mr-2 h-12 w-12"
             onClick={handleCreateNewChat}
+            aria-label="Neuer Chat"
           >
-            <Plus className="h-5 w-5" />
+            <Plus className="h-6 w-6" />
           </Button>
         </header>
 
         {/* Message Area - nimmt den restlichen Platz ein */}
-        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overscroll-contain touch-pan-y">
+        <div
+          ref={scrollContainerRef}
+          className="flex-1 touch-pan-y overflow-y-auto overscroll-contain"
+          role="region"
+          aria-label="Chatverlauf"
+        >
           {messages.length === 0 ? (
             // Welcome Screen für Mobile
-            <div className="flex min-h-full flex-col items-center justify-center px-6 py-8">
-              <div className="bg-accent/10 mb-6 flex h-16 w-16 items-center justify-center rounded-2xl">
-                <Sparkles className="text-accent h-8 w-8" />
+            <div className="flex min-h-full flex-col items-center justify-center px-6 py-12">
+              <div className="bg-accent/10 mb-8 flex h-20 w-20 items-center justify-center rounded-2xl">
+                <Sparkles className="text-accent h-10 w-10" />
               </div>
 
-              <h2 className="mb-2 text-center font-serif text-2xl font-bold">
+              <h2 className="mb-3 text-center font-serif text-3xl font-bold">
                 {CHAT_UI_TEXTS.WELCOME_TITLE}
               </h2>
-              <p className="text-muted-foreground mb-8 text-center text-sm">
+              <p className="text-muted-foreground mb-10 text-center text-sm leading-relaxed">
                 {CHAT_UI_TEXTS.WELCOME_SUBTITLE}
               </p>
 
-              <div className="w-full space-y-3">
-                <p className="text-muted-foreground mb-2 text-center text-xs font-medium tracking-widest uppercase">
+              <div className="w-full space-y-4">
+                <p className="text-muted-foreground mb-3 text-center text-xs font-medium tracking-widest uppercase">
                   {CHAT_UI_TEXTS.EXAMPLE_REQUESTS_TITLE}
                 </p>
                 {CHAT_UI_TEXTS.EXAMPLE_REQUESTS.map((req, index) => (
                   <button
                     key={index}
                     onClick={() => handleSendMessage(req.replace(/^[•\s"]+|["]+$/g, ""))}
-                    className="bg-card border-border w-full rounded-xl border px-4 py-4 text-left text-sm transition-transform active:scale-[0.98] touch-manipulation"
+                    className="bg-card border-border hover:border-accent/30 w-full touch-manipulation rounded-xl border px-5 py-5 text-left text-sm leading-relaxed transition-all active:scale-[0.98]"
                   >
                     {req}
                   </button>
@@ -142,17 +152,8 @@ export const ChatInterface = memo(({ initialSessionId }: ChatInterfaceProps) => 
               </div>
             </div>
           ) : (
-            <div className="space-y-4 px-4 py-4">
-              <MessageList messages={messages} isMobile={true} />
-
-              {isLoading && (
-                <div className="flex items-center gap-3 px-2">
-                  <div className="bg-accent/10 flex h-8 w-8 items-center justify-center rounded-full">
-                    <Loader2 className="text-accent h-4 w-4 animate-spin" />
-                  </div>
-                  <span className="text-muted-foreground text-sm">{CHAT_UI_TEXTS.THINKING}</span>
-                </div>
-              )}
+            <div className="space-y-4 px-4 py-6">
+              <MessageList messages={messages} isMobile={true} isLoading={isLoading} />
 
               {error && (
                 <div className="bg-destructive/10 flex items-center gap-3 rounded-xl p-4">
@@ -221,14 +222,7 @@ export const ChatInterface = memo(({ initialSessionId }: ChatInterfaceProps) => 
               </div>
             </div>
           ) : (
-            <MessageList messages={messages} isMobile={false} />
-          )}
-
-          {isLoading && (
-            <div className="text-muted-foreground flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span className="text-sm">{CHAT_UI_TEXTS.THINKING}</span>
-            </div>
+            <MessageList messages={messages} isMobile={false} isLoading={isLoading} />
           )}
 
           {error && (

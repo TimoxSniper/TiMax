@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { MessageSquare, Plus, Trash2, Clock, Edit2, Check, X } from "lucide-react";
+import { MessageSquare, Plus, Trash2, Clock, Edit2, Check, X, Search, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { logger } from "@/lib/logger";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
@@ -37,6 +38,7 @@ export function ChatSidebar({
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const loadChats = async (pageNum: number = 1, append: boolean = false) => {
     try {
@@ -187,40 +189,72 @@ export function ChatSidebar({
     }
   };
 
+  // Filter chats based on search query
+  const filteredChats = chats.filter((chat) =>
+    chat.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <Card className="flex h-full flex-col rounded-none border-r">
-      <CardContent className="border-b p-4">
+    <Card className="border-border bg-sidebar flex h-full flex-col rounded-none border-r">
+      {/* Header with New Chat Button and Search */}
+      <CardContent className="border-border space-y-4 border-b p-5">
         <button
           onClick={onCreateNewChat}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 flex w-full items-center gap-2 rounded-lg px-4 py-2.5 font-medium transition-colors"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-editorial-sm hover:shadow-editorial-md flex w-full items-center gap-3 rounded-lg px-5 py-4 font-medium transition-all duration-200"
           aria-label="Neuen Chat erstellen"
         >
-          <Plus className="h-4 w-4" aria-hidden="true" />
+          <Plus className="h-5 w-5" aria-hidden="true" />
           <span>Neuer Chat</span>
         </button>
+
+        {/* Search Input */}
+        <div className="relative">
+          <Search
+            className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2"
+            aria-hidden="true"
+          />
+          <Input
+            type="text"
+            placeholder="Chats durchsuchen..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="bg-background border-border focus:ring-ring focus:border-primary rounded-lg border py-3 pr-4 pl-10 text-sm transition-all focus:ring-2"
+            aria-label="Chats durchsuchen"
+          />
+        </div>
       </CardContent>
 
-      <CardContent className="flex-1 space-y-2 overflow-y-auto p-4" aria-label="Chat-Verlauf">
+      {/* Chat History */}
+      <CardContent
+        className="scroll-momentum flex-1 space-y-3 overflow-y-auto p-4"
+        aria-label="Chat-Verlauf"
+      >
         {loading ? (
           <div
-            className="text-muted-foreground py-4 text-center text-sm"
+            className="text-muted-foreground py-10 text-center text-sm"
             role="status"
             aria-live="polite"
           >
-            Chats werden geladen...
+            <Loader2 className="mx-auto mb-3 h-6 w-6 animate-spin" aria-hidden="true" />
+            <p>Chats werden geladen...</p>
           </div>
-        ) : chats.length === 0 ? (
-          <div className="text-muted-foreground py-4 text-center text-sm">Noch keine Chats</div>
+        ) : filteredChats.length === 0 ? (
+          <div className="text-muted-foreground py-10 text-center text-sm">
+            {searchQuery ? "Keine Chats gefunden" : "Noch keine Chats"}
+          </div>
         ) : (
-          <ul role="list" className="space-y-2">
-            {chats.map((chat) => (
+          <ul role="list" className="space-y-3">
+            {filteredChats.map((chat) => (
               <li key={chat.id}>
                 <div
                   onClick={() => onSelectChat(chat.id)}
                   className={cn(
-                    "group flex cursor-pointer items-start gap-3 rounded-lg p-3 transition-all",
-                    "hover:bg-muted",
-                    currentChatId === chat.id && "bg-muted"
+                    "group relative flex cursor-pointer items-start gap-4 rounded-lg p-5 transition-all duration-200",
+                    "hover:bg-muted/80 hover:shadow-editorial-sm",
+                    currentChatId === chat.id
+                      ? "bg-accent/10 border-accent/20 shadow-editorial-sm border"
+                      : "bg-background border border-transparent",
+                    pendingDeleteId === chat.id && "bg-destructive/5 border-destructive/20 border"
                   )}
                   role="button"
                   tabIndex={0}
@@ -231,12 +265,28 @@ export function ChatSidebar({
                   }}
                   aria-label={`Chat öffnen: ${chat.title || "Unbenannter Chat"}`}
                 >
+                  {/* Accent Line for Current Chat */}
+                  {currentChatId === chat.id && (
+                    <div
+                      className="bg-accent absolute top-0 bottom-0 left-0 w-1 rounded-l-lg"
+                      aria-hidden="true"
+                    />
+                  )}
+
+                  {/* Chat Icon */}
                   <div
-                    className="bg-primary/10 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full"
+                    className={cn(
+                      "flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full transition-colors",
+                      currentChatId === chat.id
+                        ? "bg-accent text-accent-foreground"
+                        : "bg-accent/10 text-accent"
+                    )}
                     aria-hidden="true"
                   >
-                    <MessageSquare className="text-primary h-4 w-4" />
+                    <MessageSquare className="h-4 w-4" />
                   </div>
+
+                  {/* Chat Content */}
                   <div className="min-w-0 flex-1">
                     <div className="mb-1 flex items-center justify-between gap-2">
                       {editingId === chat.id ? (
@@ -248,7 +298,7 @@ export function ChatSidebar({
                             autoFocus
                             value={editTitle}
                             onChange={(e) => setEditTitle(e.target.value)}
-                            className="bg-background focus:ring-primary flex-1 rounded border px-1.5 py-0.5 text-sm focus:ring-1 focus:outline-none"
+                            className="bg-background focus:ring-accent border-input flex-1 rounded border px-2 py-1 text-sm focus:ring-1 focus:outline-none"
                             aria-label="Chat-Titel bearbeiten"
                             onKeyDown={(e) => {
                               if (e.key === "Enter")
@@ -258,14 +308,14 @@ export function ChatSidebar({
                           />
                           <button
                             onClick={(e) => handleSaveEdit(e, chat.id)}
-                            className="hover:bg-primary/10 text-primary rounded p-1"
+                            className="hover:bg-accent/10 text-accent rounded p-1 transition-colors"
                             aria-label="Titel speichern"
                           >
                             <Check className="h-3.5 w-3.5" aria-hidden="true" />
                           </button>
                           <button
                             onClick={handleCancelEdit}
-                            className="hover:bg-destructive/10 text-destructive rounded p-1"
+                            className="hover:bg-destructive/10 text-destructive rounded p-1 transition-colors"
                             aria-label="Bearbeitung abbrechen"
                           >
                             <X className="h-3.5 w-3.5" aria-hidden="true" />
@@ -273,7 +323,14 @@ export function ChatSidebar({
                         </div>
                       ) : (
                         <>
-                          <h3 className="text-foreground flex-1 truncate text-sm font-medium">
+                          <h3
+                            className={cn(
+                              "flex-1 truncate text-sm font-medium transition-colors",
+                              currentChatId === chat.id
+                                ? "text-accent font-semibold"
+                                : "text-foreground"
+                            )}
+                          >
                             {chat.title || "Neuer Chat"}
                           </h3>
                           {pendingDeleteId === chat.id ? (
@@ -285,24 +342,24 @@ export function ChatSidebar({
                               <button
                                 onClick={(e) => handleDeleteChat(e, chat.id)}
                                 disabled={deletingId === chat.id}
-                                className="hover:bg-destructive/10 text-destructive rounded p-1"
+                                className="hover:bg-destructive/10 text-destructive rounded p-1 transition-colors"
                                 aria-label="Löschen bestätigen"
                               >
                                 <Check className="h-3.5 w-3.5" aria-hidden="true" />
                               </button>
                               <button
                                 onClick={handleDeleteCancel}
-                                className="hover:bg-muted-foreground/10 hover:text-foreground rounded p-1"
+                                className="hover:bg-muted/50 hover:text-foreground rounded p-1 transition-colors"
                                 aria-label="Löschen abbrechen"
                               >
                                 <X className="h-3.5 w-3.5" aria-hidden="true" />
                               </button>
                             </div>
                           ) : (
-                            <div className="flex items-center opacity-0 transition-opacity group-hover:opacity-100">
+                            <div className="flex items-center opacity-0 transition-all duration-200 group-hover:opacity-100">
                               <button
                                 onClick={(e) => handleStartEdit(e, chat)}
-                                className="hover:bg-muted-foreground/10 hover:text-foreground rounded p-1"
+                                className="hover:bg-muted hover:text-foreground rounded p-1 transition-colors"
                                 aria-label={`Chat-Titel "${chat.title || "Neuer Chat"}" bearbeiten`}
                               >
                                 <Edit2 className="h-3.5 w-3.5" aria-hidden="true" />
@@ -311,7 +368,7 @@ export function ChatSidebar({
                                 onClick={(e) => handleDeleteClick(e, chat.id)}
                                 disabled={deletingId === chat.id}
                                 className={cn(
-                                  "hover:bg-destructive/10 hover:text-destructive rounded p-1",
+                                  "hover:bg-destructive/10 hover:text-destructive rounded p-1 transition-colors",
                                   "disabled:opacity-50"
                                 )}
                                 aria-label={`Chat "${chat.title || "Neuer Chat"}" löschen`}
@@ -336,16 +393,25 @@ export function ChatSidebar({
             ))}
           </ul>
         )}
-        {hasMore && (
-          <div className="px-3 py-2">
+
+        {/* Load More Button */}
+        {hasMore && !searchQuery && (
+          <div className="px-3 py-4">
             <button
               onClick={loadMoreChats}
               disabled={loadingMore}
-              className="text-muted-foreground hover:text-foreground w-full py-2 text-sm transition-colors disabled:opacity-50"
+              className="text-muted-foreground hover:text-foreground hover:bg-muted/50 w-full rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 disabled:opacity-50"
               aria-label={loadingMore ? "Weitere Chats werden geladen" : "Weitere Chats laden"}
               aria-disabled={loadingMore}
             >
-              {loadingMore ? "Wird geladen..." : "Mehr laden"}
+              {loadingMore ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  Wird geladen...
+                </span>
+              ) : (
+                "Mehr Chats laden"
+              )}
             </button>
           </div>
         )}
