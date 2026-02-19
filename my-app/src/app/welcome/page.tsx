@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Loader2, Play, ArrowRight } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 export default function WelcomePage() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function WelcomePage() {
       router.push('/dashboard');
     } catch (error) {
       console.error('Error completing onboarding:', error);
-      alert('Ein Fehler ist aufgetreten. Bitte versuche es erneut.');
+      toast.error('Ein Fehler ist aufgetreten. Bitte versuche es erneut.');
       setIsLoading(false);
       setLoadingAction(null);
     }

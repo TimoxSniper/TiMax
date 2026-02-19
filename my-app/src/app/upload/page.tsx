@@ -29,7 +29,6 @@ export default function UploadPage() {
 
   // Check if tour is active (Steps 1 & 2)
   const tourParam = searchParams.get("tour");
-  const isTourActive = tourParam === "1" || tourParam === "2";
 
   return (
     <OnboardingTourProvider>
@@ -58,7 +57,7 @@ export default function UploadPage() {
           </h1>
           <div className="bg-accent mx-auto mb-4 h-1 w-16 sm:mb-6 sm:w-24" />
           <p className="text-muted-foreground mx-auto max-w-2xl px-2 text-sm sm:text-base lg:text-lg">
-            Laden Sie Ihre Audio- oder Videodatei hoch. Die KI transkribiert automatisch den Inhalt
+            Lade deine Audio- oder Videodatei hoch. Die KI transkribiert automatisch den Inhalt
             und bereitet ihn für die Weiterverarbeitung vor.
           </p>
         </header>
@@ -151,7 +150,7 @@ export default function UploadPage() {
               </div>
               <h3 className="font-sans text-lg font-medium">1. Datei hochladen</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Laden Sie eine Audio- oder Videodatei hoch (MP3, MP4, WAV, M4A, WebM bis 100MB).
+                Lade eine Audio- oder Videodatei hoch (MP3, MP4, WAV, M4A, WebM bis 100MB).
               </p>
             </div>
             <div className="space-y-4 text-center">
@@ -160,7 +159,7 @@ export default function UploadPage() {
               </div>
               <h3 className="font-sans text-lg font-medium">2. KI-Transkription</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Ihre Datei wird automatisch transkribiert. Die KI erkennt Sprache und wandelt sie in
+                Deine Datei wird automatisch transkribiert. Die KI erkennt Sprache und wandelt sie in
                 Text um.
               </p>
             </div>
@@ -212,8 +211,8 @@ export default function UploadPage() {
       <Footer />
 
       {/* Tour Component */}
-      {tourParam === "1" && <TourRenderer targetSelector="upload-dropzone" />}
-      {tourParam === "2" && <TourRenderer targetSelector="workflow-section" />}
+      {tourParam === "2" && <TourRenderer targetSelector="upload-dropzone" />}
+      {tourParam === "3" && <TourRenderer targetSelector="workflow-section" />}
     </div>
     </OnboardingTourProvider>
   );

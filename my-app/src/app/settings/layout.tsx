@@ -3,6 +3,8 @@
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { MainNavigation } from "@/components/layout/main-navigation";
+import { Footer } from "@/components/layout/footer";
 import { cn } from "@/lib/utils";
 import { User, Shield, Laptop, CreditCard } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -50,6 +52,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
         <RedirectToSignIn />
       </SignedOut>
       <SignedIn>
+        <MainNavigation />
         <div className="container mx-auto max-w-6xl px-4 py-8">
           <div className="mb-8">
             <h1 className="text-foreground text-3xl font-bold">Einstellungen</h1>
@@ -103,6 +106,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
             <main className="min-w-0 flex-1">{children}</main>
           </div>
         </div>
+        <Footer />
       </SignedIn>
     </>
   );

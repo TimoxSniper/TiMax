@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import {
@@ -17,6 +18,8 @@ import {
 import { AnimatedSection } from "@/components/magic-ui/animated-section";
 import { MainNavigation } from "@/components/layout/main-navigation";
 import { Footer } from "@/components/layout/footer";
+import { OnboardingTourProvider } from "@/components/onboarding/onboarding-tour-provider";
+import { TourRenderer } from "@/components/onboarding/tour-renderer";
 import { cn } from "@/lib/utils";
 import type { Upload as UploadType } from "@/lib/supabase/database.types";
 
@@ -146,6 +149,9 @@ function StatusBadge({ status }: { status: UploadType["status"] }) {
 
 export default function DashboardPage() {
   const { user } = useUser();
+  const searchParams = useSearchParams();
+  const tourParam = searchParams.get("tour");
+  const isTourActive = tourParam === "1";
   const [recentUploads, setRecentUploads] = useState<RecentUpload[]>([]);
   const [recentChats, setRecentChats] = useState<RecentChat[]>([]);
   const [uploadsLoading, setUploadsLoading] = useState(true);
@@ -185,9 +191,10 @@ export default function DashboardPage() {
   }, [fetchRecentUploads, fetchRecentChats]);
 
   return (
-    <>
-      <MainNavigation />
-      <main id="dashboard-overview" className="container mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+    <OnboardingTourProvider>
+      <>
+        <MainNavigation />
+        <main data-tour="dashboard-overview" className="container mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       {/* ── Greeting ─────────────────────────────────────────────────────── */}
       <AnimatedSection>
         <div className="mb-10">
@@ -345,8 +352,10 @@ export default function DashboardPage() {
           </div>
         </AnimatedSection>
       </div>
-      </main>
-      <Footer />
-    </>
+        </main>
+        <Footer />
+        {isTourActive && <TourRenderer targetSelector="dashboard-overview" />}
+      </>
+    </OnboardingTourProvider>
   );
 }

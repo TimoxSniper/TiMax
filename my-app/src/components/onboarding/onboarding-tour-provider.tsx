@@ -104,7 +104,8 @@ export function OnboardingTourProvider({ children }: OnboardingTourProviderProps
       router.push('/dashboard');
     } catch (error) {
       console.error('Error completing tour:', error);
-      alert('Ein Fehler ist aufgetreten. Bitte versuche es erneut.');
+      // Non-blocking: still navigate to dashboard even if API call fails
+      router.push('/dashboard');
     }
   }, [router]);
 

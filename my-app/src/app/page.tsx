@@ -10,10 +10,7 @@ import { Hero } from "@/components/magic-ui/hero";
 import { EmailSignup } from "@/components/home/email-signup";
 import {
   Upload,
-  FileText,
   MessageSquare,
-  Sparkles,
-  Brain,
   Zap,
   Network,
   Clock,

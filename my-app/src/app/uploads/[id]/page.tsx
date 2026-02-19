@@ -3,8 +3,19 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { MainNavigation } from "@/components/layout/main-navigation";
+import { Footer } from "@/components/layout/footer";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   ArrowLeft,
   Copy,
@@ -14,6 +25,8 @@ import {
   HardDrive,
   Type,
   Trash2,
+  AlertTriangle,
+  Loader2,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -40,6 +53,8 @@ export default function TranscriptDetailPage() {
   const [upload, setUpload] = useState<Upload | null>(null);
   const [loading, setLoading] = useState(true);
   const [isCopying, setIsCopying] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchUpload = async () => {
@@ -77,7 +92,7 @@ export default function TranscriptDetailPage() {
   };
 
   const handleDelete = async () => {
-    if (!confirm("Wirklich löschen?")) return;
+    setIsDeleting(true);
     try {
       // CSRF-Token holen
       const csrfResponse = await fetch("/api/csrf");
@@ -91,14 +106,18 @@ export default function TranscriptDetailPage() {
       });
 
       if (response.ok) {
-        toast.success("Gelöscht");
+        toast.success("Transkript gelöscht");
         router.push("/uploads");
       } else {
         const data = await response.json();
         toast.error(data.error || "Fehler beim Löschen");
+        setIsDeleting(false);
+        setShowDeleteDialog(false);
       }
     } catch {
       toast.error("Fehler beim Löschen");
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
     }
   };
 
@@ -118,10 +137,18 @@ export default function TranscriptDetailPage() {
   if (!upload) return null;
 
   return (
-    <div className="bg-background min-h-screen pb-20">
+    <div className="bg-background min-h-screen">
       <MainNavigation />
 
       <main className="container mx-auto max-w-5xl px-4 pt-12 sm:px-6 sm:pt-16 lg:px-8">
+        <Breadcrumbs
+          items={[
+            { label: "Meine Dateien", href: "/uploads" },
+            { label: upload.file_name },
+          ]}
+          className="mb-6"
+        />
+
         {/* Back Link */}
         <Button
           variant="ghost"
@@ -193,20 +220,67 @@ export default function TranscriptDetailPage() {
                   className="border-foreground hover:bg-foreground hover:text-background h-12 w-full rounded-none transition-all"
                 >
                   {isCopying ? (
-                    <Check className="mr-2 h-4 w-4" />
+                    <>
+                      <Check className="mr-2 h-4 w-4" />
+                      KOPIERT!
+                    </>
                   ) : (
-                    <Copy className="mr-2 h-4 w-4" />
+                    <>
+                      <Copy className="mr-2 h-4 w-4" />
+                      TEXT KOPIEREN
+                    </>
                   )}
-                  TEXT KOPIEREN
                 </Button>
-                <Button
-                  variant="ghost"
-                  onClick={handleDelete}
-                  className="text-destructive hover:bg-destructive/5 w-full rounded-none"
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Löschen
-                </Button>
+                <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="text-destructive hover:bg-destructive/5 w-full rounded-none"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Löschen
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle className="text-destructive flex items-center gap-2">
+                        <AlertTriangle className="h-5 w-5" />
+                        Transkript löschen?
+                      </DialogTitle>
+                      <DialogDescription>
+                        Das Transkript und alle zugehörigen Daten werden unwiderruflich gelöscht.
+                        Diese Aktion kann nicht rückgängig gemacht werden.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowDeleteDialog(false)}
+                        disabled={isDeleting}
+                      >
+                        Abbrechen
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={handleDelete}
+                        disabled={isDeleting}
+                        className="gap-2"
+                      >
+                        {isDeleting ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Wird gelöscht...
+                          </>
+                        ) : (
+                          <>
+                            <Trash2 className="h-4 w-4" />
+                            Endgültig löschen
+                          </>
+                        )}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               {/* Info Card */}
@@ -278,6 +352,7 @@ export default function TranscriptDetailPage() {
           </aside>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

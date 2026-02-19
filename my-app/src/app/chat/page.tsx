@@ -26,7 +26,7 @@ export default function ChatPage() {
           </div>
 
           {/* Tour Component */}
-          {tourParam === "4" && <TourRenderer targetSelector="chat-interface" />}
+          {tourParam === "5" && <TourRenderer targetSelector="chat-interface" />}
         </div>
       </OnboardingTourProvider>
     );
@@ -44,7 +44,7 @@ export default function ChatPage() {
             <h1 className="text-foreground mb-4 font-serif text-5xl font-bold lg:text-6xl">Chat</h1>
             <div className="bg-accent mb-6 h-1 w-24" />
             <p className="text-muted-foreground max-w-2xl text-lg">
-              Haben Sie ein Gespräch mit unserer KI. Stellen Sie Fragen, erhalten Sie Antworten.
+              Führe ein Gespräch mit unserer KI. Stelle Fragen, erhalte Antworten.
             </p>
           </header>
 
@@ -60,7 +60,7 @@ export default function ChatPage() {
       <Footer />
 
       {/* Tour Component */}
-      {tourParam === "4" && <TourRenderer targetSelector="chat-interface" />}
+      {tourParam === "5" && <TourRenderer targetSelector="chat-interface" />}
     </div>
     </OnboardingTourProvider>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,17 +14,27 @@ export default function ProfileSettingsPage() {
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
   const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState<{ firstName?: string; lastName?: string }>({});
 
   // Update state when user loads
-  useState(() => {
+  useEffect(() => {
     if (user) {
       setFirstName(user.firstName || "");
       setLastName(user.lastName || "");
     }
-  });
+  }, [user]);
 
   const handleSave = async () => {
     if (!user) return;
+
+    const newErrors: { firstName?: string; lastName?: string } = {};
+    if (!firstName.trim()) newErrors.firstName = "Vorname darf nicht leer sein.";
+    if (!lastName.trim()) newErrors.lastName = "Nachname darf nicht leer sein.";
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
 
     setIsSaving(true);
     try {
@@ -113,9 +123,14 @@ export default function ProfileSettingsPage() {
               <Input
                 id="firstName"
                 value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                onChange={(e) => { setFirstName(e.target.value); setErrors((prev) => ({ ...prev, firstName: undefined })); }}
                 placeholder="Max"
+                aria-invalid={!!errors.firstName}
+                className={errors.firstName ? "border-destructive" : ""}
               />
+              {errors.firstName && (
+                <p className="text-destructive text-xs">{errors.firstName}</p>
+              )}
             </div>
             <div className="space-y-2">
               <label htmlFor="lastName" className="text-sm font-medium">
@@ -124,9 +139,14 @@ export default function ProfileSettingsPage() {
               <Input
                 id="lastName"
                 value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                onChange={(e) => { setLastName(e.target.value); setErrors((prev) => ({ ...prev, lastName: undefined })); }}
                 placeholder="Mustermann"
+                aria-invalid={!!errors.lastName}
+                className={errors.lastName ? "border-destructive" : ""}
               />
+              {errors.lastName && (
+                <p className="text-destructive text-xs">{errors.lastName}</p>
+              )}
             </div>
           </div>
 

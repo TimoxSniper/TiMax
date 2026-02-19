@@ -6,14 +6,10 @@ import { Footer } from "@/components/layout/footer";
 import { Card } from "@/components/magic-ui/glass-card";
 import { AnimatedSection } from "@/components/magic-ui/animated-section";
 import { Button } from "@/components/ui/button";
-import { Hero } from "@/components/magic-ui/hero";
 import { EmailSignup } from "@/components/home/email-signup";
 import {
   Upload,
-  FileText,
   MessageSquare,
-  Sparkles,
-  Brain,
   Zap,
   Network,
   Clock,
