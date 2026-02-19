@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useUser, useClerk, useAuth } from "@clerk/nextjs";
+import { useUser, useAuth } from "@clerk/nextjs";
+import { SubscriptionDetailsButton } from "@clerk/nextjs/experimental";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +16,6 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import Link from "next/link";
-import { toast } from "react-hot-toast";
 
 const PLAN_INFO = {
   starter: {
@@ -45,15 +44,6 @@ const PLAN_INFO = {
 export default function BillingSettingsPage() {
   const { isLoaded } = useUser();
   const { has } = useAuth();
-  const clerk = useClerk();
-  const [isPortalLoading, setIsPortalLoading] = useState(false);
-
-  // Clerk Billing-Methoden sind bei aktiviertem Billing in der Clerk-Instanz vorhanden,
-  // aber noch nicht in allen @clerk/nextjs TypeScript-Typen definiert.
-  type ClerkWithBilling = typeof clerk & {
-    openBillingPortal: () => Promise<void>;
-  };
-  const billingClerk = clerk as ClerkWithBilling;
 
   if (!isLoaded) {
     return (
@@ -71,17 +61,6 @@ export default function BillingSettingsPage() {
 
   const currentPlan = currentPlanSlug ? PLAN_INFO[currentPlanSlug] : null;
   const PlanIcon = currentPlan?.icon;
-
-  const handleOpenPortal = async () => {
-    setIsPortalLoading(true);
-    try {
-      await billingClerk.openBillingPortal();
-    } catch {
-      toast.error("Billing-Portal konnte nicht geöffnet werden. Bitte versuche es erneut.");
-    } finally {
-      setIsPortalLoading(false);
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -109,19 +88,12 @@ export default function BillingSettingsPage() {
                   <p className="text-muted-foreground text-xs">{currentPlan.description}</p>
                 </div>
               </div>
-              <Button
-                variant="outline"
-                onClick={handleOpenPortal}
-                disabled={isPortalLoading}
-                className="gap-2 flex-shrink-0"
-              >
-                {isPortalLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
+              <SubscriptionDetailsButton>
+                <Button variant="outline" className="gap-2 flex-shrink-0">
                   <ExternalLink className="h-4 w-4" />
-                )}
-                Abo verwalten
-              </Button>
+                  Abo verwalten
+                </Button>
+              </SubscriptionDetailsButton>
             </div>
           ) : (
             <div className="flex items-center justify-between gap-4">
@@ -166,14 +138,12 @@ export default function BillingSettingsPage() {
                 <span>Plan upgraden oder kündigen</span>
               </div>
             </div>
-            <Button onClick={handleOpenPortal} disabled={isPortalLoading} className="gap-2">
-              {isPortalLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
+            <SubscriptionDetailsButton>
+              <Button className="gap-2">
                 <ExternalLink className="h-4 w-4" />
-              )}
-              Billing-Portal öffnen
-            </Button>
+                Billing-Portal öffnen
+              </Button>
+            </SubscriptionDetailsButton>
           </CardContent>
         </Card>
       )}

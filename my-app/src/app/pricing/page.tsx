@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useClerk, useAuth } from "@clerk/nextjs";
-import { toast } from "react-hot-toast";
+import { useAuth, SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
+import { CheckoutButton, SubscriptionDetailsButton } from "@clerk/nextjs/experimental";
 import { MainNavigation } from "@/components/layout/main-navigation";
 import { Footer } from "@/components/layout/footer";
 import { Card } from "@/components/magic-ui/glass-card";
@@ -21,7 +21,6 @@ import {
   MessageSquare,
   Upload,
   User,
-  Loader2,
   Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -121,45 +120,7 @@ const FAQ_ITEMS = [
 
 export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false);
-  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
-  const clerk = useClerk();
-  const { has, isSignedIn } = useAuth();
-
-  // Clerk Billing-Methoden sind bei aktiviertem Billing in der Clerk-Instanz vorhanden,
-  // aber noch nicht in allen @clerk/nextjs TypeScript-Typen definiert.
-  type ClerkWithBilling = typeof clerk & {
-    openCheckout: (params: { planId: string }) => Promise<void>;
-    openBillingPortal: () => Promise<void>;
-  };
-  const billingClerk = clerk as ClerkWithBilling;
-
-  const handlePlanSelect = async (planSlug: string) => {
-    if (!isSignedIn) {
-      clerk.redirectToSignUp();
-      return;
-    }
-    const planId = PLAN_IDS[planSlug];
-    if (!planId) {
-      toast.error("Plan nicht konfiguriert. Bitte versuche es später erneut.");
-      return;
-    }
-    setLoadingPlan(planSlug);
-    try {
-      await billingClerk.openCheckout({ planId });
-    } catch {
-      toast.error("Checkout konnte nicht geöffnet werden. Bitte versuche es erneut.");
-    } finally {
-      setLoadingPlan(null);
-    }
-  };
-
-  const handleOpenBillingPortal = async () => {
-    try {
-      await billingClerk.openBillingPortal();
-    } catch {
-      toast.error("Billing-Portal konnte nicht geöffnet werden.");
-    }
-  };
+  const { has } = useAuth();
 
   return (
     <div className="bg-background relative flex min-h-screen flex-col">
@@ -230,7 +191,8 @@ export default function PricingPage() {
                   <AnimatedSection key={tier.name} direction="up" delay={index * 100}>
                     {(() => {
                       const isCurrentPlan = has?.({ plan: tier.planSlug }) ?? false;
-                      const isLoading = loadingPlan === tier.planSlug;
+                      const planPeriod = isYearly ? "annual" : "month";
+                      const planId = PLAN_IDS[tier.planSlug] ?? "";
                       return (
                     <Card
                       variant="accent"
@@ -238,7 +200,7 @@ export default function PricingPage() {
                       overflow={tier.popular ? "visible" : "hidden"}
                       className={cn(
                         "relative flex h-[600px] flex-col p-6 sm:p-8",
-                        tier.popular && "ring-accent ring-2",
+                        tier.popular && !isCurrentPlan && "ring-accent ring-2",
                         isCurrentPlan && "ring-green-500 ring-2"
                       )}
                     >
@@ -317,31 +279,45 @@ export default function PricingPage() {
 
                       {/* CTA */}
                       {isCurrentPlan ? (
-                        <Button
-                          size="lg"
-                          variant="outline"
-                          className="h-14 w-full flex-shrink-0 border-green-500 text-green-600 hover:bg-green-50 dark:hover:bg-green-950"
-                          onClick={handleOpenBillingPortal}
-                        >
-                          <Settings className="mr-2 h-4 w-4" />
-                          Abo verwalten
-                        </Button>
+                        <SignedIn>
+                          <SubscriptionDetailsButton>
+                            <Button
+                              size="lg"
+                              variant="outline"
+                              className="h-14 w-full flex-shrink-0 border-green-500 text-green-600 hover:bg-green-50 dark:hover:bg-green-950"
+                            >
+                              <Settings className="mr-2 h-4 w-4" />
+                              Abo verwalten
+                            </Button>
+                          </SubscriptionDetailsButton>
+                        </SignedIn>
                       ) : (
-                        <Button
-                          size="lg"
-                          variant={tier.popular ? "default" : "outline"}
-                          className="h-14 w-full flex-shrink-0"
-                          onClick={() => handlePlanSelect(tier.planSlug)}
-                          disabled={isLoading}
-                        >
-                          {isLoading ? (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          ) : null}
-                          {tier.cta}
-                          {!isLoading && (
-                            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                          )}
-                        </Button>
+                        <>
+                          <SignedIn>
+                            <CheckoutButton planId={planId} planPeriod={planPeriod}>
+                              <Button
+                                size="lg"
+                                variant={tier.popular ? "default" : "outline"}
+                                className="h-14 w-full flex-shrink-0"
+                              >
+                                {tier.cta}
+                                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                              </Button>
+                            </CheckoutButton>
+                          </SignedIn>
+                          <SignedOut>
+                            <SignUpButton>
+                              <Button
+                                size="lg"
+                                variant={tier.popular ? "default" : "outline"}
+                                className="h-14 w-full flex-shrink-0"
+                              >
+                                {tier.cta}
+                                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                              </Button>
+                            </SignUpButton>
+                          </SignedOut>
+                        </>
                       )}
                     </Card>
                       );
@@ -480,20 +456,25 @@ export default function PricingPage() {
                 <p className="text-muted-foreground mx-auto mb-8 max-w-md">
                   Starte mit dem Starter-Plan und upgrade jederzeit, wenn du mehr brauchst.
                 </p>
-                <Button
-                  size="lg"
-                  className="group min-h-14 px-10 text-base"
-                  onClick={() => handlePlanSelect("starter")}
-                  disabled={loadingPlan === "starter"}
-                >
-                  {loadingPlan === "starter" ? (
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  ) : null}
-                  Mit Starter beginnen
-                  {loadingPlan !== "starter" && (
-                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                  )}
-                </Button>
+                <SignedIn>
+                  <CheckoutButton
+                    planId={PLAN_IDS.starter ?? ""}
+                    planPeriod={isYearly ? "annual" : "month"}
+                  >
+                    <Button size="lg" className="group min-h-14 px-10 text-base">
+                      Mit Starter beginnen
+                      <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                    </Button>
+                  </CheckoutButton>
+                </SignedIn>
+                <SignedOut>
+                  <SignUpButton>
+                    <Button size="lg" className="group min-h-14 px-10 text-base">
+                      Mit Starter beginnen
+                      <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                    </Button>
+                  </SignUpButton>
+                </SignedOut>
               </Card>
             </AnimatedSection>
           </div>
