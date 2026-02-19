@@ -284,7 +284,7 @@ export function TourFloating({ targetSelector, isActive }: TourFloatingProps) {
                 )}
 
                 {isLastStep ? (
-                  <Button onClick={completeTour} size="lg" className="ml-auto shadow-lg">
+                  <Button onClick={completeTour} size="sm" className="ml-auto shadow-lg">
                     <Check className="mr-2 h-4 w-4" />
                     Tour abschließen
                   </Button>
