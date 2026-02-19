@@ -26,7 +26,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useMobileDevice } from "@/hooks/useMobileDevice";
 
 const protectedNavigation = [
-  { name: "Home", href: "/", icon: Home },
+  { name: "Home", href: "/dashboard", icon: Home },
   { name: "Upload", href: "/upload", icon: Upload },
   { name: "Chat", href: "/chat", icon: MessageSquare },
   { name: "Meine Dateien", href: "/uploads", icon: FolderOpen },

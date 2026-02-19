@@ -100,8 +100,8 @@ export function OnboardingTourProvider({ children }: OnboardingTourProviderProps
         throw new Error('Failed to complete onboarding');
       }
 
-      // Redirect to chat
-      router.push('/chat');
+      // Redirect to dashboard
+      router.push('/dashboard');
     } catch (error) {
       console.error('Error completing tour:', error);
       alert('Ein Fehler ist aufgetreten. Bitte versuche es erneut.');

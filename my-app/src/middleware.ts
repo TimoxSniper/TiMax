@@ -34,6 +34,7 @@ const isProtectedRoute = createRouteMatcher([
   "/upload(.*)",
   "/uploads(.*)",
   "/welcome(.*)",
+  "/dashboard(.*)",
   "/admin(.*)",
   "/api/upload(.*)",
   "/api/chat(.*)",
@@ -164,9 +165,9 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   // Onboarding-Redirect für neue User
-  // Nur bei /chat ohne tour Parameter
+  // Nur bei /chat oder /dashboard ohne tour Parameter
   const searchParams = req.nextUrl.searchParams;
-  if (pathname === "/chat" && !searchParams.has("tour")) {
+  if ((pathname === "/chat" || pathname === "/dashboard") && !searchParams.has("tour")) {
     try {
       const { userId } = await auth();
       if (userId) {

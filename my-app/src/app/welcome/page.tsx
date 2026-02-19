@@ -13,7 +13,7 @@ export default function WelcomePage() {
   const handleStartTour = () => {
     setIsLoading(true);
     setLoadingAction('tour');
-    router.push('/upload?tour=1&style=floating');
+    router.push('/dashboard?tour=1&style=floating');
   };
 
   const handleSkipTour = async () => {
@@ -29,7 +29,7 @@ export default function WelcomePage() {
         throw new Error('Fehler beim Abschließen des Onboardings');
       }
 
-      router.push('/upload');
+      router.push('/dashboard');
     } catch (error) {
       console.error('Error completing onboarding:', error);
       alert('Ein Fehler ist aufgetreten. Bitte versuche es erneut.');
@@ -128,7 +128,7 @@ export default function WelcomePage() {
           </div>
 
           <p className="text-muted-foreground text-sm">
-            Tour zeigt dir alles in 4 schnellen Schritten
+            Tour zeigt dir alles in 5 schnellen Schritten
           </p>
         </div>
       </div>
