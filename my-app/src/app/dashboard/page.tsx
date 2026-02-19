@@ -15,6 +15,8 @@ import {
   FileAudio,
 } from "lucide-react";
 import { AnimatedSection } from "@/components/magic-ui/animated-section";
+import { MainNavigation } from "@/components/layout/main-navigation";
+import { Footer } from "@/components/layout/footer";
 import { cn } from "@/lib/utils";
 import type { Upload as UploadType } from "@/lib/supabase/database.types";
 
@@ -183,10 +185,9 @@ export default function DashboardPage() {
   }, [fetchRecentUploads, fetchRecentChats]);
 
   return (
-    <div
-      id="dashboard-overview"
-      className="container mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8"
-    >
+    <>
+      <MainNavigation />
+      <main id="dashboard-overview" className="container mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       {/* ── Greeting ─────────────────────────────────────────────────────── */}
       <AnimatedSection>
         <div className="mb-10">
@@ -344,6 +345,8 @@ export default function DashboardPage() {
           </div>
         </AnimatedSection>
       </div>
-    </div>
+      </main>
+      <Footer />
+    </>
   );
 }
