@@ -74,11 +74,15 @@ export function OnboardingTourProvider({ children }: OnboardingTourProviderProps
   }, [currentStep, router]);
 
   /**
-   * Skip tour without completing onboarding
-   * Removes tour parameter from URL
+   * Skip tour and mark onboarding as completed
+   * Without marking complete, the middleware would redirect back to /welcome on every /chat visit
    */
   const skipTour = useCallback(async () => {
-    // Remove tour parameter from URL
+    try {
+      await fetch('/api/onboarding/complete', { method: 'POST' });
+    } catch {
+      // Non-blocking: if this fails, user can still navigate away
+    }
     router.push(pathname);
   }, [router, pathname]);
 

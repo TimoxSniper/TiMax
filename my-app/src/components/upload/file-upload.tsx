@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, DragEvent } from "react";
+import { useState, useRef, useEffect, useCallback, DragEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Upload, X, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
@@ -198,6 +198,20 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
     }
   };
 
+  const handleProcessingComplete = useCallback(() => {
+    if (isProcessingAI) {
+      setIsProcessingAI(false);
+      setSuccess(true);
+
+      if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
+      resetTimeoutRef.current = setTimeout(() => {
+        setFile(null);
+        setSuccess(false);
+        setProgress(0);
+      }, TIMEOUTS.UPLOAD_RESET);
+    }
+  }, [isProcessingAI]);
+
   // Cleanup Timeout beim Unmount
   useEffect(() => {
     return () => {
@@ -304,20 +318,7 @@ export function FileUpload({ onUploadSuccess, onUploadError }: FileUploadProps) 
 
               <ProcessingStatus
                 isProcessing={isUploading || isProcessingAI}
-                onComplete={() => {
-                  if (isProcessingAI) {
-                    setIsProcessingAI(false);
-                    setSuccess(true);
-
-                    // Reset after configured time
-                    if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
-                    resetTimeoutRef.current = setTimeout(() => {
-                      setFile(null);
-                      setSuccess(false);
-                      setProgress(0);
-                    }, TIMEOUTS.UPLOAD_RESET);
-                  }
-                }}
+                onComplete={handleProcessingComplete}
               />
 
               {error && (
