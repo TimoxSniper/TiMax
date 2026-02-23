@@ -51,12 +51,9 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="border-border mt-6 flex flex-col items-center justify-between gap-3 border-t pt-6 sm:mt-8 sm:gap-4 sm:pt-8 md:flex-row">
+        <div className="border-border mt-6 flex flex-col items-center justify-center border-t pt-6 sm:mt-8 sm:pt-8">
           <p className="text-muted-foreground text-xs sm:text-sm">
             © {currentYear} TiMax. Alle Rechte vorbehalten.
-          </p>
-          <p className="text-muted-foreground/60 text-[10px] sm:text-xs">
-            Made with ❤️ for Content Creators
           </p>
         </div>
       </div>
