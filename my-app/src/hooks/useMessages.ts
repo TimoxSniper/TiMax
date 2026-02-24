@@ -2,27 +2,25 @@ import { useState, useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Message, UseMessagesOptions } from "@/lib/types";
 
-export type { Message }; // Exportiere Message-Typ für andere Module
-
 export function useMessages({ initialMessages = [] }: UseMessagesOptions = {}) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
 
-  const addMessage = useCallback((message: Omit<Message, 'id' | 'timestamp'>) => {
+  const addMessage = useCallback((message: Omit<Message, "id" | "timestamp">) => {
     const newMessage: Message = {
       id: `msg-${uuidv4()}`,
       ...message,
       timestamp: new Date(),
     };
-    setMessages(prev => [...prev, newMessage]);
+    setMessages((prev) => [...prev, newMessage]);
   }, []);
 
-  const addMessages = useCallback((newMessages: Omit<Message, 'id' | 'timestamp'>[]) => {
-    const messagesWithIds = newMessages.map(message => ({
+  const addMessages = useCallback((newMessages: Omit<Message, "id" | "timestamp">[]) => {
+    const messagesWithIds = newMessages.map((message) => ({
       id: `msg-${uuidv4()}`,
       ...message,
       timestamp: new Date(),
     }));
-    setMessages(prev => [...prev, ...messagesWithIds]);
+    setMessages((prev) => [...prev, ...messagesWithIds]);
   }, []);
 
   const clearMessages = useCallback(() => {
@@ -30,7 +28,7 @@ export function useMessages({ initialMessages = [] }: UseMessagesOptions = {}) {
   }, []);
 
   const removeMessage = useCallback((id: string) => {
-    setMessages(prev => prev.filter(msg => msg.id !== id));
+    setMessages((prev) => prev.filter((msg) => msg.id !== id));
   }, []);
 
   return {
