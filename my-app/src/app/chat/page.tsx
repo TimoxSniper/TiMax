@@ -2,7 +2,6 @@
 
 import { MainNavigation } from "@/components/layout/main-navigation";
 import { Footer } from "@/components/layout/footer";
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { useMobileDevice } from "@/hooks/useMobileDevice";
 import { DynamicChatInterface } from "@/lib/dynamic-import";
 import { OnboardingTourProvider } from "@/components/onboarding/onboarding-tour-provider";
@@ -50,9 +49,6 @@ export default function ChatPage() {
               Führe ein Gespräch mit unserer KI. Stelle Fragen, erhalte Antworten.
             </p>
           </header>
-
-          {/* Breadcrumbs */}
-          <Breadcrumbs items={[{ label: "Chat" }]} className="mb-2" />
 
           {/* Chat Interface */}
           <div data-tour="chat-interface">

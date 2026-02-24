@@ -5,7 +5,7 @@ import { MessageList } from "./message-list";
 import { ChatInput } from "./chat-input";
 import { ChatHeader } from "./chat-header";
 import { Card } from "@/components/ui/card";
-import { AlertCircle, Sparkles, Plus } from "lucide-react";
+import { AlertCircle, Bot, Plus } from "lucide-react";
 import { CHAT_UI_TEXTS } from "@/lib/constants";
 import { useChat, Message } from "@/hooks/useChat";
 import { useMobileDevice } from "@/hooks/useMobileDevice";
@@ -99,7 +99,7 @@ export const ChatInterface = memo(({ initialSessionId }: ChatInterfaceProps) => 
 
           <div className="flex flex-1 items-center justify-center gap-2">
             <div className="bg-accent/10 flex h-9 w-9 items-center justify-center rounded-full">
-              <Sparkles className="text-accent h-5 w-5" />
+              <Bot className="text-accent h-5 w-5" />
             </div>
             <span className="text-base font-medium">TiMax</span>
           </div>
@@ -126,7 +126,7 @@ export const ChatInterface = memo(({ initialSessionId }: ChatInterfaceProps) => 
             // Welcome Screen für Mobile
             <div className="flex min-h-full flex-col items-center justify-center px-6 py-12">
               <div className="bg-accent/10 mb-8 flex h-20 w-20 items-center justify-center rounded-2xl">
-                <Sparkles className="text-accent h-10 w-10" />
+                <Bot className="text-accent h-10 w-10" />
               </div>
 
               <h2 className="mb-3 text-center font-serif text-3xl font-bold">
@@ -197,7 +197,7 @@ export const ChatInterface = memo(({ initialSessionId }: ChatInterfaceProps) => 
           {messages.length === 0 ? (
             <div className="animate-in fade-in slide-in-from-bottom-4 flex h-full flex-col items-center justify-center px-4 text-center duration-500">
               <div className="bg-secondary mb-6 flex h-16 w-16 items-center justify-center rounded-[6px]">
-                <Sparkles className="text-accent h-8 w-8" />
+                <Bot className="text-accent h-8 w-8" />
               </div>
               <h2 className="text-foreground mb-2 font-serif text-2xl font-bold">
                 {CHAT_UI_TEXTS.WELCOME_TITLE}
