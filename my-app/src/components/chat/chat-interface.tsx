@@ -196,8 +196,8 @@ export const ChatInterface = memo(({ initialSessionId }: ChatInterfaceProps) => 
         <div ref={scrollContainerRef} className="flex-1 space-y-4 overflow-y-auto p-4">
           {messages.length === 0 ? (
             <div className="animate-in fade-in slide-in-from-bottom-4 flex h-full flex-col items-center justify-center px-4 text-center duration-500">
-              <div className="bg-secondary mb-6 flex h-16 w-16 items-center justify-center rounded-[6px]">
-                <Bot className="text-accent h-8 w-8" />
+              <div className="bg-accent/10 mb-6 flex h-20 w-20 items-center justify-center rounded-2xl">
+                <Bot className="text-accent h-10 w-10" />
               </div>
               <h2 className="text-foreground mb-2 font-serif text-2xl font-bold">
                 {CHAT_UI_TEXTS.WELCOME_TITLE}
@@ -206,7 +206,7 @@ export const ChatInterface = memo(({ initialSessionId }: ChatInterfaceProps) => 
                 {CHAT_UI_TEXTS.WELCOME_SUBTITLE}
               </p>
 
-              <div className="grid w-full max-w-md gap-3">
+              <div className="grid w-full max-w-md gap-2">
                 <p className="text-muted-foreground mb-1 text-xs font-medium tracking-widest uppercase">
                   {CHAT_UI_TEXTS.EXAMPLE_REQUESTS_TITLE}
                 </p>
@@ -214,7 +214,7 @@ export const ChatInterface = memo(({ initialSessionId }: ChatInterfaceProps) => 
                   <button
                     key={index}
                     onClick={() => handleSendMessage(req.replace(/^[•\s"]+|["]+$/g, ""))}
-                    className="bg-secondary hover:bg-secondary/80 border-border hover:shadow-editorial-sm rounded-[6px] border px-4 py-3 text-left text-sm transition-all duration-300 hover:-translate-y-[2px]"
+                    className="bg-muted/50 hover:bg-muted rounded-lg px-4 py-3 text-left text-sm transition-colors"
                   >
                     {req}
                   </button>
