@@ -197,7 +197,7 @@ export default function PricingPage() {
                     <Card
                       variant="accent"
                       hover={false}
-                      overflow={tier.popular ? "visible" : "hidden"}
+                      overflow={tier.popular || isCurrentPlan ? "visible" : "hidden"}
                       className={cn(
                         "relative flex h-[600px] flex-col p-6 sm:p-8",
                         tier.popular && !isCurrentPlan && "ring-accent ring-2",
